@@ -1,0 +1,15 @@
+{
+  "name": "塗れるくん -- 塗装タイミング判定",
+  "short_name": "塗れるくん",
+  "description": "住所を入れると今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水)を判定します。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f3ee",
+  "theme_color": "#b5532f",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

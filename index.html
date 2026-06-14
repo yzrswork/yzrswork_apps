@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b5532f">
+<title>や印工務店のアプリたち -- yzrswork apps</title>
+<meta name="description" content="や印工務店(yzrswork)が作る、単一HTML製のニッチな道具たち。塗装職人 x メイカー x AIナレッジ管理。">
+<style>
+  :root{
+    --bg:#f7f3ee; --paper:#fffdfa; --ink:#2c2620; --sub:#7a6f63;
+    --terra:#b5532f; --terra-d:#8f3f22; --line:#e7ddd2; --shadow:0 2px 10px rgba(60,40,20,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:600px; margin:0 auto; padding:16px 16px 48px}
+  header{padding:28px 0 8px; text-align:center}
+  header h1{margin:0; font-size:1.6rem; letter-spacing:.02em}
+  header h1 .a{color:var(--terra)}
+  header .tag{margin:6px 0 0; color:var(--sub); font-size:.86rem}
+  h2.sec{font-size:.95rem; margin:22px 0 10px; color:var(--terra-d)}
+  a.app{
+    display:block; text-decoration:none; color:inherit; background:var(--paper);
+    border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+    padding:16px 18px; margin:12px 0;
+  }
+  a.app:active{transform:translateY(1px)}
+  a.app .name{font-size:1.15rem; font-weight:700; color:var(--terra-d)}
+  a.app .desc{margin:6px 0 0; color:var(--sub); font-size:.88rem}
+  a.app .go{display:inline-block; margin-top:10px; font-size:.82rem; color:var(--terra); font-weight:600}
+  .soon{opacity:.6}
+  .soon .name::after{content:" (準備中)"; font-size:.72rem; color:var(--sub); font-weight:400}
+  .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600; margin-top:18px}
+  .muted{color:var(--sub); font-size:.78rem}
+  footer{text-align:center; margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>や印工務店の<span class="a">アプリたち</span></h1>
+    <p class="tag">塗装職人 x メイカー x AIナレッジ管理。単一HTML製のニッチな道具を並べていきます。</p>
+  </header>
+
+  <h2 class="sec">公開中</h2>
+
+  <a class="app" href="nurerukun/">
+    <div class="name">塗れるくん</div>
+    <p class="desc">住所を入れると、今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水・風)を判定。</p>
+    <span class="go">開く -</span>
+  </a>
+
+  <h2 class="sec">これから</h2>
+
+  <div class="app soon">
+    <div class="name">塗料量計算</div>
+    <p class="desc">面積・下地・塗料種別から必要リットル・塗り回数・概算を出す。塗れるくんと統合予定。</p>
+  </div>
+
+  <a class="note-cta" href="https://note.com/yzrswork" target="_blank" rel="noopener">作りかたと段取りの話を note で読む</a>
+
+  <footer>
+    <p class="muted">や印工務店 / yzrswork。各アプリは GitHub Pages 上の単一HTML(PWA)です。</p>
+  </footer>
+</div>
+</body>
+</html>
