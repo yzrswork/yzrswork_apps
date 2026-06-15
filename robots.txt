@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yzrswork.github.io/yzrswork_apps/sitemap.xml
