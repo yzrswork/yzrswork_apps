@@ -137,7 +137,7 @@
 
   <footer>
     <p class="muted">判定はあくまで目安です。最終判断は現場の状況と塗料の仕様書で。</p>
-    <p class="muted">天気データ: Open-Meteo / 住所検索: 国土地理院</p>
+    <p class="muted">天気データ: MET Norway (met.no) / 住所検索: 国土地理院</p>
   </footer>
 </div>
 
@@ -245,15 +245,26 @@ async function geocode(q){
   return { lat, lon, name: j[0].properties.title };
 }
 
-/* --- 予報取得 (Open-Meteo, キー不要・無料) --- */
+/* --- 予報取得 (MET Norway Locationforecast 2.0, キー不要・無料・商用可) ---
+   Open-Meteo の無料ホスト版は「非商用限定」のため、アフィリエイト収益化(=商用)と
+   利用規約が衝突する。商用可(帰属表示が条件・CC BY 4.0)の met.no へ移行した。
+   - compact 版に露点は含まれないので、気温と湿度から Magnus 式で算出する(dewPoint)。
+   - 風速は m/s で返る(Open-Meteo の既定 km/h とは別単位)。CONFIG の風閾値は m/s 基準。
+   - met.no は識別可能な User-Agent を要求するが、ブラウザからは UA を変更できない。
+     ブラウザ既定の UA であれば通る(拒否されるのはボット系 UA)。帰属はフッターに明記。 */
 async function getForecast(lat, lon){
-  const url = 'https://api.open-meteo.com/v1/forecast'
-    +'?latitude='+lat+'&longitude='+lon
-    +'&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,precipitation_probability,wind_speed_10m'
-    +'&timezone=Asia%2FTokyo&forecast_days=4';
+  const url = 'https://api.met.no/weatherapi/locationforecast/2.0/compact'
+    +'?lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);  // 座標は4桁に丸める(met.no推奨)
   const r = await fetch(url);
   if(!r.ok) throw new Error('天気の取得に失敗しました');
   return r.json();
+}
+
+/* 露点(℃)を気温T(℃)・相対湿度RH(%)から算出 (Magnus式) */
+function dewPoint(T, RH){
+  const a=17.62, b=243.12;
+  const g = Math.log(Math.max(RH,1)/100) + (a*T)/(b+T);
+  return (b*g)/(a-g);
 }
 
 /* --- 1時間ぶんの判定: 'ok' / 'warn' / 'ng' + 理由 --- */
@@ -288,21 +299,27 @@ function judgeHour(h){
   return { state: ng?'ng':(warn?'warn':'ok'), reasons };
 }
 
-/* --- 生データを日ごと・時間ごとに整形 --- */
+/* --- 生データを日ごと・時間ごとに整形 (met.noの時刻はUTC -> JSTへ変換) --- */
 function parse(data){
-  const t = data.hourly.time;
+  const ts = data.properties.timeseries;
   const days = {};
-  for(let i=0;i<t.length;i++){
-    const date = t[i].slice(0,10);
-    const hour = parseInt(t[i].slice(11,13),10);
+  for(const e of ts){
+    const n1 = e.data.next_1_hours;            // 毎時解像度がある区間だけ使う
+    if(!n1) continue;                          // 先の6時間刻みの区間は判定に使わない
+    const u = new Date(e.time);                // 末尾 Z = UTC
+    const j = new Date(u.getTime() + 9*3600000); // JST の壁時計へ (+9h)
+    const date = j.toISOString().slice(0,10);
+    const hour = j.getUTCHours();
+    const det = e.data.instant.details;
+    const T = det.air_temperature, RH = det.relative_humidity;
     (days[date] ||= []).push({
       hour,
-      temp: Math.round(data.hourly.temperature_2m[i]),
-      humidity: Math.round(data.hourly.relative_humidity_2m[i]),
-      dew: data.hourly.dew_point_2m[i],
-      precip: data.hourly.precipitation[i],
-      prob: data.hourly.precipitation_probability[i] ?? 0,
-      wind: data.hourly.wind_speed_10m[i]
+      temp: Math.round(T),
+      humidity: Math.round(RH),
+      dew: dewPoint(T, RH),
+      precip: n1.details.precipitation_amount ?? 0,
+      prob: n1.details.probability_of_precipitation ?? 0, // JPは未提供のことが多い→0
+      wind: det.wind_speed                       // m/s
     });
   }
   return days;
@@ -330,8 +347,11 @@ function summarizeDay(hours){
 /* --- 描画 --- */
 function render(data, placeName){
   const days = parse(data);
-  const dates = Object.keys(days).sort();
-  const today = dates[0];
+  const allDates = Object.keys(days).sort();
+  const today = allDates[0];
+  // 今日は必ず表示。以降の日は、判定に足る作業時間帯データがある日だけ見通しに出す
+  const dates = allDates.filter((d,i)=> i===0 ||
+    days[d].filter(h=>h.hour>=CONFIG.WORK_START && h.hour<=CONFIG.WORK_END).length >= CONFIG.MIN_OK_HOURS);
   const sum = summarizeDay(days[today]);
 
   // 今日の判定
@@ -365,7 +385,7 @@ function render(data, placeName){
   const dc=$('days'); dc.innerHTML='';
   dates.forEach((d,i)=>{
     const s=summarizeDay(days[d]);
-    const wd=['日','月','火','水','木','金','土'][new Date(d).getDay()];
+    const wd=['日','月','火','水','木','金','土'][new Date(d+'T00:00:00Z').getUTCDay()];
     const label = i===0 ? '今日' : (i===1 ? '明日' : (d.slice(5).replace('-','/')));
     const txt = s.state==='ok'?'塗れる':(s.state==='warn'?'注意':'厳しい');
     const row=document.createElement('div'); row.className='day';
