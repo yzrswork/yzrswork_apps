@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>OTAMATONE WEB</title>
+<style>
+:root{
+  --paper:#f0ebe3;
+  --paper-2:#e8e1d4;
+  --ink:#1c1a16;
+  --ink-soft:#2b2823;
+  --muted:#6f675b;
+  --rule:rgba(58,52,44,0.35);
+  --tc:#b5451b;
+  --tc-deep:#8e3514;
+  --body-white:#fdfcfa;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--paper);font-family:-apple-system,"SF Pro","Hiragino Kaku Gothic ProN",system-ui,sans-serif;user-select:none;-webkit-user-select:none;overscroll-behavior:none;}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+/* 紙テクスチャ（index.html と同系） */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:
+    radial-gradient(rgba(70,50,30,0.06) 1px, transparent 1px),
+    radial-gradient(rgba(70,50,30,0.04) 1px, transparent 1px);
+  background-size:3px 3px,7px 7px;background-position:0 0,1px 2px;
+  mix-blend-mode:multiply;opacity:0.9;
+}
+#landscape-warn{display:none;position:fixed;inset:0;background:var(--paper);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--ink);font-size:24px;text-align:center;}
+@media (orientation:landscape) and (max-height:500px){#landscape-warn{display:flex;}}
+
+#app{flex:1;display:flex;min-height:0;position:relative;z-index:2;padding:8px 10px 10px;gap:10px;}
+
+/* ── オタマトーン本体（左カラム） ─────────────────── */
+#otama{width:31%;max-width:140px;min-width:96px;display:flex;flex-direction:column;align-items:center;min-height:0;flex-shrink:0;}
+#stem{
+  flex:1;width:68%;max-width:80px;min-height:0;position:relative;touch-action:none;z-index:1;
+  background:linear-gradient(90deg,#d4cec2,#fdfcfa 28%,#ffffff 50%,#f2eee6 70%,#c9c3b7);
+  border:1px solid var(--rule);border-bottom:none;border-radius:38px 38px 0 0;
+  box-shadow:0 4px 12px rgba(28,26,22,0.15);
+}
+#ribbon-zone{position:absolute;left:0;right:0;top:18px;bottom:34px;}
+#ribbon{
+  position:absolute;left:50%;top:0;bottom:0;width:14px;transform:translateX(-50%);
+  background:linear-gradient(180deg,#3a342c,#26211b 50%,#3a342c);
+  border-radius:7px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.7),0 0 0 1px rgba(58,52,44,0.25);
+}
+.tick{position:absolute;left:50%;width:34px;height:1.5px;transform:translate(-50%,-50%);background:rgba(58,52,44,0.35);pointer-events:none;}
+.tick.octave{width:46px;background:var(--tc);opacity:0.7;}
+.tick-label{position:absolute;left:50%;transform:translate(-50%,-160%);font-size:8px;font-weight:700;color:var(--tc-deep);letter-spacing:0.5px;pointer-events:none;}
+.touch-marker{
+  position:absolute;left:50%;width:46px;height:46px;border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;z-index:3;
+  background:radial-gradient(circle at 35% 30%,rgba(255,240,230,0.95),rgba(181,69,27,0.92));
+  border:2px solid var(--tc-deep);box-shadow:0 2px 10px rgba(28,26,22,0.3);
+}
+#head{
+  width:100%;aspect-ratio:1/1;flex-shrink:0;position:relative;z-index:2;margin-top:-26px;
+  background:radial-gradient(circle at 35% 28%,#ffffff,#f4f0e8 55%,#ddd7ca);
+  border:1px solid var(--rule);border-radius:50%;
+  box-shadow:0 8px 18px rgba(28,26,22,0.2);
+}
+.eye{position:absolute;top:32%;width:11%;aspect-ratio:1/1;background:var(--ink);border-radius:50%;animation:blink 4.6s infinite;}
+.eye.l{left:27%;}
+.eye.r{right:27%;}
+@keyframes blink{0%,93%,100%{transform:scaleY(1);}96%{transform:scaleY(0.08);}}
+.cheek{position:absolute;top:48%;width:15%;aspect-ratio:1/1;border-radius:50%;background:rgba(181,69,27,0.22);}
+.cheek.l{left:11%;}
+.cheek.r{right:11%;}
+#mouth{
+  position:absolute;left:50%;top:64%;transform:translate(-50%,-50%);
+  width:38%;height:7px;background:#241f19;border-radius:46%/52%;
+  box-shadow:inset 0 -2px 4px rgba(181,69,27,0.55);
+}
+
+/* ── コントロール（右カラム） ─────────────────────── */
+#controls{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0;min-height:0;}
+.card{background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;flex-shrink:0;}
+#header{display:flex;align-items:baseline;justify-content:space-between;padding:2px 4px 0;flex-shrink:0;}
+#header h1{color:var(--ink);font-size:17px;font-weight:700;letter-spacing:2px;}
+#header h1 .ver{color:var(--tc);font-size:11px;letter-spacing:1px;margin-left:6px;vertical-align:1px;}
+.back-btn{color:var(--muted);text-decoration:none;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;}
+.back-btn:active{color:var(--tc);}
+
+#timbre-row{display:flex;gap:6px;padding:6px;}
+.timbre-btn{
+  flex:1;height:46px;border-radius:10px;border:1.5px solid var(--rule);cursor:pointer;
+  background:var(--body-white);color:var(--ink-soft);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  font-size:10px;font-weight:600;
+}
+.timbre-btn:active{transform:scale(0.95);}
+.timbre-btn .icon{font-size:15px;line-height:1;}
+.timbre-btn.active{border-color:var(--tc);background:rgba(181,69,27,0.10);color:var(--tc-deep);box-shadow:inset 0 0 0 1px var(--tc);}
+
+#knobs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 2px;padding:8px 4px;justify-items:center;}
+.knob-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.knob{width:52px;height:52px;cursor:pointer;touch-action:none;}
+.knob-label{color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.5px;}
+.arp-notes-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;width:56px;}
+.arp-notes-btns{display:flex;gap:3px;width:100%;height:52px;}
+.arp-note-btn{flex:1;background:var(--body-white);border:1.5px solid var(--rule);border-radius:8px;color:var(--ink-soft);font-size:13px;font-weight:700;cursor:pointer;}
+.arp-note-btn.active{border-color:var(--tc);background:rgba(181,69,27,0.12);color:var(--tc-deep);}
+
+#looper-row{display:flex;align-items:center;gap:6px;padding:7px 8px;}
+.loop-btn{height:42px;min-width:46px;border-radius:8px;border:1.5px solid var(--rule);background:var(--body-white);color:var(--ink-soft);font-size:10px;font-weight:700;letter-spacing:0.5px;cursor:pointer;flex-shrink:0;}
+.loop-btn:active{transform:scale(0.95);}
+.loop-btn:disabled{opacity:0.35;}
+#looper-rec.recording{background:var(--tc);border-color:var(--tc-deep);color:#fff;animation:recpulse 0.9s infinite;}
+#looper-rec.playing{border-color:var(--tc);color:var(--tc-deep);}
+.loop-btn.clear{color:var(--muted);}
+@keyframes recpulse{0%,100%{opacity:1;}50%{opacity:0.55;}}
+#looper-track{flex:1;height:42px;position:relative;background:var(--body-white);border:1px solid var(--rule);border-radius:8px;overflow:hidden;display:flex;align-items:center;min-width:0;}
+#looper-bar{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,#e08a52,var(--tc));opacity:0.45;}
+#looper-track.recording #looper-bar{background:var(--tc-deep);opacity:0.5;}
+#looper-status{position:relative;z-index:1;padding:0 8px;font-size:10px;color:var(--ink-soft);font-weight:600;letter-spacing:0.5px;white-space:nowrap;}
+.loop-knob-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;}
+.loop-knob-wrap .knob{width:40px;height:40px;}
+
+#visualizer{height:44px;overflow:hidden;}
+#vis-canvas{width:100%;height:100%;display:block;}
+#hint{flex:1;display:flex;align-items:flex-end;justify-content:center;min-height:0;}
+#hint span{font-size:10px;color:var(--muted);letter-spacing:0.08em;padding-bottom:2px;}
+</style>
+</head>
+<body>
+<div id="landscape-warn">
+  <div style="font-size:48px">📱</div>
+  <div>縦にしてね</div>
+</div>
+<div id="app">
+  <div id="otama">
+    <div id="stem">
+      <div id="ribbon-zone"><div id="ribbon"></div></div>
+    </div>
+    <div id="head">
+      <div class="eye l"></div><div class="eye r"></div>
+      <div class="cheek l"></div><div class="cheek r"></div>
+      <div id="mouth"></div>
+    </div>
+  </div>
+  <div id="controls">
+    <div id="header">
+      <h1>OTAMATONE<span class="ver">web</span></h1>
+      <a class="back-btn" href="index.html">← index</a>
+    </div>
+    <div id="timbre-row" class="card">
+      <button class="timbre-btn active" id="t0" data-timbre="0"><span class="icon">🟦</span><span>ピコピコ</span></button>
+      <button class="timbre-btn" id="t1" data-timbre="1"><span class="icon">🟨</span><span>キラキラ</span></button>
+      <button class="timbre-btn" id="t2" data-timbre="2"><span class="icon">🎹</span><span>ピアノ</span></button>
+    </div>
+    <div id="knobs-grid" class="card">
+      <div class="knob-wrap"><canvas class="knob" id="knob-arpSpd" width="52" height="52" data-knob="arpSpd"></canvas><div class="knob-label">ARP SPD</div></div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-dlyFb" width="52" height="52" data-knob="dlyFb"></canvas><div class="knob-label">DLY FB</div></div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-rev" width="52" height="52" data-knob="rev"></canvas><div class="knob-label">REV</div></div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-trm" width="52" height="52" data-knob="trm"></canvas><div class="knob-label">TRM</div></div>
+      <div class="arp-notes-wrap">
+        <div class="arp-notes-btns">
+          <button class="arp-note-btn" data-notes="2">2</button>
+          <button class="arp-note-btn" data-notes="3">3</button>
+          <button class="arp-note-btn active" data-notes="4">4</button>
+        </div>
+        <div class="knob-label">NOTES</div>
+      </div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-dlyTime" width="52" height="52" data-knob="dlyTime"></canvas><div class="knob-label">DLY TIME</div></div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-cho" width="52" height="52" data-knob="cho"></canvas><div class="knob-label">CHO</div></div>
+      <div class="knob-wrap"><canvas class="knob" id="knob-wave" width="52" height="52" data-knob="wave"></canvas><div class="knob-label">WAVE</div></div>
+    </div>
+    <div id="looper-row" class="card">
+      <button id="looper-rec" class="loop-btn">● REC</button>
+      <div id="looper-track"><div id="looper-bar"></div><span id="looper-status">長押しで録音</span></div>
+      <div class="loop-knob-wrap"><canvas class="knob" id="knob-loopSpd" width="40" height="40" data-knob="loopSpd"></canvas><div class="knob-label">SPEED</div></div>
+      <button id="looper-clear" class="loop-btn clear" disabled>CLR</button>
+    </div>
+    <div id="visualizer" class="card"><canvas id="vis-canvas"></canvas></div>
+    <div id="hint"><span>しっぽのリボンをなぞって演奏 ▲ 高音 ／ ▼ 低音</span></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── Polyfill roundRect ──────────────────────────────────────────
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) {
+    r = Math.min(r, w/2, h/2);
+    this.moveTo(x+r,y);
+    this.lineTo(x+w-r,y);
+    this.arcTo(x+w,y,x+w,y+r,r);
+    this.lineTo(x+w,y+h-r);
+    this.arcTo(x+w,y+h,x+w-r,y+h,r);
+    this.lineTo(x+r,y+h);
+    this.arcTo(x,y+h,x,y+h-r,r);
+    this.lineTo(x,y+r);
+    this.arcTo(x,y,x+r,y,r);
+    this.closePath();
+    return this;
+  };
+}
+
+// ── Audio ───────────────────────────────────────────────────────
+let audioCtx = null;
+// Effect buses
+let masterGain, compressorNode, analyserNode;
+let reverbConv, reverbWetGain, reverbDryGain;
+let delayNode, delayFBGain, delayWetGain, delayDryGain;
+let chorusDelayNode, chorusLFO, chorusWetGain, chorusDryGain;
+// Voice output bus (all voices connect here)
+let voiceBusGain;
+// Tremolo
+let tremoloGain, tremoloLFO, tremoloDepthGain;
+// Looper (separate output bus for recorded audio)
+let recProcessor, loopGain, loopComp;
+
+function buildIR(ctx, dur) {
+  const len = Math.floor(ctx.sampleRate * dur);
+  const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = buf.getChannelData(c);
+    for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/len, 3);
+  }
+  return buf;
+}
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Master
+  masterGain = audioCtx.createGain(); masterGain.gain.value = 0.8;
+  compressorNode = audioCtx.createDynamicsCompressor();
+  compressorNode.threshold.value = -12; compressorNode.ratio.value = 8;
+  compressorNode.attack.value = 0.003; compressorNode.release.value = 0.25;
+  analyserNode = audioCtx.createAnalyser(); analyserNode.fftSize = 256;
+  masterGain.connect(compressorNode);
+  compressorNode.connect(analyserNode);
+  analyserNode.connect(audioCtx.destination);
+
+  // Reverb section
+  reverbConv = audioCtx.createConvolver(); reverbConv.buffer = buildIR(audioCtx, 2.0);
+  reverbWetGain = audioCtx.createGain(); reverbWetGain.gain.value = 0;
+  reverbDryGain = audioCtx.createGain(); reverbDryGain.gain.value = 1;
+  reverbConv.connect(reverbWetGain); reverbWetGain.connect(masterGain);
+  reverbDryGain.connect(masterGain);
+
+  // Delay section
+  delayNode = audioCtx.createDelay(2.0); delayNode.delayTime.value = 0.05 + 0.30*0.95;
+  delayFBGain = audioCtx.createGain(); delayFBGain.gain.value = 0;
+  delayWetGain = audioCtx.createGain(); delayWetGain.gain.value = 0;
+  delayDryGain = audioCtx.createGain(); delayDryGain.gain.value = 1;
+  delayNode.connect(delayFBGain); delayFBGain.connect(delayNode);
+  delayNode.connect(delayWetGain);
+  delayWetGain.connect(reverbDryGain); delayWetGain.connect(reverbConv);
+  delayDryGain.connect(reverbDryGain); delayDryGain.connect(reverbConv);
+
+  // Chorus section
+  chorusDelayNode = audioCtx.createDelay(0.1); chorusDelayNode.delayTime.value = 0.030;
+  chorusLFO = audioCtx.createOscillator(); chorusLFO.type = 'sine'; chorusLFO.frequency.value = 0.5;
+  const chorusDepth = audioCtx.createGain(); chorusDepth.gain.value = 0.005;
+  chorusLFO.connect(chorusDepth); chorusDepth.connect(chorusDelayNode.delayTime); chorusLFO.start();
+  chorusWetGain = audioCtx.createGain(); chorusWetGain.gain.value = 0;
+  chorusDryGain = audioCtx.createGain(); chorusDryGain.gain.value = 1;
+  chorusDelayNode.connect(chorusWetGain);
+  chorusWetGain.connect(delayDryGain); chorusWetGain.connect(delayNode);
+  chorusDryGain.connect(delayDryGain); chorusDryGain.connect(delayNode);
+
+  // Voice bus
+  voiceBusGain = audioCtx.createGain(); voiceBusGain.gain.value = 1;
+
+  // Tremolo: LFO modulates tremoloGain.gain, inserted between voiceBus and chorus
+  tremoloGain = audioCtx.createGain();
+  tremoloGain.gain.value = 1.0;
+  tremoloLFO = audioCtx.createOscillator();
+  tremoloLFO.type = 'sine';
+  tremoloLFO.frequency.value = 0.5;
+  tremoloDepthGain = audioCtx.createGain();
+  tremoloDepthGain.gain.value = 0;
+  tremoloLFO.connect(tremoloDepthGain);
+  tremoloDepthGain.connect(tremoloGain.gain);
+  tremoloLFO.start();
+
+  voiceBusGain.connect(tremoloGain);
+  tremoloGain.connect(chorusDryGain);
+  tremoloGain.connect(chorusDelayNode);
+
+  // ── Looper: SEPARATE output bus for the recorded loop ──────────
+  // The recorded loop plays through its own gain → its own compressor →
+  // destination, completely independent from the live (realtime) path.
+  // This way the loop's speed/pitch and overdub layers never disturb the
+  // live ribbon signal, and the two are mixed only at the speakers.
+  loopGain = audioCtx.createGain(); loopGain.gain.value = 1;
+  loopComp = audioCtx.createDynamicsCompressor();
+  loopComp.threshold.value = -14; loopComp.ratio.value = 6;
+  loopComp.attack.value = 0.003; loopComp.release.value = 0.25;
+  loopGain.connect(loopComp);
+  loopComp.connect(audioCtx.destination);
+
+  // The recorder taps ONLY the live mix (post live-compressor). The
+  // existing loop is folded in by seeding the record buffer with it, so
+  // overdub layers without the loop output ever being re-sampled.
+  recProcessor = audioCtx.createScriptProcessor(4096, 2, 2);
+  recProcessor.onaudioprocess = onRecProcess;
+  const recSink = audioCtx.createGain(); recSink.gain.value = 0; // silent driver
+  compressorNode.connect(recProcessor);
+  recProcessor.connect(recSink);
+  recSink.connect(audioCtx.destination);
+}
+
+const startAudio = () => {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+};
+document.addEventListener('touchstart', startAudio, {once:true});
+document.addEventListener('click', startAudio, {once:true});
+
+// ── Knobs ───────────────────────────────────────────────────────
+const knobVals = {arpSpd:0, dlyFb:0, dlyTime:30, rev:0, cho:0, trm:0, wave:0, loopSpd:50};
+
+function applyEffect(name, val) {
+  if (!audioCtx) return;
+  const v = val / 100;
+  switch(name) {
+    case 'arpSpd':
+      // value used at noteOn time
+      break;
+    case 'dlyFb':
+      delayFBGain.gain.setTargetAtTime(Math.min(0.98, v*0.98), audioCtx.currentTime, 0.02);
+      delayWetGain.gain.setTargetAtTime(v*0.7, audioCtx.currentTime, 0.02);
+      break;
+    case 'dlyTime':
+      delayNode.delayTime.setTargetAtTime(0.05 + v*0.95, audioCtx.currentTime, 0.05);
+      break;
+    case 'rev':
+      reverbWetGain.gain.setTargetAtTime(v*0.85, audioCtx.currentTime, 0.02);
+      break;
+    case 'cho':
+      chorusWetGain.gain.setTargetAtTime(v*0.7, audioCtx.currentTime, 0.02);
+      break;
+    case 'trm': {
+      const freq = 0.5 * Math.pow(60, v);
+      const depth = v * 0.95;
+      tremoloLFO.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.02);
+      tremoloDepthGain.gain.setTargetAtTime(depth, audioCtx.currentTime, 0.02);
+      tremoloGain.gain.setTargetAtTime(1 - depth/2, audioCtx.currentTime, 0.02);
+      break;
+    }
+    case 'wave':
+      // value used at createVoice time
+      break;
+    case 'loopSpd':
+      // Speed & pitch move together (resampling): 0→0.5x(低速・低音)、
+      // 50→1.0x(等速)、100→2.0x(高速・高音)
+      loopRate = 0.5 * Math.pow(2, val/50);
+      if (loopSource) loopSource.playbackRate.setTargetAtTime(loopRate, audioCtx.currentTime, 0.02);
+      break;
+  }
+}
+
+// 白ノブ：本体は白、目盛りアークと値はテラコッタ、針はインク色
+function drawKnob(canvas, val) {
+  const ctx = canvas.getContext('2d'), w=canvas.width, h=canvas.height, cx=w/2, cy=h/2, r=w/2-4;
+  ctx.clearRect(0,0,w,h);
+  const g = ctx.createRadialGradient(cx*.7,cy*.7,2,cx,cy,r);
+  g.addColorStop(0,'#ffffff'); g.addColorStop(0.75,'#f4f0e8'); g.addColorStop(1,'#cfc9bd');
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle='rgba(58,52,44,0.55)'; ctx.lineWidth=1.5; ctx.stroke();
+  const sa=(225*Math.PI/180), span=(270*Math.PI/180);
+  ctx.beginPath(); ctx.arc(cx,cy,r-5,sa,sa+span); ctx.strokeStyle='#d8d2c6'; ctx.lineWidth=3; ctx.stroke();
+  if (val>0) {
+    ctx.beginPath(); ctx.arc(cx,cy,r-5,sa,sa+(val/100)*span); ctx.strokeStyle='#b5451b'; ctx.lineWidth=3; ctx.stroke();
+  }
+  const ang = (225+(val/100)*270)*Math.PI/180;
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(ang)*(r-12), cy+Math.sin(ang)*(r-12));
+  ctx.lineTo(cx+Math.cos(ang)*(r-4), cy+Math.sin(ang)*(r-4));
+  ctx.strokeStyle='#1c1a16'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.stroke();
+  ctx.fillStyle='rgba(28,26,22,0.75)'; ctx.font=(w<48?'7px':'8px')+' system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  let lbl;
+  if (canvas.dataset.knob === 'wave') {
+    if (val < 25) lbl = 'SIN';
+    else if (val < 50) lbl = 'SQR';
+    else if (val < 75) lbl = 'TRI';
+    else lbl = 'SAW';
+  } else if (canvas.dataset.knob === 'loopSpd') {
+    lbl = (0.5 * Math.pow(2, val/50)).toFixed(2) + 'x';
+  } else if (val === 100 && canvas.dataset.knob === 'dlyFb') {
+    lbl = '∞';
+  } else {
+    lbl = Math.round(val) + '%';
+  }
+  ctx.fillText(lbl, cx, cy+1);
+}
+
+document.querySelectorAll('.knob').forEach(canvas => {
+  const k = canvas.dataset.knob;
+  drawKnob(canvas, knobVals[k]||0);
+  let sy=0, sv=0, drag=false;
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+    drag=true; sy=e.clientY; sv=knobVals[k]||0;
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!drag) return; e.preventDefault();
+    const nv = Math.max(0, Math.min(100, sv+(sy-e.clientY)*0.8));
+    knobVals[k]=nv; drawKnob(canvas,nv); applyEffect(k,nv);
+  });
+  canvas.addEventListener('pointerup', ()=>drag=false);
+  canvas.addEventListener('pointercancel', ()=>drag=false);
+});
+
+// ── Timbre ──────────────────────────────────────────────────────
+let currentTimbre = 0;
+document.querySelectorAll('.timbre-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timbre-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); currentTimbre=parseInt(btn.dataset.timbre);
+  });
+});
+
+// ── ARP NOTES ───────────────────────────────────────────────────
+let currentArpNotes = 4;
+const ARP_INTERVALS = {
+  2: [0, 7],
+  3: [0, 4, 7],
+  4: [0, 4, 7, 12]
+};
+document.querySelectorAll('.arp-note-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.arp-note-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentArpNotes = parseInt(btn.dataset.notes);
+  });
+});
+
+// ── Looper (hold-to-overdub, separate output bus) ───────────────
+const LOOP_SECONDS = 3;
+let looperState = 'idle';   // 'idle' | 'recording' | 'playing'
+let recBufL = null, recBufR = null, recPos = 0, recTotal = 0;
+let loopBuffer = null, loopSource = null, loopStartTime = 0;
+let loopRate = 1.0;         // playbackRate (speed & pitch linked)
+let recHadLoop = false;     // true → this take is an overdub
+
+const recBtn = document.getElementById('looper-rec');
+const clrBtn = document.getElementById('looper-clear');
+const trackEl = document.getElementById('looper-track');
+const barEl = document.getElementById('looper-bar');
+const statusEl = document.getElementById('looper-status');
+
+// While RECording, live input is ADDED onto the record buffer and the
+// position WRAPS at the loop end — so holding REC layers pass after pass
+// (overdub). The existing loop keeps playing audibly the whole time.
+function onRecProcess(e) {
+  if (looperState !== 'recording') return;
+  const inBuf = e.inputBuffer;
+  const inL = inBuf.getChannelData(0);
+  const inR = inBuf.numberOfChannels > 1 ? inBuf.getChannelData(1) : inL;
+  const n = inL.length;
+  for (let i = 0; i < n; i++) {
+    recBufL[recPos] += inL[i];
+    recBufR[recPos] += inR[i];
+    recPos++;
+    if (recPos >= recTotal) recPos = 0;   // wrap → continuous overdub
+  }
+}
+
+function stopLoopSource() {
+  if (loopSource) {
+    try { loopSource.stop(); } catch(e) {}
+    try { loopSource.disconnect(); } catch(e) {}
+    loopSource = null;
+  }
+}
+
+function startLoopPlayback() {
+  if (!loopBuffer || !audioCtx) return;
+  stopLoopSource();
+  loopSource = audioCtx.createBufferSource();
+  loopSource.buffer = loopBuffer;
+  loopSource.loop = true;
+  loopSource.playbackRate.value = loopRate;   // speed/pitch
+  loopSource.connect(loopGain);
+  loopStartTime = audioCtx.currentTime;
+  loopSource.start();
+}
+
+function startRecording() {
+  startAudio();
+  if (!audioCtx) return;
+  if (looperState === 'recording') return;
+  recTotal = Math.floor(audioCtx.sampleRate * LOOP_SECONDS);
+  recBufL = new Float32Array(recTotal);
+  recBufR = new Float32Array(recTotal);
+  recHadLoop = !!loopBuffer;
+  // Overdub: seed the buffer with the existing loop so it is preserved
+  // and layered. The old loop also keeps playing (audible) meanwhile.
+  if (loopBuffer) {
+    recBufL.set(loopBuffer.getChannelData(0).subarray(0, recTotal));
+    recBufR.set(loopBuffer.getChannelData(1).subarray(0, recTotal));
+  }
+  recPos = 0;
+  looperState = 'recording';
+  updateLooperUI();
+}
+
+function finishRecording() {
+  if (looperState !== 'recording') return;
+  // Soft-clip so stacked overdubs stay bounded (still gritty = chaos OK)
+  for (let i = 0; i < recTotal; i++) {
+    recBufL[i] = Math.tanh(recBufL[i]);
+    recBufR[i] = Math.tanh(recBufR[i]);
+  }
+  loopBuffer = audioCtx.createBuffer(2, recTotal, audioCtx.sampleRate);
+  loopBuffer.copyToChannel(recBufL, 0);
+  loopBuffer.copyToChannel(recBufR, 1);
+  recBufL = recBufR = null;
+  looperState = 'playing';
+  startLoopPlayback();          // swap in the freshly baked loop
+  updateLooperUI();
+}
+
+function clearLoop() {
+  stopLoopSource();
+  loopBuffer = null;
+  looperState = 'idle';
+  updateLooperUI();
+}
+
+function updateLooperUI() {
+  recBtn.classList.toggle('recording', looperState === 'recording');
+  recBtn.classList.toggle('playing', looperState === 'playing');
+  clrBtn.disabled = (looperState === 'idle');
+  trackEl.classList.toggle('recording', looperState === 'recording');
+  if (looperState === 'idle') {
+    recBtn.textContent = '● REC';
+    barEl.style.width = '0%';
+    statusEl.textContent = '長押しで録音';
+  } else if (looperState === 'recording') {
+    recBtn.textContent = '■ REC';
+  } else {
+    recBtn.textContent = '● DUB';
+    statusEl.textContent = 'LOOP ▶';
+  }
+}
+
+// Hold to record / overdub; release (or leave) to bake the take.
+recBtn.addEventListener('pointerdown', e => { e.preventDefault(); recBtn.setPointerCapture(e.pointerId); startRecording(); });
+recBtn.addEventListener('pointerup', e => { e.preventDefault(); finishRecording(); });
+recBtn.addEventListener('pointercancel', () => finishRecording());
+clrBtn.addEventListener('click', clearLoop);
+
+(function looperRAF() {
+  requestAnimationFrame(looperRAF);
+  if (!audioCtx) return;
+  if (looperState === 'recording') {
+    barEl.style.width = (recTotal ? recPos / recTotal * 100 : 0) + '%';
+    statusEl.textContent = recHadLoop ? '● OVERDUB' : '● REC';
+  } else if (looperState === 'playing' && loopSource) {
+    const dur = LOOP_SECONDS / (loopRate || 1);   // faster rate → shorter loop
+    barEl.style.width = (((audioCtx.currentTime - loopStartTime) % dur) / dur * 100) + '%';
+  }
+})();
+
+// ── Ribbon (オタマトーンのしっぽ) ────────────────────────────────
+// 上が高音・下が低音。連続ピッチでグリッサンド／ビブラートできる。
+const NOTE_MIN = 60;   // C4 (リボン最下端)
+const NOTE_MAX = 84;   // C6 (リボン最上端)
+const stemEl = document.getElementById('stem');
+const ribbonZone = document.getElementById('ribbon-zone');
+
+// 目盛り：C は太いオレンジ線＋ラベル、それ以外の白鍵音は細い線
+(function buildTicks() {
+  const WHITE = new Set([0,2,4,5,7,9,11]);
+  for (let n = NOTE_MIN; n <= NOTE_MAX; n++) {
+    const pc = n % 12;
+    if (!WHITE.has(pc)) continue;
+    const topPct = (NOTE_MAX - n) / (NOTE_MAX - NOTE_MIN) * 100;
+    const tick = document.createElement('div');
+    tick.className = 'tick' + (pc === 0 ? ' octave' : '');
+    tick.style.top = topPct + '%';
+    ribbonZone.appendChild(tick);
+    if (pc === 0) {
+      const lbl = document.createElement('div');
+      lbl.className = 'tick-label';
+      lbl.textContent = 'C' + (n/12 - 1);
+      lbl.style.top = topPct + '%';
+      ribbonZone.appendChild(lbl);
+    }
+  }
+})();
+
+function yToNote(clientY) {
+  const r = ribbonZone.getBoundingClientRect();
+  const t = Math.max(0, Math.min(1, (clientY - r.top) / r.height));
+  return NOTE_MAX - t * (NOTE_MAX - NOTE_MIN);   // 連続値（小数あり）
+}
+
+// ── Voice synthesis ─────────────────────────────────────────────
+function midiFreq(m) { return 440*Math.pow(2,(m-69)/12); }
+
+function getEffectiveWave(timbre) {
+  const w = knobVals.wave;
+  if (w === 0) return null;
+  if (w < 25) return 'sine';
+  if (w < 50) return 'square';
+  if (w < 75) return 'triangle';
+  return 'sawtooth';
+}
+
+function createVoice(note, timbre) {
+  if (!audioCtx) return null;
+  const freq = midiFreq(note), now = audioCtx.currentTime;
+  const vg = audioCtx.createGain();
+  vg.connect(voiceBusGain);
+
+  const waveOverride = getEffectiveWave(timbre);
+  let o1,o2;
+  switch(timbre) {
+    case 0:
+      // ピコピコ: square + standard ADSR
+      vg.gain.setValueAtTime(0.001, now);
+      vg.gain.linearRampToValueAtTime(0.65, now+0.01);
+      vg.gain.setTargetAtTime(0.65*0.7, now+0.16, 0.05);
+      o1=audioCtx.createOscillator(); o1.type = waveOverride || 'square'; o1.frequency.value=freq;
+      o1.connect(vg); o1.start();
+      break;
+    case 1:
+      // キラキラ: triangle + sine 2nd harmonic
+      vg.gain.setValueAtTime(0.001, now);
+      vg.gain.linearRampToValueAtTime(0.65, now+0.01);
+      vg.gain.setTargetAtTime(0.65*0.7, now+0.16, 0.05);
+      o1=audioCtx.createOscillator(); o1.type = waveOverride || 'triangle'; o1.frequency.value=freq;
+      o2=audioCtx.createOscillator(); o2.type='sine'; o2.frequency.value=freq*2;
+      const hg=audioCtx.createGain(); hg.gain.value=0.25;
+      o1.connect(vg); o2.connect(hg); hg.connect(vg);
+      o1.start(); o2.start();
+      break;
+    case 2: {
+      // ピアノ: sine fundamental + triangle 2nd harmonic, exp decay
+      vg.gain.setValueAtTime(0.001, now);
+      vg.gain.linearRampToValueAtTime(0.7, now+0.005);
+      vg.gain.exponentialRampToValueAtTime(0.0001, now+1.2);
+      o1=audioCtx.createOscillator(); o1.type = waveOverride || 'sine'; o1.frequency.value=freq;
+      o2=audioCtx.createOscillator(); o2.type='triangle'; o2.frequency.value=freq*2;
+      const pg=audioCtx.createGain(); pg.gain.value=0.15;
+      o1.connect(vg); o2.connect(pg); pg.connect(vg);
+      o1.start(); o2.start();
+      break;
+    }
+  }
+  return {o1,o2,gain:vg,timbre};
+}
+
+// 指の移動に合わせてピッチを滑らかに追従（グライド）
+function glideVoice(v, note) {
+  if (!v || !v.o1 || !audioCtx) return;
+  const f = midiFreq(note), t = audioCtx.currentTime;
+  v.o1.frequency.setTargetAtTime(f, t, 0.015);
+  if (v.o2) v.o2.frequency.setTargetAtTime(f*2, t, 0.015);
+}
+
+function releaseVoice(v) {
+  if (!v||!v.gain) return;
+  const now = audioCtx.currentTime;
+  // Piano (timbre 2) already has natural exp decay; let it finish unless still ringing
+  v.gain.gain.cancelScheduledValues(now);
+  v.gain.gain.setValueAtTime(v.gain.gain.value, now);
+  v.gain.gain.exponentialRampToValueAtTime(0.0001, now+0.3);
+  setTimeout(()=>{
+    try{v.o1&&v.o1.stop();}catch(e){}
+    try{v.o2&&v.o2.stop();}catch(e){}
+    try{v.gain.disconnect();}catch(e){}
+  }, 400);
+}
+
+// ── Ribbon interaction (pointerId ごとに1ボイス) ─────────────────
+const ptrVoices = {};   // pointerId -> {voice} or {arpInterval, arpVoice, baseNote}
+
+function touchOn(id, note) {
+  if (!audioCtx) initAudio();
+  touchOff(id);
+  const arpSpd = knobVals.arpSpd;
+  if (arpSpd > 0) {
+    // アルペジオ：押さえた位置を半音に丸めてベース音にする
+    let idx = 0;
+    const ms = 800 - (arpSpd - 1) * (720 / 99);
+    const state = {arpInterval: null, arpVoice: null, baseNote: Math.round(note)};
+    const tick = () => {
+      if (!ptrVoices[id]) return;
+      const semisLive = ARP_INTERVALS[currentArpNotes];
+      const an = state.baseNote + semisLive[idx % semisLive.length];
+      if (state.arpVoice) releaseVoice(state.arpVoice);
+      state.arpVoice = createVoice(an, currentTimbre);
+      idx++;
+    };
+    state.arpInterval = setInterval(tick, ms);
+    ptrVoices[id] = state;
+    tick();
+  } else {
+    const v = createVoice(note, currentTimbre);
+    if (v) ptrVoices[id] = {voice: v};
+  }
+}
+
+function touchGlide(id, note) {
+  const s = ptrVoices[id];
+  if (!s) return;
+  if (s.arpInterval) s.baseNote = Math.round(note);
+  else glideVoice(s.voice, note);
+}
+
+function touchOff(id) {
+  const s = ptrVoices[id];
+  if (!s) return;
+  if (s.arpInterval) { clearInterval(s.arpInterval); if (s.arpVoice) releaseVoice(s.arpVoice); }
+  else releaseVoice(s.voice);
+  delete ptrVoices[id];
+}
+
+// 触っている位置に白×オレンジのマーカーを表示
+const ptrMarkers = {};
+function markerShow(id, clientY) {
+  let m = ptrMarkers[id];
+  if (!m) {
+    m = document.createElement('div');
+    m.className = 'touch-marker';
+    ribbonZone.appendChild(m);
+    ptrMarkers[id] = m;
+  }
+  const r = ribbonZone.getBoundingClientRect();
+  const t = Math.max(0, Math.min(1, (clientY - r.top) / r.height));
+  m.style.top = (t * 100) + '%';
+}
+function markerHide(id) {
+  const m = ptrMarkers[id];
+  if (m) { m.remove(); delete ptrMarkers[id]; }
+}
+
+stemEl.addEventListener('pointerdown', e => {
+  e.preventDefault(); startAudio();
+  stemEl.setPointerCapture(e.pointerId);
+  touchOn(e.pointerId, yToNote(e.clientY));
+  markerShow(e.pointerId, e.clientY);
+}, {passive:false});
+stemEl.addEventListener('pointermove', e => {
+  if (!ptrVoices[e.pointerId]) return;
+  e.preventDefault();
+  touchGlide(e.pointerId, yToNote(e.clientY));
+  markerShow(e.pointerId, e.clientY);
+}, {passive:false});
+stemEl.addEventListener('pointerup', e => { touchOff(e.pointerId); markerHide(e.pointerId); });
+stemEl.addEventListener('pointercancel', e => { touchOff(e.pointerId); markerHide(e.pointerId); });
+
+// ── Visualizer & 口パク ──────────────────────────────────────────
+const visC=document.getElementById('vis-canvas'), visX=visC.getContext('2d');
+const mouthEl=document.getElementById('mouth');
+function resizeVis(){ const el=document.getElementById('visualizer'); visC.width=el.clientWidth; visC.height=el.clientHeight; }
+resizeVis(); window.addEventListener('resize',resizeVis);
+
+(function visLoop(){
+  requestAnimationFrame(visLoop);
+  const w=visC.width,h=visC.height;
+  visX.fillStyle='#e8e1d4'; visX.fillRect(0,0,w,h);
+  if (!analyserNode) return;
+  const data=new Uint8Array(analyserNode.frequencyBinCount);
+  analyserNode.getByteFrequencyData(data);
+  const bars=32, bw=w/bars;
+  for(let i=0;i<bars;i++){
+    const v=data[Math.floor(i*data.length/bars)]/255;
+    visX.fillStyle=`hsl(${14+i*1.5},72%,${50-v*12}%)`;
+    visX.fillRect(i*bw+1,h-v*h,bw-2,v*h);
+  }
+  // 音量に合わせて口が開く（時間波形の振幅から）
+  const td=new Uint8Array(analyserNode.fftSize);
+  analyserNode.getByteTimeDomainData(td);
+  let peak=0;
+  for(let i=0;i<td.length;i++){ const a=Math.abs(td[i]-128); if(a>peak) peak=a; }
+  const amp=Math.min(1, peak/90);
+  const headH=document.getElementById('head').clientHeight;
+  mouthEl.style.height=(headH*0.05 + amp*headH*0.30)+'px';
+  mouthEl.style.width=(38 - amp*10)+'%';
+})();
+</script>
+</body>
+</html>

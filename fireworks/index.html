@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0e1a">
+<title>花火</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
+  }
+
+  body {
+    background: radial-gradient(ellipse 120% 80% at 50% 100%, #1a2844 0%, #0a0e1a 45%, #050810 100%);
+  }
+
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    inset: 0;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
+  }
+
+  .title {
+    position: fixed;
+    top: max(1.5rem, env(safe-area-inset-top, 0px) + 1rem);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: clamp(1.1rem, 3vw, 1.35rem);
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.55);
+    text-indent: 0.35em;
+    transition: opacity 1.2s ease;
+  }
+
+  .title.hidden { opacity: 0; }
+
+  .hint {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.35);
+    transition: opacity 1s ease;
+  }
+
+  .hint.hidden { opacity: 0; }
+
+  .controls {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top, 0px) + 0.75rem);
+    right: max(1rem, env(safe-area-inset-right, 0px) + 0.75rem);
+    z-index: 20;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    pointer-events: auto;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .btn.active {
+    color: rgba(255, 220, 150, 0.95);
+    border-color: rgba(255, 220, 150, 0.35);
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="controls">
+  <button class="btn active" id="soundBtn" type="button" aria-label="サウンド">♪</button>
+  <button class="btn active" id="autoBtn" type="button" aria-label="自動打ち上げ">✦</button>
+</div>
+
+<h1 class="title" id="title">花火</h1>
+<div class="overlay">
+  <p class="hint" id="hint">タップで打ち上げ</p>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const titleEl = document.getElementById('title');
+  const hintEl = document.getElementById('hint');
+  const soundBtn = document.getElementById('soundBtn');
+  const autoBtn = document.getElementById('autoBtn');
+
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  let soundOn = true;
+  let autoOn = true;
+  let interacted = false;
+  let autoTimer = 0;
+  let stars = [];
+  let megaCooldownUntil = 0;
+  let screenFlash = 0;
+
+  const PALETTES = [
+    { core: [255, 90, 90], glow: [255, 160, 120] },
+    { core: [255, 200, 80], glow: [255, 240, 180] },
+    { core: [255, 120, 200], glow: [255, 180, 230] },
+    { core: [100, 220, 255], glow: [180, 240, 255] },
+    { core: [120, 255, 160], glow: [200, 255, 220] },
+    { core: [180, 140, 255], glow: [220, 200, 255] },
+    { core: [255, 255, 255], glow: [255, 250, 230] },
+    { core: [255, 140, 60], glow: [255, 200, 120] },
+  ];
+
+  const rockets = [];
+  const particles = [];
+  const sparks = [];
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    initStars();
+  }
+
+  function initStars() {
+    const count = Math.floor((W * H) / 8000);
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.75,
+      r: Math.random() * 1.2 + 0.3,
+      tw: Math.random() * Math.PI * 2,
+      speed: 0.008 + Math.random() * 0.015,
+    }));
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ── Audio ──
+  let audioCtx = null;
+
+  function ensureAudio() {
+    if (!soundOn) return null;
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx?.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playLaunch() {
+    const ac = ensureAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(350, t);
+    o.frequency.exponentialRampToValueAtTime(1600, t + 0.38);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12, t + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+    o.connect(g).connect(ac.destination);
+    o.start(t);
+    o.stop(t + 0.45);
+  }
+
+  function playMegaLaunch() {
+    const ac = ensureAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(280, t);
+    o.frequency.exponentialRampToValueAtTime(2200, t + 0.65);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.2, t + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7);
+    o.connect(g).connect(ac.destination);
+    o.start(t);
+    o.stop(t + 0.75);
+  }
+
+  function playBoom(intensity = 1) {
+    const ac = ensureAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    const dur = 0.55;
+    const buffer = ac.createBuffer(1, Math.floor(ac.sampleRate * dur), ac.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 1.5;
+    }
+    const src = ac.createBufferSource();
+    src.buffer = buffer;
+    const filter = ac.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 700 + intensity * 300;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.35 * intensity, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(filter).connect(g).connect(ac.destination);
+    src.start(t);
+
+    const o = ac.createOscillator();
+    const og = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(100, t);
+    o.frequency.exponentialRampToValueAtTime(35, t + 0.25);
+    og.gain.setValueAtTime(0.3 * intensity, t);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+    o.connect(og).connect(ac.destination);
+    o.start(t);
+    o.stop(t + 0.4);
+  }
+
+  function playCrackle() {
+    const ac = ensureAudio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    for (let i = 0; i < 6; i++) {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = 'square';
+      o.frequency.value = 800 + Math.random() * 2000;
+      const start = t + i * 0.04 + Math.random() * 0.03;
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(0.04, start + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + 0.06);
+      o.connect(g).connect(ac.destination);
+      o.start(start);
+      o.stop(start + 0.07);
+    }
+  }
+
+  // ── Helpers ──
+  function pickPalette() {
+    return PALETTES[(Math.random() * PALETTES.length) | 0];
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function drawGlow(x, y, radius, r, g, b, alpha) {
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
+    grad.addColorStop(0.4, `rgba(${r},${g},${b},${alpha * 0.35})`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // ── Firework types ──
+  function spawnFirework(tx, ty, palette = pickPalette()) {
+    const sx = tx + rand(-30, 30);
+    rockets.push({
+      x: sx,
+      y: H + 8,
+      sx, sy: H + 8,
+      tx, ty,
+      t: 0,
+      duration: rand(38, 52),
+      palette,
+      trail: [],
+      mega: false,
+    });
+    playLaunch();
+  }
+
+  function spawnMegaFirework(tx, ty) {
+    rockets.push({
+      x: W / 2 + rand(-40, 40),
+      y: H + 8,
+      sx: W / 2 + rand(-40, 40),
+      sy: H + 8,
+      tx, ty,
+      t: 0,
+      duration: rand(62, 78),
+      palette: pickPalette(),
+      trail: [],
+      mega: true,
+    });
+    playMegaLaunch();
+  }
+
+  function megaBurst(x, y, palette, mult = 1.6) {
+    const count = Math.floor((130 + Math.random() * 70) * mult);
+    const [cr, cg, cb] = palette.core;
+    const [gr, gg, gb] = palette.glow;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = rand(3.5, 11) * mult;
+      particles.push({
+        x, y, px: x, py: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: rand(0.005, 0.011),
+        r: cr, g: cg, b: cb,
+        gr, gg, gb,
+        size: rand(2, 5) * mult,
+        drag: 0.982,
+        gravity: 0.03,
+        sparkle: Math.random() < 0.35,
+        trail: Math.random() < 0.25,
+      });
+    }
+  }
+
+  function explodeMega(x, y) {
+    playBoom(1.9);
+    setTimeout(() => playBoom(1.3), 180);
+    setTimeout(() => playCrackle(), 80);
+    setTimeout(() => playCrackle(), 260);
+    setTimeout(() => playCrackle(), 420);
+    screenFlash = 0.35;
+
+    const shuffled = [...PALETTES].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < 4; i++) {
+      const angle = (i / 4) * Math.PI * 2 + rand(-0.2, 0.2);
+      const dist = rand(15, 35);
+      megaBurst(x + Math.cos(angle) * dist, y + Math.sin(angle) * dist, shuffled[i]);
+    }
+    megaBurst(x, y, { core: [255, 255, 255], glow: [255, 248, 220] }, 2.2);
+
+    for (let i = 0; i < 3; i++) {
+      explodeRing(x + rand(-25, 25), y + rand(-25, 25), shuffled[i % shuffled.length]);
+    }
+
+    for (let i = 0; i < 40; i++) {
+      sparks.push({
+        x: x + rand(-20, 20),
+        y: y + rand(-20, 20),
+        vx: rand(-2, 2),
+        vy: rand(-2, 2),
+        life: rand(0.8, 1.6),
+        decay: rand(0.008, 0.014),
+        r: 255, g: rand(180, 240), b: rand(80, 160),
+      });
+    }
+
+    setTimeout(() => spawnFirework(x - rand(60, 100), y + rand(20, 60)), 350);
+    setTimeout(() => spawnFirework(x + rand(60, 100), y + rand(20, 60)), 550);
+    setTimeout(() => spawnFirework(x + rand(-50, 50), y - rand(10, 40)), 750);
+  }
+
+  function triggerMegaFirework(points) {
+    if (performance.now() < megaCooldownUntil) return;
+    megaCooldownUntil = performance.now() + 2800;
+    onInteract();
+
+    let cx = 0, cy = 0;
+    for (const p of points) { cx += p.x; cy += p.y; }
+    cx /= points.length;
+    cy /= points.length;
+    cy = Math.min(cy, H * 0.45);
+
+    spawnMegaFirework(cx, cy);
+  }
+
+  function explodeChrysanthemum(x, y, palette) {
+    const count = 90 + ((Math.random() * 50) | 0);
+    const [cr, cg, cb] = palette.core;
+    const [gr, gg, gb] = palette.glow;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = rand(2, 7);
+      particles.push({
+        x, y,
+        px: x, py: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        decay: rand(0.008, 0.016),
+        r: cr, g: cg, b: cb,
+        gr, gg, gb,
+        size: rand(1.2, 2.8),
+        drag: 0.985,
+        gravity: 0.035,
+        sparkle: Math.random() < 0.15,
+      });
+    }
+    playBoom(1);
+  }
+
+  function explodeRing(x, y, palette) {
+    const rings = 2 + ((Math.random() * 2) | 0);
+    const [cr, cg, cb] = palette.core;
+    const [gr, gg, gb] = palette.glow;
+    for (let ring = 0; ring < rings; ring++) {
+      const count = 36 + ring * 12;
+      const speed = 3 + ring * 1.8;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2 + rand(-0.05, 0.05);
+        particles.push({
+          x, y, px: x, py: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: rand(0.01, 0.018),
+          r: cr, g: cg, b: cb,
+          gr, gg, gb,
+          size: rand(1.5, 2.5),
+          drag: 0.988,
+          gravity: 0.03,
+          sparkle: true,
+        });
+      }
+    }
+    playBoom(0.85);
+    setTimeout(() => playCrackle(), 120);
+  }
+
+  function explodeWillow(x, y, palette) {
+    const count = 60 + ((Math.random() * 30) | 0);
+    const [cr, cg, cb] = palette.core;
+    const [gr, gg, gb] = palette.glow;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = rand(3, 8);
+      particles.push({
+        x, y, px: x, py: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.5,
+        life: 1,
+        decay: rand(0.004, 0.008),
+        r: cr, g: cg, b: cb,
+        gr, gg, gb,
+        size: rand(1, 2),
+        drag: 0.992,
+        gravity: 0.055,
+        sparkle: Math.random() < 0.4,
+        trail: true,
+      });
+    }
+    playBoom(0.7);
+  }
+
+  function explode(x, y, palette) {
+    const type = Math.random();
+    if (type < 0.5) explodeChrysanthemum(x, y, palette);
+    else if (type < 0.75) explodeRing(x, y, palette);
+    else explodeWillow(x, y, palette);
+
+    // lingering embers
+    for (let i = 0; i < 12; i++) {
+      sparks.push({
+        x: x + rand(-8, 8),
+        y: y + rand(-8, 8),
+        vx: rand(-0.8, 0.8),
+        vy: rand(-0.8, 0.8),
+        life: rand(0.4, 1),
+        decay: rand(0.015, 0.025),
+        r: palette.glow[0],
+        g: palette.glow[1],
+        b: palette.glow[2],
+      });
+    }
+  }
+
+  function autoLaunch() {
+    const margin = W * 0.12;
+    const tx = rand(margin, W - margin);
+    const ty = rand(H * 0.12, H * 0.55);
+    spawnFirework(tx, ty);
+  }
+
+  // ── Draw sky ──
+  function drawSky() {
+    ctx.globalCompositeOperation = 'source-over';
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#050810');
+    grad.addColorStop(0.5, '#0a0e1a');
+    grad.addColorStop(1, '#141e32');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawStars() {
+    ctx.globalCompositeOperation = 'source-over';
+    for (const s of stars) {
+      s.tw += s.speed;
+      const a = 0.2 + Math.sin(s.tw) * 0.12;
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function fadeFrame() {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(5, 8, 16, 0.22)';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // ── Update & render ──
+  let lastTime = performance.now();
+
+  function update(now) {
+    const dt = Math.min((now - lastTime) / 16.67, 2);
+    lastTime = now;
+
+    fadeFrame();
+    drawStars();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // rockets
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      const r = rockets[i];
+      r.t += dt;
+      const p = Math.min(r.t / r.duration, 1);
+      const ease = 1 - (1 - p) ** 3;
+      r.x = lerp(r.sx, r.tx, ease);
+      r.y = lerp(r.sy, r.ty, ease);
+
+      r.trail.push({ x: r.x, y: r.y });
+      if (r.trail.length > 14) r.trail.shift();
+
+      const [cr, cg, cb] = r.palette.core;
+      for (let j = 0; j < r.trail.length; j++) {
+        const t = j / r.trail.length;
+        const pt = r.trail[j];
+        const trailSize = r.mega ? 6 + t * 6 : 4 + t * 3;
+        drawGlow(pt.x, pt.y + (r.trail.length - j) * 2, trailSize, 255, 220, 150, t * 0.55);
+      }
+      const headSize = r.mega ? 12 : 6;
+      drawGlow(r.x, r.y, headSize, cr, cg, cb, r.mega ? 1 : 0.9);
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.mega ? 2.5 : 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (p >= 1) {
+        if (r.mega) explodeMega(r.x, r.y);
+        else explode(r.x, r.y, r.palette);
+        rockets.splice(i, 1);
+      }
+    }
+
+    // particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.px = p.x;
+      p.py = p.y;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += p.gravity * dt;
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+      p.life -= p.decay * dt;
+
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      const a = Math.max(0, p.life);
+      const flicker = p.sparkle ? 0.6 + Math.random() * 0.4 : 1;
+      const alpha = a * flicker;
+
+      if (p.trail) {
+        ctx.strokeStyle = `rgba(${p.gr},${p.gg},${p.gb},${alpha * 0.4})`;
+        ctx.lineWidth = p.size * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+
+      drawGlow(p.x, p.y, p.size * (2 + a * 2), p.r, p.g, p.b, alpha * 0.7);
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.6})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // sparks
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.vy += 0.02 * dt;
+      s.life -= s.decay * dt;
+      if (s.life <= 0) {
+        sparks.splice(i, 1);
+        continue;
+      }
+      const a = s.life;
+      drawGlow(s.x, s.y, 3, s.r, s.g, s.b, a * 0.5);
+    }
+
+    // auto launch
+    if (autoOn) {
+      autoTimer -= dt;
+      if (autoTimer <= 0) {
+        autoLaunch();
+        autoTimer = rand(40, 100);
+      }
+    }
+
+    if (screenFlash > 0) {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = `rgba(255, 240, 200, ${screenFlash})`;
+      ctx.fillRect(0, 0, W, H);
+      screenFlash *= 0.88;
+      if (screenFlash < 0.005) screenFlash = 0;
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // initial sky paint
+  drawSky();
+  requestAnimationFrame(update);
+
+  // ── Input ──
+  function onInteract() {
+    if (!interacted) {
+      interacted = true;
+      titleEl.classList.add('hidden');
+      hintEl.classList.add('hidden');
+    }
+    ensureAudio();
+  }
+
+  function handlePoint(x, y) {
+    onInteract();
+    spawnFirework(x, y);
+  }
+
+  function canvasPoint(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 3) {
+      const points = [];
+      for (let i = 0; i < 3; i++) {
+        points.push(canvasPoint(e.touches[i].clientX, e.touches[i].clientY));
+      }
+      triggerMegaFirework(points);
+      return;
+    }
+    for (const t of e.changedTouches) {
+      handlePoint(t.clientX - canvas.getBoundingClientRect().left, t.clientY - canvas.getBoundingClientRect().top);
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    const pt = canvasPoint(e.clientX, e.clientY);
+    handlePoint(pt.x, pt.y);
+  });
+
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+  // ── Controls ──
+  soundBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    soundOn = !soundOn;
+    soundBtn.classList.toggle('active', soundOn);
+    soundBtn.textContent = soundOn ? '♪' : '·';
+    soundBtn.style.opacity = soundOn ? '1' : '0.4';
+    if (soundOn) ensureAudio();
+  });
+
+  autoBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    autoOn = !autoOn;
+    autoBtn.classList.toggle('active', autoOn);
+    autoBtn.style.opacity = autoOn ? '1' : '0.4';
+    if (autoOn) autoTimer = rand(20, 60);
+  });
+
+  // kick off with a few fireworks
+  setTimeout(() => {
+    autoLaunch();
+    setTimeout(autoLaunch, 600);
+    setTimeout(autoLaunch, 1400);
+  }, 400);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Forge — や印工務店 キャラ一貫プロンプト生成</title>
+<style>
+  :root{
+    --bg:#2b1810; --panel:#3a2418; --panel2:#46291a;
+    --terra:#d2693f; --terra-d:#b8542e; --cream:#efe6dc;
+    --line:#6b3d28; --txt:#f3e3d6; --muted:#c7a48c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(210,105,63,.25), transparent),
+      var(--bg);
+    color:var(--txt); line-height:1.6; padding:24px;
+  }
+  .wrap{max-width:980px;margin:0 auto}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .burst{width:42px;height:42px;flex:0 0 auto}
+  h1{font-size:21px;margin:0;letter-spacing:.04em}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 22px 56px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line); border-radius:14px; padding:14px 16px;
+  }
+  .card h2{font-size:13px;letter-spacing:.08em;color:var(--terra);
+    margin:0 0 10px;text-transform:uppercase;font-weight:700}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  select,input[type=text],textarea{
+    width:100%;background:#1f120b;color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+    font-size:14px;font-family:inherit;
+  }
+  select:focus,input:focus,textarea:focus{outline:none;border-color:var(--terra)}
+  .row{display:flex;gap:10px}
+  .row>*{flex:1}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{
+    font-size:12px;padding:6px 11px;border-radius:999px;cursor:pointer;
+    background:#1f120b;border:1px solid var(--line);color:var(--muted);user-select:none;
+  }
+  .chip.on{background:var(--terra);border-color:var(--terra);color:#241008;font-weight:700}
+  .toggle{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--txt)}
+  .toggle input{width:18px;height:18px;accent-color:var(--terra)}
+  .out{margin-top:18px}
+  .outhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .outhead h2{margin:0}
+  textarea#out{min-height:230px;resize:vertical;line-height:1.5;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+  .btns{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  button{
+    background:var(--terra);color:#241008;border:none;border-radius:10px;
+    padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;
+    font-family:inherit;transition:.15s;
+  }
+  button:hover{background:var(--terra-d)}
+  button.ghost{background:transparent;color:var(--terra);border:1px solid var(--terra)}
+  button.ghost:hover{background:rgba(210,105,63,.12)}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--terra);color:#241008;padding:11px 22px;border-radius:10px;font-weight:700;
+    opacity:0;pointer-events:none;transition:.25s}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  footer{margin-top:26px;color:var(--muted);font-size:11px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="burst" viewBox="0 0 100 100" aria-hidden="true">
+      <g fill="#d2693f">
+        <!-- 11-spoke sunburst (Claude-ish) -->
+        <g id="sp">
+          <rect x="46" y="6" width="8" height="36" rx="4"/>
+        </g>
+      </g>
+      <use href="#sp" transform="rotate(32.7 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(65.4 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(98.1 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(130.9 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(163.6 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(196.3 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(229.1 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(261.8 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(294.5 50 50)" fill="#d2693f"/>
+      <use href="#sp" transform="rotate(327.3 50 50)" fill="#d2693f"/>
+    </svg>
+    <h1>Prompt Forge</h1>
+  </header>
+  <p class="sub">マネキン2体キャラを、どの画像生成AIでもブレずに・一撃でコピペ生成</p>
+
+  <div class="grid">
+    <!-- LEFT: 構成 -->
+    <div class="card">
+      <h2>構成</h2>
+
+      <label>人数</label>
+      <div class="chips" id="count">
+        <span class="chip on" data-v="solo">1体（主役）</span>
+        <span class="chip" data-v="duo">2体（相棒と並ぶ）</span>
+      </div>
+
+      <label>主役のヘッド（右の人物＝差し替え対象）</label>
+      <select id="head">
+        <option value="claude">Claude ロゴ（テラコッタの11本サンバースト）</option>
+        <option value="app">別アプリのロゴ（下に説明を入力）</option>
+        <option value="tailor">仕立てヘッド（無地・相棒と同じ）</option>
+      </select>
+      <input type="text" id="appdesc" placeholder="例: a rounded-square app icon with a white paper-plane glyph" style="margin-top:8px;display:none">
+
+      <div class="toggle" id="duoRow" style="display:none">
+        <input type="checkbox" id="leftTailor" checked>
+        <label style="margin:0;color:var(--txt)">相棒（左）は無地の仕立てヘッドにする</label>
+      </div>
+
+      <label>カメラ / レンズ</label>
+      <select id="cam">
+        <option value="50mm, shallow depth of field, cinematic">標準 50mm シネマ</option>
+        <option value="35mm, slight motion blur, cinematic">35mm 動きあり</option>
+        <option value="24mm wide-angle, cinematic">24mm 広角（群衆・空間）</option>
+        <option value="85mm portrait, soft bokeh">85mm ポートレート</option>
+      </select>
+
+      <label>アスペクト比</label>
+      <div class="chips" id="ar">
+        <span class="chip on" data-v="1:1">1:1</span>
+        <span class="chip" data-v="3:4">3:4 縦</span>
+        <span class="chip" data-v="16:9">16:9 横</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: シーン -->
+    <div class="card">
+      <h2>シーン</h2>
+
+      <label>アクション（主役の動き）</label>
+      <select id="action">
+        <option value="standing still in a calm confident pose, arms relaxed at his sides">立ちポーズ（基本）</option>
+        <option value="sitting at a wooden desk, writing in a notebook with a fountain pen held in his exposed chrome anatomical robot hand">机に座って執筆</option>
+        <option value="running energetically across the scene, mid-stride, his slim navy necktie flying in the wind">疾走する</option>
+        <option value="standing with both robot hands pressed to the sides of his head in intense concentration, streams of glowing orange programming code and binary radiating outward from his head in all directions like an explosion of thought">猛烈に思考（頭からコード放射）</option>
+        <option value="standing behind a reception counter looking overwhelmed and flustered, robot hands raised, while a huge chaotic crowd of faceless people swarms and pushes toward the counter">窓口に群衆が殺到して困る</option>
+        <option value="soldering a circuit board at a workbench, leaning in with focus, holding a soldering iron in his chrome robot hand">電子工作・はんだ付け</option>
+      </select>
+
+      <label>背景</label>
+      <select id="bg">
+        <option value="a modern corporate entrance lobby with a long reception counter, glass doors and terracotta marble floor">企業エントランスホール</option>
+        <option value="a cluttered electronics workshop full of soldering irons, breadboards, oscilloscopes and tangled cables under warm desk lamps">電子工作部屋</option>
+        <option value="an open outdoor field under a warm sunset sky, dry orange grass and distant hills">野外・夕暮れの草原</option>
+        <option value="a quiet study room with terracotta walls, bookshelves and a warm desk lamp">書斎</option>
+        <option value="__custom">（自由入力）</option>
+      </select>
+      <input type="text" id="bgcustom" placeholder="背景を英語で入力" style="margin-top:8px;display:none">
+
+      <div class="toggle">
+        <input type="checkbox" id="cyber" checked>
+        <label style="margin:0;color:var(--txt)">サイバー句（漂う0/1のバイナリ＋データ粒子）を入れる</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="mj">
+        <label style="margin:0;color:var(--txt)">Midjourney用パラメータを末尾に付ける</label>
+      </div>
+      <div class="hint">※ MJは <code>--style raw --s 250</code> と <code>--ar</code> を自動付与。一貫性を上げるなら基準画像を <code>--cref URL --cw 60</code> で追加してください。</div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card out">
+    <div class="outhead">
+      <h2>完成プロンプト</h2>
+      <span class="hint">変更すると自動更新</span>
+    </div>
+    <textarea id="out" readonly></textarea>
+    <div class="btns">
+      <button id="copy">📋 コピー</button>
+      <button class="ghost" id="copyJa">日本語版をコピー</button>
+    </div>
+  </div>
+
+  <footer>や印工務店 — Prompt Forge / オフライン動作・データ送信なし</footer>
+</div>
+
+<div class="toast" id="toast">コピーしました</div>
+
+<script>
+const $ = s => document.querySelector(s);
+
+const CHAR_EN =
+`a mannequin businessman, full body, wearing a crisp white dress shirt and a slim dark navy necktie with black tailored dress trousers; his forearms and hands are exposed polished chrome anatomical robot skeletons (visible metal finger bones, articulated steel joints, wrist wires), upper arms covered by the white shirt sleeves, small mechanical rivets and cables peeking from the collar; no human skin, faceless`;
+
+const HEADS = {
+  claude: "his head is replaced by a glowing matte terracotta-orange 11-spoke sunburst / asterisk emblem (the Claude logo) floating where a head would be",
+  tailor: "his head is a smooth blank cream linen tailor's dummy head form, seamless and faceless",
+  app: d => `his head is replaced by a single floating app logo (${d||"a glowing app icon"}) in the same matte terracotta-orange tone`
+};
+
+const CYBER =
+`faint floating holographic streams of orange binary code (0 and 1) drifting in the air and reflecting on the chrome hands, subtle data particles, realistic volumetric haze`;
+
+const STYLE =
+`matte terracotta-and-orange color grading over the whole image, warm directional sunlight with soft window shadows, hyperrealistic studio photograph`;
+
+let count='solo', arVal='1:1';
+
+function chips(id, set){
+  document.querySelectorAll('#'+id+' .chip').forEach(c=>{
+    c.onclick=()=>{
+      c.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on'); set(c.dataset.v); build();
+    };
+  });
+}
+chips('count', v=>{ count=v; $('#duoRow').style.display = v==='duo'?'flex':'none'; });
+chips('ar', v=>{ arVal=v; });
+
+$('#head').onchange = e=>{ $('#appdesc').style.display = e.target.value==='app'?'block':'none'; build(); };
+$('#bg').onchange   = e=>{ $('#bgcustom').style.display = e.target.value==='__custom'?'block':'none'; build(); };
+['appdesc','bgcustom','action','cam','cyber','mj','leftTailor'].forEach(id=>{
+  const el=$('#'+id); el.addEventListener('input',build);
+});
+
+function headText(which){
+  const h=$('#head').value;
+  if(which==='left') return HEADS.tailor;
+  if(h==='app') return HEADS.app($('#appdesc').value.trim());
+  return HEADS[h];
+}
+
+function bgText(){
+  const v=$('#bg').value;
+  return v==='__custom' ? ($('#bgcustom').value.trim()||"a plain terracotta studio backdrop") : v;
+}
+
+function build(){
+  const action=$('#action').value;
+  const cam=$('#cam').value;
+  const bg=bgText();
+  const parts=[];
+
+  if(count==='solo'){
+    parts.push(`A single ${CHAR_EN}, ${action}. ${cap(headText('hero'))}.`);
+  } else {
+    const leftHead = $('#leftTailor').checked ? HEADS.tailor : headText('hero');
+    parts.push(`Two ${CHAR_EN.replace('a mannequin businessman','identical mannequin businessmen')} standing side by side; the hero figure is ${action}.`);
+    parts.push(`The right figure: ${headText('hero')}. The left figure: ${leftHead}.`);
+  }
+
+  parts.push(`Setting: ${bg}.`);
+  if($('#cyber').checked) parts.push(CYBER + ", everything unified in a matte terracotta orange palette.");
+  else parts.push("everything unified in a matte terracotta orange palette.");
+  parts.push(`${STYLE}, ${cam}, ${arVal}.`);
+
+  let out=parts.join(' ');
+  if($('#mj').checked) out += `  --ar ${arVal.replace(':','∶').replace('∶',':')} --style raw --s 250`;
+  $('#out').value = out;
+  return out;
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* ---- 日本語版 ---- */
+const JA = {
+  char:"全身のマネキンのビジネスマン。パリッとした白いドレスシャツに細身のネイビーのネクタイ、黒のスラックス。前腕と手は剥き出しの磨かれたクロムの解剖学的ロボット骨格（金属の指の骨・可動スチール関節・手首のワイヤー）、上腕は白い袖で覆われ、襟元から小さな機械リベットとケーブルが覗く。人間の肌なし、顔は無表情で目鼻なし",
+  heads:{
+    claude:"頭部はテラコッタオレンジに光る11本のサンバースト（アスタリスク状のClaudeロゴ）に置き換わり、頭の位置に浮かんでいる",
+    tailor:"頭部は無地のクリーム色のリネンの仕立てヘッド（継ぎ目なし・顔なし）",
+  },
+  cyber:"空中にオレンジの2進数コード（0と1）のホログラムが漂い、クロムの手に反射する。データ粒子と現実的なボリューム感のあるもや",
+  style:"画面全体をマットなテラコッタ＆オレンジで統一、窓の影を落とす暖かい指向性の太陽光、超写実的なスタジオ写真",
+  actions:{
+    "standing still in a calm confident pose, arms relaxed at his sides":"落ち着いた自信のある立ちポーズ、腕は自然に下ろす",
+    "sitting at a wooden desk, writing in a notebook with a fountain pen held in his exposed chrome anatomical robot hand":"木の机に座り、クロムのロボットの手で万年筆を持ちノートに執筆する",
+    "running energetically across the scene, mid-stride, his slim navy necktie flying in the wind":"画面を勢いよく疾走、ネイビーのネクタイが風になびく",
+    "standing with both robot hands pressed to the sides of his head in intense concentration, streams of glowing orange programming code and binary radiating outward from his head in all directions like an explosion of thought":"両手を頭の側面に当てて猛烈に思考し、頭から光るオレンジのプログラムコードと2進数が放射状に四方へ噴き出す",
+    "standing behind a reception counter looking overwhelmed and flustered, robot hands raised, while a huge chaotic crowd of faceless people swarms and pushes toward the counter":"受付カウンターの内側で困り果てて慌て、顔のない大勢の群衆がカウンターに殺到して押し寄せる",
+    "soldering a circuit board at a workbench, leaning in with focus, holding a soldering iron in his chrome robot hand":"作業台で基板にはんだ付け、集中して身を乗り出し、クロムの手にはんだごてを持つ"
+  },
+  bgs:{
+    "a modern corporate entrance lobby with a long reception counter, glass doors and terracotta marble floor":"長い受付カウンター・ガラス扉・テラコッタ大理石床のモダンな企業エントランス",
+    "a cluttered electronics workshop full of soldering irons, breadboards, oscilloscopes and tangled cables under warm desk lamps":"はんだごて・ブレッドボード・オシロスコープ・絡まったケーブルが散らかった電子工作部屋、暖かいデスクランプ",
+    "an open outdoor field under a warm sunset sky, dry orange grass and distant hills":"夕暮れの空の下、乾いたオレンジの草原と遠くの丘",
+    "a quiet study room with terracotta walls, bookshelves and a warm desk lamp":"テラコッタの壁・本棚・暖かいデスクランプの静かな書斎"
+  }
+};
+function buildJa(){
+  const a=$('#action').value, b=$('#bg').value;
+  const act=JA.actions[a]||a;
+  const bg = b==='__custom' ? ($('#bgcustom').value.trim()||"無地のテラコッタ背景") : (JA.bgs[b]||b);
+  const head = ($('#head').value==='app')
+    ? `頭部は別アプリのロゴ（${$('#appdesc').value.trim()||"光るアプリアイコン"}）に置き換わり、同じテラコッタオレンジの色味`
+    : (JA.heads[$('#head').value]||JA.heads.claude);
+  let p=[];
+  if(count==='solo'){ p.push(`${JA.char}が、${act}。${head}。`); }
+  else{
+    const lh=$('#leftTailor').checked?JA.heads.tailor:head;
+    p.push(`左右にそっくりな${JA.char}が並んで立つ。主役は${act}。右の人物は${head}。左の人物は${lh}。`);
+  }
+  p.push(`背景：${bg}。`);
+  if($('#cyber').checked) p.push(JA.cyber+"。全体をマットなテラコッタオレンジで統一。");
+  p.push(`${JA.style}、${$('#cam').value}、${arVal}。`);
+  return p.join('');
+}
+
+/* ---- copy ---- */
+function toast(){ const t=$('#toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1400); }
+async function copy(txt){ try{ await navigator.clipboard.writeText(txt); }catch(e){ const t=$('#out'); t.select(); document.execCommand('copy'); } toast(); }
+$('#copy').onclick   = ()=>copy(build());
+$('#copyJa').onclick = ()=>copy(buildJa());
+
+build();
+</script>
+</body>
+</html>

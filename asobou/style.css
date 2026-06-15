@@ -1,0 +1,382 @@
+/* ===== 基本リセット & トークン ===== */
+:root{
+  --bg-1:#FFE5EC;
+  --bg-2:#FFF4E0;
+  --bg-3:#E0F4FF;
+  --red:#FF6B6B;
+  --orange:#FFA94D;
+  --yellow:#FFD93D;
+  --green:#6BCB77;
+  --blue:#4D96FF;
+  --purple:#B983FF;
+  --ink:#4A3F35;
+  --shadow:0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.12);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{
+  width:100%;height:100%;
+  background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 50%,var(--bg-3) 100%);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Maru Gothic ProN","ヒラギノ丸ゴ ProN","Hiragino Sans","Yu Gothic",sans-serif;
+  font-weight:700;
+  overflow:hidden;
+  overscroll-behavior:none;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;user-select:none;
+  touch-action:manipulation;
+}
+
+body{
+  position:fixed;inset:0;
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bottom);
+  padding-left:var(--safe-left);
+  padding-right:var(--safe-right);
+}
+
+button{
+  font:inherit;color:inherit;
+  background:none;border:0;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+#app{position:absolute;inset:0;}
+
+/* ===== 画面切替 ===== */
+.screen{
+  position:absolute;inset:0;
+  display:none;
+  flex-direction:column;
+  opacity:0;
+  transition:opacity 220ms ease;
+}
+.screen.active{display:flex;opacity:1;}
+
+/* ===== スプラッシュ ===== */
+#screen-splash{align-items:center;justify-content:center;}
+.splash-inner{text-align:center;animation:splashIn 600ms ease both;}
+.splash-emoji{font-size:96px;margin-bottom:16px;animation:floaty 2s ease-in-out infinite;}
+.splash-title{font-size:48px;color:var(--ink);letter-spacing:.05em;}
+@keyframes splashIn{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+/* ===== トップバー ===== */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;
+  flex-shrink:0;
+  z-index:10;
+}
+.topbar-spacer{flex:1;}
+.menu-title{font-size:32px;color:var(--ink);text-align:center;flex:1;}
+.icon-btn{
+  width:64px;height:64px;
+  min-width:64px;min-height:64px;
+  border-radius:24px;
+  background:rgba(255,255,255,.7);
+  box-shadow:var(--shadow);
+  font-size:32px;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 160ms ease,background 160ms ease;
+  /* 88px相当の見えないタップ拡張 */
+  position:relative;
+}
+.icon-btn::after{
+  content:"";position:absolute;
+  inset:-12px;
+}
+.icon-btn:active{transform:scale(.92);background:rgba(255,255,255,.95);}
+
+/* ===== メニュー ===== */
+#screen-menu{justify-content:flex-start;}
+.menu-grid{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:16px;
+  padding:16px;
+  min-height:0;
+}
+.menu-card{
+  background:var(--card-bg,#fff);
+  border-radius:32px;
+  box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:8px;
+  min-width:88px;min-height:88px;
+  padding:16px;
+  transition:transform 220ms ease;
+  animation:cardIn 400ms ease both;
+}
+.menu-card:nth-child(1){animation-delay:0ms;}
+.menu-card:nth-child(2){animation-delay:80ms;}
+.menu-card:nth-child(3){animation-delay:160ms;}
+.menu-card:nth-child(4){animation-delay:240ms;}
+.menu-card:active{transform:scale(.95);}
+.menu-emoji{font-size:72px;line-height:1;}
+.menu-label{font-size:28px;color:var(--ink);}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+/* 横向き */
+@media (orientation:landscape){
+  .menu-grid{grid-template-columns:1fr 1fr 1fr 1fr;grid-template-rows:1fr;}
+  .menu-emoji{font-size:64px;}
+  .menu-label{font-size:24px;}
+}
+
+/* ===== ゲーム共通 ===== */
+.game-stage{
+  flex:1;
+  position:relative;
+  min-height:0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+/* お手本領域 */
+.target-area{
+  flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  padding:8px 16px 4px;
+  min-height:35%;
+}
+.target-area svg{max-width:160px;max-height:160px;width:30vmin;height:30vmin;}
+
+/* 選択肢領域 */
+.choices-area{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  min-height:0;
+}
+.choices-grid{
+  display:grid;
+  gap:16px;
+  width:100%;
+  max-width:520px;
+}
+.choices-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.choices-grid.cols-5{grid-template-columns:repeat(5,1fr);}
+
+/* iPhone縦などの狭幅では5列を3列に折り返し（最後のボタン見切れ防止） */
+@media (max-width:520px){
+  .choices-grid.cols-5{grid-template-columns:repeat(3,1fr);}
+}
+
+/* 選択ボール (色当て) */
+.color-ball,.shape-tile,.number-tile{
+  min-width:88px;min-height:88px;
+  width:100%;
+  aspect-ratio:1;
+  border-radius:50%;
+  box-shadow:var(--shadow-lg),inset -8px -8px 16px rgba(0,0,0,.12),inset 6px 6px 12px rgba(255,255,255,.35);
+  transition:transform 200ms cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.color-ball:active{transform:scale(.92);}
+
+/* 形タイル */
+.shape-tile{
+  border-radius:24px;
+  background:#fff;
+  padding:8px;
+}
+.shape-tile svg{width:100%;height:100%;}
+.shape-tile:active{transform:scale(.95);}
+
+/* 数字タイル */
+.number-tile{
+  border-radius:24px;
+  background:#fff;
+  font-size:48px;
+  color:var(--ink);
+}
+.number-tile:active{transform:scale(.95);}
+
+/* バウンス（不正解時のやさしいフィードバック） */
+@keyframes softBounce{
+  0%,100%{transform:translate(0,0);}
+  25%{transform:translate(-6px,0) rotate(-3deg);}
+  75%{transform:translate(6px,0) rotate(3deg);}
+}
+.soft-bounce{animation:softBounce 320ms ease;}
+
+/* 正解光 */
+@keyframes glowPulse{
+  0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,217,61,0));}
+  50%{transform:scale(1.18);filter:drop-shadow(0 0 24px rgba(255,217,61,.9));}
+  100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,217,61,0));}
+}
+.glow-correct{animation:glowPulse 600ms ease;}
+
+/* お手本飛び込み */
+@keyframes flyToTarget{
+  0%{transform:translate(0,0) scale(1);opacity:1;}
+  100%{transform:var(--fly-to,translate(0,-100vh)) scale(.3);opacity:.3;}
+}
+.fly-to-target{animation:flyToTarget 600ms cubic-bezier(.5,-.2,.7,.5) forwards;}
+
+/* 数えゲームのリンゴ
+ * flex:0 1 auto = 自然サイズで表示、足りなければ縮む。
+ * choices-area(flex:1) が縦の残りを優先的に確保し、
+ * 数字ボタンの最終行が画面外にはみ出さないようにする。 */
+.count-stage{
+  flex:0 1 auto;
+  min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;padding:12px;
+  overflow:hidden;
+}
+.count-item{
+  font-size:64px;
+  line-height:1;
+  display:inline-block;
+  transition:transform 200ms ease;
+}
+@keyframes hopUp{
+  0%,100%{transform:translateY(0);}
+  40%{transform:translateY(-30px) scale(1.15);}
+}
+.hop{animation:hopUp 400ms ease;}
+
+/* 鍵盤 */
+.piano-stage{
+  flex:1;
+  display:flex;align-items:stretch;
+  gap:6px;padding:16px 12px 24px;
+}
+.key{
+  flex:1;
+  min-width:40px;
+  border-radius:16px;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+  transition:transform 120ms ease,filter 120ms ease;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:16px;
+  overflow:hidden;
+}
+.key-label{
+  font-size:18px;color:rgba(255,255,255,.92);
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+.key.active{transform:translateY(4px) scale(.98);filter:brightness(1.25);}
+
+/* 鍵盤の波紋 */
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.85) 0%,rgba(255,255,255,0) 70%);
+  width:120px;height:120px;
+  left:var(--rx,50%);top:var(--ry,50%);
+  margin-left:-60px;margin-top:-60px;
+  animation:rippleAnim 800ms ease-out forwards;
+}
+@keyframes rippleAnim{
+  0%{transform:scale(.2);opacity:.9;}
+  100%{transform:scale(2.4);opacity:0;}
+}
+
+/* パーティクル */
+.particle-layer{
+  position:absolute;inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.particle{
+  position:absolute;
+  width:14px;height:14px;
+  border-radius:50%;
+  left:var(--px,50%);top:var(--py,50%);
+  animation:particleBurst 900ms cubic-bezier(.2,.7,.4,1) forwards;
+  --tx:0;--ty:0;
+}
+@keyframes particleBurst{
+  0%{transform:translate(-50%,-50%) scale(.4);opacity:1;}
+  100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(.2);opacity:0;}
+}
+
+/* 花火（クリア演出） */
+.firework-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.0);
+  pointer-events:none;
+  z-index:20;
+}
+.firework-message{
+  font-size:64px;
+  animation:popIn 600ms cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn{
+  0%{transform:scale(.2) rotate(-20deg);opacity:0;}
+  100%{transform:scale(1) rotate(0);opacity:1;}
+}
+
+/* もう一度ボタン */
+.again-btn{
+  position:absolute;
+  left:50%;bottom:24px;
+  transform:translateX(-50%);
+  background:var(--yellow);
+  color:var(--ink);
+  border-radius:32px;
+  padding:16px 32px;
+  font-size:28px;
+  min-width:180px;min-height:88px;
+  box-shadow:var(--shadow-lg);
+  z-index:25;
+  animation:popIn 400ms ease both;
+  animation-delay:600ms;
+}
+.again-btn:active{transform:translateX(-50%) scale(.95);}
+
+/* お手本ボール */
+.target-ball{
+  width:30vmin;height:30vmin;
+  max-width:160px;max-height:160px;
+  min-width:120px;min-height:120px;
+  border-radius:50%;
+  box-shadow:var(--shadow-lg),inset -8px -8px 16px rgba(0,0,0,.12),inset 6px 6px 12px rgba(255,255,255,.35);
+  animation:targetIn 360ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes targetIn{from{opacity:0;transform:scale(.5);}to{opacity:1;transform:scale(1);}}
+
+/* お手本シルエット枠 */
+.target-shape svg{
+  width:100%;height:100%;
+  animation:targetIn 360ms cubic-bezier(.34,1.56,.64,1);
+}
+
+/* 進捗ドット */
+.progress-dots{
+  display:flex;justify-content:center;gap:10px;padding:6px 0 2px;
+}
+.progress-dot{
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(74,63,53,.18);
+  transition:background 220ms ease,transform 220ms ease;
+}
+.progress-dot.done{background:var(--green);transform:scale(1.15);}
+
+/* 横向きでの調整 */
+@media (orientation:landscape){
+  .target-area{min-height:30%;}
+  .target-area svg,.target-ball,.target-shape{max-width:120px;max-height:120px;}
+}

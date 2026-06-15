@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Mizu — Watercolor Trace</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #fbfaf6; }
+    canvas { display: block; touch-action: none; }
+
+    .back-btn {
+      position: fixed; top: 16px; left: 16px; z-index: 999;
+      color: rgba(0,0,0,0.3); text-decoration: none;
+      font-family: 'DM Mono', ui-monospace, monospace;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .back-btn:hover { color: rgba(0,0,0,0.7); }
+
+    /* ─── Palette ─────────────────────────────────────────── */
+    .palette {
+      position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+      z-index: 999; display: flex; align-items: center; gap: 16px;
+      padding: 10px 16px; border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    .swatch {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.12); cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .swatch:hover { transform: scale(1.08); }
+    .swatch.active {
+      border-color: rgba(0,0,0,0.55);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+      transform: scale(1.12);
+    }
+    .sep { width: 1px; height: 22px; background: rgba(0,0,0,0.12); }
+    .clear {
+      font-family: 'DM Mono', ui-monospace, monospace;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(0,0,0,0.4); background: none; border: none; cursor: pointer;
+      padding: 4px 2px;
+    }
+    .clear:hover { color: rgba(0,0,0,0.75); }
+
+    .hint {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font: 13px -apple-system, sans-serif; color: #bbb; pointer-events: none;
+      transition: opacity 1s; letter-spacing: .14em; text-transform: uppercase;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← index</a>
+<canvas id="c"></canvas>
+
+<div class="palette">
+  <div class="swatch active" data-color="black" style="background:#21232f"></div>
+  <div class="swatch" data-color="blue"  style="background:#286ec3"></div>
+  <div class="swatch" data-color="orange" style="background:#eb7d2d"></div>
+  <div class="sep"></div>
+  <button class="clear" id="clearBtn">clear</button>
+</div>
+
+<div class="hint" id="hint">なぞって描く</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  Mizu — Watercolor Trace (grid_v2)
+//  Drag to lay down wet, translucent washes that bloom and bleed. Where the
+//  colours overlap they mix like watercolour (subtractive `multiply`). The
+//  brush is accompanied by water sounds — gentle drops and a flowing trickle.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── Watercolour pigments (translucent, on warm paper) ────────────────────────
+const INKS = {
+  black:  { rgb: [ 33,  35,  47], name: '墨' },
+  blue:   { rgb: [ 40, 110, 195], name: '青' },
+  orange: { rgb: [235, 125,  45], name: '橙' },
+};
+let currentColor = 'black';
+
+// ─── Visual tuning ────────────────────────────────────────────────────────────
+const PAPER        = '#fbfaf6';
+const WET_FADE     = 0.018;  // per-frame dissolve of the WET layer (滲んで消えていく)
+const STAIN_RATIO  = 0.5;    // how much of each wash sinks into the permanent stain
+const R_SLOW       = 40;     // brush radius when moving slowly (wet pooling)
+const R_FAST       = 13;     // brush radius when moving fast
+const STAMP_SPACE  = 0.30;   // stamp spacing as a fraction of brush radius
+const GRAIN_CHANCE = 0.30;   // scattered pigment granulation specks
+const BLOOM_EVERY  = 5;      // every N stamps, push a faint water bloom outward
+
+// ─── Audio tuning ─────────────────────────────────────────────────────────────
+const DROP_LO = 360;         // Hz — water-drop pitch at the bottom of the screen
+const DROP_HI = 1500;        // Hz — water-drop pitch at the top
+const MAX_STREAMS = 3;       // concurrent flowing-water voices
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  AUDIO ENGINE — water
+// ═══════════════════════════════════════════════════════════════════════════
+let actx = null, master = null, noiseBuf = null, streamCount = 0;
+
+function getACtx() {
+  if (!actx) buildAudio();
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+// Synthesize a stereo reverb impulse response: decaying noise (~2.4s) for splash space
+function makeIR(ac) {
+  const sr = ac.sampleRate, len = Math.floor(sr * 2.4);
+  const buf = ac.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++)
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.2);
+  }
+  return buf;
+}
+
+// Persistent master bus: dry + reverb → soft limiter.
+function buildAudio() {
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+
+  const comp = actx.createDynamicsCompressor();
+  comp.threshold.value = -16; comp.knee.value = 26;
+  comp.ratio.value = 4; comp.attack.value = 0.004; comp.release.value = 0.25;
+  comp.connect(actx.destination);
+
+  master = actx.createGain();
+  master.gain.value = 0.9;
+
+  const dry = actx.createGain(); dry.gain.value = 0.8;
+  master.connect(dry); dry.connect(comp);
+
+  const rev = actx.createConvolver(); rev.buffer = makeIR(actx);
+  const revGain = actx.createGain(); revGain.gain.value = 0.55;
+  master.connect(rev); rev.connect(revGain); revGain.connect(comp);
+
+  // 2 s looping pink-ish noise shared by the flowing-water voices
+  const sr = actx.sampleRate, nlen = Math.floor(sr * 2);
+  noiseBuf = actx.createBuffer(1, nlen, sr);
+  const nd = noiseBuf.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < nlen; i++) {
+    const w = Math.random() * 2 - 1;
+    last = (last + 0.02 * w) / 1.02;        // gentle low-pass → softer "water" noise
+    nd[i] = last * 3.2;
+  }
+}
+
+// Map a vertical position to a water-drop pitch (higher on screen = higher).
+function yToDrop(y, H) {
+  const t = 1 - Math.min(Math.max(y / H, 0), 1);
+  return DROP_LO * Math.pow(DROP_HI / DROP_LO, t);
+}
+
+// ─── A single water drop: short sine whose pitch rises (bubble resonance). ─────
+function playDrop(y, H, gain) {
+  const ac = getACtx(), now = ac.currentTime;
+  const f0 = yToDrop(y, H) * (0.9 + Math.random() * 0.2);
+  const f1 = f0 * (1.6 + Math.random() * 0.5);            // the characteristic "plip" rise
+  const dur = 0.09 + Math.random() * 0.11;
+
+  const o = ac.createOscillator();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(f0, now);
+  o.frequency.exponentialRampToValueAtTime(f1, now + dur);
+
+  const g = ac.createGain();
+  const peak = (gain != null ? gain : 0.16) * (0.8 + Math.random() * 0.4);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(peak, now + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + dur + 0.18);
+
+  o.connect(g); g.connect(master);
+  o.start(now); o.stop(now + dur + 0.3);
+}
+
+// ─── A flowing-water trickle: soft noise through a wandering band-pass. ────────
+function makeStream(y, H) {
+  const ac = getACtx(), now = ac.currentTime;
+
+  const src = ac.createBufferSource();
+  src.buffer = noiseBuf; src.loop = true;
+
+  const bp = ac.createBiquadFilter();
+  bp.type = 'bandpass'; bp.Q.value = 1.4;
+  bp.frequency.value = 600 + yToDrop(y, H) * 0.8;
+
+  const lp = ac.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 3200;
+
+  const g = ac.createGain(); g.gain.value = 0.0001;
+
+  // Babbling: slow LFO wobbles the band-pass centre
+  const lfo = ac.createOscillator(); lfo.type = 'sine';
+  lfo.frequency.value = 1.6 + Math.random() * 2.2;
+  const lfoG = ac.createGain(); lfoG.gain.value = 320;
+  lfo.connect(lfoG); lfoG.connect(bp.frequency);
+
+  src.connect(bp); bp.connect(lp); lp.connect(g); g.connect(master);
+  src.start(now); lfo.start(now);
+  g.gain.setTargetAtTime(0.05, now, 0.2);
+
+  return { src, bp, lp, g, lfo };
+}
+
+function updateStream(s, y, speed, H) {
+  const ac = actx, now = ac.currentTime;
+  const norm = Math.min(speed / 2.2, 1);
+  s.g.gain.setTargetAtTime(0.03 + norm * 0.14, now, 0.08);     // faster brush = louder flow
+  s.bp.frequency.setTargetAtTime(600 + yToDrop(y, H) * 0.8, now, 0.15);
+  s.lp.frequency.setTargetAtTime(2200 + norm * 3000, now, 0.1);
+}
+
+function releaseStream(s) {
+  const ac = actx, now = ac.currentTime;
+  s.g.gain.cancelScheduledValues(now);
+  s.g.gain.setTargetAtTime(0.0001, now, 0.35);
+  setTimeout(() => {
+    try { s.src.stop(); s.lfo.stop(); s.g.disconnect(); } catch (_) {}
+    streamCount--;
+  }, 1600);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  WATERCOLOUR RENDERING
+// ═══════════════════════════════════════════════════════════════════════════
+const canvas = document.getElementById('c');
+const g = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+
+// Two offscreen layers composited as  paper × stain × wet  every frame:
+//   stainCv — permanent pigment that builds up & deepens with each pass
+//   wetCv   — the wet wash on top, which blooms then slowly dissolves
+let stainCv, sctx, wetCv, wctx;
+function makeLayer() {
+  const cv = document.createElement('canvas');
+  cv.width = Math.max(W * DPR, 1); cv.height = Math.max(H * DPR, 1);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  return { cv, ctx };
+}
+
+// Pre-rendered soft wash sprite per colour (very feathered = wet bleed).
+const sprites = {};
+function buildSprites() {
+  for (const key in INKS) {
+    const [r, gg, b] = INKS[key].rgb;
+    const s = document.createElement('canvas');
+    const S = 128; s.width = s.height = S;
+    const sc = s.getContext('2d');
+    const grad = sc.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+    grad.addColorStop(0.0, `rgba(${r},${gg},${b},0.85)`);
+    grad.addColorStop(0.30, `rgba(${r},${gg},${b},0.45)`);
+    grad.addColorStop(0.65, `rgba(${r},${gg},${b},0.16)`);
+    grad.addColorStop(1.0,  `rgba(${r},${gg},${b},0)`);
+    sc.fillStyle = grad;
+    sc.fillRect(0, 0, S, S);
+    sprites[key] = s;
+  }
+}
+buildSprites();
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ({ cv: stainCv, ctx: sctx } = makeLayer());
+  ({ cv: wetCv,   ctx: wctx } = makeLayer());
+}
+
+// Wipe both pigment layers (the visible paper is repainted every frame).
+function paintPaper() {
+  sctx.clearRect(0, 0, W, H);
+  wctx.clearRect(0, 0, W, H);
+}
+
+// Lay one wash dab. The wet wash sits on the wet layer (it will dissolve); a
+// fainter copy sinks into the permanent stain layer, where overlapping passes
+// multiply together — so re-tracing the same place deepens the colour.
+function stamp(color, x, y, radius, alpha, withBloom) {
+  const sp = sprites[color];
+
+  // ── Wet layer (source-over: keeps the pure pigment hue, no graying) ──
+  wctx.globalCompositeOperation = 'source-over';
+  if (withBloom) {
+    wctx.globalAlpha = alpha * 0.16;
+    const br = radius * 2.4;
+    wctx.drawImage(sp, x - br, y - br, br * 2, br * 2);
+  }
+  wctx.globalAlpha = alpha;
+  wctx.drawImage(sp, x - radius, y - radius, radius * 2, radius * 2);
+  if (Math.random() < GRAIN_CHANCE) {
+    const a = Math.random() * Math.PI * 2;
+    const dist = radius * (0.9 + Math.random() * 1.8);
+    const rr = radius * (0.14 + Math.random() * 0.3);
+    wctx.globalAlpha = alpha * 0.3;
+    wctx.drawImage(sp, x + Math.cos(a) * dist - rr, y + Math.sin(a) * dist - rr, rr * 2, rr * 2);
+  }
+  wctx.globalAlpha = 1;
+
+  // ── Stain layer (multiply: permanent, accumulates & darkens with layering) ──
+  sctx.globalCompositeOperation = 'multiply';
+  sctx.globalAlpha = alpha * STAIN_RATIO;
+  sctx.drawImage(sp, x - radius, y - radius, radius * 2, radius * 2);
+  sctx.globalAlpha = 1;
+}
+
+// ─── Animation loop ───────────────────────────────────────────────────────────
+// Dissolve the wet layer a touch each frame (滲んで消えていく), then composite
+// paper × stain × wet so the faint stain always remains underneath.
+function frame() {
+  wctx.globalCompositeOperation = 'destination-out';
+  wctx.fillStyle = `rgba(0,0,0,${WET_FADE})`;
+  wctx.fillRect(0, 0, W, H);
+  wctx.globalCompositeOperation = 'source-over';
+
+  g.globalCompositeOperation = 'source-over';
+  g.fillStyle = PAPER;
+  g.fillRect(0, 0, W, H);
+  g.globalCompositeOperation = 'multiply';
+  g.drawImage(stainCv, 0, 0, W, H);
+  g.drawImage(wetCv, 0, 0, W, H);
+  g.globalCompositeOperation = 'source-over';
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  POINTER → WASH + WATER SOUND
+// ═══════════════════════════════════════════════════════════════════════════
+const strokes = new Map();   // pointerId → { x, y, t, stream, color, sinceDrop, stampN }
+
+function strokeStart(id, x, y, pressure) {
+  const color = currentColor;
+  let stream = null;
+  if (streamCount < MAX_STREAMS) { stream = makeStream(y, H); streamCount++; }
+  strokes.set(id, { x, y, t: performance.now(), stream, color, sinceDrop: 0, stampN: 0 });
+  stamp(color, x, y, R_SLOW * 0.6 * (0.7 + pressure), 0.22, true);
+  playDrop(y, H, 0.18);
+}
+
+function strokeMove(id, x, y, pressure) {
+  const s = strokes.get(id);
+  if (!s) return;
+  const now = performance.now();
+  const dx = x - s.x, dy = y - s.y;
+  const dist = Math.hypot(dx, dy);
+  const dt = Math.max(now - s.t, 1);
+  const speed = dist / dt;                                  // px per ms
+
+  // Slow brush → wide, wet pooling wash; fast brush → narrower, paler.
+  const norm = Math.min(speed / 2.2, 1);
+  const radius = (R_SLOW + (R_FAST - R_SLOW) * norm) * (0.6 + pressure * 0.8);
+  const alpha = (0.24 - norm * 0.14) * (0.7 + pressure * 0.5);
+
+  // Lay stamps along the segment so the wash is continuous.
+  const step = Math.max(radius * STAMP_SPACE, 1);
+  const n = Math.max(Math.floor(dist / step), 1);
+  for (let i = 1; i <= n; i++) {
+    const px = s.x + dx * (i / n);
+    const py = s.y + dy * (i / n);
+    s.stampN++;
+    stamp(s.color, px, py, radius, alpha, s.stampN % BLOOM_EVERY === 0);
+  }
+
+  // Sparse water drops, density tied to distance travelled.
+  s.sinceDrop += dist;
+  if (s.sinceDrop > 150 && Math.random() < 0.55) {
+    playDrop(y, H, 0.07 + norm * 0.06);
+    s.sinceDrop = 0;
+  }
+
+  if (s.stream) updateStream(s.stream, y, speed, H);
+  s.x = x; s.y = y; s.t = now;
+}
+
+function strokeEnd(id) {
+  const s = strokes.get(id);
+  if (!s) return;
+  if (s.stream) releaseStream(s.stream);
+  playDrop(s.y, H, 0.1);                     // a final drip as the brush lifts
+  strokes.delete(id);
+}
+
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  canvas.setPointerCapture(e.pointerId);
+  dismissHint();
+  strokeStart(e.pointerId, e.clientX, e.clientY, e.pressure || 0.5);
+}, { passive: false });
+
+canvas.addEventListener('pointermove', e => {
+  if (!strokes.has(e.pointerId)) return;
+  e.preventDefault();
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of (evs.length ? evs : [e]))
+    strokeMove(e.pointerId, ev.clientX, ev.clientY, ev.pressure || 0.5);
+}, { passive: false });
+
+['pointerup', 'pointercancel', 'pointerleave'].forEach(type =>
+  canvas.addEventListener(type, e => strokeEnd(e.pointerId)));
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  UI — palette + clear
+// ═══════════════════════════════════════════════════════════════════════════
+document.querySelectorAll('.swatch').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.querySelectorAll('.swatch').forEach(o => o.classList.remove('active'));
+    sw.classList.add('active');
+    currentColor = sw.dataset.color;
+  });
+});
+
+document.getElementById('clearBtn').addEventListener('click', paintPaper);
+
+window.addEventListener('resize', resize);
+resize();
+
+// ─── Hint ─────────────────────────────────────────────────────────────────────
+const hint = document.getElementById('hint');
+let hintGone = false;
+function dismissHint() {
+  if (hintGone) return;
+  hintGone = true;
+  hint.style.opacity = '0';
+}
+</script>
+</body>
+</html>

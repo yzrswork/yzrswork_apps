@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Grid Instrument</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; }
+    canvas { display: block; touch-action: none; }
+    .back-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 999;
+      color: rgba(0,0,0,0.3);
+      text-decoration: none;
+      font-family: 'DM Mono', ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .back-btn:hover { color: rgba(0,0,0,0.7); }
+  </style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← index</a>
+<canvas id="c"></canvas>
+<script>
+// ─── Tuning constants — edit these to retune the instrument ───────────────────
+// Pentatonic scale semitone offsets from BASE_FREQ, spanning ~3 octaves
+const PENTATONIC = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31];
+const BASE_FREQ  = 200;   // Hz at left edge → ~1250 Hz at right edge
+const GRID_COLS  = 20;    // vertical lines
+const GRID_ROWS  = 30;    // horizontal lines
+const RIPPLE_MS  = 1500;  // ripple lifetime in milliseconds
+const ARP_MS     = 120;   // milliseconds between arpeggio steps
+const ARP_STEPS  = 3;     // extra notes after the tapped note (4 total per tap)
+
+// ─── AudioContext ─────────────────────────────────────────────────────────────
+// Created lazily inside the first touchstart handler — iOS requires this.
+let actx  = null;
+let irBuf = null;  // reverb impulse response, synthesized once and cached
+
+function getACtx() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+// Synthesize a stereo reverb impulse response: exponentially-decaying noise, ~2 s
+function makeIR(ac) {
+  const sr  = ac.sampleRate;
+  const len = Math.floor(sr * 2.0);
+  const buf = ac.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++)
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.0);
+  }
+  return buf;
+}
+
+// ─── Pitch helpers ────────────────────────────────────────────────────────────
+// Map tap X position to an index into the PENTATONIC array
+function xToNoteIdx(x, w) {
+  return Math.floor(Math.min(x / w, 0.9999) * PENTATONIC.length);
+}
+
+// Convert a scale index to a frequency in Hz
+function noteIdxToFreq(idx) {
+  const semitones = PENTATONIC[Math.min(idx, PENTATONIC.length - 1)];
+  return BASE_FREQ * Math.pow(2, semitones / 12);
+}
+
+// ─── Play a single triangle tone ─────────────────────────────────────────────
+// brightness: 1 = tap near top of screen (bright/more harmonics)
+//             0 = tap near bottom (soft/fewer harmonics)
+// The low-pass filter maps brightness → cutoff (300 Hz … 9000 Hz).
+function playNote(ac, freq, brightness, t, dest) {
+  const osc      = ac.createOscillator();
+  osc.type       = 'triangle';
+  osc.frequency.value = freq;
+
+  const filt           = ac.createBiquadFilter();
+  filt.type            = 'lowpass';
+  filt.frequency.value = 300 * Math.pow(30, brightness);  // 300–9000 Hz
+  filt.Q.value         = 1.5;
+
+  // Quick attack, long exponential release
+  const env = ac.createGain();
+  const att = 0.012, rel = 1.1;
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(0.4, t + att);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + att + rel);
+
+  osc.connect(filt);
+  filt.connect(env);
+  env.connect(dest);
+  osc.start(t);
+  osc.stop(t + att + rel + 0.1);
+}
+
+// ─── Glitch burst (~30 ms white noise → distortion → bit-crush) ──────────────
+// Probability: ~12.5% per tap (within the 10–15% spec range).
+function playGlitch(ac, t, dest) {
+  const len  = Math.floor(ac.sampleRate * 0.03);
+  const buf  = ac.createBuffer(1, len, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+
+  const src  = ac.createBufferSource();
+  src.buffer = buf;
+
+  // Soft-clip distortion via WaveShaperNode
+  const amt    = 400;
+  const n      = 256;
+  const dCurve = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    dCurve[i] = ((Math.PI + amt) * x) / (Math.PI + amt * Math.abs(x));
+  }
+  const dist      = ac.createWaveShaper();
+  dist.curve      = dCurve;
+  dist.oversample = '4x';
+
+  // 4-bit quantisation (BitCrusher effect) via WaveShaperNode
+  const steps   = 16;
+  const bcCurve = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    bcCurve[i] = Math.round(x * steps) / steps;
+  }
+  const bc = ac.createWaveShaper();
+  bc.curve = bcCurve;
+
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.5, t);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+
+  src.connect(dist);
+  dist.connect(bc);
+  bc.connect(env);
+  env.connect(dest);
+  src.start(t);
+  src.stop(t + 0.035);
+}
+
+// ─── Handle one tap ───────────────────────────────────────────────────────────
+// Builds a fresh audio graph per tap (avoids node-reuse issues on iOS).
+// Signal chain:
+//   notes/glitch → master → dry → destination
+//                         → delay (with feedback loop) → delayMix → reverb → reverbMix → destination
+function handleTap(x, y, W, H) {
+  const ac = getACtx();
+  if (!irBuf) irBuf = makeIR(ac);
+
+  const master = ac.createGain();
+  master.gain.value = 0.65;
+
+  // Parallel feedback delay: delay time 0.3 s, feedback 0.4
+  const delay = ac.createDelay(1.0);
+  delay.delayTime.value = 0.3;
+  const fbGain = ac.createGain();
+  fbGain.gain.value = 0.4;
+  const delayMix = ac.createGain();
+  delayMix.gain.value = 0.4;
+
+  // Reverb fed from the delay output
+  const rev    = ac.createConvolver();
+  rev.buffer   = irBuf;
+  const revMix = ac.createGain();
+  revMix.gain.value = 0.35;
+
+  const dry = ac.createGain();
+  dry.gain.value = 0.6;
+
+  // Routing
+  master.connect(dry);
+  dry.connect(ac.destination);
+
+  master.connect(delay);
+  delay.connect(fbGain);
+  fbGain.connect(delay);       // feedback loop
+  delay.connect(delayMix);
+  delayMix.connect(rev);
+  rev.connect(revMix);
+  revMix.connect(ac.destination);
+
+  // brightness = 1 at top of screen (bright), 0 at bottom (soft)
+  const brightness = 1 - y / H;
+  const startIdx   = xToNoteIdx(x, W);
+  const now        = ac.currentTime;
+
+  // Initial note + ARP_STEPS arpeggiated notes stepping up the scale
+  for (let i = 0; i <= ARP_STEPS; i++) {
+    playNote(ac, noteIdxToFreq(startIdx + i), brightness, now + i * (ARP_MS / 1000), master);
+  }
+
+  // ~12.5% glitch probability
+  if (Math.random() < 0.125) playGlitch(ac, now, master);
+
+  // Disconnect the graph after the reverb tail has fully decayed
+  setTimeout(() => {
+    try {
+      master.disconnect(); dry.disconnect(); delay.disconnect();
+      fbGain.disconnect(); delayMix.disconnect(); rev.disconnect(); revMix.disconnect();
+    } catch (_) {}
+  }, 5000);
+}
+
+// ─── Canvas setup ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const g      = canvas.getContext('2d');
+let W = 0, H = 0;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── Ripple state ─────────────────────────────────────────────────────────────
+// Each entry: { x, y, t0 } where t0 is the rAF/performance timestamp at tap time.
+const ripples = [];
+
+// Compute radial wave displacement for grid point (bx, by) given all active ripples.
+// Each ripple emits an expanding circular wavefront that decays over RIPPLE_MS.
+function displace(bx, by, now) {
+  let dx = 0, dy = 0;
+  for (const r of ripples) {
+    const age = (now - r.t0) / RIPPLE_MS;  // 0..1
+    const ex  = bx - r.x;
+    const ey  = by - r.y;
+    const d   = Math.sqrt(ex * ex + ey * ey);
+
+    // Wavefront radius grows to cover the screen diagonal
+    const front    = age * Math.sqrt(W * W + H * H) * 1.1;
+    // Gaussian band tightly localised around the wavefront
+    const spread   = 65;
+    const envelope = Math.exp(-((d - front) ** 2) / (2 * spread * spread));
+    // Amplitude decays quadratically with age
+    const amp      = 20 * (1 - age) * (1 - age);
+    const wave     = amp * envelope * Math.sin(d * 0.04 - age * 10);
+
+    if (d > 0.5) { dx += wave * ex / d; dy += wave * ey / d; }
+  }
+  return { x: bx + dx, y: by + dy };
+}
+
+// ─── 60 fps animation loop ────────────────────────────────────────────────────
+// `now` is the DOMHighResTimeStamp from requestAnimationFrame, compatible with
+// performance.now() used when recording tap times.
+function frame(now) {
+  // Expire ripples that have fully decayed
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    if (now - ripples[i].t0 > RIPPLE_MS) ripples.splice(i, 1);
+  }
+
+  g.clearRect(0, 0, W, H);
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, W, H);
+
+  // Build all displaced grid intersection positions first, then stroke lines.
+  const live = ripples.length > 0;
+  const pts  = [];
+  for (let r = 0; r <= GRID_ROWS; r++) {
+    pts[r] = [];
+    for (let c = 0; c <= GRID_COLS; c++) {
+      const bx = (c / GRID_COLS) * W;
+      const by = (r / GRID_ROWS) * H;
+      pts[r][c] = live ? displace(bx, by, now) : { x: bx, y: by };
+    }
+  }
+
+  g.strokeStyle = '#000';
+  g.lineWidth   = 0.6;
+
+  // Horizontal lines
+  for (let r = 0; r <= GRID_ROWS; r++) {
+    g.beginPath();
+    g.moveTo(pts[r][0].x, pts[r][0].y);
+    for (let c = 1; c <= GRID_COLS; c++) g.lineTo(pts[r][c].x, pts[r][c].y);
+    g.stroke();
+  }
+
+  // Vertical lines
+  for (let c = 0; c <= GRID_COLS; c++) {
+    g.beginPath();
+    g.moveTo(pts[0][c].x, pts[0][c].y);
+    for (let r = 1; r <= GRID_ROWS; r++) g.lineTo(pts[r][c].x, pts[r][c].y);
+    g.stroke();
+  }
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ─── Input events ─────────────────────────────────────────────────────────────
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();  // prevent scroll/zoom on iOS
+  for (const t of e.changedTouches) {
+    ripples.push({ x: t.clientX, y: t.clientY, t0: performance.now() });
+    handleTap(t.clientX, t.clientY, W, H);
+  }
+}, { passive: false });
+
+// Mouse fallback for desktop testing
+canvas.addEventListener('mousedown', e => {
+  ripples.push({ x: e.clientX, y: e.clientY, t0: performance.now() });
+  handleTap(e.clientX, e.clientY, W, H);
+});
+
+// ─── "Tap to play" hint ───────────────────────────────────────────────────────
+const hint = document.createElement('div');
+hint.style.cssText =
+  'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+  'font:13px -apple-system,sans-serif;color:#bbb;pointer-events:none;' +
+  'transition:opacity 1s;letter-spacing:.14em;text-transform:uppercase;user-select:none';
+hint.textContent = 'tap to play';
+document.body.appendChild(hint);
+
+function dismissHint() {
+  hint.style.opacity = '0';
+  canvas.removeEventListener('touchstart', dismissHint);
+  canvas.removeEventListener('mousedown', dismissHint);
+}
+canvas.addEventListener('touchstart', dismissHint, { passive: true });
+canvas.addEventListener('mousedown', dismissHint);
+</script>
+</body>
+</html>

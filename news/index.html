@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>電子工作通信 — や印工務店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3;
+    --paper-2: #e8e1d4;
+    --ink: #1c1a16;
+    --ink-soft: #2b2823;
+    --muted: #6f675b;
+    --rule: #3a342c;
+    --terracotta: #b5451b;
+    --terracotta-deep: #8e3514;
+    --serif: "EB Garamond", "Times New Roman", serif;
+    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 1;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(181, 69, 27, 0.05), transparent 50%),
+      radial-gradient(ellipse at 90% 90%, rgba(60, 40, 20, 0.08), transparent 55%);
+    z-index: 1;
+  }
+
+  .page {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 28px 48px;
+  }
+
+  .mark {
+    position: absolute;
+    top: 42px;
+    right: 24px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 110px;
+    line-height: 1;
+    color: var(--terracotta);
+    opacity: 0.16;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.03em;
+    z-index: 2;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 56px;
+  }
+  .meta .vol { color: var(--ink); }
+  .meta .dot { color: var(--terracotta); }
+  .meta .back-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 200ms ease;
+  }
+  .meta .back-link:hover { color: var(--terracotta); }
+
+  header { margin-bottom: 72px; }
+  .brand-jp {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(40px, 9vw, 64px);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .brand-en {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    letter-spacing: 0.12em;
+    color: var(--terracotta);
+    margin-bottom: 28px;
+  }
+  .brand-en .em {
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--terracotta);
+  }
+  .tagline {
+    font-family: var(--jp);
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    line-height: 1.9;
+    max-width: 32ch;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+  .section-head .label-jp {
+    font-family: var(--jp);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+  }
+  .section-head .label-en {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0 0 8px;
+  }
+
+  .news-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+  }
+  .news-item {
+    border-bottom: 1px solid rgba(58, 52, 44, 0.35);
+  }
+  .news-item a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto auto;
+    column-gap: 18px;
+    row-gap: 5px;
+    padding: 22px 4px 20px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: padding-left 220ms ease, background-color 220ms ease;
+  }
+  .news-item a:hover,
+  .news-item a:focus-visible {
+    padding-left: 14px;
+    background-color: rgba(181, 69, 27, 0.04);
+    outline: none;
+  }
+  .news-item .num {
+    grid-column: 1;
+    grid-row: 1;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--terracotta);
+    letter-spacing: 0.05em;
+    align-self: baseline;
+    min-width: 28px;
+    padding-top: 1px;
+  }
+  .news-item .article-meta {
+    grid-column: 2 / 4;
+    grid-row: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .news-item .source-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+  }
+  .news-item .source-label.hackaday { color: var(--terracotta); }
+  .news-item .pub-date {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .news-item .title {
+    grid-column: 2;
+    grid-row: 2;
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(17px, 3.8vw, 22px);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    align-self: baseline;
+  }
+  .news-item .arrow {
+    grid-column: 3;
+    grid-row: 2;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--terracotta);
+    align-self: center;
+    transition: transform 220ms ease;
+  }
+  .news-item a:hover .arrow { transform: translateX(6px); }
+  .news-item .caption {
+    grid-column: 2 / 4;
+    grid-row: 3;
+    font-family: var(--jp);
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--muted);
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    max-width: 46ch;
+  }
+
+  .status-msg {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    padding: 48px 0;
+    letter-spacing: 0.08em;
+    list-style: none;
+  }
+  .fetch-warnings { margin-bottom: 40px; }
+  .fetch-warning {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin: 6px 0 0;
+  }
+
+  .colophon {
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .colophon-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .note-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 4px;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+  .note-link:hover {
+    color: var(--terracotta);
+    border-color: var(--terracotta);
+  }
+  .note-link .note-jp {
+    font-family: var(--jp);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+  .note-link .note-handle {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .note-link:hover .note-handle { color: var(--terracotta); }
+  .read-more {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .footer-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-top: 18px;
+    border-top: 1px solid rgba(58, 52, 44, 0.4);
+  }
+  .footer-meta .imprint { color: var(--ink); }
+  .footer-meta .imprint .slash {
+    color: var(--terracotta);
+    margin: 0 6px;
+  }
+  .data-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin-top: -20px;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 540px) {
+    .page { padding: 36px 22px 36px; }
+    header { margin-bottom: 56px; }
+    .mark { font-size: 78px; top: 30px; right: 16px; }
+    .news-item a { column-gap: 14px; padding: 18px 2px 16px; }
+    .news-item .num { font-size: 12px; min-width: 22px; }
+    .news-item .article-meta { flex-wrap: wrap; gap: 4px 8px; }
+    .colophon-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+  <div class="mark">y.</div>
+  <main class="page">
+
+    <div class="meta">
+      <a class="back-link" href="index.html">← Index</a>
+      <span class="vol">Vol. 02</span>
+      <span><span class="dot">●</span> News</span>
+      <span>2026 / Spring</span>
+    </div>
+
+    <header>
+      <h1 class="brand-jp">や印工務店</h1>
+      <div class="brand-en">
+        <span class="em"></span>
+        <span>電子工作通信</span>
+      </div>
+      <p class="tagline">海外と国内の工作ネタを、週刊誌のように。</p>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <span class="label-jp">最 新 記 事</span>
+        <span class="label-en">— Latest Articles</span>
+      </div>
+      <hr class="section-rule" />
+
+      <ol class="news-list" id="news-list">
+        <li class="status-msg">読み込み中…</li>
+      </ol>
+
+      <div class="fetch-warnings" id="fetch-warnings"></div>
+    </section>
+
+    <section class="colophon">
+
+      <div class="section-head">
+        <span class="label-jp">読 み も の</span>
+        <span class="label-en">— Notes &amp; Essays</span>
+      </div>
+      <hr class="section-rule" style="margin-top:-22px;" />
+
+      <div class="colophon-row">
+        <a class="note-link" href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">
+          <span class="note-jp">note で書いています</span>
+          <span class="note-handle">@yzrswork ↗</span>
+        </a>
+        <span class="read-more">制作の覚書、設計のはなし、など。</span>
+      </div>
+
+      <div class="footer-meta">
+        <span class="imprint">© や印工務店 <span class="slash">/</span> yzrswork</span>
+        <span>Updated on reload — MMXXVI</span>
+      </div>
+
+      <p class="data-note">データは Hackaday / Qiita の RSS より自動取得。更新はページをリロード。</p>
+
+    </section>
+
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ───────────────────────────────────────────────────────────────
+     * RSS / Atom news loader for や印工務店
+     *
+     * Strategy: race four CORS proxies in parallel; first success wins.
+     * Promise.any is polyfilled for iOS Safari < 14.
+     * Each source has an independent 15s budget across all four proxies.
+     * ─────────────────────────────────────────────────────────────── */
+
+    var BUDGET_MS = 15000;
+    var MAX_EACH  = 10;
+
+    var SOURCES = [
+      { id: 'hackaday',
+        url: 'https://hackaday.com/blog/feed/',
+        label: 'HACKADAY / EN', cls: 'hackaday' },
+      { id: 'qiita',
+        url: 'https://qiita.com/tags/%E9%9B%BB%E5%AD%90%E5%B7%A5%E4%BD%9C/feed',
+        label: 'QIITA / JA', cls: '' },
+    ];
+
+    /* ── HTML helpers ───────────────────────────────────────────── */
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function stripTags(html) {
+      if (!html) return '';
+      try {
+        return new DOMParser().parseFromString(String(html), 'text/html')
+                              .body.textContent || '';
+      } catch (_) {
+        return String(html).replace(/<[^>]*>/g, '');
+      }
+    }
+
+    /* iOS Safari is strict about date parsing — try multiple shapes */
+    function safeDate(s) {
+      if (!s) return new Date(0);
+      var str = String(s).trim();
+      var d = new Date(str);
+      if (!isNaN(d.getTime())) return d;
+      d = new Date(str.replace(' ', 'T'));
+      if (!isNaN(d.getTime())) return d;
+      d = new Date(str.replace(/-/g, '/'));
+      if (!isNaN(d.getTime())) return d;
+      return new Date(0);
+    }
+
+    function fmtDate(s) {
+      var d = safeDate(s);
+      if (d.getTime() === 0) return '';
+      return d.getFullYear() + '.' +
+        String(d.getMonth() + 1).padStart(2, '0') + '.' +
+        String(d.getDate()).padStart(2, '0');
+    }
+
+    function txt(el) { return el ? String(el.textContent || '').trim() : ''; }
+
+    /* ── Promise.any polyfill (iOS Safari < 14) ─────────────────── */
+    function raceForFirst(promises) {
+      return new Promise(function (resolve, reject) {
+        if (!promises.length) return reject(new Error('no candidates'));
+        var settled = false;
+        var rejectedCount = 0;
+        promises.forEach(function (p) {
+          Promise.resolve(p).then(
+            function (v) { if (!settled) { settled = true; resolve(v); } },
+            function () {
+              rejectedCount++;
+              if (rejectedCount === promises.length && !settled) {
+                reject(new Error('all proxies rejected'));
+              }
+            }
+          );
+        });
+      });
+    }
+
+    /* ── XML parsing: handles RSS 2.0 + Atom across browsers ────── */
+    /* getElementsByTagNameNS('*', name) matches by local name in
+     * any namespace — required for Qiita's Atom feed (default
+     * xmlns) and reliable across Safari / Chrome / Firefox. */
+    function elsNS(parent, name) {
+      return parent.getElementsByTagNameNS('*', name);
+    }
+
+    function parseXml(xmlStr, source) {
+      if (!xmlStr) throw new Error('empty xml');
+      var doc;
+      try {
+        doc = new DOMParser().parseFromString(xmlStr, 'application/xml');
+      } catch (e) {
+        throw new Error('parser threw: ' + e.message);
+      }
+      if (!doc || !doc.documentElement) throw new Error('no documentElement');
+      if (doc.documentElement.nodeName === 'parsererror' ||
+          doc.getElementsByTagName('parsererror').length) {
+        throw new Error('xml parse error');
+      }
+
+      var entryEls = elsNS(doc, 'entry');
+      var itemEls  = elsNS(doc, 'item');
+      var isAtom   = entryEls.length > 0;
+      var raw      = isAtom ? entryEls : itemEls;
+      if (!raw.length) throw new Error('no <entry> or <item> in feed');
+
+      var rows = Array.prototype.slice.call(raw, 0, MAX_EACH);
+
+      return rows.map(function (el) {
+        /* title */
+        var title = txt(elsNS(el, 'title')[0]) || '(no title)';
+
+        /* link */
+        var link = '';
+        if (isAtom) {
+          var ll = elsNS(el, 'link');
+          var pick = null;
+          for (var i = 0; i < ll.length; i++) {
+            var r = ll[i].getAttribute('rel');
+            if (!r || r === 'alternate') { pick = ll[i]; break; }
+          }
+          if (!pick && ll.length) pick = ll[0];
+          if (pick) link = (pick.getAttribute('href') || txt(pick)).trim();
+        } else {
+          link = txt(elsNS(el, 'link')[0]);
+        }
+        if (!link) link = '#';
+
+        /* date */
+        var dateRaw = isAtom
+          ? txt(elsNS(el, 'published')[0] || elsNS(el, 'updated')[0])
+          : txt(elsNS(el, 'pubDate')[0] || elsNS(el, 'date')[0]);
+
+        /* description / summary / content */
+        var descEl = isAtom
+          ? (elsNS(el, 'summary')[0] || elsNS(el, 'content')[0])
+          : (elsNS(el, 'description')[0] || elsNS(el, 'encoded')[0]);
+        var body = stripTags(txt(descEl)).replace(/\s+/g, ' ').trim();
+        var desc = body.length > 100 ? body.slice(0, 100) + '…' : body;
+
+        return {
+          source: source, title: title, link: link,
+          pubDate: safeDate(dateRaw),
+          pubDateStr: fmtDate(dateRaw),
+          desc: desc,
+        };
+      });
+    }
+
+    /* ── rss2json.com JSON shape ────────────────────────────────── */
+    function parseJsonItems(items, source) {
+      if (!Array.isArray(items) || !items.length) throw new Error('no items');
+      return items.slice(0, MAX_EACH).map(function (item) {
+        var body = stripTags(item.description || item.content || '')
+                     .replace(/\s+/g, ' ').trim();
+        var desc = body.length > 100 ? body.slice(0, 100) + '…' : body;
+        return {
+          source: source,
+          title: item.title || '(no title)',
+          link:  item.link  || '#',
+          pubDate:    safeDate(item.pubDate),
+          pubDateStr: fmtDate(item.pubDate),
+          desc: desc,
+        };
+      });
+    }
+
+    /* ── Four CORS proxies. Race them in parallel. ──────────────── */
+    function pAllorigins(url, source, sig) {
+      return fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url),
+                   { signal: sig })
+        .then(function (r) { if (!r.ok) throw new Error('allorigins HTTP ' + r.status); return r.json(); })
+        .then(function (j) {
+          if (!j || !j.contents) throw new Error('allorigins empty contents');
+          return parseXml(j.contents, source);
+        });
+    }
+
+    function pCorsproxy(url, source, sig) {
+      return fetch('https://corsproxy.io/?' + encodeURIComponent(url),
+                   { signal: sig })
+        .then(function (r) { if (!r.ok) throw new Error('corsproxy HTTP ' + r.status); return r.text(); })
+        .then(function (t) {
+          if (!t) throw new Error('corsproxy empty');
+          return parseXml(t, source);
+        });
+    }
+
+    function pRss2json(url, source, sig) {
+      return fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url),
+                   { signal: sig })
+        .then(function (r) { if (!r.ok) throw new Error('rss2json HTTP ' + r.status); return r.json(); })
+        .then(function (j) {
+          if (!j) throw new Error('rss2json null');
+          if (j.status && j.status !== 'ok') throw new Error('rss2json status=' + j.status);
+          return parseJsonItems(j.items || [], source);
+        });
+    }
+
+    function pCodetabs(url, source, sig) {
+      return fetch('https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
+                   { signal: sig })
+        .then(function (r) { if (!r.ok) throw new Error('codetabs HTTP ' + r.status); return r.text(); })
+        .then(function (t) {
+          if (!t) throw new Error('codetabs empty');
+          return parseXml(t, source);
+        });
+    }
+
+    var PROXIES = [pAllorigins, pCorsproxy, pRss2json, pCodetabs];
+
+    function fetchFeed(source) {
+      var ctrl  = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, BUDGET_MS);
+
+      var attempts = PROXIES.map(function (proxy) {
+        /* Wrap so each rejection is logged for diagnosis */
+        return proxy(source.url, source, ctrl.signal).catch(function (err) {
+          console.warn('[news] ' + source.id + ' / ' + proxy.name + ':', err.message);
+          throw err;
+        });
+      });
+
+      return raceForFirst(attempts)
+        .then(function (articles) {
+          clearTimeout(timer);
+          /* Cancel the other still-running proxy attempts */
+          try { ctrl.abort(); } catch (_) {}
+          return articles;
+        })
+        .catch(function (err) {
+          clearTimeout(timer);
+          throw err;
+        });
+    }
+
+    /* ── Rendering ──────────────────────────────────────────────── */
+    function setMsg(msg) {
+      document.getElementById('news-list').innerHTML =
+        '<li class="status-msg">' + esc(msg) + '</li>';
+    }
+
+    function render(articles) {
+      var list = document.getElementById('news-list');
+      list.innerHTML = '';
+      if (!articles.length) { setMsg('該当する記事がありません'); return; }
+
+      var html = articles.map(function (a, i) {
+        var num = String(i + 1).padStart(2, '0');
+        return '<li class="news-item">' +
+          '<a href="' + esc(a.link) + '" target="_blank" rel="noopener noreferrer"' +
+              ' aria-label="' + esc(a.title) + ' (' + esc(a.source.label) + ')">' +
+            '<span class="num">' + esc(num) + '</span>' +
+            '<span class="article-meta">' +
+              '<span class="source-label ' + a.source.cls + '">' + esc(a.source.label) + '</span>' +
+              '<span class="pub-date">' + esc(a.pubDateStr) + '</span>' +
+            '</span>' +
+            '<span class="title">' + esc(a.title) + '</span>' +
+            '<span class="arrow" aria-hidden="true">→</span>' +
+            (a.desc ? '<span class="caption">' + esc(a.desc) + '</span>' : '') +
+          '</a>' +
+        '</li>';
+      }).join('');
+      list.innerHTML = html;
+    }
+
+    /* ── Init ───────────────────────────────────────────────────── */
+    function init() {
+      /* Wrap each source so one failure never blocks the other */
+      var wrapped = SOURCES.map(function (src) {
+        return fetchFeed(src).then(
+          function (arts) { return { ok: true,  val: arts, src: src }; },
+          function (err)  { return { ok: false, err: err,  src: src }; }
+        );
+      });
+
+      Promise.all(wrapped).then(function (results) {
+        var all = [];
+        var failed = [];
+
+        results.forEach(function (r) {
+          if (r.ok) {
+            all = all.concat(r.val);
+          } else {
+            console.error('[news] FAILED for ' + r.src.label + ':', r.err && r.err.message);
+            failed.push(r.src.label);
+          }
+        });
+
+        if (!all.length) {
+          setMsg('記事を取得できませんでした。時間を置いて再読込してください。');
+          return;
+        }
+
+        all.sort(function (a, b) { return b.pubDate - a.pubDate; });
+        render(all);
+
+        if (failed.length) {
+          document.getElementById('fetch-warnings').innerHTML =
+            failed.map(function (l) {
+              return '<p class="fetch-warning">※ ' + esc(l) + ' の取得に失敗しました</p>';
+            }).join('');
+        }
+      }).catch(function (e) {
+        console.error('[news] critical:', e);
+        setMsg('記事を取得できませんでした。時間を置いて再読込してください。');
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>ウィルスバスターズ — VIRUS BUSTERS</title>
+<style>
+  :root{
+    --paper:#f0ebe3; --paper-2:#e8e1d4; --ink:#1c1a16; --ink-soft:#2b2823;
+    --muted:#6f675b; --terracotta:#b5451b; --terracotta-deep:#8e3514;
+    --terracotta-lite:#d98a5c; --gold:#e0a85a;
+    --jp:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#1a120c;}
+  body{
+    font-family:var(--jp); color:var(--ink);
+    touch-action:none; user-select:none; -webkit-user-select:none;
+    display:flex; align-items:center; justify-content:center;
+    width:100vw; height:100vh; height:100dvh;
+  }
+  #stage-wrap{
+    position:relative; height:100%; aspect-ratio:9/16;
+    max-width:100vw; max-height:100dvh; background:#0d0a07;
+    box-shadow:0 0 40px rgba(0,0,0,.6);
+  }
+  canvas{
+    display:block; width:100%; height:100%;
+    image-rendering:pixelated; image-rendering:crisp-edges;
+    touch-action:none;
+  }
+  /* DOM overlay menus, drawn in terracotta style over the canvas */
+  .screen{
+    position:absolute; inset:0; display:none;
+    flex-direction:column; padding:5% 6%;
+    background:rgba(28,21,15,.0); color:var(--paper);
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
+  .screen.on{display:flex;}
+  .panel{
+    background:linear-gradient(180deg,#3a2417,#2a1810);
+    border:3px solid var(--terracotta); border-radius:10px;
+    padding:14px; margin-bottom:10px;
+    box-shadow:0 4px 0 rgba(0,0,0,.4), inset 0 0 0 2px rgba(224,168,90,.15);
+  }
+  h1.title{
+    font-size:clamp(26px,8vw,46px); margin:0; line-height:1.05;
+    color:var(--gold); text-shadow:3px 3px 0 var(--terracotta-deep), 5px 5px 0 rgba(0,0,0,.5);
+    letter-spacing:.04em; text-align:center;
+  }
+  .subtitle{ text-align:center; color:var(--terracotta-lite); letter-spacing:.3em; font-size:12px; margin-top:6px;}
+  .btn{
+    display:block; width:100%; padding:12px 14px; margin:7px 0;
+    background:linear-gradient(180deg,var(--terracotta),var(--terracotta-deep));
+    color:#fff; border:2px solid var(--gold); border-radius:8px;
+    font-family:var(--jp); font-weight:700; font-size:16px; cursor:pointer;
+    box-shadow:0 3px 0 rgba(0,0,0,.4); text-align:center;
+  }
+  .btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.4); }
+  .btn.sec{ background:linear-gradient(180deg,#5a4030,#3a2417); border-color:var(--terracotta-lite); }
+  .btn.sm{ font-size:13px; padding:8px 10px; }
+  .row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .row .btn{ flex:1; }
+  .label{ color:var(--terracotta-lite); font-size:11px; letter-spacing:.2em; margin:4px 0; }
+  .muted{ color:#bca; font-size:12px; line-height:1.6; }
+  .center{ text-align:center; }
+  .grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+  .cell{
+    aspect-ratio:1; background:#241509; border:2px solid #4a3018; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+  }
+  .cell.found{ border-color:var(--gold); background:#2a1a0c; }
+  .cell canvas{ width:80%; height:80%; }
+  .cell .q{ color:#5a4530; font-size:20px; font-weight:700; }
+  .cell .kc{ position:absolute; bottom:1px; right:3px; font-size:8px; color:var(--gold); }
+  .diffsel{ display:flex; gap:6px; margin:8px 0; }
+  .diffsel .btn{ padding:8px 2px; font-size:13px; }
+  .diffsel .btn.act{ outline:3px solid var(--gold); }
+  .stagegrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .stagecell{
+    aspect-ratio:1; border:2px solid var(--terracotta); border-radius:8px;
+    background:linear-gradient(180deg,#3a2417,#2a1810); color:var(--gold);
+    font-weight:700; font-size:18px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; cursor:pointer;
+  }
+  .stagecell.lock{ opacity:.4; color:#888; border-color:#555; }
+  .stagecell .st{ font-size:9px; color:var(--terracotta-lite); margin-top:2px;}
+  .stagecell .clr{ font-size:9px; color:#7ec77e; }
+  .scrollbox{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .shopitem{ display:flex; align-items:center; gap:10px; margin:6px 0; }
+  .shopitem .info{ flex:1; }
+  .shopitem .nm{ font-weight:700; font-size:14px; color:var(--gold);}
+  .shopitem .dc{ font-size:11px; color:#bca;}
+  .coinrow{ text-align:right; color:var(--gold); font-weight:700; font-size:15px; margin-bottom:6px;}
+  .dexname{ color:var(--gold); font-weight:700; font-size:16px;}
+  .dexflv{ color:#cba; font-size:12px; line-height:1.6; margin-top:4px;}
+  .toprow{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .pixframe{ width:64px; height:64px; image-rendering:pixelated; background:#1a0f06; border:2px solid #4a3018; border-radius:6px;}
+  #rotate{ position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    background:#1a120c; color:var(--gold); font-size:18px; text-align:center; z-index:50; padding:20px;}
+</style>
+</head>
+<body>
+<div id="stage-wrap">
+  <canvas id="game"></canvas>
+
+  <!-- TITLE -->
+  <div class="screen on" id="scr-title">
+    <div style="flex:1"></div>
+    <h1 class="title">ウィルス<br>バスターズ</h1>
+    <div class="subtitle">V I R U S　B U S T E R S</div>
+    <div style="height:18px"></div>
+    <button class="btn" id="btn-start">▶ はじめる</button>
+    <button class="btn sec" id="btn-dex">ウィルス図鑑</button>
+    <button class="btn sec" id="btn-shop">売店</button>
+    <button class="btn sec" id="btn-settings">設定</button>
+    <div style="flex:1"></div>
+    <div class="muted center">白血球の群れを操り、体内に侵入したウィルスの大軍を撃退せよ。<br>画面を左右にドラッグして移動。射撃は自動。</div>
+  </div>
+
+  <!-- STAGE SELECT -->
+  <div class="screen" id="scr-select">
+    <div class="toprow"><button class="btn sec sm" data-back>← 戻る</button><span class="dexname">ステージ選択</span><span style="width:60px"></span></div>
+    <div class="label">難易度</div>
+    <div class="diffsel" id="diffsel"></div>
+    <div class="scrollbox"><div class="stagegrid" id="stagegrid"></div></div>
+  </div>
+
+  <!-- DEX -->
+  <div class="screen" id="scr-dex">
+    <div class="toprow"><button class="btn sec sm" data-back>← 戻る</button><span class="dexname">ウィルス図鑑</span><span class="dexname" id="dexpct" style="font-size:13px"></span></div>
+    <div class="scrollbox"><div class="grid" id="dexgrid"></div></div>
+    <div class="panel" id="dexdetail" style="display:none">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <canvas class="pixframe" id="dexbig"></canvas>
+        <div><div class="dexname" id="dexdname"></div><div class="muted" id="dexdtype"></div></div>
+      </div>
+      <div class="dexflv" id="dexdflv"></div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="screen" id="scr-shop">
+    <div class="toprow"><button class="btn sec sm" data-back>← 戻る</button><span class="dexname">売店</span><span style="width:60px"></span></div>
+    <div class="coinrow" id="shopcoins"></div>
+    <div class="scrollbox" id="shoplist"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="scr-settings">
+    <div class="toprow"><button class="btn sec sm" data-back>← 戻る</button><span class="dexname">設定</span><span style="width:60px"></span></div>
+    <div class="panel">
+      <div class="row"><button class="btn" id="btn-mute"></button></div>
+      <div class="muted" style="margin-top:8px">BGM・効果音のオン／オフ。</div>
+    </div>
+    <div class="panel">
+      <div class="label">セーブデータ</div>
+      <button class="btn sec" id="btn-reset">データをリセット</button>
+      <div class="muted" style="margin-top:8px">クリア状況・コイン・図鑑・強化をすべて消去します。</div>
+    </div>
+    <div style="flex:1"></div>
+    <div class="muted center">ウィルスバスターズ / や印工務店</div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="scr-result">
+    <div style="flex:1"></div>
+    <div class="panel center">
+      <h1 class="title" id="res-title" style="font-size:32px"></h1>
+      <div style="height:10px"></div>
+      <div class="muted" id="res-body"></div>
+    </div>
+    <button class="btn" id="btn-res-next">次へ</button>
+    <button class="btn sec" id="btn-res-menu">タイトルへ</button>
+    <div style="flex:1"></div>
+  </div>
+
+  <div id="rotate">📱<br>縦向きにしてプレイしてください</div>
+</div>
+
+<script>
+"use strict";
+//=================================================================
+// ウィルスバスターズ — single-file defense runner
+//=================================================================
+const VW = 270, VH = 480;           // internal pixel resolution (SNES-ish)
+const cv = document.getElementById('game');
+const ctx = cv.getContext('2d');
+cv.width = VW; cv.height = VH;
+ctx.imageSmoothingEnabled = false;
+
+//---------------- Save data ----------------
+const SAVE_KEY = 'virusbusters-v1';
+const DEFAULT_SAVE = {
+  cleared:{ easy:0, normal:0, hard:0, wtf:0 }, // highest stage index cleared per difficulty
+  coins: 0,
+  shop:{ atk:0, start:0, greed:0 },            // upgrade levels
+  dex:{},                                       // enemyId -> kills
+  muted:false,
+};
+let save = loadSave();
+function loadSave(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(!s) return structuredClone(DEFAULT_SAVE);
+    return Object.assign(structuredClone(DEFAULT_SAVE), s,
+      {cleared:Object.assign({},DEFAULT_SAVE.cleared,s.cleared),
+       shop:Object.assign({},DEFAULT_SAVE.shop,s.shop),
+       dex:s.dex||{}});
+  }catch(e){ return structuredClone(DEFAULT_SAVE); }
+}
+function persist(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }catch(e){} }
+
+//---------------- Audio (Web Audio chiptune) ----------------
+const Audio2 = (()=>{
+  let ac=null, master=null, musicGain=null, sfxGain=null, musicTimer=null, musicStep=0, curTrack=null;
+  function ensure(){
+    if(ac) return;
+    try{
+      ac = new (window.AudioContext||window.webkitAudioContext)();
+      master = ac.createGain(); master.gain.value = 0.5; master.connect(ac.destination);
+      musicGain = ac.createGain(); musicGain.gain.value = 0.28; musicGain.connect(master);
+      sfxGain = ac.createGain(); sfxGain.gain.value = 0.5; sfxGain.connect(master);
+    }catch(e){}
+  }
+  function resume(){ ensure(); if(ac && ac.state==='suspended') ac.resume(); }
+  function setMuted(m){ ensure(); if(master) master.gain.value = m?0:0.5; }
+  function beep(freq, dur, type, gainNode, vol, slideTo){
+    if(!ac) return;
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type=type||'square'; o.frequency.value=freq;
+    if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, ac.currentTime+dur);
+    g.gain.value=vol||0.3;
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+dur);
+    o.connect(g); g.connect(gainNode||sfxGain);
+    o.start(); o.stop(ac.currentTime+dur);
+  }
+  function noise(dur, vol, gainNode){
+    if(!ac) return;
+    const n=Math.floor(ac.sampleRate*dur), buf=ac.createBuffer(1,n,ac.sampleRate), d=buf.getChannelData(0);
+    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    const s=ac.createBufferSource(); s.buffer=buf;
+    const g=ac.createGain(); g.gain.value=vol||0.3;
+    s.connect(g); g.connect(gainNode||sfxGain); s.start();
+  }
+  // SFX
+  const sfx={
+    shoot(){ beep(880,0.05,'square',sfxGain,0.10,1200); },
+    laser(){ beep(440,0.08,'sawtooth',sfxGain,0.10,180); },
+    hit(){ beep(220,0.04,'square',sfxGain,0.12,120); },
+    crush(){ noise(0.18,0.35); beep(160,0.18,'square',sfxGain,0.2,60); },
+    gate(){ beep(660,0.10,'triangle',sfxGain,0.25,990); beep(990,0.10,'triangle',sfxGain,0.2,1320); },
+    power(){ beep(523,0.08,'square',sfxGain,0.3,1046); setTimeout(()=>beep(1046,0.12,'square',sfxGain,0.3,1568),80); },
+    hurt(){ noise(0.12,0.3); beep(300,0.12,'sawtooth',sfxGain,0.2,80); },
+    boss(){ beep(110,0.4,'sawtooth',sfxGain,0.35,55); noise(0.4,0.2); },
+    win(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'square',sfxGain,0.3),i*110)); },
+    lose(){ [392,330,262,196].forEach((f,i)=>setTimeout(()=>beep(f,0.22,'triangle',sfxGain,0.3),i*140)); },
+    coin(){ beep(988,0.05,'square',sfxGain,0.2); setTimeout(()=>beep(1318,0.08,'square',sfxGain,0.2),50); },
+  };
+  // simple chiptune sequences (semitone offsets, -1 = rest)
+  const TRACKS={
+    title:[0,4,7,12,7,4,0,-1, 2,5,9,14,9,5,2,-1],
+    field:[0,0,7,0, 5,5,12,5, 3,3,10,3, 7,7,14,-1],
+    boss:[0,0,3,0, -1,3,5,6, 7,7,6,5, 3,-1,0,-1],
+  };
+  function root(track){ return track==='boss'?98:130.81; } // base Hz
+  function playMusic(track){
+    ensure();
+    if(curTrack===track) return;
+    curTrack=track; musicStep=0;
+    if(musicTimer) clearInterval(musicTimer);
+    if(!ac) return;
+    const seq=TRACKS[track], base=root(track), tempo = track==='boss'?150:170;
+    musicTimer=setInterval(()=>{
+      const n=seq[musicStep%seq.length];
+      if(n>=0){
+        const f=base*Math.pow(2,n/12);
+        beep(f,0.16,'square',musicGain,0.25);
+        if(musicStep%4===0) beep(f/2,0.18,'triangle',musicGain,0.18);
+      }
+      if(musicStep%2===0) noise(0.03,0.10,musicGain); // hat
+      musicStep++;
+    }, tempo);
+  }
+  function stopMusic(){ curTrack=null; if(musicTimer){clearInterval(musicTimer); musicTimer=null;} }
+  return { resume, setMuted, sfx, playMusic, stopMusic, ensure };
+})();
+
+//---------------- Pixel sprite engine ----------------
+// Sprites are arrays of strings; each char maps to a palette color (' '/'.' = transparent).
+function makeSprite(rows, palette, scale){
+  scale = scale||1;
+  const h=rows.length, w=rows[0].length;
+  const c=document.createElement('canvas'); c.width=w*scale; c.height=h*scale;
+  const g=c.getContext('2d');
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const ch=rows[y][x];
+    if(ch===' '||ch==='.') continue;
+    g.fillStyle = palette[ch]||'#f0f';
+    g.fillRect(x*scale,y*scale,scale,scale);
+  }
+  return c;
+}
+
+// White blood cell hero sprite (8x8)
+const HERO_ROWS=[
+  "..LLLL..",
+  ".LWWWWL.",
+  ".WWEEWW.",
+  ".WWWWWW.",
+  "..WWWW..",
+  ".WW..WW.",
+  ".W....W.",
+  "WW....WW",
+];
+const HERO_PAL={ L:'#dfe7ef', W:'#ffffff', E:'#3a6ea5' };
+const heroSprite = makeSprite(HERO_ROWS, HERO_PAL, 1);
+
+// Container (12x10)
+const CONT_ROWS=[
+  "BBBBBBBBBBBB",
+  "ByyyyyyyyyyB",
+  "ByByByByByyB",
+  "ByByByByByyB",
+  "ByyyyyyyyyyB",
+  "ByByByByByyB",
+  "ByByByByByyB",
+  "ByyyyyyyyyyB",
+  "ByByByByByyB",
+  "BBBBBBBBBBBB",
+];
+const contSprite = makeSprite(CONT_ROWS, {B:'#6e4d1e', y:'#c98f3a'}, 1);
+
+// --- Virus base shapes (10x10), recolored per species ---
+const SHAPE_SPIKE=[
+  "..s..s....",
+  "s.sBBs.s..",
+  ".sBBBBs.s.",
+  "sBBHHBBs..",
+  "BBHHHHBBs.",
+  "sBBHHBBBs.",
+  ".sBBBBBs..",
+  "s.sBBBs.s.",
+  "..s.ss.s..",
+  ".s....s...",
+];
+const SHAPE_ROUND=[
+  "..BBBB....",
+  ".BBBBBB...",
+  "BBHHHHBB..",
+  "BHHWWHHB..",
+  "BHWEEWHB..",
+  "BHHWWHHB..",
+  "BBHHHHBB..",
+  ".BBBBBB...",
+  "..BBBB....",
+  "..B..B....",
+];
+const SHAPE_BLOB=[
+  "...BB.....",
+  "..BBBB.B..",
+  ".BBHHBBB..",
+  "BBHHHHBB..",
+  "BHHEEHHB..",
+  "BBHHHHBB..",
+  ".BBHHBB...",
+  "..BBBBB...",
+  ".B.BB.B...",
+  "..........",
+];
+const SHAPE_CORONA=[
+  "s.s.s.s...",
+  ".sBBBBs...",
+  "sBBHHBBs..",
+  ".BHHHHB.s.",
+  "sBHWWHBs..",
+  ".BHHHHB...",
+  "sBBHHBBs..",
+  ".sBBBBs...",
+  "s.s.s.s...",
+  "..........",
+];
+const SHAPE_ROD=[
+  "...BB.....",
+  "..BHHB....",
+  "..BHHB....",
+  "..BHHB....",
+  ".BBHHBB...",
+  ".BHHHHB...",
+  ".BHEEHB...",
+  ".BHHHHB...",
+  "..BBBB....",
+  "..s..s....",
+];
+const VIRUS_SHAPES=[SHAPE_SPIKE,SHAPE_ROUND,SHAPE_BLOB,SHAPE_CORONA,SHAPE_ROD];
+
+// --- Boss shape (16x16): Dragon-quest-troll-ish lump ---
+const BOSS_SHAPE=[
+  "....DDDDDD......",
+  "...DDDDDDDD.....",
+  "..DDHHHHHHDD....",
+  ".DDHHHHHHHHDD...",
+  ".DHHWWHHWWHHD...",
+  ".DHHWEHHWEHHD...",
+  ".DHHHHHHHHHHD...",
+  "DDHHHHHHHHHHDD..",
+  "DHHHRRRRRRHHHD..",
+  "DHHRWWWWWWRHHD..",
+  "DHHHRRRRRRHHHD..",
+  ".DHHHHHHHHHHD...",
+  ".DDHHHHHHHHDD...",
+  "..DD.DDDD.DD...",
+  ".DD...DD...DD...",
+  "DD....DD....DD..",
+];
+
+// Palette factory
+function vpal(body, dark, hi){
+  return {B:dark, H:body, W:'#ffffff', E:'#1a1a1a', s:body, D:dark, R:'#b5451b'};
+}
+
+//---------------- Enemy species database (~50) ----------------
+// type: 'minion' | 'midboss' | 'boss'
+const SPECIES=[];
+function addSp(name, type, shapeIdx, body, dark, hp, spd, flv){
+  const id=SPECIES.length;
+  SPECIES.push({id,name,type,shapeIdx,body,dark,hp,spd,flv,
+    sprite: makeSprite(type==='boss'||type==='midboss'?BOSS_SHAPE:VIRUS_SHAPES[shapeIdx], vpal(body,dark), 1)});
+}
+// --- minions (実在ウィルス系) ---
+addSp("インフルA","minion",0,"#e0584f","#7d2420",10,0.55,"毎冬おなじみ。高熱と関節痛で暴れる赤い棘玉。");
+addSp("インフルB","minion",0,"#5a8fd0","#26416b",11,0.55,"A型の相棒。流行はやや遅れてやってくる。");
+addSp("インフルC","minion",0,"#8bbf4a","#3e5e1f",10,0.5,"A・B型のかげに隠れる地味な緑の棘玉。症状は軽め。");
+addSp("コロナα","minion",3,"#d06a3a","#7a3416",12,0.5,"王冠をまとった球体。せきとともに広がる。");
+addSp("コロナβ","minion",3,"#b04ad0","#5a206b",13,0.52,"変異した王冠ウィルス。じわじわ増える。");
+addSp("コロナγ","minion",3,"#4ac0b0","#1f5e57",13,0.55,"のどの奥に潜む亜種。");
+addSp("コロナδ","minion",3,"#d0a83a","#7a601a",14,0.55,"金色の王冠。感染力が強い。");
+addSp("ノロ","minion",2,"#6ad0a8","#1f6b4f",9,0.6,"おなかを直撃する小さなブロブ。冬に大暴れ。");
+addSp("ロタ","minion",2,"#d0d04a","#6b6b1f",9,0.6,"車輪のような姿。乳児を狙う黄色いやつ。");
+addSp("アデノ","minion",1,"#d04a7a","#6b1f3e",11,0.5,"プール熱の正体。目とのどに居座る。");
+addSp("RSウィルス","minion",4,"#4a7ad0","#1f3e6b",10,0.55,"赤ちゃんの気道で増える棒状ウィルス。");
+addSp("ライノ","minion",1,"#9a9a9a","#4a4a4a",8,0.65,"ただの鼻かぜの主犯。数だけは多い。");
+addSp("パラインフル","minion",4,"#d08f4a","#6b471f",10,0.55,"クループ咳を起こす厄介者。");
+addSp("ヘルパンギーナ","minion",0,"#d04a4a","#6b1f1f",11,0.5,"夏かぜの代表。のどに水疱の地雷を撒く。");
+addSp("手足口病","minion",2,"#e07a9a","#6b2f44",10,0.55,"手・足・口に発疹を散らすいたずら者。");
+addSp("おたふく","minion",1,"#d0c04a","#6b5e1f",13,0.45,"ほっぺを腫らすムンプス。ぷっくり丸い。");
+addSp("はしか","minion",0,"#d0563a","#6b2416",14,0.5,"麻疹。全身に赤い斑点をばらまく強敵。");
+addSp("風しん","minion",1,"#d07a3a","#6b3a16",12,0.5,"三日ばしか。淡い赤でふわっと増える。");
+addSp("水ぼうそう","minion",2,"#7a9ad0","#2f446b",12,0.5,"水疱をまとった帯状の親玉の子分。");
+addSp("EBウィルス","minion",1,"#6a4ad0","#2f1f6b",13,0.45,"のどの奥でリンパを腫らす紫の球。");
+addSp("サイトメガロ","minion",2,"#4ad07a","#1f6b3a",12,0.5,"ひそかに潜伏する緑のブロブ。");
+addSp("エンテロ","minion",3,"#d0b04a","#6b5e1f",10,0.55,"夏に多い腸管ウィルス。");
+addSp("コクサッキー","minion",0,"#d04ab0","#6b1f5e",11,0.5,"手足口病の相棒。ピンクの棘玉。");
+addSp("ヒトメタ","minion",4,"#4ad0d0","#1f6b6b",11,0.5,"RSに似た気道ウィルス。");
+addSp("ボカ","minion",2,"#d0904a","#6b471f",10,0.5,"幼児の気道に潜む小型ウィルス。");
+// --- 強化/色違い variants to reach ~40 ---
+addSp("インフルA改","minion",0,"#ff3a2f","#9d1410",18,0.6);
+addSp("コロナΩ","minion",3,"#ff2aff","#7a007a",20,0.6);
+addSp("黒ノロ","minion",2,"#3a3a3a","#000000",16,0.7);
+addSp("毒ライノ","minion",1,"#3ad03a","#0f6b0f",14,0.7);
+addSp("金おたふく","minion",1,"#ffd23a","#9d7a10",22,0.5);
+addSp("紅はしか","minion",0,"#ff1a3a","#9d0010",24,0.55);
+addSp("氷RS","minion",4,"#3acfff","#0f6b9d",16,0.6);
+addSp("影アデノ","minion",1,"#4a2a6b","#1a0f30",18,0.55);
+addSp("猛コクサッキー","minion",0,"#ff4ab0","#9d1f5e",20,0.6);
+addSp("超エンテロ","minion",3,"#fff04a","#9d9010",18,0.6);
+addSp("闇コロナ","minion",3,"#1a1a3a","#000010",26,0.55);
+addSp("烈インフルB","minion",0,"#1a6aff","#0f3a9d",22,0.6);
+addSp("疫ロタ","minion",2,"#aaff1a","#5e9d00",18,0.65);
+addSp("狂アデノ","minion",1,"#ff6a1a","#9d3a00",24,0.6);
+addSp("呪サイトメガロ","minion",2,"#1aff8a","#0f9d4a",22,0.6);
+addSp("魔ヒトメタ","minion",4,"#aa1aff","#5e009d",24,0.55);
+
+const MINION_COUNT = SPECIES.length; // index range of minions
+
+// --- BOSSES (~10) 病名 + ドラクエボストロール風 ---
+const BOSS_START = SPECIES.length;
+addSp("鼻炎こぞう","midboss",0,"#d08f5a","#7a4f26",260,0.18,"副鼻腔に居座る中ボス。くしゃみの号令で子分を呼ぶ。");
+addSp("扁桃炎マスター","midboss",0,"#d05a6a","#7a2636",340,0.18,"のどを真っ赤に腫らす番人。高熱の波を放つ。");
+addSp("中耳炎将軍","boss",0,"#c97a3a","#6b3e16",520,0.16,"耳の奥に陣取る将軍。痛みの衝撃波で群れを散らす。");
+addSp("気管支炎男爵","boss",0,"#7a9a3a","#3e5616",640,0.15,"咳と痰をあやつる男爵。粘液の弾幕を吐く。");
+addSp("副鼻腔炎卿","boss",0,"#d0b03a","#7a601a",760,0.15,"顔の奥に潜む卿。鈍い圧で押しつぶしにかかる。");
+addSp("結膜炎卿","boss",0,"#d05a9a","#7a2654",880,0.14,"目を真っ赤にする貴族。涙の連弾で攻める。");
+addSp("肺炎大公","boss",0,"#5a7ad0","#26417a",1100,0.14,"肺の奥に君臨する大公。呼吸を奪う重い一撃。");
+addSp("心筋炎公爵","boss",0,"#d03a3a","#7a1616",1400,0.13,"心臓に取りつく公爵。鼓動を乱す連続攻撃。");
+addSp("脳炎魔将","boss",0,"#7a3ad0","#3e167a",1750,0.13,"神経をむしばむ魔将。幻惑の弾を四方に放つ。");
+addSp("髄膜炎魔王","boss",0,"#3a1a4a","#10001a",2600,0.12,"全ステージ最後に待ち受ける魔王。あらゆる病を従える究極のラスボス。");
+const BOSS_END = SPECIES.length;
+const BOSS_IDS = []; for(let i=BOSS_START;i<BOSS_END;i++) BOSS_IDS.push(i);
+
+//---------------- Stage data (20) ----------------
+// Themes describe background gradient + which minion ids appear.
+const THEMES=[
+  ["鼻腔","#caa","#3a2a2a"],["のど","#c99","#3a2020"],["気管","#9aa","#202a2a"],
+  ["肺","#9ab","#20262e"],["血管A","#a55","#2a1010"],["血管B","#955","#2a1414"],
+  ["心臓","#a44","#2a0e0e"],["胃","#aa6","#2a2810"],["腸","#9a7","#202810"],
+  ["肝臓","#a86","#2a1e10"],["腎臓","#88a","#1a1a2a"],["リンパ","#8aa","#182a2a"],
+  ["骨髄","#aab","#22222a"],["皮膚","#ba8","#2a2418"],["目","#9bb","#1a2a2a"],
+  ["耳","#ba9","#2a221a"],["脳幹","#a8b","#241a2a"],["神経","#9ab","#1a2030"],
+  ["全身A","#b88","#2a1a1a"],["最深部","#857","#1a1020"],
+];
+function buildStages(){
+  const st=[];
+  for(let i=0;i<20;i++){
+    const theme=THEMES[i];
+    // minion pool grows tougher as stages advance
+    const lo=Math.min(MINION_COUNT-1, Math.floor(i*1.2));
+    const hi=Math.min(MINION_COUNT-1, lo+6+Math.floor(i/3));
+    const pool=[]; for(let k=lo;k<=hi;k++) pool.push(k);
+    // midboss appears mid-stage every stage; boss at end
+    const midboss = BOSS_START + (i%2);             // alternate two midboss types
+    const boss = BOSS_IDS[Math.min(BOSS_IDS.length-1, 2 + Math.floor(i/2.4))]; // progress through bosses
+    const finalBoss = (i===19);
+    st.push({
+      idx:i, name:theme[0], bg:theme[1], fg:theme[2],
+      pool, midboss, boss: finalBoss?BOSS_IDS[BOSS_IDS.length-1]:boss,
+      length: 1800 + i*220,           // course length (in scroll units)
+      reward: 120 + i*60,
+    });
+  }
+  return st;
+}
+const STAGES = buildStages();
+
+const DIFF = {
+  easy:  {key:'easy', name:'EASY', hp:0.6, spd:0.8, dens:0.7, dmg:0.6, startMul:1.4, color:'#7ec77e'},
+  normal:{key:'normal',name:'NORMAL',hp:1.0,spd:1.0, dens:1.0, dmg:1.0, startMul:1.0, color:'#e0a85a'},
+  hard:  {key:'hard', name:'HARD', hp:1.7, spd:1.25,dens:1.5, dmg:1.5, startMul:0.8, color:'#d0563a'},
+  wtf:   {key:'wtf',  name:'WTF',  hp:3.4, spd:1.6, dens:2.6, dmg:2.4, startMul:0.55,color:'#b04ad0'},
+};
+
+//---------------- Weapon upgrade tiers ----------------
+// Picked up via containers/items. Beam unlocks at tier>=4.
+const WEAPON_TIERS=[
+  {ways:1, beam:false, beamW:0, color:'#ff4030', glow:'#ff8060'},  //0 単発
+  {ways:2, beam:false, beamW:0, color:'#ff6020', glow:'#ffa060'},  //1
+  {ways:3, beam:false, beamW:0, color:'#ffa020', glow:'#ffd080'},  //2
+  {ways:5, beam:false, beamW:0, color:'#ffd020', glow:'#ffffa0'},  //3
+  {ways:1, beam:true,  beamW:6, color:'#ffe080', glow:'#ffffd0'},  //4 ビーム化
+  {ways:1, beam:true,  beamW:11,color:'#e0ffff', glow:'#a0ffff'},  //5 太ビーム
+  {ways:3, beam:true,  beamW:14,color:'#ffffff', glow:'#c0e0ff'},  //6 3連太ビーム(最終)
+];
+
+//=================================================================
+// Game state
+//=================================================================
+let scene='title';
+const G = {
+  diff:'normal', stageIdx:0,
+  people:50, maxPeople:2000,
+  x:VW/2, targetX:VW/2,
+  weaponTier:0,
+  scroll:0, length:2000,
+  fireCd:0,
+  bullets:[], beams:[], enemies:[], gates:[], containers:[], items:[], pops:[], particles:[],
+  spawnTimer:0, midbossSpawned:false, bossSpawned:false, boss:null, bossDefeated:false,
+  coinsEarned:0, killCount:0,
+  shake:0, flash:0,
+  state:'playing', // playing | win | lose
+};
+
+function curStage(){ return STAGES[G.stageIdx]; }
+function curDiff(){ return DIFF[G.diff]; }
+function atkMul(){ return 1 + save.shop.atk*0.25; }            // shop attack upgrade
+function startPeople(){ return Math.round((40 + save.shop.start*15) * curDiff().startMul); }
+function coinMul(){ return 1 + save.shop.greed*0.15; }
+
+// damage per bullet scales with people count & shop atk
+function bulletDamage(){
+  const base = 4 * atkMul();
+  const crowdBonus = 1 + Math.min(G.people,2000)/600; // more people = harder hits
+  return base * crowdBonus;
+}
+
+//=================================================================
+// Scene / screen management
+//=================================================================
+const screens = {
+  title:'scr-title', select:'scr-select', dex:'scr-dex',
+  shop:'scr-shop', settings:'scr-settings', result:'scr-result',
+};
+function showScreen(name){
+  for(const k in screens) document.getElementById(screens[k]).classList.toggle('on', k===name);
+  // game scene hides all DOM screens
+  if(name==='game'||name===null) for(const k in screens) document.getElementById(screens[k]).classList.remove('on');
+}
+function go(s){
+  scene=s;
+  if(s==='game'){ showScreen(null); }
+  else showScreen(s);
+  if(s==='title'){ Audio2.playMusic('title'); }
+  if(s==='dex') renderDex();
+  if(s==='shop') renderShop();
+  if(s==='select') renderSelect();
+  if(s==='settings') renderSettings();
+}
+
+//=================================================================
+// Stage select / difficulty UI
+//=================================================================
+let selDiff='normal';
+function renderSelect(){
+  const ds=document.getElementById('diffsel'); ds.innerHTML='';
+  for(const k of ['easy','normal','hard','wtf']){
+    const b=document.createElement('button');
+    b.className='btn'+(k===selDiff?' act':''); b.textContent=DIFF[k].name;
+    b.style.borderColor=DIFF[k].color;
+    b.onclick=()=>{ selDiff=k; renderSelect(); };
+    ds.appendChild(b);
+  }
+  const grid=document.getElementById('stagegrid'); grid.innerHTML='';
+  const clearedUpTo = save.cleared[selDiff]; // number of stages cleared (0..20)
+  for(let i=0;i<20;i++){
+    const cell=document.createElement('div');
+    const unlocked = i<=clearedUpTo;
+    cell.className='stagecell'+(unlocked?'':' lock');
+    const isClear = i<clearedUpTo;
+    cell.innerHTML=`<div>${i+1}</div><div class="st">${STAGES[i].name}</div>`+
+      (isClear?'<div class="clr">★クリア</div>':'');
+    if(unlocked) cell.onclick=()=>startGame(i, selDiff);
+    grid.appendChild(cell);
+  }
+}
+
+//=================================================================
+// Dex UI
+//=================================================================
+function renderDex(){
+  const grid=document.getElementById('dexgrid'); grid.innerHTML='';
+  let found=0;
+  for(const sp of SPECIES){
+    const kills = save.dex[sp.id]||0;
+    if(kills>0) found++;
+    const cell=document.createElement('div');
+    cell.className='cell'+(kills>0?' found':'');
+    if(kills>0){
+      const cc=document.createElement('canvas');
+      cc.width=sp.sprite.width; cc.height=sp.sprite.height;
+      cc.getContext('2d').drawImage(sp.sprite,0,0);
+      cell.appendChild(cc);
+      const kc=document.createElement('div'); kc.className='kc'; kc.textContent=kills; cell.appendChild(kc);
+      cell.onclick=()=>showDexDetail(sp);
+    }else{
+      const q=document.createElement('div'); q.className='q'; q.textContent='?'; cell.appendChild(q);
+    }
+    grid.appendChild(cell);
+  }
+  document.getElementById('dexpct').textContent = found+'/'+SPECIES.length+' ('+Math.round(found/SPECIES.length*100)+'%)';
+  document.getElementById('dexdetail').style.display='none';
+}
+function showDexDetail(sp){
+  const d=document.getElementById('dexdetail'); d.style.display='block';
+  const big=document.getElementById('dexbig');
+  const bc=big.getContext('2d'); bc.imageSmoothingEnabled=false;
+  bc.clearRect(0,0,big.width,big.height);
+  const s=Math.floor(big.width/sp.sprite.width);
+  bc.drawImage(sp.sprite,0,0,sp.sprite.width,sp.sprite.height,0,0,sp.sprite.width*s,sp.sprite.height*s);
+  document.getElementById('dexdname').textContent=sp.name;
+  const typeLabel = sp.type==='boss'?'ボス':sp.type==='midboss'?'中ボス':'ウィルス';
+  document.getElementById('dexdtype').textContent=typeLabel+' / 撃破 '+(save.dex[sp.id]||0);
+  document.getElementById('dexdflv').textContent=sp.flv||'まだ詳しいことは分かっていない…。';
+}
+
+//=================================================================
+// Shop UI
+//=================================================================
+const SHOP_DEFS=[
+  {key:'atk', name:'血液銃の威力', desc:'仲間全員の攻撃力アップ', base:80, max:20,
+    cur:()=>'+'+(save.shop.atk*25)+'%'},
+  {key:'start',name:'初期の仲間数', desc:'ステージ開始時の人数を増やす', base:120, max:15,
+    cur:()=>'+'+(save.shop.start*15)+'人'},
+  {key:'greed',name:'コイン獲得率', desc:'もらえるコインを増やす', base:100, max:15,
+    cur:()=>'+'+(save.shop.greed*15)+'%'},
+];
+function shopCost(def){ return Math.round(def.base*Math.pow(1.5, save.shop[def.key])); }
+function renderShop(){
+  document.getElementById('shopcoins').textContent='所持コイン: '+save.coins+' 🪙';
+  const list=document.getElementById('shoplist'); list.innerHTML='';
+  for(const def of SHOP_DEFS){
+    const lvl=save.shop[def.key], maxed=lvl>=def.max, cost=shopCost(def);
+    const p=document.createElement('div'); p.className='panel';
+    p.innerHTML=`<div class="shopitem"><div class="info">
+      <div class="nm">${def.name} <span style="color:#bca;font-size:12px">Lv.${lvl}/${def.max}</span></div>
+      <div class="dc">${def.desc} ｜ 現在 ${def.cur()}</div></div></div>`;
+    const btn=document.createElement('button');
+    btn.className='btn sm';
+    if(maxed){ btn.textContent='MAX'; btn.disabled=true; btn.style.opacity=.5; }
+    else { btn.textContent=cost+' 🪙 で強化';
+      if(save.coins<cost){ btn.style.opacity=.5; }
+      btn.onclick=()=>{ if(save.coins>=cost){ save.coins-=cost; save.shop[def.key]++; persist(); Audio2.sfx.power(); renderShop(); } };
+    }
+    p.appendChild(btn); list.appendChild(p);
+  }
+}
+
+//=================================================================
+// Settings UI
+//=================================================================
+function renderSettings(){
+  document.getElementById('btn-mute').textContent = save.muted?'🔇 サウンド: OFF':'🔊 サウンド: ON';
+}
+
+//=================================================================
+// Start / run a stage
+//=================================================================
+function startGame(idx, diff){
+  G.diff=diff; G.stageIdx=idx;
+  const st=curStage();
+  G.people=Math.min(2000, startPeople());
+  G.maxPeople=2000;
+  G.x=G.targetX=VW/2;
+  G.weaponTier=0;
+  G.scroll=0; G.length=st.length;
+  G.fireCd=0;
+  G.bullets.length=0; G.beams.length=0; G.enemies.length=0; G.gates.length=0;
+  G.containers.length=0; G.items.length=0; G.pops.length=0; G.particles.length=0;
+  G.spawnTimer=0; G.midbossSpawned=false; G.bossSpawned=false; G.boss=null; G.bossDefeated=false;
+  G.coinsEarned=0; G.killCount=0; G.shake=0; G.flash=0;
+  G.state='playing';
+  go('game');
+  Audio2.resume();
+  Audio2.playMusic('field');
+}
+
+//=================================================================
+// Spawning during a run
+//=================================================================
+function spawnWave(){
+  const st=curStage(), d=curDiff();
+  const progress=G.scroll/G.length; // 0..1
+  // pick a random event
+  const r=Math.random();
+  if(r<0.40){
+    // enemy cluster
+    const n=Math.round((3+Math.random()*5)*d.dens);
+    const baseId=st.pool[Math.floor(Math.random()*st.pool.length)];
+    const sp=SPECIES[baseId];
+    const lane=20+Math.random()*(VW-40);
+    for(let k=0;k<n;k++){
+      G.enemies.push(makeEnemy(baseId,
+        lane + (Math.random()-0.5)*60,
+        -20 - k*16 - Math.random()*10));
+    }
+  }else if(r<0.62){
+    // gate (reward wall) — choose additive or multiplicative
+    spawnGate();
+  }else if(r<0.80){
+    // container
+    G.containers.push({x:30+Math.random()*(VW-60), y:-20, hp:Math.round(20*d.hp), maxHp:Math.round(20*d.hp),
+      vy:0.45*d.spd, drop:pickDrop()});
+  }else{
+    // a denser enemy stream
+    const baseId=st.pool[Math.floor(Math.random()*st.pool.length)];
+    const cols=2+Math.floor(Math.random()*3);
+    for(let c=0;c<cols;c++){
+      const lane=30+(VW-60)*(c/(cols-1||1));
+      G.enemies.push(makeEnemy(baseId,lane,-20-Math.random()*20));
+    }
+  }
+}
+function spawnGate(){
+  const mult = Math.random()<0.25;
+  let value, label, op;
+  if(mult){ op='*'; value= Math.random()<0.5?2:3; label='×'+value; }
+  else{
+    op='+';
+    const choices=[5,10,10,20,50];
+    value=choices[Math.floor(Math.random()*choices.length)];
+    label='+'+value;
+  }
+  // gate spans part of the width; sometimes two side-by-side with different values
+  const single = Math.random()<0.55;
+  if(single){
+    G.gates.push(makeGate(40, VW-40, value, op, label));
+  }else{
+    const mid=VW/2;
+    const v2 = op==='+'? value*2 : value;
+    G.gates.push(makeGate(20, mid-4, value, op, label));
+    G.gates.push(makeGate(mid+4, VW-20, v2, op, (op==='+'?'+':'×')+v2));
+  }
+}
+function makeGate(x0,x1,value,op,label){
+  return {x0,x1,y:-30,h:34,value,op,label,vy:0.5*curDiff().spd, hp:30, used:false};
+}
+function pickDrop(){
+  const r=Math.random();
+  if(r<0.45) return {type:'weapon'};
+  if(r<0.75) return {type:'coin', amount:10+Math.floor(Math.random()*20)};
+  return {type:'people', amount:20+Math.floor(Math.random()*60)};
+}
+function makeEnemy(id,x,y){
+  const sp=SPECIES[id], d=curDiff();
+  return {id,x,y,hp:sp.hp*d.hp,maxHp:sp.hp*d.hp,vy:sp.spd*d.spd*0.5,
+    w:sp.sprite.width, h:sp.sprite.height, t:Math.random()*6};
+}
+function spawnBoss(id, isMid){
+  const sp=SPECIES[id], d=curDiff();
+  const e={id, x:VW/2, y:-60, hp:sp.hp*d.hp, maxHp:sp.hp*d.hp, vy:sp.spd*d.spd*0.3,
+    w:sp.sprite.width, h:sp.sprite.height, t:0, isBoss:true, isMid:isMid,
+    atkCd:120, phase:0, entering:true};
+  G.boss=e; G.enemies.push(e);
+  Audio2.sfx.boss();
+  if(!isMid) Audio2.playMusic('boss');
+}
+
+//=================================================================
+// Update loop
+//=================================================================
+let lastT=performance.now(), acc=0;
+const STEP=1000/60;
+function frame(now){
+  let dt=now-lastT; lastT=now; if(dt>100)dt=100;
+  acc+=dt;
+  while(acc>=STEP){ if(scene==='game'&&G.state==='playing') update(); acc-=STEP; }
+  render();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+function update(){
+  const st=curStage(), d=curDiff();
+  // scroll forward until boss
+  const scrollSpeed = G.bossSpawned ? 0 : 1.0;
+  G.scroll += scrollSpeed;
+
+  // crowd movement (ease toward target)
+  G.x += (G.targetX-G.x)*0.25;
+  G.x=Math.max(14,Math.min(VW-14,G.x));
+
+  // spawn cadence
+  if(!G.bossSpawned){
+    G.spawnTimer--;
+    if(G.spawnTimer<=0){
+      spawnWave();
+      G.spawnTimer = Math.max(28, 70 - st.idx*1.5) / d.dens;
+    }
+    // midboss around 50%
+    if(!G.midbossSpawned && G.scroll>G.length*0.5){
+      G.midbossSpawned=true; spawnBoss(st.midboss, true);
+    }
+    // boss at the end
+    if(G.scroll>=G.length && !G.bossSpawned){
+      G.bossSpawned=true;
+      // clear leftover small enemies for a clean boss fight
+      spawnBoss(st.boss, false);
+    }
+  }
+
+  // auto fire
+  G.fireCd--;
+  if(G.fireCd<=0){
+    fire();
+    const tier=WEAPON_TIERS[G.weaponTier];
+    G.fireCd = tier.beam? 4 : 8;
+  }
+
+  updateBullets();
+  updateBeams();
+  updateEnemies();
+  updateGates();
+  updateContainers();
+  updateItems();
+  updateParticles();
+  updatePops();
+
+  if(G.shake>0)G.shake*=0.85;
+  if(G.flash>0)G.flash-=0.05;
+
+  // lose condition
+  if(G.people<=0){ G.people=0; endStage(false); }
+  // win condition handled in enemy death (boss)
+}
+
+function fire(){
+  const tier=WEAPON_TIERS[G.weaponTier];
+  const dmg=bulletDamage();
+  const fx=G.x, fy=VH-46;
+  if(tier.beam){
+    // beams: persistent vertical lasers for a few frames
+    const spread = tier.ways;
+    for(let i=0;i<spread;i++){
+      const off=(i-(spread-1)/2)* (tier.beamW+8);
+      G.beams.push({x:fx+off, w:tier.beamW, life:6, dmg:dmg*0.5, color:tier.color, glow:tier.glow});
+    }
+    Audio2.sfx.laser();
+  }else{
+    const ways=tier.ways;
+    for(let i=0;i<ways;i++){
+      const ang=(i-(ways-1)/2)*0.12;
+      G.bullets.push({x:fx, y:fy, vx:Math.sin(ang)*3, vy:-6, dmg, color:tier.color, glow:tier.glow, r:tier.ways>=3?2.5:3});
+    }
+    Audio2.sfx.shoot();
+  }
+}
+
+function updateBullets(){
+  for(let i=G.bullets.length-1;i>=0;i--){
+    const b=G.bullets[i];
+    b.x+=b.vx; b.y+=b.vy;
+    if(b.y<-10||b.x<-10||b.x>VW+10){ G.bullets.splice(i,1); continue; }
+    // collide enemies
+    if(hitEnemiesAt(b.x,b.y,4,b.dmg)){ G.bullets.splice(i,1); continue; }
+    // collide containers
+    if(hitContainerAt(b.x,b.y,4,b.dmg)){ G.bullets.splice(i,1); continue; }
+    // collide gates (shooting a gate increases its value)
+    if(hitGateAt(b.x,b.y,4,b.dmg)){ G.bullets.splice(i,1); continue; }
+  }
+}
+function updateBeams(){
+  for(let i=G.beams.length-1;i>=0;i--){
+    const bm=G.beams[i]; bm.life--;
+    if(bm.life<=0){ G.beams.splice(i,1); continue; }
+    // damage everything along the vertical line each frame
+    const half=bm.w/2+2;
+    for(const e of G.enemies){
+      if(Math.abs(e.x-bm.x)< half+e.w/2){ damageEnemy(e, bm.dmg); }
+    }
+    for(const c of G.containers){
+      if(Math.abs(c.x-bm.x)< half+6){ c.hp-=bm.dmg; spark(c.x,c.y,bm.color); }
+    }
+    for(const g of G.gates){
+      if(!g.used && bm.x>g.x0-half && bm.x<g.x1+half && g.y>0){ growGate(g, bm.dmg); }
+    }
+  }
+}
+function hitEnemiesAt(x,y,r,dmg){
+  for(const e of G.enemies){
+    if(x> e.x-e.w/2-r && x< e.x+e.w/2+r && y> e.y-e.h/2-r && y< e.y+e.h/2+r){
+      damageEnemy(e,dmg); spark(x,y,'#ffd080'); return true;
+    }
+  }
+  return false;
+}
+function damageEnemy(e,dmg){
+  e.hp-=dmg;
+  if(e.hp<=0 && !e.dead){
+    e.dead=true;
+    killEnemy(e);
+  }
+}
+function killEnemy(e){
+  const sp=SPECIES[e.id];
+  // record dex
+  save.dex[e.id]=(save.dex[e.id]||0)+1;
+  G.killCount++;
+  // coins for kills
+  if(Math.random()<0.3 || e.isBoss){
+    const c=Math.round((e.isBoss? (e.isMid?40:120) : 1)*coinMul());
+    G.coinsEarned+=c;
+  }
+  // explosion
+  for(let k=0;k<(e.isBoss?40:8);k++) spark(e.x+(Math.random()-0.5)*e.w, e.y+(Math.random()-0.5)*e.h, sp.body);
+  G.shake = e.isBoss?10:2;
+  // remove
+  const idx=G.enemies.indexOf(e); if(idx>=0)G.enemies.splice(idx,1);
+  if(e.isBoss){
+    if(e.isMid){ Audio2.sfx.win(); Audio2.playMusic('field'); G.boss=null; }
+    else { G.bossDefeated=true; persist(); endStage(true); }
+  }else{
+    Audio2.sfx.hit();
+  }
+}
+function updateEnemies(){
+  for(let i=G.enemies.length-1;i>=0;i--){
+    const e=G.enemies[i]; e.t+=0.05;
+    if(e.isBoss){
+      if(e.entering){ e.y+=0.8; if(e.y>=70){e.y=70; e.entering=false;} }
+      else { e.x = VW/2 + Math.sin(e.t*0.5)*70; bossAttack(e); }
+      continue;
+    }
+    e.y+=e.vy; e.x+=Math.sin(e.t)*0.3;
+    // reached the crowd line?
+    if(e.y> VH-52){
+      // contact damage scaled by difficulty
+      const dmg=Math.ceil((4+SPECIES[e.id].hp*0.3)*curDiff().dmg);
+      loseople(dmg, e.x);
+      spark(e.x,e.y,'#ff4040'); Audio2.sfx.hurt();
+      G.enemies.splice(i,1);
+    }
+  }
+}
+function bossAttack(e){
+  e.atkCd--;
+  if(e.atkCd<=0){
+    e.atkCd = e.isMid? 90 : 60;
+    // spit projectiles downward
+    const n=e.isMid?3:5;
+    for(let i=0;i<n;i++){
+      const ang=(i-(n-1)/2)*0.25;
+      G.particles.push({x:e.x, y:e.y+e.h/2, vx:Math.sin(ang)*1.5, vy:1.2+Math.random()*0.6,
+        r:3, color:SPECIES[e.id].dark, enemy:true, life:240});
+    }
+    // occasionally summon minions
+    if(!e.isMid && Math.random()<0.4){
+      const st=curStage();
+      const baseId=st.pool[Math.floor(Math.random()*st.pool.length)];
+      G.enemies.push(makeEnemy(baseId, e.x+(Math.random()-0.5)*80, e.y+20));
+    }
+  }
+}
+function loseople(dmg,x){
+  G.people-=dmg;
+  G.shake=Math.max(G.shake,4); G.flash=0.4;
+  if(G.people<0)G.people=0;
+}
+function updateGates(){
+  for(let i=G.gates.length-1;i>=0;i--){
+    const g=G.gates[i]; g.y+=g.vy;
+    if(g.y> VH+20){ G.gates.splice(i,1); continue; }
+    // crowd passes through near the player line
+    if(!g.used && g.y> VH-58 && g.y< VH-30){
+      if(G.x> g.x0-6 && G.x< g.x1+6){
+        g.used=true;
+        applyGate(g);
+      }
+    }
+  }
+}
+function applyGate(g){
+  if(g.op==='*'){ G.people=Math.min(2000, Math.round(G.people*g.value)); }
+  else { G.people=Math.min(2000, G.people + g.value); }
+  Audio2.sfx.gate();
+  G.pops.push({x:G.x, y:VH-60, text:(g.op==='*'?'×':'+')+g.value, color:'#80ffd0', life:40, vy:-0.6});
+}
+function growGate(g,dmg){
+  // shooting a + gate raises its number a bit; throttle by hp
+  g.hp-=dmg;
+  if(g.hp<=0){
+    g.hp=30;
+    if(g.op==='+'){ g.value+=5; g.label='+'+g.value; }
+    spark((g.x0+g.x1)/2, g.y, '#80c0ff');
+  }
+}
+function hitGateAt(x,y,r,dmg){
+  for(const g of G.gates){
+    if(!g.used && g.y>0 && x>g.x0 && x<g.x1 && y>g.y-r && y<g.y+g.h+r){
+      growGate(g,dmg); return false; // bullets pass through gates (don't despawn)
+    }
+  }
+  return false;
+}
+function updateContainers(){
+  for(let i=G.containers.length-1;i>=0;i--){
+    const c=G.containers[i]; c.y+=c.vy;
+    if(c.hp<=0){
+      // drop
+      dropItem(c.x,c.y,c.drop); Audio2.sfx.crush();
+      for(let k=0;k<12;k++) spark(c.x+(Math.random()-0.5)*12,c.y,'#c98f3a');
+      G.shake=3; G.containers.splice(i,1); continue;
+    }
+    if(c.y>VH+20){ G.containers.splice(i,1); continue; }
+    // container reaching crowd does small damage
+    if(c.y>VH-52){ loseople(3, c.x); G.containers.splice(i,1); }
+  }
+}
+function hitContainerAt(x,y,r,dmg){
+  for(const c of G.containers){
+    if(x>c.x-7-r && x<c.x+7+r && y>c.y-6-r && y<c.y+6+r){ c.hp-=dmg; spark(x,y,'#ffd080'); return true; }
+  }
+  return false;
+}
+function dropItem(x,y,drop){
+  G.items.push({x,y,vy:1.2,drop,t:0});
+}
+function updateItems(){
+  for(let i=G.items.length-1;i>=0;i--){
+    const it=G.items[i]; it.y+=it.vy; it.t+=0.1;
+    if(it.y>VH+20){ G.items.splice(i,1); continue; }
+    // collect near crowd line
+    if(it.y>VH-58 && Math.abs(it.x-G.x)<30){
+      collectItem(it.drop); G.items.splice(i,1);
+    }
+  }
+}
+function collectItem(drop){
+  if(drop.type==='weapon'){
+    if(G.weaponTier<WEAPON_TIERS.length-1){ G.weaponTier++; Audio2.sfx.power();
+      G.pops.push({x:G.x,y:VH-70,text:'POWER UP!',color:'#ffe080',life:50,vy:-0.5});
+    } else { G.coinsEarned+=20; Audio2.sfx.coin(); }
+  }else if(drop.type==='coin'){
+    G.coinsEarned+=Math.round(drop.amount*coinMul()); Audio2.sfx.coin();
+    G.pops.push({x:G.x,y:VH-70,text:'+'+drop.amount+'🪙',color:'#ffd060',life:40,vy:-0.5});
+  }else if(drop.type==='people'){
+    G.people=Math.min(2000,G.people+drop.amount); Audio2.sfx.gate();
+    G.pops.push({x:G.x,y:VH-70,text:'+'+drop.amount+'人',color:'#80ffd0',life:40,vy:-0.5});
+  }
+}
+function updateParticles(){
+  for(let i=G.particles.length-1;i>=0;i--){
+    const p=G.particles[i];
+    p.x+=p.vx; p.y+=p.vy; if(p.life!=null)p.life--;
+    if(p.enemy){
+      // enemy projectile hits crowd
+      if(p.y>VH-50 && Math.abs(p.x-G.x)<16){ loseople(Math.ceil(5*curDiff().dmg),p.x); G.particles.splice(i,1); continue; }
+      if(p.y>VH+10||p.life<=0){ G.particles.splice(i,1); }
+    }else{
+      p.vy+=0.06; p.life--;
+      if(p.life<=0){ G.particles.splice(i,1); }
+    }
+  }
+}
+function updatePops(){
+  for(let i=G.pops.length-1;i>=0;i--){
+    const p=G.pops[i]; p.y+=p.vy; p.life--;
+    if(p.life<=0)G.pops.splice(i,1);
+  }
+}
+function spark(x,y,color){
+  G.particles.push({x,y,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2-0.5,life:18,color,r:1.5});
+}
+
+//=================================================================
+// End of stage
+//=================================================================
+function endStage(win){
+  if(G.state!=='playing')return;
+  G.state= win?'win':'lose';
+  Audio2.stopMusic();
+  if(win){
+    Audio2.sfx.win();
+    // award coins, unlock next
+    save.coins += G.coinsEarned;
+    const prevCleared = save.cleared[G.diff];
+    if(G.stageIdx+1 > prevCleared) save.cleared[G.diff]=G.stageIdx+1;
+    persist();
+  }else{
+    Audio2.sfx.lose();
+    // still grant earned coins (partial)
+    save.coins += Math.floor(G.coinsEarned*0.5);
+    persist();
+  }
+  setTimeout(()=>showResult(win), 700);
+}
+function showResult(win){
+  go('result');
+  document.getElementById('res-title').textContent = win?'STAGE CLEAR!':'GAME OVER';
+  document.getElementById('res-title').style.color = win?'#7ec77e':'#d0563a';
+  const earned = win?G.coinsEarned:Math.floor(G.coinsEarned*0.5);
+  document.getElementById('res-body').innerHTML =
+    `撃破: ${G.killCount}体<br>最終人数: ${G.people}人<br>獲得コイン: +${earned}🪙`+
+    (win&&G.stageIdx===19?'<br><br>🎉 全ステージ制覇！魔王を倒した！':'');
+  const nextBtn=document.getElementById('btn-res-next');
+  if(win && G.stageIdx<19){ nextBtn.textContent='次のステージへ ▶'; nextBtn.style.display='block';
+    nextBtn.onclick=()=>startGame(G.stageIdx+1, G.diff); }
+  else if(!win){ nextBtn.textContent='リトライ ⟳'; nextBtn.style.display='block';
+    nextBtn.onclick=()=>startGame(G.stageIdx, G.diff); }
+  else { nextBtn.style.display='none'; }
+}
+
+//=================================================================
+// Rendering
+//=================================================================
+function render(){
+  if(scene!=='game'){ return; }
+  const st=curStage();
+  ctx.save();
+  if(G.shake>0.5){ ctx.translate((Math.random()-0.5)*G.shake,(Math.random()-0.5)*G.shake); }
+  // background gradient (体内テーマ)
+  const grad=ctx.createLinearGradient(0,0,0,VH);
+  grad.addColorStop(0,st.fg); grad.addColorStop(1,'#0d0a07');
+  ctx.fillStyle=grad; ctx.fillRect(-10,-10,VW+20,VH+20);
+  // moving "course" texture lines
+  ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
+  const off=(G.scroll*1.0)%30;
+  for(let y=-30+off;y<VH;y+=30){ ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(40,y+14); ctx.moveTo(VW-40,y); ctx.lineTo(VW-40,y+14); ctx.stroke(); }
+  // side walls
+  ctx.fillStyle='rgba(20,12,6,0.55)'; ctx.fillRect(0,0,28,VH); ctx.fillRect(VW-28,0,28,VH);
+
+  // gates
+  for(const g of G.gates){ drawGate(g); }
+  // containers
+  for(const c of G.containers){ drawContainer(c); }
+  // items
+  for(const it of G.items){ drawItem(it); }
+  // enemies
+  for(const e of G.enemies){ drawEnemy(e); }
+  // beams (under bullets)
+  for(const bm of G.beams){ drawBeam(bm); }
+  // bullets
+  for(const b of G.bullets){ drawBullet(b); }
+  // particles
+  for(const p of G.particles){
+    ctx.globalAlpha=Math.max(0,Math.min(1,(p.life||10)/18));
+    ctx.fillStyle=p.color||'#fff';
+    ctx.fillRect(p.x-(p.r||1.5),p.y-(p.r||1.5),(p.r||1.5)*2,(p.r||1.5)*2);
+    ctx.globalAlpha=1;
+  }
+  // crowd
+  drawCrowd();
+  // pops
+  for(const p of G.pops){
+    ctx.globalAlpha=Math.max(0,p.life/40);
+    ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle='#000'; ctx.fillText(p.text,p.x+1,p.y+1);
+    ctx.fillStyle=p.color; ctx.fillText(p.text,p.x,p.y);
+    ctx.globalAlpha=1;
+  }
+
+  // damage flash
+  if(G.flash>0){ ctx.fillStyle='rgba(255,40,40,'+G.flash*0.4+')'; ctx.fillRect(-10,-10,VW+20,VH+20); }
+  ctx.restore();
+
+  drawHUD();
+}
+function drawBullet(b){
+  ctx.fillStyle=b.glow; ctx.globalAlpha=0.5;
+  ctx.fillRect(b.x-b.r-1,b.y-b.r-1,(b.r+1)*2,(b.r+1)*2);
+  ctx.globalAlpha=1; ctx.fillStyle=b.color;
+  ctx.fillRect(b.x-b.r,b.y-b.r,b.r*2,b.r*2);
+}
+function drawBeam(bm){
+  const top=70;
+  ctx.globalAlpha=0.35; ctx.fillStyle=bm.glow;
+  ctx.fillRect(bm.x-bm.w/2-2, top, bm.w+4, VH-46-top);
+  ctx.globalAlpha=0.9; ctx.fillStyle=bm.color;
+  ctx.fillRect(bm.x-bm.w/2, top, bm.w, VH-46-top);
+  ctx.globalAlpha=1;
+}
+function drawEnemy(e){
+  const sp=SPECIES[e.id];
+  let s=1;
+  if(e.isBoss){ s=2; }
+  const w=sp.sprite.width*s, h=sp.sprite.height*s;
+  ctx.drawImage(sp.sprite, Math.round(e.x-w/2), Math.round(e.y-h/2), w, h);
+  // hp bar for tough/boss
+  if(e.isBoss){
+    const bw=VW-60; const ratio=Math.max(0,e.hp/e.maxHp);
+    ctx.fillStyle='#000'; ctx.fillRect(30,8,bw,8);
+    ctx.fillStyle=e.isMid?'#d0a83a':'#d0563a'; ctx.fillRect(30,8,bw*ratio,8);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.strokeRect(30,8,bw,8);
+    ctx.font='bold 9px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff';
+    ctx.fillText(sp.name+(e.isMid?'（中ボス）':'（ボス）'),VW/2,24);
+  } else if(e.hp<e.maxHp){
+    ctx.fillStyle='#000'; ctx.fillRect(e.x-7,e.y-h/2-3,14,2);
+    ctx.fillStyle='#7ec77e'; ctx.fillRect(e.x-7,e.y-h/2-3,14*(e.hp/e.maxHp),2);
+  }
+}
+function drawContainer(c){
+  const s=1.2, w=contSprite.width*s, h=contSprite.height*s;
+  ctx.drawImage(contSprite, Math.round(c.x-w/2), Math.round(c.y-h/2), w, h);
+  // crack overlay as hp drops
+  ctx.fillStyle='#fff'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#241509'; ctx.fillText('★', c.x, c.y+3);
+  if(c.hp<c.maxHp){
+    ctx.fillStyle='#000'; ctx.fillRect(c.x-8,c.y+h/2,16,2);
+    ctx.fillStyle='#e07a3a'; ctx.fillRect(c.x-8,c.y+h/2,16*(c.hp/c.maxHp),2);
+  }
+}
+function drawGate(g){
+  const w=g.x1-g.x0;
+  // translucent blue wall like the screenshot
+  ctx.fillStyle='rgba(60,140,230,0.30)';
+  ctx.fillRect(g.x0,g.y,w,g.h);
+  ctx.strokeStyle='rgba(150,200,255,0.8)'; ctx.lineWidth=2; ctx.strokeRect(g.x0,g.y,w,g.h);
+  ctx.font='bold 16px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#fff'; ctx.fillText(g.label,(g.x0+g.x1)/2,g.y+g.h/2+6);
+}
+function drawItem(it){
+  const bob=Math.sin(it.t*2)*2;
+  let icon='?', col='#ffd060';
+  if(it.drop.type==='weapon'){ icon='⚡'; col='#ffe080'; }
+  else if(it.drop.type==='coin'){ icon='🪙'; col='#ffd060'; }
+  else if(it.drop.type==='people'){ icon='＋'; col='#80ffd0'; }
+  ctx.font='14px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=col; ctx.fillText(icon, it.x, it.y+bob);
+}
+function drawCrowd(){
+  // visual formation: cap drawn sprites, show count label
+  const n=G.people;
+  const drawN=Math.min(90, Math.max(1, Math.round(n/ (n>400?12 : n>100?5 : 1))));
+  const baseY=VH-44;
+  const cols=Math.min(9, Math.ceil(Math.sqrt(drawN*1.4)));
+  for(let i=0;i<drawN;i++){
+    const row=Math.floor(i/cols), col=i%cols;
+    const spread=Math.min(46, 8+drawN*0.5);
+    const px=G.x + (col-(cols-1)/2)*(spread/cols);
+    const py=baseY + row*5 - Math.sin((performance.now()/200)+i)*0.6;
+    ctx.drawImage(heroSprite, Math.round(px-4), Math.round(py-4), 8,8);
+  }
+  // count label
+  ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='#000'; ctx.fillText(n+'人', G.x+1, baseY-12+1);
+  ctx.fillStyle='#fff'; ctx.fillText(n+'人', G.x, baseY-12);
+}
+function drawHUD(){
+  // top-left people + weapon
+  ctx.textAlign='left'; ctx.font='bold 10px sans-serif';
+  ctx.fillStyle='rgba(28,16,8,0.7)'; ctx.fillRect(4,VH-16,150,14);
+  ctx.fillStyle='#ffd9b0';
+  const tierName=WEAPON_TIERS[G.weaponTier].beam?('ビームLv'+G.weaponTier):('ショットx'+WEAPON_TIERS[G.weaponTier].ways);
+  ctx.fillText('武器:'+tierName+'  🪙'+G.coinsEarned, 7, VH-6);
+  // progress bar (top)
+  if(!G.bossSpawned){
+    const p=Math.min(1,G.scroll/G.length);
+    ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fillRect(34,2,VW-68,4);
+    ctx.fillStyle='#e0a85a'; ctx.fillRect(34,2,(VW-68)*p,4);
+  }
+  // mute / pause buttons drawn as canvas zones (top corners)
+  ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(28,16,8,0.6)';
+  ctx.fillRect(VW-26,VH-20,22,18);
+  ctx.fillStyle='#fff'; ctx.fillText('⏸', VW-15, VH-7);
+}
+
+//=================================================================
+// Input — drag anywhere to move the crowd; canvas zones for pause
+//=================================================================
+function canvasPos(ev){
+  const r=cv.getBoundingClientRect();
+  const t=ev.touches? ev.touches[0] : ev;
+  return { x:(t.clientX-r.left)/r.width*VW, y:(t.clientY-r.top)/r.height*VH };
+}
+let dragging=false;
+function pointerDown(ev){
+  if(scene!=='game') return;
+  Audio2.resume();
+  const p=canvasPos(ev);
+  // pause zone (bottom-right)
+  if(p.x>VW-30 && p.y>VH-24){ togglePause(); return; }
+  dragging=true; G.targetX=p.x;
+  ev.preventDefault();
+}
+function pointerMove(ev){
+  if(!dragging||scene!=='game')return;
+  const p=canvasPos(ev); G.targetX=p.x; ev.preventDefault();
+}
+function pointerUp(){ dragging=false; }
+cv.addEventListener('touchstart',pointerDown,{passive:false});
+cv.addEventListener('touchmove',pointerMove,{passive:false});
+cv.addEventListener('touchend',pointerUp);
+cv.addEventListener('mousedown',pointerDown);
+cv.addEventListener('mousemove',pointerMove);
+cv.addEventListener('mouseup',pointerUp);
+
+let paused=false;
+function togglePause(){
+  paused=!paused;
+  if(paused){ G.state='paused'; Audio2.stopMusic();
+    // simple confirm overlay using result screen? keep minimal: show menu
+    if(confirm('一時停止中。タイトルへ戻りますか？（キャンセルで続行）')){
+      paused=false; go('title');
+    } else { paused=false; G.state='playing'; Audio2.playMusic(G.bossSpawned?'boss':'field'); }
+  }
+}
+
+//=================================================================
+// Wire up DOM buttons
+//=================================================================
+document.getElementById('btn-start').onclick=()=>{ Audio2.resume(); go('select'); };
+document.getElementById('btn-dex').onclick=()=>{ Audio2.resume(); go('dex'); };
+document.getElementById('btn-shop').onclick=()=>{ Audio2.resume(); go('shop'); };
+document.getElementById('btn-settings').onclick=()=>{ Audio2.resume(); go('settings'); };
+document.querySelectorAll('[data-back]').forEach(b=> b.onclick=()=>go('title'));
+document.getElementById('btn-res-menu').onclick=()=>go('title');
+document.getElementById('btn-mute').onclick=()=>{ save.muted=!save.muted; Audio2.setMuted(save.muted); persist(); renderSettings(); };
+document.getElementById('btn-reset').onclick=()=>{
+  if(confirm('本当にすべてのデータを消去しますか？')){
+    save=structuredClone(DEFAULT_SAVE); persist(); renderSettings(); alert('リセットしました。');
+  }
+};
+
+// orientation hint
+function checkOrient(){
+  const land = window.innerWidth>window.innerHeight*1.15;
+  document.getElementById('rotate').style.display = land? 'flex':'none';
+}
+window.addEventListener('resize',checkOrient);
+checkOrient();
+
+// init audio mute state, start title music on first interaction
+Audio2.ensure(); Audio2.setMuted(save.muted);
+document.body.addEventListener('touchstart',()=>{ Audio2.resume(); if(scene==='title')Audio2.playMusic('title'); },{once:true});
+document.body.addEventListener('mousedown',()=>{ Audio2.resume(); if(scene==='title')Audio2.playMusic('title'); },{once:true});
+
+go('title');
+</script>
+</body>
+</html>

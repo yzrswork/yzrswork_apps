@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>あそぼう！</title>
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<a id="back-to-index" href="../index.html" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:calc(env(safe-area-inset-left,0px) + 12px);z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(74,63,53,0.55);text-decoration:none;background:rgba(255,255,255,0.7);padding:6px 10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.06);">← index</a>
+<div id="app">
+  <!-- スプラッシュ -->
+  <section id="screen-splash" class="screen active" aria-label="スプラッシュ">
+    <div class="splash-inner">
+      <div class="splash-emoji">🌈</div>
+      <h1 class="splash-title">あそぼう！</h1>
+    </div>
+  </section>
+
+  <!-- メニュー -->
+  <section id="screen-menu" class="screen" aria-label="メニュー">
+    <header class="topbar">
+      <div class="topbar-spacer"></div>
+      <h1 class="menu-title">あそぼう！</h1>
+      <button class="icon-btn mute-btn" data-action="toggle-mute" aria-label="音のオンオフ">🔊</button>
+    </header>
+    <div class="menu-grid">
+      <button class="menu-card" data-game="color" style="--card-bg:#FFE5EC">
+        <span class="menu-emoji">🎨</span>
+        <span class="menu-label">いろ</span>
+      </button>
+      <button class="menu-card" data-game="shape" style="--card-bg:#FFF4E0">
+        <span class="menu-emoji">⭐</span>
+        <span class="menu-label">かたち</span>
+      </button>
+      <button class="menu-card" data-game="count" style="--card-bg:#E0F4FF">
+        <span class="menu-emoji">🍎</span>
+        <span class="menu-label">かぞえる</span>
+      </button>
+      <button class="menu-card" data-game="piano" style="--card-bg:#F0E5FF">
+        <span class="menu-emoji">🎹</span>
+        <span class="menu-label">おと</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ゲーム共通シェル -->
+  <section id="screen-game" class="screen" aria-label="ゲーム">
+    <header class="topbar">
+      <button class="icon-btn home-btn" data-action="home" aria-label="メニューに戻る">🏠</button>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn mute-btn" data-action="toggle-mute" aria-label="音のオンオフ">🔊</button>
+    </header>
+    <div id="game-stage" class="game-stage"></div>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
