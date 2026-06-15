@@ -63,6 +63,7 @@
   .affi{background:#fbf4ec; border:1px dashed var(--terra); }
   .affi h2{color:var(--terra-d)}
   .affi .slot{font-size:.86rem; color:var(--sub); padding:8px 0}
+  .affi-link{display:inline-block; margin-left:4px; color:var(--terra-d); font-weight:600; text-decoration:underline}
   .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600}
   .muted{color:var(--sub); font-size:.78rem}
   footer{text-align:center; margin-top:22px}
@@ -118,12 +119,12 @@
   <div id="affiCard" class="card affi hidden">
     <h2 class="sec">塗るなら、あると便利な道具</h2>
     <div class="slot">
-      <!-- AFFILIATE: 非接触温湿度計 / 温湿度計 -->
-      乾燥管理に温湿度計、ひとつあると安心です。[LINK]
+      <!-- AFFILIATE slot 0: 温湿度計 -->
+      <span class="affi-text">乾燥管理に温湿度計、ひとつあると安心です。</span>
     </div>
     <div class="slot">
-      <!-- AFFILIATE: 塗料(条件に応じて) -->
-      この気温帯ならこの塗料、という紹介枠。[LINK]
+      <!-- AFFILIATE slot 1: 塗料(条件に応じて) -->
+      <span class="affi-text">この気温帯ならこの塗料、という紹介枠。</span>
     </div>
   </div>
 
@@ -175,6 +176,37 @@ const CONFIG = {
   WORK_END: 17,         // 作業時間帯の終了 (時)
   MIN_OK_HOURS: 3       // 「今日OK」と言える連続OK時間数の目安
 };
+
+/* ============================================================
+   アフィリエイト枠 (Amazonアソシエイト)
+   - tag を入れた瞬間に下の2スロットが実リンクになる。
+     未設定(tag:"")の間は説明文のみ表示(リンクなし)。審査通過後に設定すること。
+   - 各 item: asin があれば商品ページ直リンク、無ければ search 語で検索結果リンク。
+   - 例: tag:"yzrswork-22", items[0].asin:"B0xxxxxxxx"
+   ============================================================ */
+const AFF = {
+  tag: "",  // - アソシエイトタグ (例 "yzrswork-22")。空の間はリンクを出さない
+  items: [
+    { asin: "", search: "温湿度計" },        // slot 0
+    { asin: "", search: "外壁 塗料 油性" }   // slot 1
+  ]
+};
+function renderAffiliate(){
+  if(!AFF.tag) return;  // 未設定なら既定の説明文のまま
+  const slots = document.querySelectorAll('#affiCard .slot');
+  AFF.items.forEach((it, i)=>{
+    const s = slots[i]; if(!s) return;
+    const old = s.querySelector('.affi-link'); if(old) old.remove();  // 再描画時の重複防止
+    const href = it.asin
+      ? 'https://www.amazon.co.jp/dp/'+encodeURIComponent(it.asin)+'/?tag='+encodeURIComponent(AFF.tag)
+      : 'https://www.amazon.co.jp/s?k='+encodeURIComponent(it.search)+'&tag='+encodeURIComponent(AFF.tag);
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener sponsored nofollow';
+    a.className = 'affi-link'; a.textContent = 'Amazonで見る';
+    s.appendChild(document.createTextNode(' '));
+    s.appendChild(a);
+  });
+}
 
 const $ = id => document.getElementById(id);
 const set = (el, cls) => { el.className = el.className.replace(/\b(ok|ng|warn)\b/g,'').trim()+' '+cls; };
@@ -321,6 +353,7 @@ function render(data, placeName){
 
   $('place').textContent = placeName ? ('地点: '+placeName) : '';
   ['result','hoursCard','daysCard','affiCard'].forEach(id=>$(id).classList.remove('hidden'));
+  renderAffiliate();
   $('error').classList.add('hidden');
 }
 
