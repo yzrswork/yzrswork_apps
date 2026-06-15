@@ -255,7 +255,7 @@ async function geocode(q){
    - compact に露点は無いので気温と湿度から Magnus 式で算出(dewPoint。=データ加工、帰属に明記)。
    - 風速は m/s で返る(Open-Meteo の既定 km/h とは別単位)。CONFIG の風閾値は m/s 基準。
    WEATHER_PROXY: 自分の Worker の URL に差し替える(末尾スラッシュなし)。 */
-const WEATHER_PROXY = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
+const WEATHER_PROXY = 'https://nurerukun-weather.yzrswork.workers.dev';
 async function getForecast(lat, lon){
   const url = WEATHER_PROXY + '/forecast?lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);
   const r = await fetch(url);
