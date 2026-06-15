@@ -67,6 +67,7 @@
   .affi-link{display:inline-block; margin-left:4px; color:var(--terra-d); font-weight:600; text-decoration:underline}
   .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600}
   .muted{color:var(--sub); font-size:.78rem}
+  .muted a{color:inherit; text-decoration:underline}
   footer{text-align:center; margin-top:22px}
   .err{color:var(--ng); font-size:.88rem}
   .spin{display:inline-block; width:16px; height:16px; border:2px solid var(--line); border-top-color:var(--terra); border-radius:50%; animation:s .8s linear infinite; vertical-align:-3px}
@@ -137,7 +138,7 @@
 
   <footer>
     <p class="muted">判定はあくまで目安です。最終判断は現場の状況と塗料の仕様書で。</p>
-    <p class="muted">天気データ: MET Norway (met.no) / 住所検索: 国土地理院</p>
+    <p class="muted">天気データ: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 住所検索: 国土地理院</p>
   </footer>
 </div>
 
@@ -245,16 +246,18 @@ async function geocode(q){
   return { lat, lon, name: j[0].properties.title };
 }
 
-/* --- 予報取得 (MET Norway Locationforecast 2.0, キー不要・無料・商用可) ---
-   Open-Meteo の無料ホスト版は「非商用限定」のため、アフィリエイト収益化(=商用)と
-   利用規約が衝突する。商用可(帰属表示が条件・CC BY 4.0)の met.no へ移行した。
-   - compact 版に露点は含まれないので、気温と湿度から Magnus 式で算出する(dewPoint)。
+/* --- 予報取得 (MET Norway Locationforecast 2.0 を Cloudflare Worker proxy 経由で取得) ---
+   Open-Meteo 無料版は非商用限定でアフィリエイト収益化(=商用)と衝突するため met.no へ移行。
+   met.no は商用可(CC BY 4.0)だが、規約で「連絡先を含む識別 User-Agent」「caching proxy」を求め、
+   「ブラウザからの直アクセスは本番非推奨」としている(ブラウザでは UA を付けられず CORS も通らない)。
+   そこで無料の Cloudflare Worker proxy を1枚挟み、UA・キャッシュ・CORS を満たして規約へ完全準拠させる。
+   proxy の実体とデプロイ手順は cloudflare-worker/ を参照。
+   - compact に露点は無いので気温と湿度から Magnus 式で算出(dewPoint。=データ加工、帰属に明記)。
    - 風速は m/s で返る(Open-Meteo の既定 km/h とは別単位)。CONFIG の風閾値は m/s 基準。
-   - met.no は識別可能な User-Agent を要求するが、ブラウザからは UA を変更できない。
-     ブラウザ既定の UA であれば通る(拒否されるのはボット系 UA)。帰属はフッターに明記。 */
+   WEATHER_PROXY: 自分の Worker の URL に差し替える(末尾スラッシュなし)。 */
+const WEATHER_PROXY = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
 async function getForecast(lat, lon){
-  const url = 'https://api.met.no/weatherapi/locationforecast/2.0/compact'
-    +'?lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);  // 座標は4桁に丸める(met.no推奨)
+  const url = WEATHER_PROXY + '/forecast?lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);
   const r = await fetch(url);
   if(!r.ok) throw new Error('天気の取得に失敗しました');
   return r.json();
