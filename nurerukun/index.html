@@ -178,34 +178,55 @@ const CONFIG = {
 };
 
 /* ============================================================
-   アフィリエイト枠 (Amazonアソシエイト)
-   - tag を入れた瞬間に下の2スロットが実リンクになる。
-     未設定(tag:"")の間は説明文のみ表示(リンクなし)。審査通過後に設定すること。
-   - 各 item: asin があれば商品ページ直リンク、無ければ search 語で検索結果リンク。
-   - 例: tag:"yzrswork-22", items[0].asin:"B0xxxxxxxx"
+   アフィリエイト枠 (Amazonアソシエイト) -- 合わせ技モード
+   - tag を空にすると枠は説明文のみ(リンクなし)に戻る。
+   - スロット①(乾燥管理): 通常日は normal から、露点、低温、高湿リスクの日は
+     risk(高機能機)から1点をランダム表示。判定結果に連動。
+   - スロット②(段取り): items から毎回1点をランダム表示。
+   - 商品追加は asin と linkId(SiteStripeのリンクから)を足すだけ。
    ============================================================ */
 const AFF = {
   tag: "yzrswork-22",  // アソシエイトタグ。空にするとリンクを出さない
-  items: [
-    { asin: "", search: "温湿度計" },        // slot 0
-    { asin: "", search: "外壁 塗料 油性" }   // slot 1
-  ]
+  dry: {  // スロット① 乾燥管理
+    lead: "乾燥管理に、これがあると安心:",
+    normal: [
+      { name: "シンワ 放射温度計 B(73010)", asin: "B003004HSI", linkId: "d6e9f8a8a98846e1eb38ea572062b428" }
+    ],
+    risk: [  // 露点、低温、高湿の日に出す高機能機
+      { name: "シンワ 放射温度計 E(73036) 防塵防水", asin: "B007MUO8UO", linkId: "dc707b01d09beabdd6f4c80b66033403" },
+      { name: "testo 605i 温湿度計(露点を自動演算)", asin: "B098NGNFP9", linkId: "354398ebdb4b0d5962ada7a95e831945" }
+    ]
+  },
+  tools: {  // スロット② 段取り
+    lead: "段取りに、職人の定番:",
+    items: [
+      { name: "大塚刷毛 PEACH ローラー", asin: "B009A30O4A", linkId: "7f5b7ac67df188f2a09754e391bcd429" },
+      { name: "大塚刷毛 オールワン ローラー", asin: "B09Z2B3KYQ", linkId: "b1308c058843ad9cc87ec18b943dc8e0" },
+      { name: "カモ井 ルパンクーペ マスキングテープ", asin: "B083XC4PRJ", linkId: "ea502df7fe66edbca440509ca478c816" },
+      { name: "3M スコッチ 塗装用マスキングテープ", asin: "B005JWNJZM", linkId: "a70040146e246620d329aab9f8429544" }
+    ]
+  }
 };
-function renderAffiliate(){
+function affHref(it){
+  return 'https://www.amazon.co.jp/dp/'+encodeURIComponent(it.asin)+'?tag='+encodeURIComponent(AFF.tag)
+    + (it.linkId ? '&linkId='+encodeURIComponent(it.linkId) : '');
+}
+function affPick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function affFill(slot, lead, it){
+  if(!slot || !it) return;
+  slot.textContent = '';  // 既定の説明文/前回の表示をクリア(再描画で重複しない)
+  const t = document.createElement('span'); t.className = 'affi-text'; t.textContent = lead + ' ';
+  const a = document.createElement('a');
+  a.href = affHref(it); a.target = '_blank'; a.rel = 'noopener sponsored nofollow';
+  a.className = 'affi-link'; a.textContent = it.name;
+  slot.appendChild(t); slot.appendChild(a);
+}
+/* dryRisk: 今日の作業時間帯に低温・露点近・高湿があれば true (乾燥管理が重要な日) */
+function renderAffiliate(dryRisk){
   if(!AFF.tag) return;  // 未設定なら既定の説明文のまま
   const slots = document.querySelectorAll('#affiCard .slot');
-  AFF.items.forEach((it, i)=>{
-    const s = slots[i]; if(!s) return;
-    const old = s.querySelector('.affi-link'); if(old) old.remove();  // 再描画時の重複防止
-    const href = it.asin
-      ? 'https://www.amazon.co.jp/dp/'+encodeURIComponent(it.asin)+'/?tag='+encodeURIComponent(AFF.tag)
-      : 'https://www.amazon.co.jp/s?k='+encodeURIComponent(it.search)+'&tag='+encodeURIComponent(AFF.tag);
-    const a = document.createElement('a');
-    a.href = href; a.target = '_blank'; a.rel = 'noopener sponsored nofollow';
-    a.className = 'affi-link'; a.textContent = 'Amazonで見る';
-    s.appendChild(document.createTextNode(' '));
-    s.appendChild(a);
-  });
+  affFill(slots[0], AFF.dry.lead, affPick(dryRisk ? AFF.dry.risk : AFF.dry.normal));
+  affFill(slots[1], AFF.tools.lead, affPick(AFF.tools.items));
 }
 
 const $ = id => document.getElementById(id);
@@ -353,7 +374,12 @@ function render(data, placeName){
 
   $('place').textContent = placeName ? ('地点: '+placeName) : '';
   ['result','hoursCard','daysCard','affiCard'].forEach(id=>$(id).classList.remove('hidden'));
-  renderAffiliate();
+  // 今日の作業時間帯に低温、露点近、高湿があれば乾燥管理が重要なので高機能機を出す
+  const dryRisk = sum.work.some(h =>
+    h.temp < CONFIG.TEMP_LOW_WARN ||
+    (h.temp - h.dew) < CONFIG.DEWPOINT_WARN ||
+    h.humidity >= CONFIG.HUMIDITY_WARN);
+  renderAffiliate(dryRisk);
   $('error').classList.add('hidden');
 }
 
