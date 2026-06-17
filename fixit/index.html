@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>直し方ナビ — Fix-it Navigator</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="直し方ナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://yzrswork.github.io/yzrswork_apps/fixit/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="直し方ナビ — Fix-it Navigator" />
+<meta property="og:description" content="よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
+<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/fixit/" />
+<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-fixit.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="直し方ナビ — Fix-it Navigator" />
+<meta name="twitter:description" content="質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
+<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-fixit.png" />
+<meta name="description" content="iPhoneのYahoo!メールが繋がらない、Windows11 24H2で共有フォルダが見えない。よくあるトラブルを質問に答えるだけで切り分ける、オフライン対応の診断ナビ。" />
+<script async src="/yzrswork_apps/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3;
+    --paper-2: #e8e1d4;
+    --card: #f6f2ea;
+    --ink: #1c1a16;
+    --ink-soft: #2b2823;
+    --muted: #6f675b;
+    --rule: #3a342c;
+    --rule-soft: rgba(58, 52, 44, 0.28);
+    --terracotta: #b5451b;
+    --terracotta-deep: #8e3514;
+    --ok: #4f6f3e;
+    --serif: "EB Garamond", "Times New Roman", serif;
+    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); cursor: pointer; }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header (home) ───────────────────── */
+  header.hero { margin-bottom: 30px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(30px, 8vw, 42px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 12px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    max-width: 36ch;
+    margin: 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 30px 0 12px;
+  }
+
+  /* ── Tree menu cards ─────────────────── */
+  .menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .menu-card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    padding: 18px 18px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 180ms ease, transform 120ms ease;
+    font-family: var(--jp);
+  }
+  .menu-card:hover, .menu-card:focus-visible {
+    border-color: var(--terracotta);
+    outline: none;
+    transform: translateX(2px);
+  }
+  .menu-card .mc-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--terracotta);
+    letter-spacing: 0.05em;
+  }
+  .menu-card .mc-title {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 4px 0 6px;
+  }
+  .menu-card .mc-sub {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .menu-card .mc-go {
+    font-family: var(--mono);
+    color: var(--terracotta);
+    font-size: 13px;
+    margin-top: 10px;
+    display: inline-block;
+  }
+
+  /* ── Progress / crumb ────────────────── */
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .crumb .back {
+    background: none;
+    border: 1px solid var(--rule-soft);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .crumb .back:hover { border-color: var(--terracotta); color: var(--terracotta); }
+  .crumb .now { color: var(--ink); }
+
+  /* ── Node card ───────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+  }
+  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.win { border-color: var(--terracotta); }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .card.solution .kicker { color: var(--ok); }
+  .qtext {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.45;
+    margin: 0 0 12px;
+  }
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(181, 69, 27, 0.05);
+    border-left: 3px solid var(--terracotta);
+    padding: 9px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 16px;
+  }
+  .warn {
+    font-size: 13.5px;
+    color: var(--terracotta-deep);
+    background: rgba(181, 69, 27, 0.09);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  ol.steps {
+    margin: 4px 0 18px;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  ol.steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 8px 0 8px 38px;
+    border-bottom: 1px dashed var(--rule-soft);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card.solution ol.steps li::before { background: var(--ok); }
+  ol.steps code, .qtext code, .help code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--paper-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    word-break: break-all;
+  }
+
+  /* ── Option buttons ──────────────────── */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .opt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: var(--jp);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease;
+  }
+  .opt:hover, .opt:focus-visible {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: #fff;
+    outline: none;
+  }
+  .opt .arrow { font-family: var(--mono); opacity: 0.7; }
+  .opt.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .opt.primary:hover { background: var(--terracotta-deep); }
+  .opt.ghost { background: transparent; border-color: var(--rule-soft); color: var(--muted); font-weight: 400; }
+  .opt.ghost:hover { background: var(--paper-2); color: var(--ink); border-color: var(--rule); }
+
+  /* ── Links / affiliate ───────────────── */
+  .extras { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule-soft); }
+  .ext-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+    margin-bottom: 10px;
+  }
+  .ext-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .affiliate {
+    display: block;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    text-align: center;
+    border-radius: 9px;
+    padding: 13px 16px;
+    font-weight: 700;
+    font-size: 14.5px;
+    margin-top: 8px;
+    transition: background 160ms ease;
+  }
+  .affiliate:hover { background: var(--terracotta); }
+  .affiliate .sub { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; opacity: 0.7; margin-top: 3px; letter-spacing: 0.04em; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 26, 22, 0.55);
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 22px 20px;
+    max-width: 420px;
+    width: 100%;
+    border: 1px solid var(--rule);
+  }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    font-family: var(--jp);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand" id="brand"><span class="dot">●</span> 直し方ナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <div id="app"></div>
+
+    <footer>
+      <div>
+        困りごとが解決したら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><a href="../">← や印工務店のアプリたちへ戻る</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Fix-it Navigator</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   直し方ナビ — Fix-it Navigator
+   依存ゼロの単一HTML。データ送信なし、オフライン動作。
+   よくあるトラブルを「質問に答えるだけ」で切り分ける診断ウィザード。
+   決定木はTREESに定義。元記事から #yahoo-mail / #win-share で直リンク可。
+   ========================================================= */
+
+/* ---------- 決定木データ ----------
+   node.type: 'question'（選択肢で分岐）/ 'solution'（最終手順）
+   共通: text, help?, warn?, steps?[], links?[{label,url}], affiliate?{keyword,label,note}, options[{label,next,style?}]
+   特殊next: '__home'（メニューへ戻る）
+*/
+const TREES = {
+  'yahoo-mail': {
+    num: '01',
+    title: 'iPhoneでYahoo!メールが急に使えない',
+    sub: '「パスワードが正しくありません」と出る／IMAP・SMTP設定の直し方',
+    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n1b799d6967c5' },
+    start: 'y0',
+    nodes: {
+      y0: {
+        type: 'question',
+        text: 'iPhoneの標準メールで、Yahoo!メールが急に送受信できなくなりましたか？',
+        help: '2026年2月26日に、Yahoo!が不正ログイン対策でサードパーティ製メールアプリの接続をデフォルト遮断しました。心当たりがなくても、これが主な原因です。',
+        options: [
+          { label: 'はい（パスワードは変えていない）', next: 'y1' },
+          { label: 'パスワード自体を忘れた／変えた', next: 'yAcct' },
+          { label: 'メールソフトのIMAP/SMTP設定値が知りたい', next: 'ySettings', style: 'ghost' },
+          { label: '症状がちょっと違う', next: 'yOther', style: 'ghost' }
+        ]
+      },
+      ySettings: {
+        type: 'solution',
+        text: 'メールソフトのサーバ設定値（IMAP / SMTP / POP）',
+        text2: 'iPhone標準メール以外（Thunderbird等）で設定する場合の値です。先にPC側で「IMAP/POP/SMTPアクセス」を有効化しておく必要があります。',
+        steps: [
+          '受信 IMAP: <code>imap.mail.yahoo.co.jp</code> ／ ポート <code>993</code> ／ SSL(SSL/TLS) 有効',
+          '受信 POP: <code>pop.mail.yahoo.co.jp</code> ／ ポート <code>995</code> ／ SSL 有効',
+          '送信 SMTP: <code>smtp.mail.yahoo.co.jp</code> ／ ポート <code>465</code> または <code>587</code> ／ SSL 有効・認証あり',
+          '2段階認証を使っている場合は「アプリパスワード」を発行して使う',
+          'つながらない時は、先にアクセス許可（IMAP/SMTPを「利用する」）を確認'
+        ],
+        help: 'サーバ値は変わることがあります。最新はYahoo!メール公式ヘルプでも確認してください。',
+        options: [
+          { label: 'アクセス許可の設定手順へ', next: 'y3', style: 'primary' },
+          { label: '最初に戻る', next: '__home', style: 'ghost' }
+        ]
+      },
+      yAcct: {
+        type: 'solution',
+        text: 'それはアカウント側の問題です',
+        steps: [
+          'ブラウザで Yahoo! JAPAN にアクセスし、ID／パスワードを再設定する',
+          '何度もパスワードを間違えてロックされている場合は、しばらく時間を置いてから再試行する',
+          'パスワードが確定したら、このナビの最初に戻ってメール設定を確認する'
+        ],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      yOther: {
+        type: 'solution',
+        text: 'このナビはYahoo!のIMAP/SMTP遮断トラブル向けです',
+        text2: '症状が違う場合は、元記事に他の手がかりがあるかもしれません。',
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      y1: {
+        type: 'question',
+        text: 'まず落ち着いてください。先にやることがあります。',
+        warn: '焦ってパスワードを何度も入れると、Yahoo! JAPAN IDが一時的にロックされます。iPhoneのダイアログはいったんキャンセルして、先にPCで設定を変えます。',
+        options: [{ label: '了解。次へ', next: 'y2', style: 'primary' }]
+      },
+      y2: {
+        type: 'question',
+        text: 'PCのブラウザでYahoo!メールにログインできますか？',
+        options: [
+          { label: 'できる', next: 'y3' },
+          { label: 'PCがない（スマホだけ）', next: 'y2b' },
+          { label: 'そもそもログインできない', next: 'yAcct' }
+        ]
+      },
+      y2b: {
+        type: 'question',
+        text: 'スマホのブラウザでも設定できます',
+        steps: [
+          'Safari等で mail.yahoo.co.jp を開く',
+          'ページ下部などから「PC版」表示に切り替える',
+          'PCと同じ設定画面が出れば、そのまま次の手順へ'
+        ],
+        options: [{ label: 'PC版表示にできた。次へ', next: 'y3', style: 'primary' }]
+      },
+      y3: {
+        type: 'question',
+        text: 'PC側でIMAPとSMTPを有効にします',
+        help: '「許可する」に切り替えただけでは不十分。IMAPとSMTPを個別に「利用する」にするのが盲点です。',
+        steps: [
+          'mail.yahoo.co.jp にログイン',
+          '右上の歯車アイコン → 「メールの設定」 → 「IMAP/POP/SMTPアクセス」',
+          '「許可しない（推奨）」を「許可する」に切り替える',
+          'IMAPを「利用する」に変更して保存（受信用）',
+          'SMTPも「利用する」に変更して保存（送信用）'
+        ],
+        options: [{ label: '保存した。次へ', next: 'y4', style: 'primary' }]
+      },
+      y4: {
+        type: 'question',
+        text: 'iPhoneに戻って、パスワードを入れ直します',
+        steps: [
+          'キャンセルしたダイアログが残っていれば、Yahoo!のパスワードを入力してOK',
+          '消えていれば <code>設定 → メール → アカウント → Yahoo!</code> を開き、パスワード欄を入力し直す'
+        ],
+        options: [{ label: '送受信できるか確認した', next: 'y5', style: 'primary' }]
+      },
+      y5: {
+        type: 'question',
+        text: '送受信できるようになりましたか？',
+        options: [
+          { label: '両方できた！', next: 'yWin' },
+          { label: '受信はできるが、送信だけできない', next: 'y5smtp' },
+          { label: 'まだ全部だめ', next: 'y5stuck' }
+        ]
+      },
+      y5smtp: {
+        type: 'solution',
+        text: 'SMTP（送信）が有効になっていない可能性',
+        steps: [
+          'PC側の「IMAP/POP/SMTPアクセス」をもう一度開く',
+          'SMTPが「利用する」になっているか確認し、なっていなければ変更して保存',
+          'iPhoneで送信を再試行する'
+        ],
+        options: [
+          { label: '送信もできた！', next: 'yWin', style: 'primary' },
+          { label: 'まだだめ', next: 'y5stuck', style: 'ghost' }
+        ]
+      },
+      y5stuck: {
+        type: 'solution',
+        text: '考えられる原因をつぶします',
+        steps: [
+          'パスワードを連続入力してID一時ロック中かも → しばらく時間を置く',
+          'iPhone側のパスワードをもう一度入力し直す（<code>設定 → メール → アカウント</code>）',
+          'IMAPとSMTPが両方「利用する」で保存済みか、PCで再確認する'
+        ],
+        links: [{ label: '元記事で手順を見る', url: 'https://note.com/yzrswork/n/n1b799d6967c5' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      yWin: {
+        type: 'solution',
+        text: '解決しました。おつかれさまでした。',
+        text2: '原因は「Yahoo!が不正ログイン対策でデフォルト設定を変えたこと」、解決は「IMAP/SMTPアクセスをPC側で有効にすること」でした。',
+        links: [{ label: '同じ症状の人に届くよう、元記事を見る', url: 'https://note.com/yzrswork/n/n1b799d6967c5' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      }
+    }
+  },
+
+  'win-share': {
+    num: '02',
+    title: 'Windows11 24H2で共有フォルダに繋がらない',
+    sub: '「資格情報の手動登録が必須」になった新仕様の切り分け',
+    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' },
+    start: 'w0',
+    nodes: {
+      w0: {
+        type: 'question',
+        text: 'Windows 11を24H2にしてから、共有フォルダに繋がらなくなりましたか？',
+        help: '24H2から「資格情報の手動登録が必須」になりました。原因は複合しがちなので、上から順に切り分けます。',
+        options: [
+          { label: 'はい、24H2にしてから', next: 'w1' },
+          { label: 'バージョンは不明だが繋がらない', next: 'w1' },
+          { label: '共有以外のWindowsトラブル', next: 'wOther', style: 'ghost' }
+        ]
+      },
+      wOther: {
+        type: 'solution',
+        text: 'このナビは「24H2の共有フォルダ問題」向けです',
+        text2: '別のトラブルの場合は、元記事や他の記事も参考にしてみてください。',
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      w1: {
+        type: 'question',
+        text: '繋ぎたい相手PCに、IPアドレスで ping は通りますか？',
+        help: 'コマンドプロンプトで <code>ping 192.168.x.x</code>（相手のIP）。pingのやり方が分からなければ下のボタンへ。',
+        options: [
+          { label: 'ping は通る', next: 'w2' },
+          { label: 'ping が通らない', next: 'wPing' },
+          { label: 'pingのやり方が分からない', next: 'wPingHow', style: 'ghost' }
+        ]
+      },
+      wPingHow: {
+        type: 'question',
+        text: 'ping の確認方法',
+        steps: [
+          '<code>Windows + R</code> →「cmd」と入力してEnter',
+          '<code>ping 相手PCのIPアドレス</code> を入力してEnter',
+          '「応答」が返れば疎通OK、「タイムアウト」なら通っていない'
+        ],
+        options: [
+          { label: '通った → 次へ', next: 'w2', style: 'primary' },
+          { label: '通らなかった', next: 'wPing' }
+        ]
+      },
+      wPing: {
+        type: 'solution',
+        text: 'まずネットワークの基礎を確認',
+        text2: 'pingが通らない場合は、共有設定より前に物理・IP側の問題です。',
+        steps: [
+          '両方のPCが同じLAN（ルーター）に繋がっているか',
+          '相手PCのIPアドレスが正しいか（変わっていないか）',
+          'LANケーブル／Wi-Fiの接続、ハブの電源',
+          'どちらかのファイアウォールがpingまで遮断していないか'
+        ],
+        options: [
+          { label: 'pingが通るようになった → 次へ', next: 'w2', style: 'primary' },
+          { label: '最初に戻る', next: '__home', style: 'ghost' }
+        ]
+      },
+      w2: {
+        type: 'question',
+        text: '相手PCがネットワーク一覧に表示されますか？（または <code>\\\\IPアドレス</code> でアクセスできますか）',
+        options: [
+          { label: '一覧に表示されない', next: 'w3fd' },
+          { label: '表示される／IP指定なら見える', next: 'w4cred' }
+        ]
+      },
+      w3fd: {
+        type: 'question',
+        text: 'Function Discovery サービスを確認します',
+        help: 'これが止まっていると、そもそも相手PCが一覧に出ません。半日悩んだ原因がこれ、というパターンも多いです。',
+        steps: [
+          '<code>Windows + R</code> →「services.msc」と入力してEnter',
+          '「Function Discovery Provider Host」を探す',
+          '「Function Discovery Resource Publication」を探す',
+          '両方とも「スタートアップの種類」を「自動」にする',
+          '右クリック →「開始」で起動する'
+        ],
+        options: [
+          { label: '相手PCが表示された → 次へ', next: 'w4cred', style: 'primary' },
+          { label: 'まだ表示されない', next: 'w3share' }
+        ]
+      },
+      w3share: {
+        type: 'question',
+        text: 'ファイル共有と探索を有効にします',
+        steps: [
+          '設定 →「ネットワークとインターネット」→「ネットワークの詳細設定」→「共有の詳細設定」',
+          '「ネットワーク検出」を有効にする',
+          '「ファイルとプリンターの共有」を有効にする'
+        ],
+        options: [
+          { label: '表示された → 次へ', next: 'w4cred', style: 'primary' },
+          { label: 'まだダメ', next: 'w5eset' }
+        ]
+      },
+      w4cred: {
+        type: 'question',
+        text: '資格情報マネージャーに、相手PCのユーザー名・パスワードを登録しましたか？',
+        help: 'ここが24H2の核心。共有設定が全部OKでも、資格情報がないと接続エラーになります。',
+        options: [
+          { label: '登録していない', next: 'w4do' },
+          { label: '登録済みでもダメ', next: 'w5eset' }
+        ]
+      },
+      w4do: {
+        type: 'solution',
+        text: '資格情報を登録する（ここが核心）',
+        steps: [
+          '相手PCのユーザー名を確認（<code>設定 → アカウント → ユーザー情報</code>。Microsoftアカウントは表示名と違うことがある）',
+          'アクセスする側のPCで「資格情報マネージャー」を検索して開く',
+          '「Windows 資格情報」→「Windows 資格情報の追加」',
+          'アドレス：<code>\\\\相手PCのコンピュータ名</code> または <code>\\\\相手のIP</code>',
+          'ユーザー名：<code>コンピュータ名\\ユーザー名</code>',
+          'パスワード：相手PCのWindowsログインパスワード → OK'
+        ],
+        options: [
+          { label: '繋がった！', next: 'wWin', style: 'primary' },
+          { label: 'まだダメ', next: 'w5eset' }
+        ]
+      },
+      w5eset: {
+        type: 'solution',
+        text: '残りの複合要因をつぶします',
+        text2: '原因は1つとは限りません。よくあるのは「資格情報・Function Discovery・セキュリティソフト」の3つ重なりです。',
+        steps: [
+          'セキュリティソフト（ESET等）のファイアウォールでSMB／ファイル共有が遮断されていないか',
+          '相手PC（やNAS・複合機）のIPを「信頼ゾーン」に追加する',
+          '共有フォルダのアクセス権に「Everyone」の変更権限があるか',
+          '共有名に全角文字が入っていないか（半角英数推奨）',
+          'Function Discoveryが再起動で「手動」に戻っていないか（「自動」と「自動(遅延開始)」を切替）',
+          '一度PCを再起動する'
+        ],
+        options: [
+          { label: '繋がった！', next: 'wWin', style: 'primary' },
+          { label: '毎回の設定が面倒。根本解決したい', next: 'wNas' },
+          { label: '最初に戻る', next: '__home', style: 'ghost' }
+        ]
+      },
+      wNas: {
+        type: 'solution',
+        text: '根本解決したいなら NAS という手',
+        text2: '「毎回この設定が面倒」「PC以外からもアクセスしたい」なら、NAS導入が根本策です。Synologyの入門機 DS223j は設定がわかりやすく、自宅や小規模オフィスにちょうどいいサイズ感です。',
+        affiliate: { keyword: 'Synology NAS DS223j 2ベイ', label: 'Synology DS223j を探す', note: 'Amazonで価格・在庫を見る' },
+        links: [{ label: '元記事で詳しく読む', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      wWin: {
+        type: 'solution',
+        text: '解決しました。おつかれさまでした。',
+        text2: '24H2では "なんとなく繋がる共有" が "認証して初めて繋がる共有" に変わりました。定番の原因は「資格情報未登録・Function Discovery手動化・セキュリティソフト」の複合です。',
+        links: [{ label: '元記事で全手順を見る', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' }],
+        options: [
+          { label: '最初に戻る', next: '__home', style: 'ghost' },
+          { label: '根本解決（NAS）も見る', next: 'wNas', style: 'ghost' }
+        ]
+      }
+    }
+  },
+
+  'pc-boot': {
+    num: '03',
+    title: '自作PCが起動しない／ビープ音が鳴る',
+    sub: '電源は入るのに画面が出ない・ビープ音で止まる時の切り分け',
+    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' },
+    start: 'p0',
+    nodes: {
+      p0: {
+        type: 'question',
+        text: '自作PCで、電源は入るのに起動しない・ビープ音が鳴りますか？',
+        help: 'ビープ音＝GPU故障とは限りません。安く試せる対処から順に切り分けます（ビープコードの意味はマザーボードのマニュアルで要確認）。',
+        options: [
+          { label: 'ビープ音が鳴る', next: 'p1' },
+          { label: '電源は入るが画面が出ない（ビープなし）', next: 'pBasic' },
+          { label: '別の自作PCトラブル', next: 'pOther', style: 'ghost' }
+        ]
+      },
+      pOther: {
+        type: 'solution',
+        text: 'このナビは「起動時のビープ音・画面が出ない」向けです',
+        text2: '組み立て全体や他のトラブルは、はじめての自作PCまとめ（ハブ記事）が地図になります。',
+        links: [{ label: 'はじめての自作PCまとめ', url: 'https://note.com/yzrswork/n/nae5cdc6a50f1' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      p1: {
+        type: 'question',
+        text: 'ビープ音のパターンは？',
+        help: 'メーカーで意味が違うことがあります。長音1＋短音2は映像（VGA）系の定番。マザーのマニュアルやビープ一覧で確認を。',
+        options: [
+          { label: '長音1＋短音2（映像・VGA系）', next: 'pVga' },
+          { label: 'その他のパターン／よく分からない', next: 'pBasic' },
+          { label: 'ビープ音の意味を一覧で見たい', next: 'pBeep', style: 'ghost' }
+        ]
+      },
+      pBeep: {
+        type: 'solution',
+        text: 'ビープ音の意味（早見）',
+        help: 'BIOSメーカーで意味が異なります。回数・長短・繰り返しを正確に数えてから、マザーボードのマニュアルで最終確認を。',
+        steps: [
+          'AWARD系｜短音1回: 正常起動（問題なし）',
+          'AWARD系｜長音1＋短音2: グラフィック（VGA）エラー ← 今回の本命',
+          'AWARD系｜長音1＋短音1: メインメモリ（RAM）エラー',
+          'AWARD系｜短音2回: CMOS（設定）エラー',
+          'AWARD系｜長音の連続: メモリの接続不良・破損',
+          'AWARD系｜短音の連続: 電源供給のエラー',
+          'AMI系｜長音1回: 正常（AWARDと逆なので注意）／短音くり返し: メモリ系'
+        ],
+        links: [{ label: 'ビープ音トラブルの記事', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' }],
+        options: [
+          { label: 'VGA系だった → 映像側を切り分ける', next: 'pVga', style: 'primary' },
+          { label: 'まず基本の切り分けへ', next: 'pBasic' },
+          { label: '最初に戻る', next: '__home', style: 'ghost' }
+        ]
+      },
+      pBasic: {
+        type: 'question',
+        text: 'まず基本の切り分けをします（安く確実）',
+        steps: [
+          'CPU補助電源（8ピン）を差し直す',
+          'メモリを1枚だけにして起動テスト',
+          'GPUを一度外して再装着',
+          'CMOSクリア（マザーボードのボタン電池を抜く）'
+        ],
+        options: [
+          { label: 'これで直った', next: 'pWin', style: 'primary' },
+          { label: '変わらない', next: 'pVga' }
+        ]
+      },
+      pVga: {
+        type: 'question',
+        text: '受け取り側（モニター・ケーブル・中継機器）を疑います',
+        help: '実例では原因がGPUではなく「モニターの信号受信タイミング」でした。映像は出るのにビープが鳴る場合は特にこのパターンの可能性。',
+        steps: [
+          'モニターの入力ポートを変える（HDMI1／HDMI2／DisplayPort）',
+          'ケーブルを別規格・別メーカーに交換する',
+          '可能なら別のモニターで試す'
+        ],
+        options: [
+          { label: 'これで直った', next: 'pWin', style: 'primary' },
+          { label: 'まだ鳴る／画面が出ない', next: 'pSelector' }
+        ]
+      },
+      pSelector: {
+        type: 'solution',
+        text: 'HDMIセレクター／スプリッターを挟む',
+        text2: 'モニターとPCの間にHDMI切替器を挟むと、信号が保持されてエラーを回避できることがあります（実例ではこれで完全解消）。電源不要の安価なものでOK。',
+        steps: [
+          'モニターとPCの間にHDMIセレクターを挟む',
+          '起動してビープ音・表示を確認する'
+        ],
+        affiliate: { keyword: 'HDMI 切替器 セレクター 4K 電源不要', label: 'HDMI切替器を探す', note: '¥600前後から' },
+        options: [
+          { label: '解消した！', next: 'pWin', style: 'primary' },
+          { label: 'まだダメ', next: 'pBios' }
+        ]
+      },
+      pBios: {
+        type: 'solution',
+        text: 'ソフト対処と最終手段',
+        steps: [
+          'マザーボード公式から最新BIOSに更新（CPU世代対応・ファイル名のリネーム規則に注意）',
+          'CMOSクリアをもう一度試す',
+          'それでもダメならGPUの交換・RMA申請を検討'
+        ],
+        links: [
+          { label: 'ビープ音トラブルの記事', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' },
+          { label: 'はじめての自作PCまとめ', url: 'https://note.com/yzrswork/n/nae5cdc6a50f1' }
+        ],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      pWin: {
+        type: 'solution',
+        text: '解決しました。おつかれさまでした。',
+        text2: 'ビープ音＝GPU故障とは限りません。接続環境（モニター・ケーブル・中継機器）も原因になります。高額パーツを疑う前に、安価な対処から順番に、が教訓。',
+        links: [{ label: '元記事で全手順を見る', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      }
+    }
+  },
+
+  'obsidian-sync': {
+    num: '04',
+    title: 'iPhoneのObsidianがiCloudで同期できない',
+    sub: '「Store in iCloud」が押せない／保管庫のマトリョーシカ現象',
+    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' },
+    start: 'o0',
+    nodes: {
+      o0: {
+        type: 'question',
+        text: 'iPhoneのObsidianをiCloudで同期したいのに、うまくいきませんか？',
+        help: 'Appleの作法でハマりがちです。症状から切り分けます。',
+        options: [
+          { label: '「Store in iCloud」が押せない／グレーアウト', next: 'oGray' },
+          { label: '設定はONなのにアプリが「iCloudが有効でない」と言う', next: 'oGray' },
+          { label: '一部ノートが見つからない／PCの変更が反映されない', next: 'oMatryoshka' },
+          { label: 'これから新規に構築したい', next: 'oSetup' }
+        ]
+      },
+      oSetup: {
+        type: 'question',
+        text: '正しい作り方（PC先行は厳禁）',
+        help: '「ファイルを置けば同期される」ではありません。iPhone側で専用フォルダ（アジト）を作らせるのが先です。',
+        steps: [
+          'iPhone版Obsidianで Create new vault をタップ',
+          '「Store in iCloud」をONにして保管庫を作成（iCloud Driveに専用フォルダができる）',
+          'そのあとにPC側のデータをそのフォルダへ移す',
+          'Indexing が回って同期完了'
+        ],
+        options: [
+          { label: 'スイッチがONにできない', next: 'oGray' },
+          { label: '作ったがノートが反映されない', next: 'oMatryoshka' },
+          { label: '同期できた', next: 'oWin', style: 'primary' }
+        ]
+      },
+      oGray: {
+        type: 'solution',
+        text: '最後の手段は「Apple ID 再ログイン」',
+        text2: '設定ではONなのにアプリが認識しない時、iCloudの同期エンジンが根本でフリーズしていることがあります。Apple IDのサインアウト→再ログインが定番の特効薬です。',
+        warn: 'サインアウトはApple Pay等の紐付けが一時的に解除されます。時間に余裕をもって行ってください。',
+        steps: [
+          'まず再起動・設定のON/OFFを一通り試す',
+          '<code>設定 → 自分の名前</code> からサインアウト',
+          '再度サインインする',
+          'Obsidianで Create new vault →「Store in iCloud」が押せるか確認'
+        ],
+        options: [
+          { label: '押せるようになった', next: 'oSetup', style: 'primary' },
+          { label: 'まだダメ', next: 'oStuck' }
+        ]
+      },
+      oMatryoshka: {
+        type: 'solution',
+        text: '保管庫の中に保管庫（マトリョーシカ現象）を直す',
+        help: 'PCからドラッグした時に、空の保管庫の中へ保管庫を丸ごと入れてしまうと、<code>.obsidian</code> が二重になりアプリが混乱します。',
+        steps: [
+          'PC側でiCloud Driveの階層を整理（保管庫フォルダ内の余計なフォルダを取り除く）',
+          '複数できた <code>.obsidian</code> のうち不要なものを削除し、設定フォルダを1つだけにする',
+          'iPhone版Obsidianを再起動して再スキャン',
+          'PCで金庫アイコンからVaultのパスが正しい場所か確認'
+        ],
+        options: [
+          { label: '直った', next: 'oWin', style: 'primary' },
+          { label: 'まだ変', next: 'oStuck' }
+        ]
+      },
+      oStuck: {
+        type: 'solution',
+        text: 'それでも不整合が残るなら',
+        steps: [
+          '雲マーク（ストレージ最適化）をオフにし、ファイルを常にローカルに実体化させる',
+          'iOSのファイルアプリで実体がダウンロード済みか確認',
+          '最後の手段として Apple ID 再ログインをもう一度試す'
+        ],
+        links: [{ label: '元記事で詳しく読む', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      oWin: {
+        type: 'solution',
+        text: '同期できました。おつかれさまでした。',
+        text2: 'ポイントは「iPhone側でStore in iCloudを先行」「雲マーク最適化を避けてローカル実体化」「理屈で直らない時はApple ID再ログイン」の3つ。',
+        links: [{ label: '元記事を見る', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      }
+    }
+  }
+};
+
+/* ---------- 状態 ---------- */
+const appEl = document.getElementById('app');
+let current = null;       // { treeId, nodeId }
+let stack = [];           // 戻る用の履歴 [{treeId, nodeId}, ...]
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+// stepsとhelpは<code>タグを意図的に含むので、エスケープせずそのまま使う（データは内製・固定）
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('fixit:amazonTag') || '';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+/* ---------- レンダリング ---------- */
+function renderHome() {
+  current = null;
+  stack = [];
+  if (location.hash) history.replaceState(null, '', location.pathname);
+
+  let cards = '';
+  Object.keys(TREES).forEach((id) => {
+    const t = TREES[id];
+    cards += `
+      <li>
+        <button class="menu-card" data-tree="${id}">
+          <span class="mc-num">${t.num}</span>
+          <div class="mc-title">${esc(t.title)}</div>
+          <div class="mc-sub">${esc(t.sub)}</div>
+          <span class="mc-go">診断をはじめる →</span>
+        </button>
+      </li>`;
+  });
+
+  appEl.innerHTML = `
+    <header class="hero">
+      <h1>直し方ナビ<span class="en">— Fix-it Navigator</span></h1>
+      <p>「何もしてないのに急に繋がらない」よくあるトラブルを、質問に答えるだけで切り分けます。オフラインでも動きます。</p>
+    </header>
+    <div class="section-label">— 診断メニュー</div>
+    <ul class="menu">${cards}</ul>`;
+
+  appEl.querySelectorAll('.menu-card').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-tree');
+      startTree(id);
+    });
+  });
+}
+
+function startTree(treeId) {
+  const tree = TREES[treeId];
+  if (!tree) { renderHome(); return; }
+  stack = [];
+  location.hash = treeId;          // 共有・ブックマーク用
+  go(treeId, tree.start, false);
+}
+
+function go(treeId, nodeId, push) {
+  if (nodeId === '__home') { renderHome(); return; }
+  const tree = TREES[treeId];
+  const node = tree && tree.nodes[nodeId];
+  if (!node) { renderHome(); return; }
+  if (push && current) stack.push({ ...current });
+  current = { treeId, nodeId };
+  renderNode(tree, node);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderNode(tree, node) {
+  const isSolution = node.type === 'solution';
+  const isWinTerminal = node.affiliate || (node.options && node.options.some(o => o.next === 'wNas'));
+  const kicker = isSolution ? '解決手順' : '質問';
+  let cls = 'card';
+  if (isSolution) cls += ' solution';
+  if (node.affiliate) cls += ' win';
+
+  let html = `
+    <div class="crumb">
+      <button class="back" id="backBtn">← 戻る</button>
+      <span class="now">${esc(tree.title)}</span>
+    </div>
+    <div class="${cls}">
+      <div class="kicker">${kicker}</div>
+      <p class="qtext">${node.text}</p>`;
+
+  if (node.text2) html += `<p style="font-size:14px;color:var(--ink-soft);margin:0 0 14px;">${esc(node.text2)}</p>`;
+  if (node.warn) html += `<div class="warn">${esc(node.warn)}</div>`;
+  if (node.help) html += `<div class="help">${node.help}</div>`;
+
+  if (node.steps && node.steps.length) {
+    html += '<ol class="steps">';
+    node.steps.forEach((s) => { html += `<li>${s}</li>`; });
+    html += '</ol>';
+  }
+
+  // 選択肢
+  if (node.options && node.options.length) {
+    html += '<div class="options">';
+    node.options.forEach((o, i) => {
+      const style = o.style ? ' ' + o.style : '';
+      html += `<button class="opt${style}" data-next="${o.next}">
+                 <span>${esc(o.label)}</span><span class="arrow">→</span>
+               </button>`;
+    });
+    html += '</div>';
+  }
+
+  // リンク・アフィリエイト
+  if ((node.links && node.links.length) || node.affiliate) {
+    html += '<div class="extras">';
+    if (node.links) {
+      node.links.forEach((l) => {
+        html += `<a class="ext-link" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">
+                   <span class="lab">↗</span>${esc(l.label)}</a><br>`;
+      });
+    }
+    if (node.affiliate) {
+      const a = node.affiliate;
+      html += `<a class="affiliate" href="${esc(amazonUrl(a.keyword))}" target="_blank" rel="noopener noreferrer">
+                 🛒 ${esc(a.label)}<span class="sub">${esc(a.note || 'Amazonで探す')}</span></a>`;
+    }
+    html += '</div>';
+  }
+
+  html += '</div>';
+  appEl.innerHTML = html;
+
+  // イベント
+  const back = document.getElementById('backBtn');
+  if (back) back.addEventListener('click', goBack);
+  appEl.querySelectorAll('.opt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      go(current.treeId, btn.getAttribute('data-next'), true);
+    });
+  });
+}
+
+function goBack() {
+  if (stack.length) {
+    const prev = stack.pop();
+    current = prev;
+    const tree = TREES[prev.treeId];
+    renderNode(tree, tree.nodes[prev.nodeId]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    renderHome();
+  }
+}
+
+/* ---------- ルーティング（ハッシュで直リンク） ---------- */
+function routeFromHash() {
+  const h = location.hash.replace('#', '');
+  if (h && TREES[h]) {
+    stack = [];
+    go(h, TREES[h].start, false);
+  } else {
+    renderHome();
+  }
+}
+
+document.getElementById('brand').addEventListener('click', renderHome);
+window.addEventListener('hashchange', () => {
+  // メニューのカードクリックでもhashが変わるが、その場合は既に描画済み。
+  // ブラウザの戻る/進む・外部リンク流入時のみ反映する。
+  const h = location.hash.replace('#', '');
+  if (!h) { if (current) renderHome(); return; }
+  if (TREES[h] && (!current || current.treeId !== h || stack.length === 0)) {
+    // 既に同じツリーの途中なら邪魔しない
+    if (!current || current.treeId !== h) routeFromHash();
+  }
+});
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('fixit:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('fixit:amazonTag', v);
+  else localStorage.removeItem('fixit:amazonTag');
+  tagSaved.textContent = '保存しました';
+  // 表示中ノードを再描画してリンクへ反映
+  if (current) { const t = TREES[current.treeId]; renderNode(t, t.nodes[current.nodeId]); }
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('fixit:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+routeFromHash();
+
+/* ---------- Service Worker ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>
