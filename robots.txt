@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /yzrswork_apps/vault-path/
 
 Sitemap: https://yzrswork.github.io/yzrswork_apps/sitemap.xml
