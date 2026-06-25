@@ -450,7 +450,7 @@
         困りごとが解決したら、元記事に「スキ」をもらえると次の記事の励みになります。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
       </div>
-      <div><a href="../">← や印工務店のアプリたちへ戻る</a></div>
+      <div id="footer-parent-link"><a href="../">← や印工務店のアプリたちへ戻る</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — Fix-it Navigator</div>
     </footer>
   </main>
@@ -997,7 +997,21 @@ const TREES = {
 /* ---------- 状態 ---------- */
 const appEl = document.getElementById('app');
 let current = null;       // { treeId, nodeId }
-let stack = [];           // 戻る用の履歴 [{treeId, nodeId}, ...]
+let stack = [];
+let lockedTree = null;
+
+function goHome() {
+  if (lockedTree) {
+    stack = [];
+    go(lockedTree, TREES[lockedTree].start, false);
+  } else {
+    renderHome();
+  }
+}
+function updateFooterVisibility() {
+  var el = document.getElementById('footer-parent-link');
+  if (el) el.style.display = lockedTree ? 'none' : '';
+}
 
 /* ---------- ユーティリティ ---------- */
 function esc(s) {
@@ -1012,9 +1026,11 @@ function amazonUrl(keyword) {
 
 /* ---------- レンダリング ---------- */
 function renderHome() {
+  lockedTree = null;
   current = null;
   stack = [];
   if (location.hash) history.replaceState(null, '', location.pathname);
+  updateFooterVisibility();
 
   let cards = '';
   Object.keys(TREES).forEach((id) => {
@@ -1055,10 +1071,10 @@ function startTree(treeId) {
 }
 
 function go(treeId, nodeId, push) {
-  if (nodeId === '__home') { renderHome(); return; }
+  if (nodeId === '__home') { goHome(); return; }
   const tree = TREES[treeId];
   const node = tree && tree.nodes[nodeId];
-  if (!node) { renderHome(); return; }
+  if (!node) { goHome(); return; }
   if (push && current) stack.push({ ...current });
   current = { treeId, nodeId };
   renderNode(tree, node);
@@ -1142,7 +1158,7 @@ function goBack() {
     renderNode(tree, tree.nodes[prev.nodeId]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
-    renderHome();
+    goHome();
   }
 }
 
@@ -1150,19 +1166,22 @@ function goBack() {
 function routeFromHash() {
   const h = location.hash.replace('#', '');
   if (h && TREES[h]) {
+    lockedTree = h;
     stack = [];
     go(h, TREES[h].start, false);
   } else {
+    lockedTree = null;
     renderHome();
   }
+  updateFooterVisibility();
 }
 
-document.getElementById('brand').addEventListener('click', renderHome);
+document.getElementById('brand').addEventListener('click', goHome);
 window.addEventListener('hashchange', () => {
   // メニューのカードクリックでもhashが変わるが、その場合は既に描画済み。
   // ブラウザの戻る/進む・外部リンク流入時のみ反映する。
   const h = location.hash.replace('#', '');
-  if (!h) { if (current) renderHome(); return; }
+  if (!h) { lockedTree = null; updateFooterVisibility(); if (current) renderHome(); return; }
   if (TREES[h] && (!current || current.treeId !== h || stack.length === 0)) {
     // 既に同じツリーの途中なら邪魔しない
     if (!current || current.treeId !== h) routeFromHash();
