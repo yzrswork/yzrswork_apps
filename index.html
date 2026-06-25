@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <meta name="google-site-verification" content="Gx-rIx1a-8EGxWvW9O4_LmfSJxdIXqbgKj-RKIntctQ" />
 <meta name="theme-color" content="#b5532f">
 <title>や印工務店のアプリたち -- yzrswork apps</title>
@@ -51,7 +52,6 @@
   header h1{margin:0; font-size:1.6rem; letter-spacing:.02em}
   header h1 .a{color:var(--terra)}
   header .tag{margin:6px 0 0; color:var(--sub); font-size:.86rem}
-  h2.sec{font-size:.95rem; margin:22px 0 10px; color:var(--terra-d)}
   a.app{
     display:block; text-decoration:none; color:inherit; background:var(--paper);
     border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
@@ -61,8 +61,6 @@
   a.app .name{font-size:1.15rem; font-weight:700; color:var(--terra-d)}
   a.app .desc{margin:6px 0 0; color:var(--sub); font-size:.88rem}
   a.app .go{display:inline-block; margin-top:10px; font-size:.82rem; color:var(--terra); font-weight:600}
-  .soon{opacity:.6}
-  .soon .name::after{content:" (準備中)"; font-size:.72rem; color:var(--sub); font-weight:400}
   .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600; margin-top:18px}
   .muted{color:var(--sub); font-size:.78rem}
   footer{text-align:center; margin-top:24px}
@@ -76,90 +74,9 @@
     <p class="tag">電子工作 x メイカー x AI。単一HTML製のニッチな道具を並べていきます。</p>
   </header>
 
-  <h2 class="sec">PC / スマホ両対応</h2>
-
-  <a class="app" href="nurerukun/">
-    <div class="name">塗れるくん</div>
-    <p class="desc">住所を入れると、今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水・風)を判定。</p>
-    <span class="go">開く -</span>
-  </a>
-
   <a class="app" href="fixit/">
     <div class="name">直し方ナビ</div>
     <p class="desc">よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期に対応。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="soubi-navi/">
-    <div class="name">装備ナビ</div>
-    <p class="desc">電子工作の工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先ガイドつき。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="prompt-forge/">
-    <div class="name">Prompt Forge</div>
-    <p class="desc">キャラを崩さず、どの画像生成AIでもブレない完成プロンプトを一撃生成。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="news/">
-    <div class="name">電子工作通信</div>
-    <p class="desc">HackadayとQiitaの電子工作記事をまとめて流す、自分用のRSSリーダー。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <div class="app soon">
-    <div class="name">塗料量計算</div>
-    <p class="desc">面積・下地・塗料種別から必要リットル・塗り回数・概算を出す。塗れるくんと統合予定。</p>
-  </div>
-
-  <h2 class="sec">スマホ向け（タッチ操作）</h2>
-
-  <a class="app" href="yzrsynth/">
-    <div class="name">YZRsynth</div>
-    <p class="desc">16ステップシーケンサー、5音色シンセ、ルーパーを1台にまとめたリズムマシン。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="otamatone/">
-    <div class="name">オタマトーン WEB</div>
-    <p class="desc">しっぽのリボンをなぞって鳴らす白いやつ。エフェクトとルーパー付き。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="grid/">
-    <div class="name">Grid Instrument</div>
-    <p class="desc">タップで鳴らす音楽グリッド。仕組みは単純、出てくる音は意外と複雑。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="metronome/">
-    <div class="name">Metronome Watch</div>
-    <p class="desc">時計型ネオンのメトロノーム。背後を透明な振り子がゆっくり往復します。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="mizu/">
-    <div class="name">Mizu</div>
-    <p class="desc">指でなぞって描く、水多めの水彩。にじんで混ざり、なぞるたびに水の音が落ちる。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="fireworks/">
-    <div class="name">花火</div>
-    <p class="desc">画面のどこを触っても、ちゃんと夏になる。幼児向けのタップゲーム。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="asobou/">
-    <div class="name">あそぼう</div>
-    <p class="desc">モンテッソーリ風の知育ゲーム集。親はそっと隣で見ていてください。</p>
-    <span class="go">開く -</span>
-  </a>
-
-  <a class="app" href="virus-busters/">
-    <div class="name">ウィルスバスターズ</div>
-    <p class="desc">白血球の群れを操り、ウィルスの大軍を撃退する縦持ちディフェンス。</p>
     <span class="go">開く -</span>
   </a>
 
