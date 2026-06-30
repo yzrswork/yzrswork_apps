@@ -1,0 +1,32 @@
+{
+  "name": "工房の電卓",
+  "short_name": "工房電卓",
+  "description": "電子工作の作業台に常駐する計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間をオフラインで。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ja",
+  "background_color": "#f0ebe3",
+  "theme_color": "#f0ebe3",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>自作PC 構成プランナー — PC Build Planner</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="構成プランナー" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<meta name="description" content="自作PCの構成を、CPUソケットからDDR規格、用途からRAM容量、ストレージ、GPUから電源容量の目安まで一気に決める構成プランナー。組み立てチェックリストつき。オフライン対応。" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="自作PC 構成プランナー — PC Build Planner" />
+<meta property="og:description" content="ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。" />
+<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/build/" />
+<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-build.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="自作PC 構成プランナー — PC Build Planner" />
+<meta name="twitter:description" content="ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。" />
+<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-build.png" />
+<script async src="/yzrswork_apps/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3; --paper-2: #e8e1d4; --card: #f6f2ea;
+    --ink: #1c1a16; --ink-soft: #2b2823; --muted: #6f675b;
+    --rule: #3a342c; --rule-soft: rgba(58,52,44,0.28);
+    --terracotta: #b5451b; --terracotta-deep: #8e3514;
+    --ok: #4f6f3e;
+    --serif: "EB Garamond","Times New Roman",serif;
+    --mono: "DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+    --jp: "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink); font-family: var(--jp);
+    line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh;
+    position: relative; overflow-x: hidden;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(70,50,30,0.06) 1px, transparent 1px), radial-gradient(rgba(70,50,30,0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px; background-position: 0 0, 1px 2px;
+    z-index: 0; mix-blend-mode: multiply; opacity: 0.9;
+  }
+  .page { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 24px 18px calc(40px + env(safe-area-inset-bottom)); }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 20px; }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  header.hero { margin-bottom: 18px; }
+  .hero h1 { font-weight: 700; font-size: clamp(25px, 6.8vw, 35px); line-height: 1.15; margin: 0 0 8px; }
+  .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 14px; letter-spacing: 0.08em; display: block; margin-bottom: 12px; }
+  .hero p { font-size: 13.5px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin: 24px 0 11px; padding-bottom: 6px; border-bottom: 1px solid var(--rule-soft); }
+  .sec-head .s-jp { font-weight: 700; font-size: 14.5px; }
+  .sec-head .s-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 15px; cursor: pointer; font-family: var(--jp); font-size: 14px; font-weight: 500; color: var(--ink); }
+  .opt-btn:hover, .opt-btn.active { border-color: var(--terracotta); }
+  .opt-btn.active { background: var(--terracotta); color: #fff; }
+  .opt-btn .o-meta { font-family: var(--mono); font-size: 11px; opacity: 0.8; }
+  .opt-btn.active .o-meta { opacity: 0.95; }
+
+  /* Summary */
+  .summary { margin-top: 22px; background: var(--ink); color: var(--paper); border-radius: 13px; padding: 18px 18px; }
+  .summary h2 { font-size: 15px; margin: 0 0 12px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; color: #f0c9b8; }
+  .sum-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed rgba(240,237,232,0.18); font-size: 13.5px; }
+  .sum-row:last-of-type { border-bottom: none; }
+  .sum-row .k { color: #c9c2b6; }
+  .sum-row .v { font-weight: 700; text-align: right; }
+  .sum-row .v.pending { color: #8d857a; font-weight: 400; }
+  .sum-buys { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .sum-buys a { background: var(--terracotta); color: #fff; text-decoration: none; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
+  .sum-buys a:hover { background: var(--terracotta-deep); }
+  .sum-note { font-size: 11.5px; color: #b7b0a4; margin-top: 12px; line-height: 1.6; }
+
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .links a { font-size: 12.5px; color: var(--ink); text-decoration: none; border: 1px solid var(--rule-soft); border-radius: 14px; padding: 6px 12px; background: var(--card); }
+  .links a:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+  .check { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 11px; padding: 6px 16px; }
+  .check details { border-bottom: 1px solid var(--rule-soft); }
+  .check details:last-child { border-bottom: none; }
+  .check summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 12px 0; list-style: none; }
+  .check summary::-webkit-details-marker { display: none; }
+  .check summary::before { content: "＋ "; color: var(--terracotta); font-family: var(--mono); }
+  .check details[open] summary::before { content: "− "; }
+  .check ul { margin: 0 0 12px; padding-left: 20px; }
+  .check li { font-size: 13px; margin-bottom: 5px; color: var(--ink-soft); }
+  .check li b { color: var(--terracotta-deep); }
+
+  .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
+
+  footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .modal-bg { position: fixed; inset: 0; background: rgba(28,26,22,0.55); z-index: 20; display: none; align-items: center; justify-content: center; padding: 18px; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 13px; padding: 20px 18px; max-width: 440px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 4px; }
+  .modal .m-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
+  .modal label.m-lab { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input.m-in { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .m-row button { flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> 構成プランナー</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>自作PC 構成プランナー<span class="en">— PC Build Planner</span></h1>
+      <p>CPUソケットから規格、用途から容量、GPUから電源の目安までを順に選ぶと、構成サマリーと買い物リンクが出ます。最後に組み立てチェックも。</p>
+    </header>
+
+    <div class="sec-head"><span class="s-jp">1. CPU ソケット</span><span class="s-en">Socket → DDR</span></div>
+    <div class="opts" id="sockets"></div>
+
+    <div class="sec-head"><span class="s-jp">2. 用途（RAM容量）</span><span class="s-en">Use → RAM</span></div>
+    <div class="opts" id="uses"></div>
+
+    <div class="sec-head"><span class="s-jp">3. ストレージ用途</span><span class="s-en">Storage</span></div>
+    <div class="opts" id="storages"></div>
+
+    <div class="sec-head"><span class="s-jp">4. GPU クラス（電源の目安）</span><span class="s-en">GPU → PSU</span></div>
+    <div class="opts" id="gpus"></div>
+
+    <!-- サマリー -->
+    <div class="summary" id="summary"></div>
+
+    <div class="links" id="crosslinks">
+      <a href="../mem/index.html">メモリ選び 詳細 →</a>
+      <a href="../hdd/index.html">HDD選び 詳細 →</a>
+      <a href="../fixit/index.html#pc-boot">起動しない時の診断 →</a>
+    </div>
+
+    <div class="sec-head"><span class="s-jp">組み立て＆初回起動チェック</span><span class="s-en">Checklist</span></div>
+    <div class="check">
+      <details>
+        <summary>組み立て前</summary>
+        <ul>
+          <li>静電気対策（金属に触れて放電。可能なら静電気手袋）</li>
+          <li>マザーボードのマニュアルを手元に（コネクタ位置とビープの意味）</li>
+          <li>CPUの向き（三角マークを合わせる）。ピン曲げ厳禁</li>
+          <li>メモリは<b>奥までカチッと</b>。2枚なら指定スロット（A2/B2が多い）</li>
+        </ul>
+      </details>
+      <details>
+        <summary>配線</summary>
+        <ul>
+          <li>24ピン主電源＋<b>CPU補助電源（8ピン）</b>の挿し忘れに注意</li>
+          <li>GPUの補助電源（必要なら）。50系はPCIe 5.1 / 12V-2x6</li>
+          <li>フロントパネル配線（電源スイッチ/LED）はマニュアル通りに</li>
+          <li>SSD/HDDのSATA電源＋データ、M.2はネジ留め</li>
+        </ul>
+      </details>
+      <details>
+        <summary>初回起動</summary>
+        <ul>
+          <li>最初にBIOS（UEFI）に入って、CPU・メモリ・ストレージが認識されているか確認</li>
+          <li>メモリの表示速度を出すなら <b>XMP（Intel）/ EXPO（AMD）</b> を有効化</li>
+          <li><b>ビープ音が鳴って起動しない</b>時は「直し方ナビ」の自作PC診断へ</li>
+        </ul>
+      </details>
+    </div>
+
+    <p class="disclaimer">※ 電源容量は一般的な目安です。CPU/GPUの世代・OC・周辺機器で変わります。最終的には各GPU/電源メーカーの推奨値とマザーの対応リスト（QVL）を確認してください。情報は2026年6月時点。</p>
+
+    <footer>
+      <div>関連: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（note）↗</a></div>
+      <div><a href="../tools/index.html">← 道具箱（ほかの実用ツール）</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — PC Build Planner</div>
+    </footer>
+  </main>
+
+  <div class="modal-bg" id="set-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p class="m-sub">AmazonアソシエイトのトラッキングIDを入れると、買い物リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label class="m-lab" for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" class="m-in" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="m-row">
+        <button id="tag-clear">クリア</button>
+        <button class="primary" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   自作PC 構成プランナー — PC Build Planner
+   依存ゼロの単一HTML。データ送信なし、オフライン動作。
+   note「はじめての自作PCまとめ」シリーズ（HDD/メモリ/ビープ等）の知見を
+   1つの構成決めフローに統合。電源目安は2026年6月時点の各社推奨に基づく。
+   ========================================================= */
+
+const SOCKETS = [
+  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', ddrSearch: 'DDR5' },
+  { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4', ddrSearch: 'DDR4-3200' },
+  { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: 'DDR4 または DDR5', ddrSearch: '' },
+  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', ddrSearch: 'DDR5' }
+];
+const USES = [
+  { id: 'web', label: 'ブラウジング・文書', cap: '8〜16GB', search: '16GB' },
+  { id: 'game', label: 'ゲーム全般', cap: '16GB（16GB×1〜2）', search: '16GB' },
+  { id: 'creative', label: '軽量3D・動画編集', cap: '32GB（16GB×2）', search: '32GB 16GBx2' },
+  { id: 'ai', label: '生成AI・機械学習', cap: '32GB以上', search: '32GB 16GBx2' }
+];
+const STORAGES = [
+  { id: 'os', label: 'OS・アプリ（起動用）', reco: 'NVMe SSD（M.2・1TB目安）', search: 'NVMe SSD 1TB M.2' },
+  { id: 'game', label: 'ゲーム・録画', reco: '大容量SSD or HDD', search: 'SSD 2TB' },
+  { id: 'nas', label: 'NAS・RAID・24時間', reco: 'HDD Red Plus（CMR必須）', search: 'WD Red Plus NAS HDD' },
+  { id: 'archive', label: '写真・動画の長期保存', reco: '大容量HDD（CMR推奨）', search: 'WD HDD 4TB CMR' }
+];
+const GPUS = [
+  { id: 'igpu', label: '内蔵GPU / ローエンド', psu: '450〜550W', search: '電源 550W 80PLUS' },
+  { id: 't3060', label: 'RTX 3060 / 4060 級', psu: '550W 目安', search: '電源 550W 80PLUS Bronze' },
+  { id: 't4070', label: 'RTX 4070 級', psu: '650W 目安', search: '電源 650W 80PLUS Gold' },
+  { id: 't5070', label: 'RTX 5070 級', psu: '750〜850W（PCIe 5.1 / 12V-2x6）', search: '電源 850W ATX3.1' },
+  { id: 't5080', label: 'RTX 5080 / ハイエンド', psu: '1000W以上（PCIe 5.1 / 12V-2x6）', search: '電源 1000W ATX3.1' }
+];
+
+const sel = { socket: null, use: null, storage: null, gpu: null };
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function amazonUrl(kw) {
+  const tag = localStorage.getItem('build:amazonTag') || '';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+function renderOpts(containerId, list, key, metaFn) {
+  document.getElementById(containerId).innerHTML = list.map(o =>
+    `<button class="opt-btn${sel[key] === o.id ? ' active' : ''}" data-id="${o.id}"><span>${esc(o.label)}</span><span class="o-meta">${esc(metaFn(o))}</span></button>`).join('');
+  document.querySelectorAll('#' + containerId + ' .opt-btn').forEach(b =>
+    b.addEventListener('click', () => { sel[key] = b.getAttribute('data-id'); renderAll(); }));
+}
+
+function row(k, obj, valFn) {
+  if (!obj) return `<div class="sum-row"><span class="k">${k}</span><span class="v pending">未選択</span></div>`;
+  return `<div class="sum-row"><span class="k">${k}</span><span class="v">${esc(valFn(obj))}</span></div>`;
+}
+
+function renderSummary() {
+  const s = SOCKETS.find(x => x.id === sel.socket);
+  const u = USES.find(x => x.id === sel.use);
+  const st = STORAGES.find(x => x.id === sel.storage);
+  const g = GPUS.find(x => x.id === sel.gpu);
+
+  let html = '<h2>構成サマリー</h2>';
+  html += row('規格（DDR）', s, o => o.ddr);
+  html += row('メモリ容量', u, o => o.cap);
+  html += row('ストレージ', st, o => o.reco);
+  html += row('電源の目安', g, o => o.psu);
+
+  // 買い物リンク
+  const buys = [];
+  if (s && u) {
+    const ddrKw = s.ddrSearch || 'DDR4 DDR5';
+    buys.push(['メモリ', (ddrKw + ' ' + u.search + ' デスクトップ メモリ').trim()]);
+  }
+  if (st) buys.push(['ストレージ', st.search]);
+  if (g) buys.push(['電源', g.search]);
+  if (buys.length) {
+    html += '<div class="sum-buys">' + buys.map(b =>
+      `<a href="${esc(amazonUrl(b[1]))}" target="_blank" rel="noopener noreferrer">🛒 ${esc(b[0])}</a>`).join('') + '</div>';
+  }
+
+  if (s && s.id === 'lga1700') {
+    html += '<div class="sum-note">LGA1700はマザーボードによりDDR4専用／DDR5専用が分かれます。スロット表記を必ず確認してください。</div>';
+  }
+  if (g && (g.id === 't5070' || g.id === 't5080')) {
+    html += '<div class="sum-note">RTX 50系は新しい電源コネクタ（12V-2x6）とPCIe 5.1対応電源（ATX 3.x）が安心です。</div>';
+  }
+  if (!s && !u && !st && !g) {
+    html += '<div class="sum-note">上の1〜4を選ぶと、ここに構成と買い物リンクが集まります。</div>';
+  }
+  document.getElementById('summary').innerHTML = html;
+}
+
+function renderAll() {
+  renderOpts('sockets', SOCKETS, 'socket', o => o.ddr);
+  renderOpts('uses', USES, 'use', o => o.cap);
+  renderOpts('storages', STORAGES, 'storage', o => o.reco);
+  renderOpts('gpus', GPUS, 'gpu', o => o.psu);
+  renderSummary();
+}
+
+/* 設定モーダル */
+const setBg = document.getElementById('set-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('build:amazonTag') || '';
+  tagSaved.textContent = ''; setBg.classList.add('open');
+});
+setBg.addEventListener('click', e => { if (e.target === setBg) setBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('build:amazonTag', v); else localStorage.removeItem('build:amazonTag');
+  tagSaved.textContent = '保存しました（リンクに反映）'; renderSummary();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('build:amazonTag'); tagInput.value = ''; tagSaved.textContent = 'クリアしました'; renderSummary();
+});
+
+/* 起動 */
+renderAll();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>

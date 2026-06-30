@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://yzrswork.github.io/yzrswork_apps/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/nurerukun/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://yzrswork.github.io/yzrswork_apps/kit/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://yzrswork.github.io/yzrswork_apps/bench/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://yzrswork.github.io/yzrswork_apps/mem/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://yzrswork.github.io/yzrswork_apps/hdd/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://yzrswork.github.io/yzrswork_apps/build/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://yzrswork.github.io/yzrswork_apps/fixit/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/soubi-navi/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/yzrsynth/</loc><priority>0.7</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/otamatone/</loc><priority>0.7</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/grid/</loc><priority>0.6</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/metronome/</loc><priority>0.6</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/mizu/</loc><priority>0.6</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/fireworks/</loc><priority>0.6</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/asobou/</loc><priority>0.6</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/virus-busters/</loc><priority>0.7</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/prompt-forge/</loc><priority>0.7</priority></url>
-  <url><loc>https://yzrswork.github.io/yzrswork_apps/news/</loc><priority>0.6</priority></url>
 </urlset>

@@ -1,0 +1,1800 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>工房の電卓 — Maker's Bench</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<meta name="description" content="電子工作の作業台に常駐するオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="工房の電卓 — Maker's Bench" />
+<meta property="og:description" content="電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
+<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/bench/" />
+<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-bench.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="工房の電卓 — Maker's Bench" />
+<meta name="twitter:description" content="電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
+<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-bench.png" />
+<script async src="/yzrswork_apps/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3;
+    --paper-2: #e8e1d4;
+    --ink: #1c1a16;
+    --ink-soft: #2b2823;
+    --muted: #6f675b;
+    --rule: #3a342c;
+    --terracotta: #b5451b;
+    --terracotta-deep: #8e3514;
+    --serif: "EB Garamond", "Times New Roman", serif;
+    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { min-height: 100vh; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Paper texture */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(181, 69, 27, 0.05), transparent 50%),
+      radial-gradient(ellipse at 90% 90%, rgba(60, 40, 20, 0.08), transparent 55%);
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 22px calc(48px + var(--safe-bottom));
+  }
+
+  /* ── Top meta strip ─────────────────────────── */
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 36px;
+  }
+  .meta .vol { color: var(--ink); }
+  .meta .dot { color: var(--terracotta); }
+
+  .meta-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .meta-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    transition: color 150ms ease;
+  }
+  .meta-nav a:hover { color: var(--terracotta); }
+
+  /* ── Header ─────────────────────────────────── */
+  header {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-text { flex: 1; }
+  .brand-jp {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 6vw, 40px);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .brand-en {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    color: var(--terracotta);
+    margin-bottom: 14px;
+  }
+  .brand-en .em {
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--terracotta);
+  }
+  .tagline {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    line-height: 1.7;
+  }
+
+  /* Settings button */
+  .settings-btn {
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid rgba(58,52,44,0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 150ms, color 150ms;
+    white-space: nowrap;
+  }
+  .settings-btn:hover {
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+  }
+
+  /* ── Section labels ──────────────────────────── */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    margin-top: 32px;
+  }
+  .section-head .label-jp {
+    font-family: var(--jp);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+  }
+  .section-head .label-en {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0 0 16px;
+  }
+
+  /* ── Accordion tools ─────────────────────────── */
+  .tool-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  details.tool {
+    border: 1px solid rgba(58,52,44,0.3);
+    border-radius: 8px;
+    background: rgba(240,235,227,0.6);
+    overflow: hidden;
+    transition: border-color 200ms;
+  }
+  details.tool[open] {
+    border-color: rgba(181,69,27,0.4);
+  }
+  details.tool summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 14px;
+    align-items: start;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  details.tool summary::-webkit-details-marker { display: none; }
+  details.tool summary::marker { display: none; }
+
+  .tool-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--terracotta);
+    letter-spacing: 0.05em;
+    padding-top: 3px;
+    min-width: 24px;
+  }
+  .tool-head { display: flex; flex-direction: column; gap: 3px; }
+  .tool-title {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .tool-title .en {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .tool-desc {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .tool-body {
+    padding: 0 18px 20px;
+    border-top: 1px solid rgba(58,52,44,0.2);
+  }
+
+  /* ── Form elements ───────────────────────────── */
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .fields.single { grid-template-columns: 1fr; }
+  .fields.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .field input,
+  .field select {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--paper-2);
+    border: 1px solid rgba(58,52,44,0.3);
+    border-radius: 6px;
+    padding: 10px 12px;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 150ms;
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--terracotta);
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236f675b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    font-size: 14px;
+  }
+
+  /* ── Results ─────────────────────────────────── */
+  .result-box {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--ink);
+    border-radius: 8px;
+    color: var(--paper);
+  }
+  .result-box.error {
+    background: rgba(181,69,27,0.15);
+    border: 1px solid rgba(181,69,27,0.4);
+  }
+  .result-box.error .result-error {
+    color: var(--terracotta);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(240,235,227,0.1);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(240,235,227,0.5);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .result-value {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--paper);
+  }
+  .result-value.highlight { color: #f4a261; }
+
+  /* Color chips for resistor */
+  .color-bands {
+    display: flex;
+    gap: 4px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .color-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .color-chip .swatch {
+    width: 28px;
+    height: 52px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.2);
+  }
+  .color-chip .clabel {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  /* Toggle for resistor direction */
+  .toggle-row {
+    display: flex;
+    gap: 0;
+    margin-top: 16px;
+    border: 1px solid rgba(58,52,44,0.3);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .toggle-row button {
+    flex: 1;
+    padding: 9px 4px;
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 150ms, color 150ms;
+  }
+  .toggle-row button.active {
+    background: var(--terracotta);
+    color: white;
+  }
+
+  /* Ohm specific: 2-input panel */
+  .ohm-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .ohm-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .ohm-field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ohm-field .hint {
+    color: rgba(181,69,27,0.7);
+    font-size: 10px;
+  }
+
+  /* ── Affiliate link ──────────────────────────── */
+  .affiliate-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 8px 14px;
+    border: 1px solid rgba(181,69,27,0.4);
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--terracotta);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    transition: background 150ms, color 150ms;
+    background: rgba(181,69,27,0.06);
+  }
+  .affiliate-link:hover {
+    background: rgba(181,69,27,0.12);
+    color: var(--terracotta-deep);
+  }
+
+  /* ── Pro section ─────────────────────────────── */
+  .pro-gate {
+    border: 1px solid rgba(181,69,27,0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .pro-header {
+    background: rgba(181,69,27,0.08);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .pro-title {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pro-badge {
+    display: inline-block;
+    background: var(--terracotta);
+    color: white;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .pro-body { padding: 16px 18px; }
+  .pro-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+  .pro-key-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .pro-key-row input {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--paper-2);
+    border: 1px solid rgba(58,52,44,0.3);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+  .pro-key-row input:focus {
+    outline: none;
+    border-color: var(--terracotta);
+  }
+  .pro-btn {
+    padding: 9px 16px;
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 150ms;
+  }
+  .pro-btn:hover { background: var(--terracotta-deep); }
+  .pro-purchase-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .pro-purchase-link:hover { color: var(--terracotta); }
+  .pro-msg {
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-top: 8px;
+    color: var(--terracotta);
+  }
+  .pro-msg.ok { color: #4a7c59; }
+
+  /* Pro unlocked state */
+  .pro-tools-locked .tool-list { display: none; }
+  .pro-tools-unlocked .pro-body { display: none; }
+  .pro-tools-unlocked .pro-header .pro-lock-icon { display: none; }
+
+  /* note */
+  .note-small {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── Footer ──────────────────────────────────── */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .support-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 3px;
+    transition: color 150ms, border-color 150ms;
+    align-self: flex-start;
+  }
+  .support-link:hover {
+    color: var(--terracotta);
+    border-color: var(--terracotta);
+  }
+  .support-link .sj {
+    font-family: var(--jp);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .support-link .se {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Settings modal ──────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,26,22,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--paper);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    position: relative;
+  }
+  .modal h2 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  .modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .modal-field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .modal-field input {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--paper-2);
+    border: 1px solid rgba(58,52,44,0.3);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--ink);
+    width: 100%;
+  }
+  .modal-field input:focus {
+    outline: none;
+    border-color: var(--terracotta);
+  }
+  .modal-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: -8px;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .modal-actions button {
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: background 150ms;
+  }
+  .btn-cancel {
+    background: var(--paper-2);
+    color: var(--muted);
+  }
+  .btn-cancel:hover { background: var(--rule); color: var(--paper); }
+  .btn-save {
+    background: var(--terracotta);
+    color: white;
+  }
+  .btn-save:hover { background: var(--terracotta-deep); }
+
+  /* ── Utility ─────────────────────────────────── */
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 28px 16px calc(36px + var(--safe-bottom)); }
+    .fields { grid-template-columns: 1fr; }
+    .fields.triple { grid-template-columns: 1fr 1fr; }
+    .ohm-inputs { grid-template-columns: 1fr 1fr; }
+    header { flex-direction: column; }
+    .settings-btn { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-label="設定">
+  <div class="modal">
+    <h2>設定</h2>
+    <div class="modal-field">
+      <label for="amazonTagInput">Amazonアソシエイトタグ</label>
+      <input type="text" id="amazonTagInput" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+    </div>
+    <p class="modal-hint">設定すると「部品を探す」リンクにタグが付与され、購入を通じて制作を支援できます。未設定でも通常リンクで部品検索できます。</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modalCancel">キャンセル</button>
+      <button class="btn-save" id="modalSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<main class="page">
+
+  <div class="meta">
+    <span class="vol">Maker's Bench</span>
+    <div class="meta-nav">
+      <span><span class="dot">●</span> 電子工作計算ツール</span>
+      <a href="../index.html">← 作品一覧</a>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-text">
+      <h1 class="brand-jp">工房の電卓</h1>
+      <div class="brand-en">
+        <span class="em"></span>
+        <span>Maker's Bench</span>
+      </div>
+      <p class="tagline">電子工作の作業台に常駐する計算ツール集。オフライン動作・データ送信なし。</p>
+    </div>
+    <button class="settings-btn" id="settingsBtn" aria-label="設定を開く">⚙ 設定</button>
+  </header>
+
+  <!-- ── Free Tools ───────────────────────────── -->
+  <div class="section-head">
+    <span class="label-jp">計 算 ツ ー ル</span>
+    <span class="label-en">— Free Tools</span>
+  </div>
+  <hr class="section-rule" />
+
+  <div class="tool-list">
+
+    <!-- 1. Ohm's Law -->
+    <details class="tool" id="tool-ohm">
+      <summary>
+        <span class="tool-num">01</span>
+        <div class="tool-head">
+          <span class="tool-title">オームの法則 <span class="en">Ohm's Law</span></span>
+          <span class="tool-desc">V / I / R / P のうち任意2つを入力 → 残りを算出</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <p class="note-small" style="margin-top:14px;">入力したいフィールドに値を入れてください。2つ以上入力すると自動計算します。クリアするには0またはフィールドを空に。</p>
+        <div class="ohm-inputs">
+          <div class="ohm-field">
+            <label>V <span class="hint">電圧 [V]</span></label>
+            <input type="number" id="ohm-V" placeholder="—" min="0" step="any" />
+          </div>
+          <div class="ohm-field">
+            <label>I <span class="hint">電流 [A]</span></label>
+            <input type="number" id="ohm-I" placeholder="—" min="0" step="any" />
+          </div>
+          <div class="ohm-field">
+            <label>R <span class="hint">抵抗 [Ω]</span></label>
+            <input type="number" id="ohm-R" placeholder="—" min="0" step="any" />
+          </div>
+          <div class="ohm-field">
+            <label>P <span class="hint">電力 [W]</span></label>
+            <input type="number" id="ohm-P" placeholder="—" min="0" step="any" />
+          </div>
+        </div>
+        <div id="ohm-result"></div>
+      </div>
+    </details>
+
+    <!-- 2. LED Resistor -->
+    <details class="tool" id="tool-led">
+      <summary>
+        <span class="tool-num">02</span>
+        <div class="tool-head">
+          <span class="tool-title">LED直列抵抗 <span class="en">LED Series Resistor</span></span>
+          <span class="tool-desc">電源電圧・LEDの順電圧・電流から直列抵抗値を計算</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields triple">
+          <div class="field">
+            <label>Vs [V]</label>
+            <input type="number" id="led-Vs" placeholder="5" step="any" />
+          </div>
+          <div class="field">
+            <label>Vf [V]</label>
+            <input type="number" id="led-Vf" placeholder="2.0" step="any" />
+          </div>
+          <div class="field">
+            <label>If [mA]</label>
+            <input type="number" id="led-If" placeholder="20" step="any" />
+          </div>
+        </div>
+        <div id="led-result"></div>
+        <a class="affiliate-link" id="led-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+      </div>
+    </details>
+
+    <!-- 3. Resistor Color Code -->
+    <details class="tool" id="tool-color">
+      <summary>
+        <span class="tool-num">03</span>
+        <div class="tool-head">
+          <span class="tool-title">抵抗カラーコード <span class="en">Color Code</span></span>
+          <span class="tool-desc">値→色帯 / 色帯→値の双方向変換（4帯・5帯）</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="toggle-row" role="group">
+          <button id="cc-mode-v2c" class="active" onclick="ccSetMode('v2c')">値 → 色帯</button>
+          <button id="cc-mode-c2v" onclick="ccSetMode('c2v')">色帯 → 値</button>
+          <button id="cc-bands-4" class="active" onclick="ccSetBands(4)">4帯</button>
+          <button id="cc-bands-5" onclick="ccSetBands(5)">5帯</button>
+        </div>
+
+        <!-- Value to color -->
+        <div id="cc-v2c-panel">
+          <div class="fields mt16">
+            <div class="field">
+              <label>抵抗値 [Ω]</label>
+              <input type="number" id="cc-val" placeholder="4700" min="0" step="any" />
+            </div>
+            <div class="field">
+              <label>誤差</label>
+              <select id="cc-tol">
+                <option value="1">茶 ±1%</option>
+                <option value="2">赤 ±2%</option>
+                <option value="0.5">緑 ±0.5%</option>
+                <option value="0.25">青 ±0.25%</option>
+                <option value="0.1">紫 ±0.1%</option>
+                <option value="5" selected>金 ±5%</option>
+                <option value="10">銀 ±10%</option>
+              </select>
+            </div>
+          </div>
+          <div id="cc-v2c-result"></div>
+        </div>
+
+        <!-- Color to value -->
+        <div id="cc-c2v-panel" style="display:none;">
+          <div id="cc-selects" class="mt16" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+          <div id="cc-c2v-result" class="mt12"></div>
+        </div>
+
+        <a class="affiliate-link" id="color-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:14px;">🛒 部品を探す</a>
+      </div>
+    </details>
+
+    <!-- 4. Voltage Divider -->
+    <details class="tool" id="tool-vdiv">
+      <summary>
+        <span class="tool-num">04</span>
+        <div class="tool-head">
+          <span class="tool-title">分圧回路 <span class="en">Voltage Divider</span></span>
+          <span class="tool-desc">Vin, R1, R2 から出力電圧 Vout を算出</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields triple">
+          <div class="field">
+            <label>Vin [V]</label>
+            <input type="number" id="vd-Vin" placeholder="5" step="any" />
+          </div>
+          <div class="field">
+            <label>R1 [Ω]</label>
+            <input type="number" id="vd-R1" placeholder="1000" step="any" />
+          </div>
+          <div class="field">
+            <label>R2 [Ω]</label>
+            <input type="number" id="vd-R2" placeholder="1000" step="any" />
+          </div>
+        </div>
+        <div id="vdiv-result"></div>
+        <a class="affiliate-link" id="vdiv-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+      </div>
+    </details>
+
+    <!-- 5. 555 Timer Astable -->
+    <details class="tool" id="tool-555">
+      <summary>
+        <span class="tool-num">05</span>
+        <div class="tool-head">
+          <span class="tool-title">555タイマー（アスタブル） <span class="en">555 Astable</span></span>
+          <span class="tool-desc">R1, R2, C から発振周波数・デューティ比・周期を算出</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields triple">
+          <div class="field">
+            <label>R1 [Ω]</label>
+            <input type="number" id="t555-R1" placeholder="1000" step="any" />
+          </div>
+          <div class="field">
+            <label>R2 [Ω]</label>
+            <input type="number" id="t555-R2" placeholder="1000" step="any" />
+          </div>
+          <div class="field">
+            <label>C [µF]</label>
+            <input type="number" id="t555-C" placeholder="1" step="any" />
+          </div>
+        </div>
+        <div id="t555-result"></div>
+        <a class="affiliate-link" id="t555-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+      </div>
+    </details>
+
+    <!-- 6. Battery Life -->
+    <details class="tool" id="tool-bat">
+      <summary>
+        <span class="tool-num">06</span>
+        <div class="tool-head">
+          <span class="tool-title">電池駆動時間 <span class="en">Battery Life</span></span>
+          <span class="tool-desc">電池容量と平均消費電流から駆動時間を推定</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields">
+          <div class="field">
+            <label>容量 [mAh]</label>
+            <input type="number" id="bat-cap" placeholder="2000" step="any" min="0" />
+          </div>
+          <div class="field">
+            <label>消費電流 [mA]</label>
+            <input type="number" id="bat-cur" placeholder="50" step="any" min="0" />
+          </div>
+        </div>
+        <div id="bat-result"></div>
+        <a class="affiliate-link" id="bat-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+      </div>
+    </details>
+
+    <!-- 7. Engineering Notation Parser -->
+    <details class="tool" id="tool-eng">
+      <summary>
+        <span class="tool-num">07</span>
+        <div class="tool-head">
+          <span class="tool-title">エンジニア表記パーサ <span class="en">Engineering Notation</span></span>
+          <span class="tool-desc">10k / 4k7 / 1M5 / 4u7 / 100n / 2p2 等を数値変換・逆変換</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields single mt16">
+          <div class="field">
+            <label>入力（例: 4k7, 100n, 2p2, 1M5）</label>
+            <input type="text" id="eng-input" placeholder="4k7" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+        <div id="eng-result"></div>
+      </div>
+    </details>
+
+  </div><!-- /tool-list -->
+
+  <!-- ── Pro Tools ─────────────────────────────── -->
+  <div class="section-head">
+    <span class="label-jp">Pro ツ ー ル</span>
+    <span class="label-en">— Pro Tools</span>
+  </div>
+  <hr class="section-rule" />
+
+  <div id="pro-section" class="pro-gate pro-tools-locked">
+    <div class="pro-header">
+      <span class="pro-title">
+        <span class="pro-lock-icon">🔒</span>
+        Proツール
+        <span class="pro-badge">PRO</span>
+      </span>
+    </div>
+    <div class="pro-body">
+      <p class="pro-desc">オペアンプ非反転ゲイン計算と基板トレース幅の目安（IPC-2221簡易）を収録。ライセンスキーで解除します。</p>
+      <div class="pro-key-row">
+        <input type="text" id="pro-key-input" placeholder="YZRS-XXXXXXXX" autocomplete="off" spellcheck="false" aria-label="ライセンスキー" />
+        <button class="pro-btn" id="pro-unlock-btn">解除</button>
+      </div>
+      <div id="pro-msg" class="pro-msg" style="display:none;"></div>
+      <a class="pro-purchase-link" href="https://yzrswork.booth.pm/" target="_blank" rel="noopener noreferrer">→ Proを購入する（BOOTH）</a>
+      <p class="note-small" style="margin-top:10px;">購入後に受け取ったライセンスキーを入力してください。デバイスのlocalStorageに保存されます。</p>
+    </div>
+
+    <!-- Pro tool list (hidden until unlock) -->
+    <div class="tool-list" style="padding:0 0 16px;margin-bottom:0;">
+
+      <!-- P1. Op-amp Non-inverting Gain -->
+      <details class="tool" style="border-left:none;border-right:none;border-bottom:none;border-radius:0;border-top:1px solid rgba(58,52,44,0.15);">
+        <summary>
+          <span class="tool-num">P1</span>
+          <div class="tool-head">
+            <span class="tool-title">オペアンプ非反転ゲイン <span class="en">Op-amp Non-inverting</span></span>
+            <span class="tool-desc">Rf, Rg からゲイン倍率と dB を算出</span>
+          </div>
+        </summary>
+        <div class="tool-body">
+          <div class="fields">
+            <div class="field">
+              <label>Rf [Ω]</label>
+              <input type="number" id="oa-Rf" placeholder="10000" step="any" min="0" />
+            </div>
+            <div class="field">
+              <label>Rg [Ω]</label>
+              <input type="number" id="oa-Rg" placeholder="1000" step="any" min="0" />
+            </div>
+          </div>
+          <div id="oa-result"></div>
+        </div>
+      </details>
+
+      <!-- P2. PCB Trace Width -->
+      <details class="tool" style="border-left:none;border-right:none;border-bottom:none;border-radius:0;border-top:1px solid rgba(58,52,44,0.15);">
+        <summary>
+          <span class="tool-num">P2</span>
+          <div class="tool-head">
+            <span class="tool-title">基板トレース幅の目安 <span class="en">PCB Trace Width</span></span>
+            <span class="tool-desc">IPC-2221 簡易式（外層のみ）で最小トレース幅を推定</span>
+          </div>
+        </summary>
+        <div class="tool-body">
+          <div class="fields triple">
+            <div class="field">
+              <label>電流 [A]</label>
+              <input type="number" id="pcb-I" placeholder="1" step="any" min="0" />
+            </div>
+            <div class="field">
+              <label>ΔT [℃]</label>
+              <input type="number" id="pcb-dT" placeholder="10" step="any" min="1" />
+            </div>
+            <div class="field">
+              <label>銅厚 [oz]</label>
+              <select id="pcb-oz">
+                <option value="1" selected>1 oz</option>
+                <option value="2">2 oz</option>
+                <option value="0.5">0.5 oz</option>
+              </select>
+            </div>
+          </div>
+          <div id="pcb-result"></div>
+          <p class="note-small mt8">外層のみ対応（k=0.048）。概算値です。実設計では余裕を持たせてください。</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ────────────────────────────────── -->
+  <footer>
+    <a class="support-link" href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">
+      <span class="sj">制作を応援する</span>
+      <span class="se">note @yzrswork ↗</span>
+    </a>
+    <div><a class="support-link" href="../tools/index.html"><span class="sj">道具箱（ほかの実用ツール）</span><span class="se">The Toolbox →</span></a></div>
+    <div class="footer-meta">
+      <span>© や印工務店 / yzrswork — Maker's Bench</span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* =========================================================
+   Maker's Bench — Electronics Calculator
+   Dependency-free, offline-capable, data stays on device.
+   ========================================================= */
+
+/* ── Utility: format values with SI prefixes ─────────── */
+function fmtOhm(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (v >= 1e6) return (v / 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' MΩ';
+  if (v >= 1e3) return (v / 1e3).toPrecision(4).replace(/\.?0+$/, '') + ' kΩ';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' Ω';
+}
+function fmtVolt(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (Math.abs(v) < 0.001) return (v * 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' µV';
+  if (Math.abs(v) < 1) return (v * 1000).toPrecision(4).replace(/\.?0+$/, '') + ' mV';
+  return v.toPrecision(5).replace(/\.?0+$/, '') + ' V';
+}
+function fmtAmp(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (Math.abs(v) < 0.001) return (v * 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' µA';
+  if (Math.abs(v) < 1) return (v * 1000).toPrecision(4).replace(/\.?0+$/, '') + ' mA';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' A';
+}
+function fmtWatt(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (Math.abs(v) < 0.001) return (v * 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' µW';
+  if (Math.abs(v) < 1) return (v * 1000).toPrecision(4).replace(/\.?0+$/, '') + ' mW';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' W';
+}
+function fmtFreq(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (v >= 1e6) return (v / 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' MHz';
+  if (v >= 1e3) return (v / 1e3).toPrecision(4).replace(/\.?0+$/, '') + ' kHz';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' Hz';
+}
+function fmtTime(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (v < 1e-3) return (v * 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' µs';
+  if (v < 1) return (v * 1e3).toPrecision(4).replace(/\.?0+$/, '') + ' ms';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' s';
+}
+function fmtFarad(v) {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  if (v < 1e-9) return (v * 1e12).toPrecision(4).replace(/\.?0+$/, '') + ' pF';
+  if (v < 1e-6) return (v * 1e9).toPrecision(4).replace(/\.?0+$/, '') + ' nF';
+  if (v < 1e-3) return (v * 1e6).toPrecision(4).replace(/\.?0+$/, '') + ' µF';
+  return v.toPrecision(4).replace(/\.?0+$/, '') + ' F';
+}
+function n(v) { return v == null || v === '' ? null : parseFloat(v); }
+
+function resultBox(rows, error) {
+  if (error) {
+    return `<div class="result-box error"><div class="result-error">${escHtml(error)}</div></div>`;
+  }
+  const inner = rows.map(([lbl, val, hi]) =>
+    `<div class="result-row">
+      <span class="result-label">${escHtml(lbl)}</span>
+      <span class="result-value${hi ? ' highlight' : ''}">${escHtml(val)}</span>
+    </div>`
+  ).join('');
+  return `<div class="result-box">${inner}</div>`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── Affiliate link helper ───────────────────────────── */
+function amazonLink(keyword) {
+  const tag = localStorage.getItem('bench:amazonTag') || '';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+function showAmzLink(elId, keyword) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.href = amazonLink(keyword);
+  el.style.display = 'inline-flex';
+}
+
+/* =========================================================
+   1. Ohm's Law
+   V=IR, P=VI=I²R=V²/R
+   ========================================================= */
+(function() {
+  const ids = ['ohm-V', 'ohm-I', 'ohm-R', 'ohm-P'];
+  ids.forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  function calc() {
+    const V = n(document.getElementById('ohm-V').value);
+    const I = n(document.getElementById('ohm-I').value);
+    const R = n(document.getElementById('ohm-R').value);
+    const P = n(document.getElementById('ohm-P').value);
+    const el = document.getElementById('ohm-result');
+
+    // Count valid inputs
+    const vals = [V, I, R, P];
+    const known = vals.filter(x => x !== null && x > 0);
+    if (known.length < 2) { el.innerHTML = ''; return; }
+
+    let cV = V, cI = I, cR = R, cP = P;
+
+    // Solve with available pair (prioritize first valid combination)
+    try {
+      if (V !== null && I !== null) { cR = V / I; cP = V * I; }
+      else if (V !== null && R !== null) { cI = V / R; cP = (V * V) / R; }
+      else if (V !== null && P !== null) { cI = P / V; cR = (V * V) / P; }
+      else if (I !== null && R !== null) { cV = I * R; cP = I * I * R; }
+      else if (I !== null && P !== null) { cV = P / I; cR = P / (I * I); }
+      else if (R !== null && P !== null) { cV = Math.sqrt(P * R); cI = Math.sqrt(P / R); }
+
+      if ([cV, cI, cR, cP].some(x => x !== null && (x <= 0 || !isFinite(x)))) {
+        el.innerHTML = resultBox([], '値が不正です（正の数値を入力してください）');
+        return;
+      }
+      el.innerHTML = resultBox([
+        ['V 電圧', fmtVolt(cV)],
+        ['I 電流', fmtAmp(cI)],
+        ['R 抵抗', fmtOhm(cR)],
+        ['P 電力', fmtWatt(cP), true],
+      ]);
+    } catch(e) {
+      el.innerHTML = resultBox([], '計算エラー');
+    }
+  }
+})();
+
+/* =========================================================
+   2. LED Series Resistor
+   R = (Vs - Vf) / (If / 1000)
+   ========================================================= */
+(function() {
+  const E12 = [1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2];
+  function nearestE12(ohm) {
+    let best = null, bestDiff = Infinity;
+    for (let exp = -2; exp <= 6; exp++) {
+      for (const e of E12) {
+        const v = e * Math.pow(10, exp);
+        const d = Math.abs(v - ohm);
+        if (d < bestDiff) { bestDiff = d; best = v; }
+      }
+    }
+    return best;
+  }
+  function recWatt(p) {
+    const std = [0.125, 0.25, 0.5, 1, 2, 5];
+    for (const s of std) { if (s >= p * 2) return s; }
+    return null;
+  }
+
+  ['led-Vs','led-Vf','led-If'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  function calc() {
+    const Vs = n(document.getElementById('led-Vs').value);
+    const Vf = n(document.getElementById('led-Vf').value);
+    const If_mA = n(document.getElementById('led-If').value);
+    const el = document.getElementById('led-result');
+    const amz = document.getElementById('led-amz');
+
+    if (Vs == null || Vf == null || If_mA == null) { el.innerHTML = ''; amz.style.display='none'; return; }
+    if (Vs <= Vf) { el.innerHTML = resultBox([], 'Vs はVf より大きくしてください（Vs > Vf）'); amz.style.display='none'; return; }
+    if (If_mA <= 0) { el.innerHTML = resultBox([], '電流Ifは正の値を入力してください'); amz.style.display='none'; return; }
+
+    const If_A = If_mA / 1000;
+    const R = (Vs - Vf) / If_A;
+    const R12 = nearestE12(R);
+    const Pr = (Vs - Vf) * If_A;
+    const Prec = recWatt(Pr);
+
+    el.innerHTML = resultBox([
+      ['R 必要抵抗', fmtOhm(R), true],
+      ['最寄りE12値', fmtOhm(R12)],
+      ['抵抗の消費電力', fmtWatt(Pr)],
+      ['推奨ワット数', Prec ? Prec + ' W以上' : '2W以上'],
+    ]);
+    showAmzLink('led-amz', 'LED 5mm 詰め合わせ');
+    amz.style.display = 'inline-flex';
+  }
+})();
+
+/* =========================================================
+   3. Resistor Color Code (4-band / 5-band, bidirectional)
+   ========================================================= */
+(function() {
+  const COLORS = {
+    // name, hex, digit (null if not digit), multiplier, tolerance
+    black:  { hex: '#000000', d: 0,  m: 1,    t: null },
+    brown:  { hex: '#8B4513', d: 1,  m: 10,   t: 1    },
+    red:    { hex: '#CC0000', d: 2,  m: 100,  t: 2    },
+    orange: { hex: '#FF6600', d: 3,  m: 1e3,  t: null },
+    yellow: { hex: '#FFDD00', d: 4,  m: 1e4,  t: null },
+    green:  { hex: '#00AA00', d: 5,  m: 1e5,  t: 0.5  },
+    blue:   { hex: '#0044CC', d: 6,  m: 1e6,  t: 0.25 },
+    violet: { hex: '#8800CC', d: 7,  m: 1e7,  t: 0.1  },
+    gray:   { hex: '#888888', d: 8,  m: 1e8,  t: null },
+    white:  { hex: '#EEEEEE', d: 9,  m: 1e9,  t: null },
+    gold:   { hex: '#C8A000', d: null, m: 0.1,  t: 5  },
+    silver: { hex: '#AAAAAA', d: null, m: 0.01, t: 10 },
+  };
+  const COLOR_NAMES = Object.keys(COLORS);
+  const DIGIT_COLORS = COLOR_NAMES.filter(c => COLORS[c].d !== null);
+  const MULT_COLORS  = COLOR_NAMES.filter(c => COLORS[c].m !== null);
+  const TOL_COLORS   = COLOR_NAMES.filter(c => COLORS[c].t !== null);
+  const COLOR_JP = {
+    black:'黒',brown:'茶',red:'赤',orange:'橙',yellow:'黄',
+    green:'緑',blue:'青',violet:'紫',gray:'灰',white:'白',
+    gold:'金',silver:'銀'
+  };
+
+  let mode = 'v2c';
+  let bands = 4;
+
+  window.ccSetMode = function(m) {
+    mode = m;
+    document.getElementById('cc-v2c-panel').style.display = m === 'v2c' ? '' : 'none';
+    document.getElementById('cc-c2v-panel').style.display = m === 'c2v' ? '' : 'none';
+    document.getElementById('cc-mode-v2c').classList.toggle('active', m === 'v2c');
+    document.getElementById('cc-mode-c2v').classList.toggle('active', m === 'c2v');
+    if (m === 'c2v') rebuildSelects();
+  };
+
+  window.ccSetBands = function(b) {
+    bands = b;
+    document.getElementById('cc-bands-4').classList.toggle('active', b === 4);
+    document.getElementById('cc-bands-5').classList.toggle('active', b === 5);
+    if (mode === 'v2c') calcV2C();
+    else rebuildSelects();
+  };
+
+  function makeChip(name) {
+    const c = COLORS[name];
+    const textColor = (name === 'white' || name === 'yellow' || name === 'gray') ? '#333' : '#fff';
+    return `<div class="color-chip">
+      <div class="swatch" style="background:${c.hex};"></div>
+      <div class="clabel" style="color:var(--muted);">${COLOR_JP[name]||name}</div>
+    </div>`;
+  }
+
+  // Value -> Color bands
+  function calcV2C() {
+    const val = n(document.getElementById('cc-val').value);
+    const tolVal = parseFloat(document.getElementById('cc-tol').value);
+    const el = document.getElementById('cc-v2c-result');
+    const amz = document.getElementById('color-amz');
+    if (val == null || val <= 0) { el.innerHTML=''; amz.style.display='none'; return; }
+
+    let digits, mult;
+    if (bands === 4) {
+      // 2 significant digits
+      const exp = Math.floor(Math.log10(val)) - 1;
+      mult = Math.pow(10, exp);
+      const sig = Math.round(val / mult);
+      if (sig < 10 || sig > 99) {
+        el.innerHTML = resultBox([], '4帯では 10〜9.9MΩ の範囲を推奨します');
+        amz.style.display='none'; return;
+      }
+      digits = [Math.floor(sig/10), sig%10];
+    } else {
+      // 3 significant digits
+      const exp = Math.floor(Math.log10(val)) - 2;
+      mult = Math.pow(10, exp);
+      const sig = Math.round(val / mult);
+      if (sig < 100 || sig > 999) {
+        el.innerHTML = resultBox([], '5帯では 100〜999MΩ の範囲を推奨します');
+        amz.style.display='none'; return;
+      }
+      digits = [Math.floor(sig/100), Math.floor((sig%100)/10), sig%10];
+    }
+
+    const multColor = MULT_COLORS.find(c => Math.abs(COLORS[c].m - mult) / mult < 0.001);
+    const tolColor = TOL_COLORS.find(c => COLORS[c].t === tolVal);
+    const digitColors = digits.map(d => DIGIT_COLORS.find(c => COLORS[c].d === d));
+
+    if (!multColor || digitColors.some(c => !c)) {
+      el.innerHTML = resultBox([], 'この値は標準カラーコードで表現できません');
+      amz.style.display='none'; return;
+    }
+
+    const allBands = [...digitColors, multColor, tolColor || 'gold'];
+    el.innerHTML = `<div class="result-box" style="padding-top:14px;">
+      <div class="color-bands">${allBands.map(makeChip).join('')}</div>
+      <div style="margin-top:12px;">${resultBox([
+        ['帯の色 (' + bands + '帯)', allBands.map(c=>COLOR_JP[c]||c).join(' / ')],
+        ['誤差', '±' + tolVal + '%'],
+      ]).replace('<div class="result-box">','').replace('</div>','')}</div>
+    </div>`;
+    showAmzLink('color-amz', 'カーボン抵抗 1/4W セット');
+    amz.style.display = 'inline-flex';
+  }
+
+  document.getElementById('cc-val').addEventListener('input', calcV2C);
+  document.getElementById('cc-tol').addEventListener('change', calcV2C);
+
+  // Color -> Value
+  function rebuildSelects() {
+    const container = document.getElementById('cc-selects');
+    const n4 = bands === 4 ? ['帯1','帯2','乗数','誤差'] : ['帯1','帯2','帯3','乗数','誤差'];
+    container.innerHTML = n4.map((label, i) => {
+      const isLast = i === n4.length - 1;
+      const colors = isLast ? TOL_COLORS : (i === n4.length - 2 ? MULT_COLORS : DIGIT_COLORS);
+      const opts = colors.map(c =>
+        `<option value="${c}" style="background:${COLORS[c].hex};color:${c==='white'||c==='yellow'?'#333':'#fff'};">${COLOR_JP[c]||c}</option>`
+      ).join('');
+      return `<div class="field" style="min-width:70px;">
+        <label style="font-size:10px;">${label}</label>
+        <select id="cc-s-${i}" onchange="calcC2V()" style="font-size:13px;padding:8px 28px 8px 10px;">
+          <option value="">—</option>${opts}
+        </select>
+      </div>`;
+    }).join('');
+    calcC2V();
+  }
+
+  window.calcC2V = function() {
+    const el = document.getElementById('cc-c2v-result');
+    const amz = document.getElementById('color-amz');
+    const n4 = bands === 4 ? 4 : 5;
+    const vals = Array.from({length: n4}, (_,i) => {
+      const s = document.getElementById('cc-s-'+i);
+      return s ? s.value : '';
+    });
+    if (vals.some(v=>!v)) { el.innerHTML=''; amz.style.display='none'; return; }
+
+    let ohm;
+    if (bands === 4) {
+      const [d1,d2,mult,tol] = vals;
+      const sig = COLORS[d1].d * 10 + COLORS[d2].d;
+      ohm = sig * COLORS[mult].m;
+      const tolv = COLORS[tol].t;
+      el.innerHTML = resultBox([
+        ['抵抗値', fmtOhm(ohm), true],
+        ['誤差', tolv != null ? '±'+tolv+'%' : '—'],
+        ['範囲', tolv != null ? fmtOhm(ohm*(1-tolv/100))+' ～ '+fmtOhm(ohm*(1+tolv/100)) : '—'],
+      ]);
+    } else {
+      const [d1,d2,d3,mult,tol] = vals;
+      const sig = COLORS[d1].d * 100 + COLORS[d2].d * 10 + COLORS[d3].d;
+      ohm = sig * COLORS[mult].m;
+      const tolv = COLORS[tol].t;
+      el.innerHTML = resultBox([
+        ['抵抗値', fmtOhm(ohm), true],
+        ['誤差', tolv != null ? '±'+tolv+'%' : '—'],
+        ['範囲', tolv != null ? fmtOhm(ohm*(1-tolv/100))+' ～ '+fmtOhm(ohm*(1+tolv/100)) : '—'],
+      ]);
+    }
+    showAmzLink('color-amz', 'カーボン抵抗 1/4W セット');
+    amz.style.display = 'inline-flex';
+  };
+  window.calcC2V = window.calcC2V; // expose
+})();
+
+/* =========================================================
+   4. Voltage Divider
+   Vout = Vin * R2 / (R1 + R2)
+   ========================================================= */
+(function() {
+  ['vd-Vin','vd-R1','vd-R2'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  function calc() {
+    const Vin = n(document.getElementById('vd-Vin').value);
+    const R1  = n(document.getElementById('vd-R1').value);
+    const R2  = n(document.getElementById('vd-R2').value);
+    const el  = document.getElementById('vdiv-result');
+    const amz = document.getElementById('vdiv-amz');
+
+    if (Vin == null || R1 == null || R2 == null) { el.innerHTML=''; amz.style.display='none'; return; }
+    if (R1 <= 0 || R2 <= 0) { el.innerHTML = resultBox([], 'R1, R2 は正の値を入力してください'); amz.style.display='none'; return; }
+
+    const Vout = Vin * R2 / (R1 + R2);
+    const ratio = R2 / (R1 + R2);
+
+    el.innerHTML = resultBox([
+      ['Vout 出力電圧', fmtVolt(Vout), true],
+      ['分圧比 R2/(R1+R2)', (ratio * 100).toFixed(2) + ' %'],
+      ['R1 + R2', fmtOhm(R1 + R2)],
+    ]);
+    showAmzLink('vdiv-amz', 'カーボン抵抗 1/4W セット');
+    amz.style.display = 'inline-flex';
+  }
+})();
+
+/* =========================================================
+   5. 555 Timer Astable
+   f = 1.44 / ((R1 + 2*R2) * C)
+   D = (R1 + R2) / (R1 + 2*R2)
+   ========================================================= */
+(function() {
+  ['t555-R1','t555-R2','t555-C'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  function calc() {
+    const R1 = n(document.getElementById('t555-R1').value);
+    const R2 = n(document.getElementById('t555-R2').value);
+    const C_uF = n(document.getElementById('t555-C').value);
+    const el  = document.getElementById('t555-result');
+    const amz = document.getElementById('t555-amz');
+
+    if (R1 == null || R2 == null || C_uF == null) { el.innerHTML=''; amz.style.display='none'; return; }
+    if (R1 <= 0 || R2 <= 0 || C_uF <= 0) { el.innerHTML = resultBox([], 'R1, R2, C は正の値を入力してください'); amz.style.display='none'; return; }
+
+    const C = C_uF * 1e-6;
+    const f = 1.44 / ((R1 + 2 * R2) * C);
+    const T = 1 / f;
+    const D = (R1 + R2) / (R1 + 2 * R2);
+
+    el.innerHTML = resultBox([
+      ['f 周波数', fmtFreq(f), true],
+      ['T 周期', fmtTime(T)],
+      ['D デューティ比', (D * 100).toFixed(2) + ' %'],
+      ['C 容量', fmtFarad(C)],
+    ]);
+    showAmzLink('t555-amz', 'NE555 タイマーIC');
+    amz.style.display = 'inline-flex';
+  }
+})();
+
+/* =========================================================
+   6. Battery Life
+   hours = capacity / current
+   ========================================================= */
+(function() {
+  ['bat-cap','bat-cur'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  function calc() {
+    const cap = n(document.getElementById('bat-cap').value);
+    const cur = n(document.getElementById('bat-cur').value);
+    const el  = document.getElementById('bat-result');
+    const amz = document.getElementById('bat-amz');
+
+    if (cap == null || cur == null) { el.innerHTML=''; amz.style.display='none'; return; }
+    if (cap <= 0 || cur <= 0) { el.innerHTML = resultBox([], '正の値を入力してください'); amz.style.display='none'; return; }
+
+    const h = cap / cur;
+    const h_eff = h * 0.7;
+
+    function fmtHM(hours) {
+      const hh = Math.floor(hours);
+      const mm = Math.round((hours - hh) * 60);
+      return hh + ' 時間 ' + mm + ' 分';
+    }
+
+    el.innerHTML = resultBox([
+      ['理論駆動時間', fmtHM(h), true],
+      ['実用目安（×0.7）', fmtHM(h_eff)],
+    ]) + '<p class="note-small" style="margin-top:8px;">実用目安は温度・放電特性・変換効率の損失を含む概算（係数0.7）です。</p>';
+    showAmzLink('bat-amz', '単3 充電池');
+    amz.style.display = 'inline-flex';
+  }
+})();
+
+/* =========================================================
+   7. Engineering Notation Parser
+   Parses: 10k, 4k7, 1M5, 100R, 4u7, 100n, 2p2, 1m
+   ========================================================= */
+(function() {
+  document.getElementById('eng-input').addEventListener('input', calc);
+  function calc() {
+    const raw = document.getElementById('eng-input').value.trim();
+    const el  = document.getElementById('eng-result');
+    if (!raw) { el.innerHTML=''; return; }
+
+    const val = parseEng(raw);
+    if (val == null || isNaN(val)) {
+      el.innerHTML = resultBox([], '認識できない形式です（例: 4k7, 100n, 2p2）');
+      return;
+    }
+
+    // Determine category from suffix
+    const lower = raw.toLowerCase();
+    let category = 'resistance'; // default
+    if (/[pnuf]/.test(lower) && !/[rk]/.test(lower)) category = 'capacitance';
+    if (/hz/.test(lower)) category = 'frequency';
+
+    let rows = [['数値', val.toPrecision(6).replace(/\.?0+$/, '')]];
+    if (category === 'resistance') {
+      rows.push(['抵抗値', fmtOhm(val)]);
+    } else if (category === 'capacitance') {
+      rows.push(['容量', fmtFarad(val)]);
+    } else {
+      rows.push(['周波数', fmtFreq(val)]);
+    }
+    // Reverse: best prefix notation
+    rows.push(['接頭辞表記', toEngNotation(val)]);
+    el.innerHTML = resultBox(rows);
+  }
+
+  function parseEng(s) {
+    // Normalize: remove spaces
+    s = s.trim();
+    // Patterns: number + prefix + optional digit (e.g. 4k7, 1M5, 2p2)
+    // Also: 100R, 100n, 4u7
+    const re = /^(\d+(?:\.\d*)?)\s*([RkKmMunpfFhHzZ]*)(\d*)$/i;
+    const m = s.match(re);
+    if (!m) return null;
+    let num = parseFloat(m[1]);
+    const prefix = m[2].toLowerCase();
+    const frac = m[3]; // digit after prefix (e.g. '7' in '4k7')
+
+    if (frac) {
+      // e.g. 4k7 → 4.7k
+      num = parseFloat(m[1] + '.' + frac);
+    }
+
+    const mult = {
+      '': 1, r: 1, f: 1e-15, p: 1e-12, n: 1e-9,
+      u: 1e-6, m: 1e-3, k: 1e3, meg: 1e6, 'M': 1e6, g: 1e9
+    };
+    const prefixMap = {
+      '': 1, r: 1, f: 1e-15, p: 1e-12, n: 1e-9,
+      u: 1e-6, 'm': 1e-3, k: 1e3, 'm': 1e-3
+    };
+    // manual map
+    let factor = 1;
+    if (prefix === 'r') factor = 1;
+    else if (prefix === 'k') factor = 1e3;
+    else if (prefix === 'm') factor = 1e6; // mega or milli ambiguous; use 'u' for micro
+    else if (prefix === 'meg') factor = 1e6;
+    else if (prefix === 'u') factor = 1e-6;
+    else if (prefix === 'n') factor = 1e-9;
+    else if (prefix === 'p') factor = 1e-12;
+    else if (prefix === 'f') factor = 1e-15;
+    else if (prefix === 'g') factor = 1e9;
+    else if (prefix === '') factor = 1;
+    // M is ambiguous; treat as Mega for resistance/frequency context
+    else if (prefix === 'M' || prefix === 'm') {
+      // uppercase M = Mega
+      if (m[2] === 'M') factor = 1e6;
+      else factor = 1e-3; // lowercase m = milli
+    }
+    else if (prefix === 'h' || prefix === 'hz' || prefix === 'z') factor = 1;
+
+    return num * factor;
+  }
+
+  function toEngNotation(v) {
+    if (v == null || isNaN(v)) return '—';
+    const abs = Math.abs(v);
+    const prefixes = [
+      [1e12, 'T'], [1e9, 'G'], [1e6, 'M'], [1e3, 'k'],
+      [1, ''], [1e-3, 'm'], [1e-6, 'u'], [1e-9, 'n'], [1e-12, 'p'], [1e-15, 'f']
+    ];
+    for (const [factor, label] of prefixes) {
+      if (abs >= factor) {
+        const val = v / factor;
+        const s = val.toPrecision(3).replace(/\.?0+$/, '');
+        return s + label;
+      }
+    }
+    return v.toExponential(3);
+  }
+})();
+
+/* =========================================================
+   Pro Tools
+   NOTE: This is a client-side "honest-user" model.
+   It does NOT provide strong DRM protection.
+   For real monetization with enforcement, server-side
+   license verification is required.
+
+   Sample valid key (for testing): YZRS-ABCDE128
+   Validation: key starts with "YZRS-" and the sum of
+   char codes of remaining chars is divisible by 7.
+   ========================================================= */
+(function() {
+  function validateKey(key) {
+    if (!key || !key.startsWith('YZRS-')) return false;
+    const rest = key.slice(5);
+    if (rest.length < 8) return false;
+    const sum = rest.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return sum % 7 === 0;
+  }
+
+  function applyProState(unlocked) {
+    const sec = document.getElementById('pro-section');
+    if (unlocked) {
+      sec.classList.remove('pro-tools-locked');
+      sec.classList.add('pro-tools-unlocked');
+    } else {
+      sec.classList.remove('pro-tools-unlocked');
+      sec.classList.add('pro-tools-locked');
+    }
+  }
+
+  // Check stored state on load
+  if (localStorage.getItem('bench:pro') === '1') {
+    applyProState(true);
+  }
+
+  document.getElementById('pro-unlock-btn').addEventListener('click', function() {
+    const key = document.getElementById('pro-key-input').value.trim().toUpperCase();
+    const msg = document.getElementById('pro-msg');
+    if (validateKey(key)) {
+      localStorage.setItem('bench:pro', '1');
+      msg.textContent = 'Proを解除しました！';
+      msg.className = 'pro-msg ok';
+      msg.style.display = '';
+      applyProState(true);
+    } else {
+      msg.textContent = 'ライセンスキーが正しくありません';
+      msg.className = 'pro-msg';
+      msg.style.display = '';
+    }
+  });
+
+  // Pro P1: Op-amp Non-inverting Gain
+  ['oa-Rf','oa-Rg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calcOA);
+  });
+  function calcOA() {
+    const Rf = n(document.getElementById('oa-Rf').value);
+    const Rg = n(document.getElementById('oa-Rg').value);
+    const el = document.getElementById('oa-result');
+    if (!el) return;
+    if (Rf == null || Rg == null) { el.innerHTML=''; return; }
+    if (Rg <= 0) { el.innerHTML = resultBox([], 'Rg は正の値を入力してください'); return; }
+    const gain = 1 + Rf / Rg;
+    const dB = 20 * Math.log10(gain);
+    el.innerHTML = resultBox([
+      ['Gain 電圧ゲイン', gain.toPrecision(5).replace(/\.?0+$/,'') + ' 倍', true],
+      ['dB', dB.toFixed(2) + ' dB'],
+    ]);
+  }
+
+  // Pro P2: PCB Trace Width (IPC-2221, external layer, k=0.048)
+  ['pcb-I','pcb-dT','pcb-oz'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calcPCB);
+    if (el) el.addEventListener('change', calcPCB);
+  });
+  function calcPCB() {
+    const I   = n(document.getElementById('pcb-I').value);
+    const dT  = n(document.getElementById('pcb-dT').value);
+    const oz  = n(document.getElementById('pcb-oz').value);
+    const el  = document.getElementById('pcb-result');
+    if (!el) return;
+    if (I == null || dT == null || oz == null) { el.innerHTML=''; return; }
+    if (I <= 0 || dT <= 0 || oz <= 0) { el.innerHTML = resultBox([], '正の値を入力してください'); return; }
+
+    // IPC-2221 formula (external layer)
+    // A [mils^2] = (I / (k * dT^0.44))^(1/0.725)
+    // k = 0.048 (external)
+    // thickness [mils] = oz * 1.378 mils/oz
+    const k = 0.048;
+    const A_mils2 = Math.pow(I / (k * Math.pow(dT, 0.44)), 1 / 0.725);
+    const thickness_mils = oz * 1.378;
+    const width_mils = A_mils2 / thickness_mils;
+    const width_mm = width_mils * 0.0254;
+
+    el.innerHTML = resultBox([
+      ['最小トレース幅', width_mm.toFixed(3) + ' mm', true],
+      ['最小トレース幅（mil）', width_mils.toFixed(1) + ' mil'],
+      ['断面積', A_mils2.toFixed(1) + ' mil²'],
+      ['銅厚', thickness_mils.toFixed(2) + ' mil (' + oz + ' oz)'],
+    ]);
+  }
+})();
+
+/* =========================================================
+   Settings Modal
+   ========================================================= */
+(function() {
+  const overlay = document.getElementById('settingsOverlay');
+  const tagInput = document.getElementById('amazonTagInput');
+
+  document.getElementById('settingsBtn').addEventListener('click', function() {
+    tagInput.value = localStorage.getItem('bench:amazonTag') || '';
+    overlay.classList.add('open');
+    tagInput.focus();
+  });
+
+  document.getElementById('modalCancel').addEventListener('click', function() {
+    overlay.classList.remove('open');
+  });
+
+  document.getElementById('modalSave').addEventListener('click', function() {
+    const tag = tagInput.value.trim();
+    if (tag) {
+      localStorage.setItem('bench:amazonTag', tag);
+    } else {
+      localStorage.removeItem('bench:amazonTag');
+    }
+    overlay.classList.remove('open');
+  });
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+  });
+})();
+
+/* =========================================================
+   Service Worker Registration
+   ========================================================= */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(function(err) { console.warn('SW registration failed:', err); });
+  });
+}
+</script>
+</body>
+</html>

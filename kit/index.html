@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>装備ナビ — Maker's Starter Kit</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="装備ナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="装備ナビ — Maker's Starter Kit" />
+<meta property="og:description" content="電子工作の工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先ガイドつき。" />
+<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/kit/" />
+<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-kit.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="装備ナビ — Maker's Starter Kit" />
+<meta name="twitter:description" content="電子工作の工具・部品をステップ別にチェックして買い物リストに集約。調達先ガイドつき。" />
+<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-kit.png" />
+<meta name="description" content="電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先の使い分けガイドつき。オフライン対応。" />
+<script async src="/yzrswork_apps/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3;
+    --paper-2: #e8e1d4;
+    --card: #f6f2ea;
+    --ink: #1c1a16;
+    --ink-soft: #2b2823;
+    --muted: #6f675b;
+    --rule: #3a342c;
+    --rule-soft: rgba(58, 52, 44, 0.28);
+    --terracotta: #b5451b;
+    --terracotta-deep: #8e3514;
+    --ok: #4f6f3e;
+    --serif: "EB Garamond", "Times New Roman", serif;
+    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0; mix-blend-mode: multiply; opacity: 0.9;
+  }
+  .page {
+    position: relative; z-index: 1;
+    max-width: 660px; margin: 0 auto;
+    padding: 24px 18px calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 22px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  header.hero { margin-bottom: 22px; }
+  .hero h1 { font-weight: 700; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.15; margin: 0 0 10px; }
+  .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 15px; letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 40ch; margin: 0; }
+
+  /* ── Filter chips ── */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
+  .chip {
+    font-family: var(--jp); font-size: 13px; font-weight: 500;
+    padding: 7px 14px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .chip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .toolbar-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; gap: 8px; }
+  .hide-owned { font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+  .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
+  .count-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+  /* ── Group heading ── */
+  .group-head {
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 24px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--rule-soft);
+  }
+  .group-head .g-jp { font-weight: 700; font-size: 15px; }
+  .group-head .g-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
+
+  /* ── Item card ── */
+  .item {
+    background: var(--card); border: 1px solid var(--rule-soft);
+    border-radius: 11px; padding: 15px 15px 13px; margin-bottom: 11px;
+    transition: opacity 160ms ease;
+  }
+  .item.owned { opacity: 0.5; }
+  .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .item .it-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
+  .item .it-why { font-size: 13px; color: var(--muted); margin: 4px 0 8px; }
+  .item .it-reco {
+    font-size: 13px; color: var(--ink-soft);
+    background: rgba(181, 69, 27, 0.05); border-left: 3px solid var(--terracotta);
+    padding: 7px 11px; border-radius: 0 6px 6px 0; margin: 0 0 10px;
+  }
+  .item .it-reco .pick { font-weight: 700; color: var(--ink); }
+  .item .it-tip { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; margin: 0 0 10px; }
+  .item .it-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .btn { font-family: var(--jp); font-size: 13px; font-weight: 500; border-radius: 8px; padding: 9px 13px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
+  .btn.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn.buy:hover { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .btn.add.on { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .btn.own { font-size: 12.5px; }
+  .btn.own.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+
+  /* ── Channels (調達先) ── */
+  .channels { margin-top: 30px; }
+  .ch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .ch {
+    background: var(--card); border: 1px solid var(--rule-soft); border-radius: 10px; padding: 13px 13px;
+  }
+  .ch .ch-when { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--terracotta); }
+  .ch .ch-name { font-weight: 700; font-size: 14.5px; margin: 3px 0 4px; }
+  .ch .ch-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .ch a { font-size: 12px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  .ch a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  @media (max-width: 460px) { .ch-grid { grid-template-columns: 1fr; } }
+
+  /* ── Footer ── */
+  footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── Sticky cart bar ── */
+  .cartbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
+    background: rgba(28, 26, 22, 0.96); color: var(--paper);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    transform: translateY(120%); transition: transform 220ms ease;
+  }
+  .cartbar.show { transform: translateY(0); }
+  .cartbar .ct-label { font-size: 13px; }
+  .cartbar .ct-count { font-family: var(--mono); color: #f0c9b8; }
+  .cartbar button { font-family: var(--jp); font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; background: var(--terracotta); color: #fff; }
+
+  /* ── Modal (cart + settings) ── */
+  .modal-bg { position: fixed; inset: 0; background: rgba(28,26,22,0.55); z-index: 20; display: none; align-items: flex-end; justify-content: center; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 14px 14px 0 0; padding: 20px 18px calc(22px + env(safe-area-inset-bottom)); max-width: 660px; width: 100%; max-height: 84vh; overflow-y: auto; border-top: 1px solid var(--rule); }
+  @media (min-width: 520px) { .modal-bg { align-items: center; } .modal { border-radius: 14px; max-width: 460px; } }
+  .modal h2 { font-size: 17px; margin: 0 0 4px; }
+  .modal .m-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--rule-soft); }
+  .cart-item .ci-name { font-size: 13.5px; font-weight: 500; }
+  .cart-item .ci-pick { font-size: 11.5px; color: var(--muted); }
+  .cart-item .ci-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .cart-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
+  .mini { font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
+  .mini.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mini.del { color: var(--terracotta); }
+  .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .m-row button { flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin: 14px 0 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> 装備ナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>装備ナビ<span class="en">— Maker's Starter Kit</span></h1>
+      <p>電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、買い物リストに集約。持っているものは「持ってる」で消し込めます。</p>
+    </header>
+
+    <div class="chips" id="chips"></div>
+    <div class="toolbar-row">
+      <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
+      <span class="count-note" id="ownCount"></span>
+    </div>
+
+    <div id="list"></div>
+
+    <section class="channels">
+      <div class="group-head"><span class="g-jp">部品はどこで買う？</span><span class="g-en">Where to buy</span></div>
+      <div class="ch-grid" id="channels"></div>
+    </section>
+
+    <footer>
+      <div>このリストは <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note の「電子工作部品の話」シリーズ ↗</a> をもとにした、や印工務店の実機での選定です。</div>
+      <div>現行モデル確認: 2026年6月（HAKKO FX600 / AstroAI 4000カウント / Jesverty SPS-3010M）。価格・在庫は市況で変動します。</div>
+      <div><a href="../tools/index.html">← 道具箱（ほかの実用ツール）</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Maker's Starter Kit</div>
+    </footer>
+  </main>
+
+  <!-- Sticky cart bar -->
+  <div class="cartbar" id="cartbar">
+    <span class="ct-label">買い物リスト <span class="ct-count" id="cartCount">0</span> 点</span>
+    <button id="openCart">リストを見る</button>
+  </div>
+
+  <!-- Cart modal -->
+  <div class="modal-bg" id="cart-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="買い物リスト">
+      <h2>買い物リスト</h2>
+      <p class="m-sub">「探す」でAmazonの検索が開きます。設定でアソシエイトIDを入れると紹介リンクになります。</p>
+      <div id="cart-items"></div>
+      <div class="m-row">
+        <button id="copyList">リストをコピー</button>
+        <button id="clearList">全部クリア</button>
+        <button class="primary" id="closeCart">閉じる</button>
+      </div>
+      <div class="saved" id="copyMsg"></div>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="set-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p class="m-sub">AmazonアソシエイトのトラッキングIDを入れると、買い物リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="m-row">
+        <button id="tag-clear">クリア</button>
+        <button class="primary" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   装備ナビ — Maker's Starter Kit Navigator
+   依存ゼロの単一HTML。データ送信なし、オフライン動作。
+   note「電子工作部品の話」vol.1〜3 の選定を、ステップ別チェック
+   リスト＋Amazon買い物リスト＋調達先ガイドに再構成したもの。
+   ========================================================= */
+
+/* ---------- カテゴリ定義（表示順） ---------- */
+const GROUPS = [
+  { cat: 'tool-1', jp: 'Step 1・まず絶対いる', en: 'Essential tools', kind: 'tool' },
+  { cat: 'tool-2', jp: 'Step 2・あると作業が変わる', en: 'Soon', kind: 'tool' },
+  { cat: 'tool-3', jp: 'Step 3・慣れてきたら', en: 'Later', kind: 'tool' },
+  { cat: 'stock',  jp: '部品ストック', en: 'Parts to stock', kind: 'stock' }
+];
+
+/* ---------- アイテム（vol.2 工具 / vol.3 部品ストック より） ---------- */
+const ITEMS = [
+  // Step 1
+  { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: 'これがないと始まらない。最初から温度調整付きが正解。', pick: 'HAKKO FX600（温調 200〜500℃）＋こて台', kw: 'HAKKO FX600 はんだこて 温調 こて台 セット' },
+  { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作' },
+  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット（1,500〜2,000円）', kw: 'ブレッドボード ジャンパー線 セット' },
+  // Step 2
+  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '動かない原因の9割は「つながってない」か「電圧がおかしい」。切り分けが一気に楽になる。', pick: 'AstroAI 4000カウント（TRMS・3年保証）', kw: 'AstroAI デジタルマルチメーター 4000カウント TRMS' },
+  { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に刺しやすくなる。標準プローブの不満を解消。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03' },
+  { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300' },
+  { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '被覆を銅線を傷つけず剥がす。細いシリコン線もサクッと。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01' },
+  // Step 3
+  { id: 'psu', cat: 'tool-3', title: '直流安定化電源', why: '電圧・電流を自分で設定。ラズパイ/Arduinoで「電源を安定させたい」と思ってからで十分。', pick: 'Jesverty SPS-3010M（30V/10A・USB PD・エンコーダ）', kw: 'Jesverty 直流安定化電源 SPS-3010M 30V 10A' },
+  // 部品ストック
+  { id: 'jumper', cat: 'stock', title: 'ジャンパー線', why: 'オス-オス/オス-メス/メス-メスの3種セットでほぼ対応。', pick: 'ELEGOO 120pcs 多色デュポンワイヤー', kw: 'ELEGOO ジャンパーワイヤー 120本 セット', tip: '急ぎ→Amazon' },
+  { id: 'resistor', cat: 'stock', title: '抵抗セット', why: 'LEDを焼かないための必須部品。収納ケース付きが整理に効く。', pick: 'GOODCHI 600個（10Ω〜1MΩ・30種・各20）', kw: 'GOODCHI 金属皮膜抵抗 600個 セット 収納ケース', tip: '急ぎ→Amazon' },
+  { id: 'elcap', cat: 'stock', title: '電解コンデンサ', why: '電源の平滑化・低周波ノイズ除去。容量幅の広いセットが便利。', pick: 'YFFSDC 200個（0.1μF〜1000μF・15種）', kw: '電解コンデンサ セット 200個 0.1uF 1000uF', tip: '急ぎ→Amazon' },
+  { id: 'ceracap', cat: 'stock', title: 'セラミックコンデンサ', why: 'パスコン用。0.1μF（104）を大量に使うので多めに。', pick: 'オーディオファン 300個（2pF〜100nF・30種）', kw: 'セラミックコンデンサ セット 300個 30種類', tip: '急ぎ→Amazon' },
+  { id: 'led', cat: 'stock', title: 'LED（各色）', why: '動作確認でとにかく使う。赤緑青黄白を100本単位で。', pick: 'LED 5色アソートセット', kw: 'LED 5色 セット 電子工作 アソート', tip: '急ぎ→Amazon' },
+  { id: 'shrink', cat: 'stock', title: '熱収縮チューブ', why: '配線の絶縁。見た目もきれいに、ショートも防ぐ。', pick: '複数サイズ＋収納ケース付きセット', kw: '熱収縮チューブ セット 収納ケース', tip: '急ぎ→Amazon' },
+  { id: 'solder', cat: 'stock', title: 'ハンダ（消耗品）', why: '品質が作業に直結。チャイナ便は溶け方が微妙なことがある。', pick: 'goot SD-83（スズ60/鉛40・φ1.0mm・日本製）', kw: 'goot はんだ SD-83 1.0mm 日本製', tip: '消耗品は国産推奨' },
+  { id: 'wick', cat: 'stock', title: 'ハンダ吸い取り線', why: '失敗を吸い取る。こての出番より多いかも。国産はフラックスが素直。', pick: 'goot CP-3015（幅3.0mm・1.5m・日本製）', kw: 'goot はんだ吸取線 CP-3015 3.0mm', tip: '消耗品は国産推奨' },
+  { id: 'protoboard', cat: 'stock', title: 'ユニバーサル基板', why: '仮組みした回路をハンダ付けで固定。消耗が遅いのでまとめ買い向き。', pick: '各サイズ まとめ買い', kw: 'ユニバーサル基板 セット', tip: '安く大量→AliExpress' }
+];
+
+/* ---------- 調達先（vol.1） ---------- */
+const CHANNELS = [
+  { when: '急いでいる', name: 'Amazon', desc: 'すぐ欲しい・まず1セット試す最初の1手に。', url: 'https://www.amazon.co.jp/' },
+  { when: 'とにかく安く大量に', name: 'AliExpress', desc: '通称チャイナ便。今は2週間以内に届く。待てるならここ。', url: 'https://ja.aliexpress.com/' },
+  { when: '品質重視・定番部品', name: '秋月電子 / 千石電商', desc: 'マイコン・センサー・電源は国内定番が安心。', url: 'https://akizukidenshi.com/catalog/default.aspx' },
+  { when: '変わった部品・宝探し', name: 'aitendo（通販）', desc: '変態パーツの聖地。実店舗は終了、通販は継続。', url: 'https://www.aitendo.com/' }
+];
+
+/* ---------- 状態 ---------- */
+let filter = 'all';                                  // 'all' | 'tool' | 'stock'
+let hideOwned = localStorage.getItem('kit:hideOwned') === '1';
+let owned = loadSet('kit:owned');
+let cart = loadSet('kit:cart');
+
+function loadSet(key) {
+  try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
+  catch (e) { return new Set(); }
+}
+function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('kit:amazonTag') || '';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+function byId(id) { return ITEMS.find(i => i.id === id); }
+
+/* ---------- フィルタチップ ---------- */
+const FILTERS = [ { id: 'all', label: 'すべて' }, { id: 'tool', label: '工具' }, { id: 'stock', label: '部品ストック' } ];
+function renderChips() {
+  document.getElementById('chips').innerHTML = FILTERS.map(f =>
+    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}">${f.label}</button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(c =>
+    c.addEventListener('click', () => { filter = c.getAttribute('data-f'); renderChips(); renderList(); })
+  );
+}
+
+/* ---------- リスト ---------- */
+function groupKind(cat) { return GROUPS.find(g => g.cat === cat).kind; }
+function renderList() {
+  const listEl = document.getElementById('list');
+  let html = '';
+  GROUPS.forEach(g => {
+    if (filter === 'tool' && g.kind !== 'tool') return;
+    if (filter === 'stock' && g.kind !== 'stock') return;
+    let items = ITEMS.filter(i => i.cat === g.cat);
+    if (hideOwned) items = items.filter(i => !owned.has(i.id));
+    if (!items.length) return;
+    html += `<div class="group-head"><span class="g-jp">${esc(g.jp)}</span><span class="g-en">${esc(g.en)}</span></div>`;
+    items.forEach(i => {
+      const isOwned = owned.has(i.id);
+      const inCart = cart.has(i.id);
+      html += `
+        <div class="item${isOwned ? ' owned' : ''}">
+          <div class="it-top"><div class="it-title">${esc(i.title)}</div></div>
+          <div class="it-why">${esc(i.why)}</div>
+          <div class="it-reco"><span class="pick">${esc(i.pick)}</span></div>
+          ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+          <div class="it-actions">
+            <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
+            <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
+            <a class="btn buy" href="${esc(amazonUrl(i.kw))}" target="_blank" rel="noopener noreferrer">🛒 探す</a>
+          </div>
+        </div>`;
+    });
+  });
+  if (!html) html = '<p class="cart-empty">表示する項目がありません。フィルタや「持ってるものを隠す」を見直してください。</p>';
+  listEl.innerHTML = html;
+
+  listEl.querySelectorAll('[data-own]').forEach(b =>
+    b.addEventListener('click', () => toggleSet(owned, 'kit:owned', b.getAttribute('data-own'))));
+  listEl.querySelectorAll('[data-add]').forEach(b =>
+    b.addEventListener('click', () => toggleSet(cart, 'kit:cart', b.getAttribute('data-add'))));
+
+  updateOwnCount();
+}
+
+function toggleSet(set, key, id) {
+  if (set.has(id)) set.delete(id); else set.add(id);
+  saveSet(key, set);
+  renderList();
+  updateCartBar();
+}
+
+function updateOwnCount() {
+  document.getElementById('ownCount').textContent = `所有 ${owned.size} / 全 ${ITEMS.length}`;
+}
+
+/* ---------- 調達先 ---------- */
+function renderChannels() {
+  document.getElementById('channels').innerHTML = CHANNELS.map(c => `
+    <div class="ch">
+      <div class="ch-when">${esc(c.when)}</div>
+      <div class="ch-name">${esc(c.name)}</div>
+      <div class="ch-desc">${esc(c.desc)}</div>
+      <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>
+    </div>`).join('');
+}
+
+/* ---------- カートバー / モーダル ---------- */
+const cartbar = document.getElementById('cartbar');
+function updateCartBar() {
+  document.getElementById('cartCount').textContent = cart.size;
+  cartbar.classList.toggle('show', cart.size > 0);
+}
+function renderCart() {
+  const wrap = document.getElementById('cart-items');
+  if (!cart.size) { wrap.innerHTML = '<p class="cart-empty">まだ何も入っていません。各アイテムの「＋ リスト」で追加できます。</p>'; return; }
+  wrap.innerHTML = [...cart].map(id => {
+    const i = byId(id); if (!i) return '';
+    return `
+      <div class="cart-item">
+        <div><div class="ci-name">${esc(i.title)}</div><div class="ci-pick">${esc(i.pick)}</div></div>
+        <div class="ci-actions">
+          <a class="mini buy" href="${esc(amazonUrl(i.kw))}" target="_blank" rel="noopener noreferrer">探す</a>
+          <button class="mini del" data-del="${i.id}">削除</button>
+        </div>
+      </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-del]').forEach(b =>
+    b.addEventListener('click', () => { cart.delete(b.getAttribute('data-del')); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); }));
+}
+
+function cartAsText() {
+  const lines = ['電子工作 買い物リスト（や印工務店 装備ナビ）'];
+  [...cart].forEach(id => { const i = byId(id); if (i) lines.push(`- ${i.title}: ${i.pick}`); });
+  return lines.join('\n');
+}
+
+/* ---------- イベント結線 ---------- */
+const cartBg = document.getElementById('cart-bg');
+const setBg = document.getElementById('set-bg');
+document.getElementById('openCart').addEventListener('click', () => { renderCart(); cartBg.classList.add('open'); });
+document.getElementById('closeCart').addEventListener('click', () => cartBg.classList.remove('open'));
+cartBg.addEventListener('click', e => { if (e.target === cartBg) cartBg.classList.remove('open'); });
+document.getElementById('clearList').addEventListener('click', () => { cart.clear(); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); });
+document.getElementById('copyList').addEventListener('click', () => {
+  const text = cartAsText();
+  const msg = document.getElementById('copyMsg');
+  const done = () => { msg.textContent = 'コピーしました'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => { fallbackCopy(text); done(); });
+  } else { fallbackCopy(text); done(); }
+});
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+const hideOwnedEl = document.getElementById('hideOwned');
+hideOwnedEl.checked = hideOwned;
+hideOwnedEl.addEventListener('change', () => {
+  hideOwned = hideOwnedEl.checked;
+  localStorage.setItem('kit:hideOwned', hideOwned ? '1' : '0');
+  renderList();
+});
+
+// 設定モーダル
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('kit:amazonTag') || '';
+  tagSaved.textContent = '';
+  setBg.classList.add('open');
+});
+setBg.addEventListener('click', e => { if (e.target === setBg) setBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('kit:amazonTag', v); else localStorage.removeItem('kit:amazonTag');
+  tagSaved.textContent = '保存しました（リンクに反映）';
+  renderList();          // 買い物リンクへ反映
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('kit:amazonTag'); tagInput.value = ''; tagSaved.textContent = 'クリアしました'; renderList();
+});
+
+/* ---------- 起動 ---------- */
+renderChips();
+renderList();
+renderChannels();
+updateCartBar();
+
+/* ---------- Service Worker ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>

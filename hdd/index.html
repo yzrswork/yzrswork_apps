@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>HDD選びナビ — WD色 & CMR/SMR</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="HDD選び" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="HDD選びナビ — WD Color & CMR/SMR" />
+<meta property="og:description" content="WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避けるための早見。" />
+<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/hdd/" />
+<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-hdd.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="HDD選びナビ — WD Color & CMR/SMR" />
+<meta name="twitter:description" content="WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避ける早見。" />
+<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-hdd.png" />
+<meta name="description" content="Western DigitalのHDDを用途から色で選び、CMR/SMRを型番末尾で確認する選び方ナビ。RAID/NASにSMRを避けるための早見つき。オフライン対応。" />
+<script async src="/yzrswork_apps/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3; --paper-2: #e8e1d4; --card: #f6f2ea;
+    --ink: #1c1a16; --ink-soft: #2b2823; --muted: #6f675b;
+    --rule: #3a342c; --rule-soft: rgba(58,52,44,0.28);
+    --terracotta: #b5451b; --terracotta-deep: #8e3514;
+    --ok: #4f6f3e; --warn: #b5451b;
+    --serif: "EB Garamond","Times New Roman",serif;
+    --mono: "DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+    --jp: "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink); font-family: var(--jp);
+    line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh;
+    position: relative; overflow-x: hidden;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(70,50,30,0.06) 1px, transparent 1px), radial-gradient(rgba(70,50,30,0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px; background-position: 0 0, 1px 2px;
+    z-index: 0; mix-blend-mode: multiply; opacity: 0.9;
+  }
+  .page { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 24px 18px calc(40px + env(safe-area-inset-bottom)); }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 20px; }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  header.hero { margin-bottom: 18px; }
+  .hero h1 { font-weight: 700; font-size: clamp(26px, 7vw, 36px); line-height: 1.15; margin: 0 0 8px; }
+  .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 14px; letter-spacing: 0.08em; display: block; margin-bottom: 12px; }
+  .hero p { font-size: 13.5px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  .rule3 { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 11px; padding: 14px 16px; margin: 18px 0; }
+  .rule3 .r-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+  .rule3 ol { margin: 0; padding-left: 20px; }
+  .rule3 li { font-size: 13.5px; margin-bottom: 4px; }
+  .rule3 li b { color: var(--terracotta-deep); }
+
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin: 26px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--rule-soft); }
+  .sec-head .s-jp { font-weight: 700; font-size: 15px; }
+  .sec-head .s-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
+
+  /* Use selector */
+  .uses { display: flex; flex-direction: column; gap: 9px; }
+  .use-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 13px 15px; cursor: pointer; font-family: var(--jp); font-size: 14.5px; font-weight: 500; color: var(--ink); }
+  .use-btn:hover, .use-btn.active { border-color: var(--terracotta); }
+  .use-btn.active { background: var(--terracotta); color: #fff; }
+  .use-btn .u-arrow { font-family: var(--mono); opacity: 0.6; }
+
+  /* Result color card */
+  .result { margin-top: 14px; }
+  .color-card { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 16px; border-left-width: 6px; }
+  .color-card .cc-top { display: flex; align-items: center; gap: 10px; }
+  .color-card .cc-dot { font-size: 22px; line-height: 1; }
+  .color-card .cc-name { font-weight: 700; font-size: 18px; }
+  .color-card .cc-use { font-size: 13px; color: var(--ink-soft); margin: 8px 0 10px; }
+  .color-card .cc-rec { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 14px; letter-spacing: 0.04em; }
+  .rec-cmr { background: rgba(79,111,62,0.16); color: var(--ok); }
+  .rec-smr { background: rgba(181,69,27,0.14); color: var(--warn); }
+  .rec-mixed { background: var(--paper-2); color: var(--ink-soft); }
+  .color-card .cc-warn { font-size: 12.5px; color: var(--terracotta-deep); background: rgba(181,69,27,0.08); border-radius: 7px; padding: 8px 11px; margin: 10px 0 0; }
+  .color-card .cc-buy { display: inline-block; margin-top: 12px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 13.5px; }
+  .color-card .cc-buy:hover { background: var(--terracotta); }
+  .result-empty { font-size: 13px; color: var(--muted); padding: 4px 2px; }
+
+  /* Series table */
+  .series { display: flex; flex-direction: column; gap: 8px; }
+  .srow { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--rule-soft); border-radius: 9px; padding: 11px 14px; }
+  .srow .sr-name { font-weight: 500; font-size: 14px; }
+  .srow .sr-tag { font-family: var(--mono); font-size: 11.5px; padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
+
+  /* 型番 checker */
+  .checker { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 11px; padding: 15px 16px; }
+  .checker label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); display: block; margin-bottom: 7px; }
+  .checker input { width: 100%; padding: 12px 13px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 16px; background: var(--paper); color: var(--ink); text-transform: uppercase; }
+  .check-out { margin-top: 12px; font-size: 14px; min-height: 22px; }
+  .check-out .verdict { font-weight: 700; font-family: var(--mono); }
+  .check-out .v-cmr { color: var(--ok); }
+  .check-out .v-smr { color: var(--warn); }
+  .check-out .v-unknown { color: var(--muted); }
+  .check-out .v-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  .examples { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .examples b { color: var(--ink-soft); font-weight: 500; }
+  .examples code { font-family: var(--mono); background: var(--paper-2); padding: 1px 5px; border-radius: 4px; cursor: pointer; }
+
+  /* Avoid */
+  .avoid { background: rgba(181,69,27,0.07); border: 1px solid rgba(181,69,27,0.3); border-radius: 11px; padding: 14px 16px; }
+  .avoid .a-title { font-weight: 700; color: var(--terracotta-deep); font-size: 14px; margin-bottom: 8px; }
+  .avoid ul { margin: 0; padding-left: 18px; }
+  .avoid li { font-size: 13px; margin-bottom: 5px; }
+  .avoid li b { color: var(--terracotta-deep); }
+
+  .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
+
+  footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Settings modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(28,26,22,0.55); z-index: 20; display: none; align-items: center; justify-content: center; padding: 18px; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 13px; padding: 20px 18px; max-width: 440px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 4px; }
+  .modal .m-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
+  .modal label.m-lab { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input.m-in { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .m-row button { flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> HDD選びナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>HDD選びナビ<span class="en">— WD Color & CMR/SMR</span></h1>
+      <p>Western DigitalのHDDを「用途から色」で選び、「CMR/SMR」を型番末尾で確認する選び方ナビ。RAID/NASにSMRを選ばないための早見つき。</p>
+    </header>
+
+    <div class="rule3">
+      <div class="r-title">迷ったらこの3手順</div>
+      <ol>
+        <li>用途から<b>色</b>を大まかに選ぶ</li>
+        <li>用途で<b>CMR/SMR</b>を選ぶ（特にRAID/NASは必ずCMR）</li>
+        <li>最終判断は必ず<b>型番</b>の記録方式を確認</li>
+      </ol>
+    </div>
+
+    <!-- 1. 用途から色 -->
+    <div class="sec-head"><span class="s-jp">1. 用途から色を選ぶ</span><span class="s-en">Pick by use</span></div>
+    <div class="uses" id="uses"></div>
+    <div class="result" id="result"><div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div></div>
+
+    <!-- 2. シリーズ別 CMR/SMR -->
+    <div class="sec-head"><span class="s-jp">2. シリーズ別 CMR/SMR 早見</span><span class="s-en">By series</span></div>
+    <div class="series" id="series"></div>
+
+    <!-- 3. 型番チェッカー -->
+    <div class="sec-head"><span class="s-jp">3. 型番末尾から記録方式</span><span class="s-en">Model checker</span></div>
+    <div class="checker">
+      <label for="model">型番を入力（例: WD20EFRX）</label>
+      <input type="text" id="model" placeholder="WD20EFRX" autocomplete="off" spellcheck="false" />
+      <div class="check-out" id="check-out"></div>
+      <div class="examples" id="examples"></div>
+    </div>
+
+    <!-- 4. 避けるべき -->
+    <div class="sec-head"><span class="s-jp">4. この使い方は避ける</span><span class="s-en">Avoid</span></div>
+    <div class="avoid">
+      <div class="a-title">SMRを選んではいけない用途</div>
+      <ul>
+        <li><b>RAID / NAS に SMR</b> ー 復旧が極端に遅く、数日〜数週間かかる例も。ここだけはCMR必須。</li>
+        <li><b>ゲーム用に SMR</b> ー ロード時間が増え、プレイ体験が悪化。</li>
+        <li><b>頻繁な書き換えに SMR</b> ー ランダム書き込みで性能が急低下。</li>
+      </ul>
+    </div>
+
+    <p class="disclaimer">※ 色だけでは記録方式（CMR/SMR）は確定できません。WDは旧Red Plus（EFRX）を現行のEFZX/EFPX（いずれもCMR）へ静かに置き換えており、容量・世代で末尾が変わります。最終判断は必ず型番の「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年6月時点）。</p>
+
+    <footer>
+      <div>この早見は <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「WDの色の選び方ガイド」 ↗</a> と最新の公式情報をもとにしています。役に立ったら記事にスキをもらえると励みになります。</div>
+      <div><a href="../tools/index.html">← 道具箱（ほかの実用ツール）</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — HDD Picker</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="set-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p class="m-sub">AmazonアソシエイトのトラッキングIDを入れると、「探す」リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label class="m-lab" for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" class="m-in" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="m-row">
+        <button id="tag-clear">クリア</button>
+        <button class="primary" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   HDD選びナビ — WD Color & CMR/SMR
+   依存ゼロの単一HTML。データ送信なし、オフライン動作。
+   note「Western Digitalの色の選び方ガイド」をもとに、用途→色→
+   記録方式（CMR/SMR）→型番確認の手順を対話化したもの。
+   型番例は2025年時点。最終判断は公式仕様を確認する前提。
+   ========================================================= */
+
+/* ---------- 色データ ---------- */
+const COLORS = {
+  blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '一般PC・万能型。OS／アプリ／普段使い向け。', rec: 'mixed', recLabel: '型番で確認必須', warn: '2TB以上はSMR混在に注意。', kw: 'WD Blue 内蔵HDD' },
+  redplus: { name: 'WD Red Plus / Pro', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', rec: 'cmr', recLabel: 'CMR確定', warn: '', kw: 'WD Red Plus NAS HDD' },
+  red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '低コストNAS向け。', rec: 'smr', recLabel: '基本SMR', warn: 'SMR注意。RAIDには非推奨。', kw: 'WD Red 内蔵HDD' },
+  purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', rec: 'cmr', recLabel: '用途特化', warn: '', kw: 'WD Purple 監視カメラ HDD' },
+  black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能・ゲーム・動画編集など高速作業向け。', rec: 'cmr', recLabel: '全容量CMR', warn: '', kw: 'WD Black 内蔵HDD' }
+};
+
+/* ---------- 用途セレクタ ---------- */
+const USES = [
+  { label: 'OS・アプリ・普段使い', color: 'blue' },
+  { label: 'NAS・RAID・24時間稼働', color: 'redplus' },
+  { label: '監視カメラの録画', color: 'purple' },
+  { label: 'ゲーム・動画編集・高速作業', color: 'black' },
+  { label: 'とにかく安くNAS（非推奨に注意）', color: 'red' }
+];
+
+/* ---------- シリーズ別 CMR/SMR 早見 ---------- */
+const SERIES = [
+  { name: 'Black / Gold / Red Plus / Red Pro', verdict: 'cmr', text: '全容量CMR' },
+  { name: 'Blue', verdict: 'mixed', text: '型番で確認' },
+  { name: 'Red（無印）', verdict: 'smr', text: '基本SMR' }
+];
+
+/* ---------- 型番末尾ルール（2026年6月時点・WD公式で要確認） ---------- */
+const SUFFIX = [
+  { suf: 'EFPX', v: 'cmr', note: '例: WD40EFPX（現行 Red Plus 4TB・CMR・256MB）' },
+  { suf: 'EFZX', v: 'cmr', note: '例: WD40EFZX（現行 Red Plus 4TB・CMR・128MB）' },
+  { suf: 'EFRX', v: 'cmr', note: '例: WD20EFRX（旧 Red Plus・CMR。現行はEFZX/EFPXへ置換）' },
+  { suf: 'EFAX', v: 'smr', note: '例: WD20EFAX（Red 無印 2TB・SMR）' },
+  { suf: 'EARZ', v: 'cmr', note: '例: WD20EARZ（Blue 2TB 新型・CMR）' },
+  { suf: 'EZBX', v: 'smr', note: '例: WD20EZBX（Blue 2TB 7200rpm・SMR）' },
+  { suf: 'EZAZ', v: 'smr', note: '例: WD20EZAZ（Blue 2TB 5400rpm・SMR）' }
+];
+const EXAMPLES = ['WD40EFPX', 'WD40EFZX', 'WD20EFRX', 'WD20EARZ', 'WD20EZAZ', 'WD20EFAX'];
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function amazonUrl(kw) {
+  const tag = localStorage.getItem('hdd:amazonTag') || '';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+const VTAG = {
+  cmr: '<span class="sr-tag rec-cmr">CMR</span>',
+  smr: '<span class="sr-tag rec-smr">SMR</span>',
+  mixed: '<span class="sr-tag rec-mixed">要確認</span>'
+};
+
+/* ---------- 用途セレクタ描画 ---------- */
+let activeUse = -1;
+function renderUses() {
+  document.getElementById('uses').innerHTML = USES.map((u, i) =>
+    `<button class="use-btn${i === activeUse ? ' active' : ''}" data-u="${i}"><span>${esc(u.label)}</span><span class="u-arrow">→</span></button>`
+  ).join('');
+  document.querySelectorAll('.use-btn').forEach(b =>
+    b.addEventListener('click', () => { activeUse = +b.getAttribute('data-u'); renderUses(); renderResult(); }));
+}
+function renderResult() {
+  const el = document.getElementById('result');
+  if (activeUse < 0) { el.innerHTML = '<div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div>'; return; }
+  const c = COLORS[USES[activeUse].color];
+  el.innerHTML = `
+    <div class="color-card" style="border-left-color:${c.hex}">
+      <div class="cc-top"><span class="cc-dot">${c.dot}</span><span class="cc-name">${esc(c.name)}</span></div>
+      <div class="cc-use">${esc(c.use)}</div>
+      <span class="cc-rec rec-${c.rec}">${esc(c.recLabel)}</span>
+      ${c.warn ? `<div class="cc-warn">${esc(c.warn)}</div>` : ''}
+      <a class="cc-buy" href="${esc(amazonUrl(c.kw))}" target="_blank" rel="noopener noreferrer">🛒 ${esc(c.name)} を探す</a>
+    </div>`;
+}
+
+/* ---------- シリーズ早見 ---------- */
+function renderSeries() {
+  document.getElementById('series').innerHTML = SERIES.map(s =>
+    `<div class="srow"><span class="sr-name">${esc(s.name)}</span>${VTAG[s.verdict]}</div>`
+  ).join('');
+}
+
+/* ---------- 型番チェッカー ---------- */
+function checkModel(raw) {
+  const out = document.getElementById('check-out');
+  const v = (raw || '').toUpperCase().replace(/\s/g, '');
+  if (!v) { out.innerHTML = ''; return; }
+  const hit = SUFFIX.find(s => v.endsWith(s.suf));
+  if (hit) {
+    const cls = hit.v === 'cmr' ? 'v-cmr' : 'v-smr';
+    const label = hit.v === 'cmr' ? 'CMR' : 'SMR';
+    out.innerHTML = `<span class="verdict ${cls}">${label}</span> と判定（末尾 ${esc(hit.suf)}）<div class="v-note">${esc(hit.note)}</div>`;
+  } else {
+    out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">登録済みの末尾（EFRX / EFAX / EARZ / EZAZ / EZBX）に当てはまりません。型番の「Recording Technology」を公式で確認してください。</div>`;
+  }
+}
+
+function renderExamples() {
+  document.getElementById('examples').innerHTML =
+    '<b>例（タップで判定）:</b> ' + EXAMPLES.map(e => `<code data-ex="${e}">${e}</code>`).join(' ');
+  document.querySelectorAll('#examples code').forEach(c =>
+    c.addEventListener('click', () => { const m = document.getElementById('model'); m.value = c.getAttribute('data-ex'); checkModel(m.value); }));
+}
+
+/* ---------- 設定モーダル ---------- */
+const setBg = document.getElementById('set-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('hdd:amazonTag') || '';
+  tagSaved.textContent = ''; setBg.classList.add('open');
+});
+setBg.addEventListener('click', e => { if (e.target === setBg) setBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('hdd:amazonTag', v); else localStorage.removeItem('hdd:amazonTag');
+  tagSaved.textContent = '保存しました（リンクに反映）'; renderResult();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('hdd:amazonTag'); tagInput.value = ''; tagSaved.textContent = 'クリアしました'; renderResult();
+});
+
+document.getElementById('model').addEventListener('input', e => checkModel(e.target.value));
+
+/* ---------- 起動 ---------- */
+renderUses();
+renderSeries();
+renderExamples();
+
+/* ---------- Service Worker ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>
