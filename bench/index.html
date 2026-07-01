@@ -896,6 +896,7 @@
     </a>
     <div><a class="support-link" href="../"><span class="sj">道具箱（ほかの実用ツール）</span><span class="se">The Toolbox →</span></a></div>
     <div class="footer-meta">
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
       <span>© や印工務店 / yzrswork — Maker's Bench</span>
     </div>
   </footer>
@@ -972,7 +973,7 @@ function escHtml(s) {
 
 /* ── Affiliate link helper ───────────────────────────── */
 function amazonLink(keyword) {
-  const tag = localStorage.getItem('bench:amazonTag') || '';
+  const tag = localStorage.getItem('bench:amazonTag') || 'yzrs_apps-22';
   const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
   return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
 }

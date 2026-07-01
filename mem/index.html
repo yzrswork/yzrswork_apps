@@ -179,6 +179,7 @@
     <footer>
       <div>この早見は <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">note「DDR3〜DDR5の進化と16GBのTEAMGROUPを選んだ話」 ↗</a> と最新の公式情報をもとにしています。</div>
       <div><a href="../">← 道具箱（ほかの実用ツール）</a></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
       <div class="footer-meta">© や印工務店 / yzrswork — Memory Picker</div>
     </footer>
   </main>
@@ -231,7 +232,7 @@ const PICKS = [
 let selSocket = null, selUse = null;
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(kw) {
-  const tag = localStorage.getItem('mem:amazonTag') || '';
+  const tag = localStorage.getItem('mem:amazonTag') || 'yzrs_apps-22';
   const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw);
   return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
 }
