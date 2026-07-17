@@ -10,19 +10,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="装備ナビ" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/kit/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="装備ナビ — Maker's Starter Kit" />
 <meta property="og:description" content="電子工作の工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先ガイドつき。" />
-<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/kit/" />
-<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-kit.png" />
+<meta property="og:url" content="https://apps.yzrswork.com/kit/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-kit.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="装備ナビ — Maker's Starter Kit" />
 <meta name="twitter:description" content="電子工作の工具・部品をステップ別にチェックして買い物リストに集約。調達先ガイドつき。" />
-<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-kit.png" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-kit.png" />
 <meta name="description" content="電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先の使い分けガイドつき。オフライン対応。" />
-<script async src="/yzrswork_apps/analytics.js"></script>
+<script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
@@ -220,6 +221,7 @@
       <div>現行モデル確認: 2026年6月（HAKKO FX600 / AstroAI 4000カウント / Jesverty SPS-3010M）。価格・在庫は市況で変動します。</div>
       <div><a href="../">← 道具箱（ほかの実用ツール）</a></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — Maker's Starter Kit</div>
     </footer>
   </main>
@@ -363,7 +365,7 @@ function renderList() {
           <div class="it-actions">
             <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
             <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
-            <a class="btn buy" href="${esc(amazonUrl(i.kw))}" target="_blank" rel="noopener noreferrer">🛒 探す</a>
+            <a class="btn buy" href="${esc(amazonUrl(i.kw))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">🛒 探す</a>
           </div>
         </div>`;
     });
@@ -416,7 +418,7 @@ function renderCart() {
       <div class="cart-item">
         <div><div class="ci-name">${esc(i.title)}</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
-          <a class="mini buy" href="${esc(amazonUrl(i.kw))}" target="_blank" rel="noopener noreferrer">探す</a>
+          <a class="mini buy" href="${esc(amazonUrl(i.kw))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">探す</a>
           <button class="mini del" data-del="${i.id}">削除</button>
         </div>
       </div>`;

@@ -15,3 +15,16 @@
   gtag("js", new Date());
   gtag("config", ID);
 })();
+
+// アフィリエイトリンクのクリック計測。
+// data-track-label を付けたリンクはそのラベルを、無ければリンクテキストをitem_labelとして送る。
+document.addEventListener("click", function (e) {
+  var a = e.target && e.target.closest && e.target.closest('a[href*="amazon.co.jp"]');
+  if (!a || !window.gtag) return;
+  gtag("event", "outbound_click", {
+    link_url: a.href,
+    link_domain: "amazon.co.jp",
+    item_label: a.getAttribute("data-track-label") || (a.textContent || "").trim().slice(0, 100),
+    app_name: location.pathname.replace(/\/$/, "").split("/").pop() || "root"
+  });
+}, true);

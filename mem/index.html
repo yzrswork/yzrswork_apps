@@ -10,19 +10,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="メモリ選び" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/mem/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="メモリ選びナビ — DDR Spec & Capacity" />
 <meta property="og:description" content="自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成で組むための選び方ナビ。" />
-<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/mem/" />
-<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-mem.png" />
+<meta property="og:url" content="https://apps.yzrswork.com/mem/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-mem.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="メモリ選びナビ — DDR Spec & Capacity" />
 <meta name="twitter:description" content="ソケットからDDR規格、用途から容量、2枚構成（デュアルチャネル）で。2026年の対応を反映。" />
-<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-mem.png" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-mem.png" />
 <meta name="description" content="自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成（デュアルチャネル）で組むための選び方ナビ。オフライン対応。" />
-<script async src="/yzrswork_apps/analytics.js"></script>
+<script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
@@ -180,6 +181,7 @@
       <div>この早見は <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">note「DDR3〜DDR5の進化と16GBのTEAMGROUPを選んだ話」 ↗</a> と最新の公式情報をもとにしています。</div>
       <div><a href="../">← 道具箱（ほかの実用ツール）</a></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — Memory Picker</div>
     </footer>
   </main>
@@ -279,13 +281,13 @@ function renderReco() {
       <div class="rc-lab">あなたの構成の目安</div>
       <div class="rc-big">${esc(config)}</div>
       <div class="rc-sub">同じ容量なら2枚構成（デュアルチャネル）を。表示速度を出すならBIOSでXMP/EXPOを有効化。</div>
-      <a class="rc-buy" href="${esc(amazonUrl(kw))}" target="_blank" rel="noopener noreferrer">🛒 この条件で探す</a>
+      <a class="rc-buy" href="${esc(amazonUrl(kw))}" data-track-label="${esc(kw)}" target="_blank" rel="noopener sponsored nofollow">🛒 この条件で探す</a>
     </div>`;
 }
 
 function renderPicks() {
   document.getElementById('picks').innerHTML = PICKS.map(p =>
-    `<div class="pick"><div><div class="pk-name">${esc(p.name)}</div><div class="pk-sub">${esc(p.sub)}</div></div><a href="${esc(amazonUrl(p.kw))}" target="_blank" rel="noopener noreferrer">探す</a></div>`).join('');
+    `<div class="pick"><div><div class="pk-name">${esc(p.name)}</div><div class="pk-sub">${esc(p.sub)}</div></div><a href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">探す</a></div>`).join('');
 }
 
 /* ---------- 設定モーダル ---------- */

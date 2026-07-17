@@ -10,19 +10,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="構成プランナー" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/build/" />
 <meta name="description" content="自作PCの構成を、CPUソケットからDDR規格、用途からRAM容量、ストレージ、GPUから電源容量の目安まで一気に決める構成プランナー。組み立てチェックリストつき。オフライン対応。" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="自作PC 構成プランナー — PC Build Planner" />
 <meta property="og:description" content="ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。" />
-<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/build/" />
-<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-build.png" />
+<meta property="og:url" content="https://apps.yzrswork.com/build/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-build.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="自作PC 構成プランナー — PC Build Planner" />
 <meta name="twitter:description" content="ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。" />
-<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-build.png" />
-<script async src="/yzrswork_apps/analytics.js"></script>
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-build.png" />
+<script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
@@ -191,6 +192,7 @@
       <div>関連: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（note）↗</a></div>
       <div><a href="../">← 道具箱（ほかの実用ツール）</a></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — PC Build Planner</div>
     </footer>
   </main>
@@ -286,7 +288,7 @@ function renderSummary() {
   if (g) buys.push(['電源', g.search]);
   if (buys.length) {
     html += '<div class="sum-buys">' + buys.map(b =>
-      `<a href="${esc(amazonUrl(b[1]))}" target="_blank" rel="noopener noreferrer">🛒 ${esc(b[0])}</a>`).join('') + '</div>';
+      `<a href="${esc(amazonUrl(b[1]))}" data-track-label="${esc(b[0])}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(b[0])}</a>`).join('') + '</div>';
   }
 
   if (s && s.id === 'lga1700') {

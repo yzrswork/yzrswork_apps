@@ -10,20 +10,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="直し方ナビ" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
-<link rel="canonical" href="https://yzrswork.github.io/yzrswork_apps/fixit/" />
+<link rel="canonical" href="https://apps.yzrswork.com/fixit/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="直し方ナビ — Fix-it Navigator" />
 <meta property="og:description" content="よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
-<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/fixit/" />
-<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-fixit.png" />
+<meta property="og:url" content="https://apps.yzrswork.com/fixit/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-fixit.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="直し方ナビ — Fix-it Navigator" />
 <meta name="twitter:description" content="質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
-<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-fixit.png" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-fixit.png" />
 <meta name="description" content="iPhoneのYahoo!メールが繋がらない、Windows11 24H2で共有フォルダが見えない。よくあるトラブルを質問に答えるだけで切り分ける、オフライン対応の診断ナビ。" />
-<script async src="/yzrswork_apps/analytics.js"></script>
+<script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
@@ -452,6 +452,7 @@
       </div>
       <div id="footer-parent-link"><a href="../">← や印工務店のアプリたちへ戻る</a></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — Fix-it Navigator</div>
     </footer>
   </main>
@@ -1132,7 +1133,7 @@ function renderNode(tree, node) {
     }
     if (node.affiliate) {
       const a = node.affiliate;
-      html += `<a class="affiliate" href="${esc(amazonUrl(a.keyword))}" target="_blank" rel="noopener noreferrer">
+      html += `<a class="affiliate" href="${esc(amazonUrl(a.keyword))}" data-track-label="${esc(a.keyword)}" target="_blank" rel="noopener sponsored nofollow">
                  🛒 ${esc(a.label)}<span class="sub">${esc(a.note || 'Amazonで探す')}</span></a>`;
     }
     html += '</div>';

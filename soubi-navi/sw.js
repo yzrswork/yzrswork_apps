@@ -1,4 +1,4 @@
-const CACHE_NAME = 'soubi-navi-v1';
+const CACHE_NAME = 'soubi-navi-v2';
 const ASSETS = [
   './',
   './index.html',

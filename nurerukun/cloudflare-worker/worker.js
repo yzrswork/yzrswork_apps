@@ -20,10 +20,11 @@
 //   -> met.no の JSON が返り、レスポンスに Access-Control-Allow-Origin が付いていればOK
 
 const CONTACT = 'https://note.com/yzrswork';                           // 連絡先(公開URL。met.no識別要件用。メアドにしてもよい)
-const APP_URL = 'https://yzrswork.github.io/yzrswork_apps/nurerukun/'; // アプリのURL
-const UA = `nurerukun/1.0 (${APP_URL}; ${CONTACT})`;                   // met.no要件の識別UA
+const APP_URL = 'https://apps.yzrswork.com/nurerukun/'; // アプリのURL
+const UA = `nurerukun/1.0 (${APP_URL}; ${CONTACT})`;     // met.no要件の識別UA
 const ALLOW_ORIGINS = [
-  'https://yzrswork.github.io',  // 公開サイトのオリジン
+  'https://apps.yzrswork.com',   // 公開サイトのオリジン(Cloudflare Pages)
+  'https://yzrswork.github.io',  // 旧公開サイトのオリジン(並行稼働終了後に削除)
   'http://localhost:8080',       // ローカル確認用(不要なら消す)
 ];
 const CACHE_TTL = 900; // 秒。met.noは概ね30分更新なので15分キャッシュで十分(=met.no要件のproxyキャッシュ)

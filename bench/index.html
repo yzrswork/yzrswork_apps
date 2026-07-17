@@ -9,19 +9,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/bench/" />
 <meta name="description" content="電子工作の作業台に常駐するオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="工房の電卓 — Maker's Bench" />
 <meta property="og:description" content="電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
-<meta property="og:url" content="https://yzrswork.github.io/yzrswork_apps/bench/" />
-<meta property="og:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-bench.png" />
+<meta property="og:url" content="https://apps.yzrswork.com/bench/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-bench.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="工房の電卓 — Maker's Bench" />
 <meta name="twitter:description" content="電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
-<meta name="twitter:image" content="https://yzrswork.github.io/yzrswork_apps/icons/og-bench.png" />
-<script async src="/yzrswork_apps/analytics.js"></script>
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-bench.png" />
+<script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
@@ -729,7 +730,7 @@
           </div>
         </div>
         <div id="led-result"></div>
-        <a class="affiliate-link" id="led-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+        <a class="affiliate-link" id="led-amz" href="#" target="_blank" rel="noopener sponsored nofollow" style="display:none;">🛒 部品を探す</a>
       </div>
     </details>
 
@@ -779,7 +780,7 @@
           <div id="cc-c2v-result" class="mt12"></div>
         </div>
 
-        <a class="affiliate-link" id="color-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:14px;">🛒 部品を探す</a>
+        <a class="affiliate-link" id="color-amz" href="#" target="_blank" rel="noopener sponsored nofollow" style="display:none;margin-top:14px;">🛒 部品を探す</a>
       </div>
     </details>
 
@@ -808,7 +809,7 @@
           </div>
         </div>
         <div id="vdiv-result"></div>
-        <a class="affiliate-link" id="vdiv-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+        <a class="affiliate-link" id="vdiv-amz" href="#" target="_blank" rel="noopener sponsored nofollow" style="display:none;">🛒 部品を探す</a>
       </div>
     </details>
 
@@ -837,7 +838,7 @@
           </div>
         </div>
         <div id="t555-result"></div>
-        <a class="affiliate-link" id="t555-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+        <a class="affiliate-link" id="t555-amz" href="#" target="_blank" rel="noopener sponsored nofollow" style="display:none;">🛒 部品を探す</a>
       </div>
     </details>
 
@@ -862,7 +863,7 @@
           </div>
         </div>
         <div id="bat-result"></div>
-        <a class="affiliate-link" id="bat-amz" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🛒 部品を探す</a>
+        <a class="affiliate-link" id="bat-amz" href="#" target="_blank" rel="noopener sponsored nofollow" style="display:none;">🛒 部品を探す</a>
       </div>
     </details>
 
@@ -897,6 +898,7 @@
     <div><a class="support-link" href="../"><span class="sj">道具箱（ほかの実用ツール）</span><span class="se">The Toolbox →</span></a></div>
     <div class="footer-meta">
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <span>© や印工務店 / yzrswork — Maker's Bench</span>
     </div>
   </footer>
@@ -981,6 +983,7 @@ function showAmzLink(elId, keyword) {
   const el = document.getElementById(elId);
   if (!el) return;
   el.href = amazonLink(keyword);
+  el.setAttribute('data-track-label', keyword);
   el.style.display = 'inline-flex';
 }
 

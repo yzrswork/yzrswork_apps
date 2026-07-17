@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fixit-v6';
+const CACHE_NAME = 'fixit-v7';
 const ASSETS = [
   './',
   './index.html',
