@@ -110,6 +110,8 @@
   .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
   .disclaimer a { color: var(--ink-soft); }
 
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
+  .about a { color: var(--terracotta); }
   footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
@@ -174,6 +176,11 @@
     <!-- 定番モデル -->
     <div class="sec-head"><span class="s-jp">定番モデル（DDR4）</span><span class="s-en">Picks</span></div>
     <div class="picks" id="picks"></div>
+
+    <section class="about">
+      <p>自作PCを組んだとき、地味に悩んだのがメモリでした。DDR3、DDR4、DDR5と数字が増えるたびに何が違うのか分からなくなりますが、実は迷う余地は意外と少なくて、規格はマザーボードを買った時点で決まっています。世代ごとにノッチ（切り欠き）の位置が違うので、合わない規格はそもそも刺さりません。だから順番は「まずマザーボードで規格を確認、次に用途で容量を決める」。容量が足りないとOSはSSDをメモリ代わりに使い始めて（スワップ）、体感がいっきに重くなります。「なんか遅い」の原因はCPUよりメモリ不足のことが多い、というのが組んでみての実感です。自分はRyzen 7 5700XのAM4構成だったのでDDR4一択、用途から32GB（16GBを2枚のデュアルチャネル）を選びました。このナビは、その時の検討をそのまま「ソケットから規格、用途から容量」の順にたどれる形にしたものです。</p>
+      <p>選定の一部始終と価格高騰の話はnoteで: <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">DDR3からDDR5の進化と16GBのTEAMGROUPを選んだ話</a></p>
+    </section>
 
     <p class="disclaimer">※ 規格の最終判断は、マザーボードの製品ページ「メモリ」欄や対応リスト（QVL）で確認してください。メモリ・SSDは市況で価格が大きく動きます（2025〜2026年は高騰局面）。Intel LGA1700はマザーによりDDR4専用／DDR5専用が分かれます。情報は2026年6月時点。</p>
 

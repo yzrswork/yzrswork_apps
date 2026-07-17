@@ -126,6 +126,8 @@
 
   .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
 
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
+  .about a { color: var(--terracotta); }
   footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
@@ -194,6 +196,11 @@
         <li><b>頻繁な書き換えに SMR</b> ー ランダム書き込みで性能が急低下。</li>
       </ul>
     </div>
+
+    <section class="about">
+      <p>仕事用のストレージが限界に近づくたびに、WDのHDDの「色」で毎回悩んでいました。Blueは普段使い、Red PlusはNAS向け、Purpleは監視カメラ、Blackは高性能ゲーム向け、と色でおおまかな用途は分かるのですが、落とし穴は記録方式です。CMRはランダム書き込みや頻繁な書き換えに強く、SMRは安くて大容量にしやすい代わりにランダム書き込みが苦手。そしてやっかいなことに、色だけでは記録方式は確定できません。同じ色でもCMRとSMRが混在しているためで、特にNASやRAIDにSMRを入れてしまうと、障害からの復旧が極端に遅くなることがあります。結局のところ「用途で色を選び、型番でCMRかSMRかを確認する」の二段構えが確実、というのが調べ回った結論でした。このナビはその手順をそのまま画面にしたもので、最終判断はWD公式の型番情報で確認できるようにしています。</p>
+      <p>色と記録方式の詳しい整理はnoteで: <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">Western Digitalの色の選び方ガイド</a></p>
+    </section>
 
     <p class="disclaimer">※ 色だけでは記録方式（CMR/SMR）は確定できません。WDは旧Red Plus（EFRX）を現行のEFZX/EFPX（いずれもCMR）へ静かに置き換えており、容量・世代で末尾が変わります。最終判断は必ず型番の「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年6月時点）。</p>
 

@@ -373,6 +373,8 @@
   }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .about { margin-top: 26px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
+  .about a { color: var(--terracotta); }
   .footer-meta {
     font-family: var(--mono);
     font-size: 10px;
@@ -1054,7 +1056,10 @@ function renderHome() {
       <p>「何もしてないのに急に繋がらない」よくあるトラブルを、質問に答えるだけで切り分けます。オフラインでも動きます。</p>
     </header>
     <div class="section-label">— 診断メニュー</div>
-    <ul class="menu">${cards}</ul>`;
+    <ul class="menu">${cards}</ul>
+    <section class="about">
+      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、調べたらYahoo!側が不正ログイン対策でサードパーティ製メールアプリの接続を止めた新仕様だった話。Windows 11を24H2にした途端に社内の共有フォルダが見えなくなり、半日格闘した末に「資格情報の手動登録が必須になった」という仕様変更にたどり着いた話。組み上げた自作PCがビープ音を鳴らして起動せず、高いパーツを疑う前にケーブルやモニター側から順に切り分けるべきだったと学んだ話。ObsidianとiCloudの同期がiPhone側で固まった話。トラブルの渦中では長い記事を読む余裕がないので、質問に答えていくだけで原因を絞り込めるように、それぞれの記事の切り分け手順をナビ形式に組み直しました。各診断の最後から、経緯と全手順をまとめた元記事に飛べます。</p>
+    </section>`;
 
   appEl.querySelectorAll('.menu-card').forEach((btn) => {
     btn.addEventListener('click', () => {

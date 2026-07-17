@@ -105,6 +105,8 @@
 
   .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
 
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
+  .about a { color: var(--terracotta); }
   footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
@@ -185,6 +187,11 @@
         </ul>
       </details>
     </div>
+
+    <section class="about">
+      <p>このプランナーの元になっているのは、や印工務店が実際にはじめての自作PCを組んだときの記録です。構成はRyzen 7 5700XにRTX 3060、昔の星野金属のケース（Altium Super X）を再利用して、総額はおよそ10万円。計画段階の予算配分から、CPUクーラーの干渉といった物理トラブル、BIOSでのA-XMP設定やSecure Boot、TPMの有効化、Windows 11のインストール、そして組み上がったあとに鳴りやまなかったビープ音との格闘まで、一連の流れをぜんぶ通ってきました。やってみて分かったのは、パーツ選びでいちばん事故りやすいのが「電源容量」と「規格の組み合わせ」だということです。このツールでは、CPU、GPU、ストレージを選んでいくと電源容量の目安と構成サマリーが出るので、買う前に全体のつじつまを確認できます。組み立て時のチェックリストもつけました。起動しないときは、姉妹ツールの直し方ナビ（自作PCビープ音診断）へどうぞ。</p>
+      <p>計画から完成までの全記録はnoteで: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（ハブ記事）</a></p>
+    </section>
 
     <p class="disclaimer">※ 電源容量は一般的な目安です。CPU/GPUの世代・OC・周辺機器で変わります。最終的には各GPU/電源メーカーの推奨値とマザーの対応リスト（QVL）を確認してください。情報は2026年6月時点。</p>
 
