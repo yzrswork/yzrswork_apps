@@ -7,5 +7,7 @@
   <url><loc>https://apps.yzrswork.com/hdd/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/build/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/fixit/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/glue/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/nurerukun/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/privacy/</loc><priority>0.3</priority></url>
 </urlset>
