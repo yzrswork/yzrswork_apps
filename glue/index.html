@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>接着剤選びナビ | や印工務店の道具箱</title>
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="接着剤選びナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/glue/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="接着剤選びナビ | や印工務店の道具箱" />
+<meta property="og:description" content="くっつけたい素材を2つ選ぶだけで、プラセメント・瞬間接着剤・エポキシなど接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。" />
+<meta property="og:url" content="https://apps.yzrswork.com/glue/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-glue.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="接着剤選びナビ | や印工務店の道具箱" />
+<meta name="twitter:description" content="素材を2つ選ぶだけで接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-glue.png" />
+<meta name="description" content="プラモの合わせ目、ガンプラの関節、レジンのガレキ、金属や木材。くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材が分からない時の見分け方つき。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "接着剤選びナビ",
+  "url": "https://apps.yzrswork.com/glue/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "author": { "@type": "Organization", "name": "や印工務店 (yzrswork)", "url": "https://note.com/yzrswork" }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f0ebe3;
+    --paper-2: #e8e1d4;
+    --card: #f6f2ea;
+    --ink: #1c1a16;
+    --ink-soft: #2b2823;
+    --muted: #6f675b;
+    --rule: #3a342c;
+    --rule-soft: rgba(58, 52, 44, 0.28);
+    --terracotta: #b5451b;
+    --terracotta-deep: #8e3514;
+    --ok: #4f6f3e;
+    --serif: "EB Garamond", "Times New Roman", serif;
+    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header ───────────────────── */
+  header.hero { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 7.5vw, 40px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 10px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  /* ── Tabs ─────────────────────── */
+  .tabs { display: flex; gap: 8px; margin: 20px 0 22px; }
+  .tab {
+    font-family: var(--jp); font-size: 13.5px; font-weight: 500;
+    padding: 9px 16px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 12px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Material picker chips ───────────── */
+  .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .matchip {
+    font-family: var(--jp); font-size: 13px; text-align: left;
+    padding: 9px 13px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
+    line-height: 1.4;
+  }
+  .matchip .mc-sub { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .matchip:hover { border-color: var(--terracotta); }
+  .matchip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .matchip.active .mc-sub { color: rgba(255,255,255,0.8); }
+  .matchip.unknown { border-style: dashed; }
+
+  .condgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .condchip {
+    font-family: var(--jp); font-size: 12.5px; font-weight: 500;
+    padding: 7px 13px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .condchip.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* ── Result / Node card ───────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+    margin-top: 8px;
+  }
+  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.notice { border-color: var(--terracotta); }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .card.solution .kicker { color: var(--ok); }
+  .qtext { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
+  .principle { font-size: 14px; color: var(--ink-soft); margin: 0 0 16px; }
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(181, 69, 27, 0.05);
+    border-left: 3px solid var(--terracotta);
+    padding: 9px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px;
+  }
+  .warn {
+    font-size: 13.5px;
+    color: var(--terracotta-deep);
+    background: rgba(181, 69, 27, 0.09);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .note-box {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 0 0 10px;
+  }
+  .note-box b { color: var(--ink); }
+
+  /* ── Product list ───────────────── */
+  .plabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+  .products { display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 9px;
+    padding: 12px 13px;
+  }
+  .product .p-main { min-width: 0; }
+  .product .p-name { font-weight: 700; font-size: 14.5px; line-height: 1.4; }
+  .product .p-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .product .p-buy {
+    flex-shrink: 0;
+    font-family: var(--jp); font-size: 12.5px; font-weight: 700;
+    background: var(--ink); color: var(--paper); text-decoration: none;
+    border-radius: 8px; padding: 9px 12px; white-space: nowrap;
+  }
+  .product .p-buy:hover { background: var(--terracotta); }
+
+  ul.cautions { margin: 0 0 4px; padding: 0 0 0 1.1em; }
+  ul.cautions li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 4px; }
+
+  /* ── Steps (identify mode) ───────────── */
+  ol.steps { margin: 4px 0 4px; padding: 0; list-style: none; counter-reset: step; }
+  ol.steps li {
+    counter-increment: step; position: relative; padding: 8px 0 8px 38px;
+    border-bottom: 1px dashed var(--rule-soft); font-size: 14px; line-height: 1.65;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 8px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--terracotta); color: #fff; font-family: var(--mono); font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  ol.steps code, .note-box code { font-family: var(--mono); font-size: 0.9em; background: var(--paper-2); padding: 1px 5px; border-radius: 4px; }
+
+  table.lookup { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13.5px; }
+  table.lookup th, table.lookup td { text-align: left; padding: 7px 6px; border-bottom: 1px dashed var(--rule-soft); vertical-align: top; }
+  table.lookup th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+
+  .opt {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--terracotta); border: 1px solid var(--terracotta); border-radius: 9px;
+    padding: 11px 16px; font-size: 14px; font-weight: 500; font-family: var(--jp);
+    color: #fff; cursor: pointer; margin-top: 8px;
+  }
+  .opt:hover { background: var(--terracotta-deep); }
+
+  /* ── Links / affiliate ───────────────── */
+  .extras { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule-soft); }
+  .ext-link {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+    text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  }
+  .ext-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ── About ───────────────────── */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28, 26, 22, 0.55); z-index: 10;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; padding: 22px 20px; max-width: 420px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 500; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> 接着剤選びナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>接着剤選びナビ<span class="en">— Glue Advisor</span></h1>
+      <p>くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かります。素材が分からない時は見分け方から。</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-diag">診断する</button>
+      <button class="tab" id="tab-id">素材の見分け方</button>
+    </div>
+
+    <div id="app"></div>
+
+    <section class="about">
+      <h2>なぜ素材で接着剤を変えるのか</h2>
+      <p>「接着剤」は1本あれば何でもくっつく、と思って買うと、たいてい痛い目を見ます。プラモデルの合わせ目に瞬間接着剤を盛って表面が荒れたり、ポリキャップにどんな接着剤を使っても数日で剥がれたり。原因は、素材によって「くっつき方」がまったく違うからです。大きく分けると2種類あります。ひとつは、PS(ポリスチレン)同士のように、接着剤で貼るのではなく樹脂そのものを溶剤で溶かして一体化させる「溶剤溶着」。もうひとつは、金属やガラス、木材と異素材のように、溶剤では溶けない素材を、接着剤という別の層で機械的に貼り合わせる「機械的接着」です。この違いを知らずに製品を選ぶと、強度が出なかったり、逆に素材そのものを傷めたりします。</p>
+      <p>溶剤溶着が使える代表がPSとABSです。プラモデルのタミヤセメントやMr.セメントは、接着剤というより「PSやABSを溶かす薬品」で、乾けば元と同じ樹脂として一体化するため、他のどんな接着剤よりも強く仕上がります。ただしABSはラッカー系の溶剤に弱く、塗装済みの面や特定の薬品でケミカルクラックというひび割れを起こすことがあるため注意が必要です。逆に、ポリキャップやタッパーに使われるPE、PPは表面エネルギーが低く、接着剤がそもそも表面で濡れずに弾かれてしまうため、プライマー(下地処理剤)とセットになった専用品以外はほぼ効きません。同じ「プラスチック」でも中身が違えば正解の道具がまったく違う、というのがこの分野の分かりにくさです。</p>
+      <p>この使い分けの多くは、プラモデルを作る人たちの文化から学びました。ガンプラの関節がABS、ボディの大部分がPSと分けて成形されているのも、可動と見た目それぞれに向いた樹脂を使い分けているからです。合わせ目を消すのに「流し込みタイプ」を選ぶ、クリアパーツには白化(接着面が白く曇る現象)を避けて水性の接着剤を選ぶ、といった知恵は、模型誌やモデラーの間で長年積み重ねられてきたものです。このナビは、そうした素材ごとの相性を、模型以外の日用品や工作にもそのまま当てはめられる形に整理したものです。</p>
+      <p>接着剤選びで失敗しないコツは、結局のところ「素材を正しく特定すること」と「目立たない場所で試してから本番に使うこと」の2つです。溶剤系の接着剤を使う時は必ず換気をしながら作業してください。このツールで示す組み合わせは代表的なパターンで、実際の製品には対応素材の表示があるので、購入前にパッケージも確認することをおすすめします。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><a href="../">← や印工務店のアプリたちへ戻る</a></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Glue Advisor</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   接着剤選びナビ — Glue Advisor
+   依存ゼロの単一HTML。データ送信なし。
+   素材Aと素材Bを選ぶと、接着剤タイプ＋推奨製品＋注意点を出す診断ツール。
+   マッピングは仕様定義に忠実（推測での組み合わせ追加はしない）。
+   ========================================================= */
+
+/* ---------- 素材定義 ---------- */
+const MATERIALS = [
+  { id: 'ps',      label: 'PS(ポリスチレン)', sub: 'プラモ、CDケース' },
+  { id: 'abs',     label: 'ABS', sub: 'ガンプラ関節、家電筐体、レゴ' },
+  { id: 'pepp',    label: 'PE・PP', sub: 'ポリキャップ、キャップ、タッパー' },
+  { id: 'pvc',     label: '塩ビ、ソフビ', sub: 'ソフビ人形など' },
+  { id: 'foam',    label: '発泡スチロール', sub: '' },
+  { id: 'resin',   label: 'レジン', sub: 'ガレキ、3Dプリント' },
+  { id: 'metal',   label: '金属', sub: '' },
+  { id: 'wood',    label: '木材', sub: '' },
+  { id: 'glass',   label: 'ガラス、陶器', sub: '' },
+  { id: 'rubber',  label: 'ゴム', sub: '' },
+  { id: 'clear',   label: 'クリアパーツ', sub: '透明パーツ' },
+  { id: 'painted', label: '塗装済みの面', sub: '' },
+  { id: 'unknown', label: 'わからない', sub: '見分け方へ' }
+];
+function matLabel(id) { const m = MATERIALS.find(x => x.id === id); return m ? m.label : id; }
+
+/* ---------- 条件定義（複数可） ---------- */
+const CONDITIONS = [
+  { id: 'clear_finish', label: '透明に仕上げたい' },
+  { id: 'strength',     label: '強度重視' },
+  { id: 'outdoor',      label: '屋外、水がかかる' },
+  { id: 'fast',         label: 'とにかく速く' },
+  { id: 'gap',          label: '隙間を埋めたい' }
+];
+
+/* ---------- 製品カタログ（5ブランドのみ。型番の細部は発明しない） ---------- */
+const P = {
+  tamiyaCement:      { name: 'タミヤセメント（プラモデル用）', kw: 'タミヤセメント プラモデル用接着剤' },
+  tamiyaFlow:         { name: 'タミヤセメント（流し込みタイプ）', kw: 'タミヤセメント 流し込みタイプ', note: '合わせ目や隙間に少量ずつ流し込む用' },
+  mrCementS:          { name: 'Mr.セメントS／SP（クレオス）', kw: 'Mr.セメントS クレオス 流し込み接着剤', note: '流し込みタイプ、乾燥が早い' },
+  tamiyaLimonene:      { name: 'タミヤ リモネンセメント（低臭タイプ）', kw: 'タミヤ リモネンセメント 低臭', note: '臭いが気になる作業環境向け' },
+  tamiyaAbs:           { name: 'タミヤセメント（ABS用）', kw: 'タミヤセメント ABS用' },
+  aronAlphaExtra:      { name: 'アロンアルフア EXTRA系（瞬間接着剤）', kw: 'アロンアルフア EXTRA 瞬間接着剤' },
+  loctitePower:        { name: 'ロックタイト 強力瞬間接着剤', kw: 'ロックタイト 強力瞬間接着剤' },
+  aronAlphaPrimer:      { name: 'アロンアルフア プラスチック用（プライマー付き）', kw: 'アロンアルフア プラスチック用 プライマー付き' },
+  cemedinePPX:          { name: 'セメダイン PPX', kw: 'セメダイン PPX', note: 'プライマーを先に塗ってから接着する専用品' },
+  cemedineWood:         { name: 'セメダイン 木工用', kw: 'セメダイン 木工用接着剤' },
+  cemedineSuperX:       { name: 'セメダイン スーパーX', kw: 'セメダイン スーパーX 多用途接着剤' },
+  epoxy:                { name: 'エポキシ系接着剤（2液性）', kw: 'エポキシ接着剤 2液性', note: '主剤と硬化剤を混ぜて使う。硬化後の強度が高い' },
+  jellyInstant:         { name: 'ゼリー状瞬間接着剤', kw: 'ゼリー状 瞬間接着剤', note: '垂れにくく隙間にも盛りやすい' },
+  aronAlphaWood:         { name: 'アロンアルフア木工用', kw: 'アロンアルフア木工用', note: '瞬間接着剤タイプで速さ重視' },
+  cemedineHighGrade:    { name: 'セメダイン ハイグレード模型用', kw: 'セメダイン ハイグレード模型用接着剤', note: '白化しない水性、クリアパーツの定番' }
+};
+
+/* ---------- 素材ペアからベースルールを決める ----------
+   優先順位: PE・PP(難接着) > 発泡スチロール(溶剤NG) > PS×PS(溶着) >
+   ABS絡み > レジン > 金属 > 木材×木材 > 木材×異素材 > ガラス、陶器 >
+   ゴム > 塗装済み > クリア > フォールバック
+*/
+function baseRule(a, b) {
+  const set = [a, b];
+  const has = (id) => set.includes(id);
+  const both = (id) => a === id && b === id;
+
+  if (has('pepp')) {
+    return {
+      key: 'pepp',
+      title: '難接着素材の組み合わせです',
+      principle: 'PE(ポリエチレン)、PP(ポリプロピレン)は表面エネルギーが低く、接着剤が表面で濡れずにほとんど接着しません。プライマー(下地処理剤)とセットになった専用品以外は基本的に効かないと考えてください。',
+      products: [P.aronAlphaPrimer, P.cemedinePPX],
+      cautions: [
+        'プライマーを先に塗って乾かしてから接着剤を塗るのが前提の製品です。プライマーを省くとすぐ剥がれます。',
+        '接着面はできるだけ広く取り、荷重がかかる箇所は接着だけに頼らず、はめ込みなど機械的な固定も検討してください。'
+      ]
+    };
+  }
+  if (has('foam')) {
+    return {
+      key: 'foam',
+      title: '発泡スチロールが絡む組み合わせです',
+      principle: '発泡スチロールはプラモデル用セメントのような溶剤系接着剤に触れると表面が溶けて崩れます。水性の接着剤か、発泡スチロールに対応した多用途接着剤を選んでください。',
+      products: [P.cemedineWood, P.cemedineSuperX],
+      cautions: [
+        'タミヤセメントやMr.セメントなどラッカー系溶剤を含む接着剤は発泡スチロールを溶かすため使わない。',
+        '購入前にパッケージで発泡スチロールへの適合表示を確認してください。'
+      ]
+    };
+  }
+  if (both('ps')) {
+    return {
+      key: 'ps-ps',
+      title: 'PS同士 — プラセメントによる溶剤溶着が最強です',
+      principle: '接着剤で貼るのではなく、溶剤でPSそのものを溶かして一体化させる「溶剤溶着」です。硬化後は同じ樹脂として繋がるため、他のどの接着剤よりも強く仕上がります。',
+      products: [P.tamiyaCement, P.tamiyaFlow, P.mrCementS, P.tamiyaLimonene],
+      cautions: [
+        '有機溶剤でPSを溶かして接着するため、換気をしながら作業してください。',
+        '合わせ目の消し込みなど隙間を埋めたい時は、流し込みタイプを少量ずつ使うときれいに仕上がります。',
+        '低臭タイプ（リモネンセメント）は接着力そのものは通常品とほぼ同等ですが、乾燥がやや遅めです。'
+      ]
+    };
+  }
+  if (has('abs') && (has('ps') || both('abs'))) {
+    return {
+      key: 'abs',
+      title: 'ABSが絡む組み合わせです',
+      principle: 'タミヤセメント(ABS用)を使うと、ABSも溶剤溶着に近い形で接着できます。PSとABSを組み合わせる場合も同じ製品が第一候補です。',
+      products: [P.tamiyaAbs, P.aronAlphaExtra, P.loctitePower],
+      cautions: [
+        'ABSはラッカー系の塗料や溶剤に触れるとケミカルクラック(ひび割れ)を起こすことがあります。塗装済みのABSパーツには使わないでください。',
+        '換気をしながら作業してください。',
+        '瞬間接着剤は点付けや部分的な補強に向きます。'
+      ]
+    };
+  }
+  if (has('resin')) {
+    return {
+      key: 'resin',
+      title: 'レジンが絡む組み合わせです',
+      principle: 'レジン(ガレージキットや3Dプリント造形物)は溶剤で溶けて融着する素材ではないため、接着剤の層で貼り合わせる「機械的接着」になります。',
+      products: [P.aronAlphaExtra, P.loctitePower, P.epoxy],
+      cautions: [
+        '瞬間接着剤は硬化が速い分、位置合わせは手早く行ってください。',
+        '強度や大面積の接着はエポキシ系のほうが安定します。'
+      ]
+    };
+  }
+  if (has('metal')) {
+    return {
+      key: 'metal',
+      title: '金属が絡む組み合わせです',
+      principle: '金属は溶剤で溶けないため機械的接着になります。強度を出すならエポキシ系、手早く仮止めするなら瞬間接着剤、屋外や振動がある箇所には弾性のある接着剤が向きます。',
+      products: [P.epoxy, P.jellyInstant, P.cemedineSuperX],
+      cautions: ['金属表面の油分や汚れを脱脂してから接着すると持ちが良くなります。']
+    };
+  }
+  if (both('wood')) {
+    return {
+      key: 'wood-wood',
+      title: '木材同士 — 木工用ボンドが基本です',
+      principle: '水分を含む接着剤が木の繊維に浸透して硬化するため、木材同士は木工用ボンドとの相性が良い組み合わせです。',
+      products: [P.cemedineWood, P.aronAlphaWood],
+      cautions: [
+        '木工用ボンドは乾燥に時間がかかるので、しっかりクランプするか重しをして固定してください。',
+        '急いでいる時は瞬間接着剤タイプのアロンアルフア木工用を選ぶと早く仕上がります。'
+      ]
+    };
+  }
+  if (has('wood')) {
+    return {
+      key: 'wood-other',
+      title: '木材と異素材の組み合わせです',
+      principle: '木工用ボンドだけでは異素材側に浸透せず接着力が不足しがちです。多用途タイプかエポキシ系を使ってください。',
+      products: [P.cemedineSuperX, P.epoxy],
+      cautions: ['異素材側の表面（金属の油分、プラの成形時の離型剤など）を軽く拭いてから接着すると安定します。']
+    };
+  }
+  if (has('glass')) {
+    return {
+      key: 'glass',
+      title: 'ガラス、陶器が絡む組み合わせです',
+      principle: 'ガラスや陶器はつるつるした非多孔質の面なので、木工用ボンドのような水性接着剤はほぼ効きません。エポキシ系、多用途接着剤、ゼリー状瞬間接着剤のいずれかを使ってください。',
+      products: [P.epoxy, P.cemedineSuperX, P.jellyInstant],
+      cautions: ['食器など口に触れる用途で使うかどうかで耐熱性、耐水性の要件が変わります。用途に合った製品表示を確認してください。']
+    };
+  }
+  if (has('rubber')) {
+    return {
+      key: 'rubber',
+      title: 'ゴムが絡む組み合わせです',
+      principle: 'ゴムは瞬間接着剤との相性が比較的良い素材です。',
+      products: [P.aronAlphaExtra, P.loctitePower],
+      cautions: [
+        'ゴムの種類（シリコンゴムなど）によっては接着剤がほとんど効かないものもあります。',
+        '繰り返し曲げ伸ばしする箇所は接着強度が落ちやすいので過度な期待はしないでください。'
+      ]
+    };
+  }
+  if (has('painted')) {
+    return {
+      key: 'painted',
+      title: '塗装済みの面が絡む組み合わせです',
+      principle: 'プラセメントなど溶剤系の接着剤を塗装済みの面に使うと、塗膜を侵して荒れたり色が滲んだりします。塗膜を侵さない多用途接着剤か、水性のセメダイン ハイグレード模型用を使ってください。',
+      products: [P.cemedineSuperX, P.cemedineHighGrade],
+      cautions: ['目立たない場所で先に試してから、本番の面に使うと安心です。']
+    };
+  }
+  if (has('clear')) {
+    return {
+      key: 'clear',
+      title: 'クリアパーツが絡む組み合わせです',
+      principle: 'クリアパーツは接着剤の白化（接着面が白く曇る現象）が目立ちやすい素材です。白化しない水性のセメダイン ハイグレード模型用が定番で、エポキシ系も透明な仕上がりになります。',
+      products: [P.cemedineHighGrade, P.epoxy],
+      cautions: ['瞬間接着剤は硬化時に白化（ブルーミング）が起きやすいため、目立つ面には避けるか、目立たない場所で試してから使ってください。']
+    };
+  }
+  return {
+    key: 'fallback',
+    title: '汎用の多用途接着剤から試してください',
+    principle: 'この組み合わせに固有の定番はないため、汎用性の高い多用途接着剤かエポキシ系から試すのが無難です。',
+    products: [P.cemedineSuperX, P.epoxy],
+    cautions: ['可能なら目立たない場所で試してから本番の面に使ってください。']
+  };
+}
+
+/* ---------- 条件による補正メモ ---------- */
+function conditionNotes(conds, ruleKey) {
+  const notes = [];
+  if (conds.has('outdoor')) {
+    notes.push('屋外、水がかかる場所なら、セメダイン スーパーXかエポキシ系のような耐水性のある接着剤を優先してください。');
+  }
+  if (conds.has('fast')) {
+    notes.push('とにかく速く仕上げたいなら、瞬間接着剤（数十秒で硬化）か、プラセメントの流し込みタイプ（速乾）を優先してください。');
+  }
+  if (conds.has('gap')) {
+    notes.push('隙間があるなら、垂れにくいゼリー状瞬間接着剤か、パテのように盛れるエポキシ系を優先してください。');
+  }
+  if (conds.has('strength')) {
+    notes.push('強度を重視するなら、瞬間接着剤よりエポキシ系（2液性）を優先してください。硬化後の強度に優れます。');
+  }
+  if (conds.has('clear_finish') && ruleKey !== 'clear') {
+    notes.push('透明に仕上げたいなら、白化しない水性のセメダイン ハイグレード模型用が定番です。瞬間接着剤は白化のリスクがあるため、目立つ面では避けるか目立たない場所で試してください。');
+  }
+  return notes;
+}
+
+/* ---------- 状態 ---------- */
+let tab = 'diag';
+let matA = null;
+let matB = null;
+const conds = new Set();
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('glue:amazonTag') || 'yzrs_apps-22';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+/* ---------- レンダリング: タブ ---------- */
+const appEl = document.getElementById('app');
+document.getElementById('tab-diag').addEventListener('click', () => setTab('diag'));
+document.getElementById('tab-id').addEventListener('click', () => setTab('id'));
+function setTab(t) {
+  tab = t;
+  document.getElementById('tab-diag').classList.toggle('active', t === 'diag');
+  document.getElementById('tab-id').classList.toggle('active', t === 'id');
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  if (tab === 'diag') renderDiagnose(); else renderIdentify();
+}
+
+/* ---------- 診断モード ---------- */
+function renderDiagnose() {
+  const chipsA = MATERIALS.map(m =>
+    `<button class="matchip${m.id === 'unknown' ? ' unknown' : ''}${matA === m.id ? ' active' : ''}" data-group="a" data-mat="${m.id}">
+       ${esc(m.label)}${m.sub ? `<span class="mc-sub">${esc(m.sub)}</span>` : ''}
+     </button>`).join('');
+  const chipsB = MATERIALS.map(m =>
+    `<button class="matchip${m.id === 'unknown' ? ' unknown' : ''}${matB === m.id ? ' active' : ''}" data-group="b" data-mat="${m.id}">
+       ${esc(m.label)}${m.sub ? `<span class="mc-sub">${esc(m.sub)}</span>` : ''}
+     </button>`).join('');
+  const condChips = CONDITIONS.map(c =>
+    `<button class="condchip${conds.has(c.id) ? ' active' : ''}" data-cond="${c.id}">${esc(c.label)}</button>`).join('');
+
+  let html = `
+    <div class="section-label">— 素材A</div>
+    <div class="matgrid" id="grid-a">${chipsA}</div>
+    <div class="section-label">— 素材B</div>
+    <div class="matgrid" id="grid-b">${chipsB}</div>
+    <div class="section-label">— 条件（任意、複数選択可）</div>
+    <div class="condgrid" id="grid-c">${condChips}</div>
+    <div id="result"></div>`;
+
+  appEl.innerHTML = html;
+
+  appEl.querySelectorAll('#grid-a .matchip, #grid-b .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.getAttribute('data-group');
+      const id = btn.getAttribute('data-mat');
+      if (g === 'a') matA = (matA === id ? null : id); else matB = (matB === id ? null : id);
+      renderDiagnose();
+    });
+  });
+  appEl.querySelectorAll('#grid-c .condchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-cond');
+      if (conds.has(id)) conds.delete(id); else conds.add(id);
+      btn.classList.toggle('active', conds.has(id));
+      renderResult();
+    });
+  });
+
+  renderResult();
+}
+
+function renderResult() {
+  const resultEl = document.getElementById('result');
+  if (!resultEl) return;
+
+  if (!matA || !matB) {
+    resultEl.innerHTML = `<p class="note-box" style="margin-top:16px;">素材Aと素材Bを1つずつ選ぶと、ここに接着剤タイプと推奨製品が出ます。</p>`;
+    return;
+  }
+  if (matA === 'unknown' || matB === 'unknown') {
+    resultEl.innerHTML = `
+      <div class="card notice" style="margin-top:16px;">
+        <div class="kicker">素材が未確定です</div>
+        <p class="qtext">先に素材を見分けてから、もう一度選んでください</p>
+        <p class="principle">刻印を探す、簡易テストをする、素材相場の早見表で確認する、の3段階で見分けられます。</p>
+        <button class="opt" id="goIdentify">素材の見分け方を見る →</button>
+      </div>`;
+    document.getElementById('goIdentify').addEventListener('click', () => setTab('id'));
+    return;
+  }
+
+  const rule = baseRule(matA, matB);
+  const notes = conditionNotes(conds, rule.key);
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(matLabel(matA))} × ${esc(matLabel(matB))}</div>
+      <p class="qtext">${esc(rule.title)}</p>
+      <p class="principle">${esc(rule.principle)}</p>`;
+
+  html += '<div class="plabel">推奨製品</div><div class="products">';
+  rule.products.forEach(p => {
+    html += `
+      <div class="product">
+        <div class="p-main">
+          <div class="p-name">${esc(p.name)}</div>
+          ${p.note ? `<div class="p-note">${esc(p.note)}</div>` : ''}
+        </div>
+        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+      </div>`;
+  });
+  html += '</div>';
+
+  if (rule.cautions && rule.cautions.length) {
+    html += '<div class="plabel">注意点</div><ul class="cautions">';
+    rule.cautions.forEach(c => { html += `<li>${esc(c)}</li>`; });
+    html += '</ul>';
+  }
+
+  if (notes.length) {
+    html += '<div class="plabel">選んだ条件について</div>';
+    notes.forEach(n => { html += `<div class="note-box">${esc(n)}</div>`; });
+  }
+
+  html += '</div>';
+  resultEl.innerHTML = html;
+}
+
+/* ---------- 素材の見分けモード ---------- */
+function renderIdentify() {
+  appEl.innerHTML = `
+    <div class="card" style="margin-top:0;">
+      <div class="kicker">STEP 1</div>
+      <p class="qtext">刻印を探す</p>
+      <p class="principle">家電やおもちゃのプラ部品には、JIS規格で「&gt;ABS&lt;」「&gt;PS&lt;」「&gt;PC+ABS&lt;」のような材質刻印が入っていることが多くあります。</p>
+      <ol class="steps">
+        <li>電池蓋の裏、部品の内側など、目立たない面を確認する</li>
+        <li>ペットボトルやパック容器は、プラマーク（識別マーク）の近くに略号がある</li>
+        <li>プラモデルは説明書のパーツリストか、ランナー（枠）に刻印がある</li>
+      </ol>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="kicker">STEP 2</div>
+      <p class="qtext">簡易テストで絞り込む</p>
+      <p class="principle">刻印が見つからない時は、目立たない場所で簡易的に確かめる方法があります。</p>
+      <ol class="steps">
+        <li>水に浮けば PP か PE（＝難接着グループ）。沈めば PS、ABS、PVC などの可能性が高い</li>
+        <li>曲げてパキッと白く割れるなら PS。白化して粘るように曲がるなら ABS</li>
+        <li>プラセメントを目立たない場所に点付けし、表面が溶ければ PS などのスチロール系</li>
+      </ol>
+      <div class="warn">燃焼試験という見分け方法も文献にはありますが、有害なガスが出ることや火災の危険があるため、このツールでは扱いません。</div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="kicker">STEP 3</div>
+      <p class="qtext">素材相場の早見表</p>
+      <p class="principle">迷ったら、用途からの当たりをつける参考にしてください（絶対ではありません）。</p>
+      <table class="lookup">
+        <tr><th>素材</th><th>よくある用途</th></tr>
+        <tr><td>ABS</td><td>レゴ、リモコン、家電筐体、ゲーム機、ガンプラ関節</td></tr>
+        <tr><td>PS</td><td>プラモデルの大部分、食品トレー、CDケース、冷蔵庫トレー</td></tr>
+        <tr><td>PP</td><td>ペットボトルキャップ、タッパー</td></tr>
+        <tr><td>PE</td><td>レジ袋、ポリキャップ</td></tr>
+        <tr><td>PVC</td><td>ソフビ人形、フィギュア</td></tr>
+      </table>
+      <button class="opt" id="goDiag">素材が分かった。診断へ →</button>
+    </div>`;
+
+  document.getElementById('goDiag').addEventListener('click', () => setTab('diag'));
+}
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('glue:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('glue:amazonTag', v);
+  else localStorage.removeItem('glue:amazonTag');
+  tagSaved.textContent = '保存しました';
+  if (tab === 'diag') renderResult();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('glue:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+render();
+</script>
+</body>
+</html>
