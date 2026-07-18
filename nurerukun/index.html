@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#b5532f">
-<title>塗れるくん -- 今日、外壁塗装できる?</title>
-<meta name="description" content="住所を入れると、今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水)を判定します。や印工務店のニッチツール。">
+<title>塗れるくん -- 今日、外壁塗装・DIY塗装できる?</title>
+<meta name="description" content="住所を入れると、今日や数日先に外壁塗装やDIY塗装(家具・木部・スプレー缶)ができるか(気温・湿度・露点・降水)を判定します。や印工務店のニッチツール。">
 <link rel="canonical" href="https://apps.yzrswork.com/nurerukun/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="や印工務店 / yzrswork">
-<meta property="og:title" content="塗れるくん -- 今日、外壁塗装できる?">
-<meta property="og:description" content="住所を入れると、今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水)を判定します。">
+<meta property="og:title" content="塗れるくん -- 今日、外壁塗装・DIY塗装できる?">
+<meta property="og:description" content="住所を入れると、今日や数日先に外壁塗装やDIY塗装(家具・木部・スプレー缶)ができるか(気温・湿度・露点・降水)を判定します。">
 <meta property="og:url" content="https://apps.yzrswork.com/nurerukun/">
 <meta property="og:image" content="https://apps.yzrswork.com/nurerukun/icon-512.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="塗れるくん -- 今日、外壁塗装できる?">
-<meta name="twitter:description" content="住所から外壁塗装の可否(気温・湿度・露点・降水)を判定するニッチツール。">
+<meta name="twitter:title" content="塗れるくん -- 今日、外壁塗装・DIY塗装できる?">
+<meta name="twitter:description" content="住所から外壁塗装やDIY塗装(家具・木部・スプレー缶)の可否(気温・湿度・露点・降水)を判定するニッチツール。">
 <meta name="twitter:image" content="https://apps.yzrswork.com/nurerukun/icon-512.png">
 <script type="application/ld+json">
 {
@@ -27,7 +27,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "住所から外壁塗装の可否(気温・湿度・露点・降水・風)を判定するニッチツール。",
+  "description": "住所から外壁塗装やDIY塗装(家具・木部・スプレー缶)の可否(気温・湿度・露点・降水・風)を判定するニッチツール。",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
   "author": { "@type": "Organization", "name": "や印工務店 (yzrswork)", "url": "https://note.com/yzrswork" }
 }
@@ -65,6 +65,12 @@
   button.ghost{background:#fff; color:var(--terra); border:1px solid var(--terra)}
   button:active{transform:translateY(1px)}
   .geobtn{width:100%; margin-top:8px}
+  .paintrow{display:flex; gap:8px; margin-top:10px}
+  .ptbtn{
+    flex:1; font-family:inherit; font-size:.86rem; font-weight:600; padding:9px 8px;
+    border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--sub); cursor:pointer;
+  }
+  .ptbtn.active{background:var(--terra); border-color:var(--terra); color:#fff}
   .place{font-size:.86rem; color:var(--sub); margin-top:10px; min-height:1.2em}
   .verdict{text-align:center; padding:6px 0 2px}
   .verdict .badge{display:inline-block; font-size:1.5rem; font-weight:800; padding:8px 22px; border-radius:999px; color:#fff}
@@ -106,7 +112,7 @@
 <div class="wrap">
   <header>
     <h1>塗<span class="drop">れる</span>くん</h1>
-    <p class="tag">今日、外壁塗装できる? 気温・湿度・露点・降水でサッと判定</p>
+    <p class="tag">今日、外壁塗装やDIY塗装(家具・木部・スプレー缶)できる? 気温・湿度・露点・降水でサッと判定</p>
   </header>
 
   <!-- 入力 -->
@@ -116,6 +122,10 @@
       <button id="searchBtn">調べる</button>
     </div>
     <button id="geoBtn" class="ghost geobtn">現在地から調べる</button>
+    <div class="paintrow" role="group" aria-label="塗料タイプ">
+      <button type="button" id="paintOil" class="ptbtn" data-type="oil" aria-pressed="true">油性(溶剤系)</button>
+      <button type="button" id="paintWater" class="ptbtn" data-type="water" aria-pressed="false">水性</button>
+    </div>
     <div id="place" class="place"></div>
   </div>
 
@@ -129,6 +139,8 @@
       <p id="window" class="sub"></p>
     </div>
     <ul id="reasons" class="reasons"></ul>
+    <p id="dryTime" class="sub"></p>
+    <p id="paintNote" class="sub hidden"></p>
   </div>
 
   <!-- 時間帯 -->
@@ -164,7 +176,7 @@
   </div>
 
   <footer>
-    <p class="muted">判定はあくまで目安です。最終判断は現場の状況と塗料の仕様書で。</p>
+    <p class="muted">判定はあくまで目安です。最終判断は作業場所の状況と塗料の仕様書で。</p>
     <p class="muted">天気データ: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 住所検索: 国土地理院</p>
   </footer>
 </div>
@@ -205,6 +217,28 @@ const CONFIG = {
   WORK_END: 17,         // 作業時間帯の終了 (時)
   MIN_OK_HOURS: 3       // 「今日OK」と言える連続OK時間数の目安
 };
+
+/* ============================================================
+   塗料タイプ (油性=溶剤系 / 水性) による判定の出し分け
+   出典: 外壁塗装業者向け解説記事による一般的な目安(数値の裏取り資料)。
+
+   - NG/WARNの数値閾値(気温・湿度・露点・降水・風いずれもCONFIG参照)は
+     塗料タイプに関わらず共通のまま変更しない(閾値を新規に発明しない)。
+   - 水性塗料は水の蒸発で塗膜を作るため、低温・高湿度では油性(溶剤系)より
+     乾燥が遅くなりやすい。既存のWARN帯(気温低め/湿度高め)に入ったときの
+     理由文言だけを水性向けに強める(judgeHour内で分岐)。
+   - 油性(溶剤系)は気温・湿度の影響を比較的受けにくいが、露点接近時の結露は
+     どちらの塗料も同じくNG。油性選択時は判定理由の補足としてこの旨を表示する。
+   - 乾燥時間の目安(気温23℃前後の標準条件、幅を持たせた表現。低温/高湿では
+     これより大幅に延びるため断定しない): 水性はおおむね3-4時間、油性は
+     おおむね6時間。
+   ============================================================ */
+const PAINT_TYPE_KEY = 'nurerukun_paintType';
+const DRY_TIME_TEXT = {
+  oil:   '乾燥時間の目安: 気温23℃前後の標準条件でおおむね6時間ほど(低温や高湿度ではこれより延びる場合があります)',
+  water: '乾燥時間の目安: 気温23℃前後の標準条件でおおむね3-4時間ほど(低温や高湿度ではこれより大幅に延びます)'
+};
+const PAINT_NOTE_OIL = '油性(溶剤系)は気温や湿度の影響を比較的受けにくい塗料ですが、露点が近づいたときの結露リスクはどちらの塗料も同じです。';
 
 /* ============================================================
    アフィリエイト枠 (Amazonアソシエイト) -- 合わせ技モード
@@ -262,6 +296,24 @@ function renderAffiliate(dryRisk){
 const $ = id => document.getElementById(id);
 const set = (el, cls) => { el.className = el.className.replace(/\b(ok|ng|warn)\b/g,'').trim()+' '+cls; };
 
+/* --- 塗料タイプ (油性/水性) の状態管理。既定は油性(溶剤系)=現行挙動そのまま。
+   localStorageに保存して次回も維持。取得済みの判定結果があれば選び直した時点で再描画する。 --- */
+let paintType = localStorage.getItem(PAINT_TYPE_KEY) === 'water' ? 'water' : 'oil';
+let lastData = null, lastPlaceName = null;
+function setPaintType(t, opts){
+  opts = opts || {};
+  paintType = t === 'water' ? 'water' : 'oil';
+  localStorage.setItem(PAINT_TYPE_KEY, paintType);
+  $('paintOil').classList.toggle('active', paintType==='oil');
+  $('paintWater').classList.toggle('active', paintType==='water');
+  $('paintOil').setAttribute('aria-pressed', String(paintType==='oil'));
+  $('paintWater').setAttribute('aria-pressed', String(paintType==='water'));
+  if(!opts.silent && lastData) render(lastData, lastPlaceName); // 判定表示済みなら選び直しに合わせて再描画
+}
+setPaintType(paintType, {silent:true});
+$('paintOil').onclick = ()=> setPaintType('oil');
+$('paintWater').onclick = ()=> setPaintType('water');
+
 /* --- 住所 -> 緯度経度 (国土地理院, キー不要・日本国内) --- */
 async function geocode(q){
   const url = 'https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(q);
@@ -297,21 +349,35 @@ function dewPoint(T, RH){
   return (b*g)/(a-g);
 }
 
-/* --- 1時間ぶんの判定: 'ok' / 'warn' / 'ng' + 理由 --- */
-function judgeHour(h){
+/* --- 1時間ぶんの判定: 'ok' / 'warn' / 'ng' + 理由
+   paintType: 'oil'(既定, 溶剤系) | 'water'。WARN帯の理由文言だけ水性向けに強める。
+   NG/WARNの数値閾値そのものはCONFIG共通で、塗料タイプでは変えない。 --- */
+function judgeHour(h, paintType){
+  paintType = paintType === 'water' ? 'water' : 'oil';
   const reasons = [];
   let ng = false, warn = false;
   const dewMargin = h.temp - h.dew;
+  const slowDryNote = '水性塗料は水の蒸発で塗膜を作るため、低温や高湿度では乾燥が極端に遅くなる';
 
   // 気温
-  if(h.temp < CONFIG.TEMP_MIN){ ng=true; reasons.push('気温が低い('+h.temp+'℃, 5℃未満は施工不可)'); }
+  if(h.temp < CONFIG.TEMP_MIN){ ng=true; reasons.push('気温が低い('+h.temp+'℃, 5℃未満は塗装に不向き)'); }
   else if(h.temp > CONFIG.TEMP_MAX){ ng=true; reasons.push('気温が高すぎ('+h.temp+'℃, 乾燥が速く塗膜不良)'); }
-  else if(h.temp < CONFIG.TEMP_LOW_WARN){ warn=true; reasons.push('気温が低め('+h.temp+'℃, 乾燥が遅い)'); }
+  else if(h.temp < CONFIG.TEMP_LOW_WARN){
+    warn=true;
+    reasons.push(paintType==='water'
+      ? '気温が低め('+h.temp+'℃, '+slowDryNote+')'
+      : '気温が低め('+h.temp+'℃, 乾燥が遅い)');
+  }
   else if(h.temp > CONFIG.TEMP_HIGH_WARN){ warn=true; reasons.push('気温が高め('+h.temp+'℃, 乾燥が速い)'); }
 
   // 湿度
-  if(h.humidity >= CONFIG.HUMIDITY_MAX){ ng=true; reasons.push('湿度が高い('+h.humidity+'%, 85%以上は施工不可)'); }
-  else if(h.humidity >= CONFIG.HUMIDITY_WARN){ warn=true; reasons.push('湿度が高め('+h.humidity+'%)'); }
+  if(h.humidity >= CONFIG.HUMIDITY_MAX){ ng=true; reasons.push('湿度が高い('+h.humidity+'%, 85%以上は塗装に不向き)'); }
+  else if(h.humidity >= CONFIG.HUMIDITY_WARN){
+    warn=true;
+    reasons.push(paintType==='water'
+      ? '湿度が高め('+h.humidity+'%, '+slowDryNote+')'
+      : '湿度が高め('+h.humidity+'%)');
+  }
 
   // 露点 (結露リスク)
   if(dewMargin < CONFIG.DEWPOINT_MARGIN){ ng=true; reasons.push('露点が近く結露リスク(差'+dewMargin.toFixed(1)+'℃)'); }
@@ -356,9 +422,9 @@ function parse(data){
 }
 
 /* --- 作業時間帯のOK連続枠から「今日塗れる?」を出す --- */
-function summarizeDay(hours){
+function summarizeDay(hours, paintType){
   const work = hours.filter(h => h.hour>=CONFIG.WORK_START && h.hour<=CONFIG.WORK_END)
-                    .map(h => ({...h, ...judgeHour(h)}));
+                    .map(h => ({...h, ...judgeHour(h, paintType)}));
   if(!work.length) return { state:'ng', work, best:null };
   // 連続OK枠の最長を探す
   let best=null, run=null;
@@ -382,7 +448,7 @@ function render(data, placeName){
   // 今日は必ず表示。以降の日は、判定に足る作業時間帯データがある日だけ見通しに出す
   const dates = allDates.filter((d,i)=> i===0 ||
     days[d].filter(h=>h.hour>=CONFIG.WORK_START && h.hour<=CONFIG.WORK_END).length >= CONFIG.MIN_OK_HOURS);
-  const sum = summarizeDay(days[today]);
+  const sum = summarizeDay(days[today], paintType);
 
   // 今日の判定
   const badge=$('badge'), lead=$('lead'), win=$('window');
@@ -405,16 +471,23 @@ function render(data, placeName){
   // 時間帯バー
   const hc=$('hours'); hc.innerHTML='';
   days[today].filter(h=>h.hour>=6 && h.hour<=19).forEach(h=>{
-    const j=judgeHour(h);
+    const j=judgeHour(h, paintType);
     const cell=document.createElement('div'); cell.className='hour';
     cell.innerHTML='<div>'+h.hour+'時</div><div class="bar '+j.state+'">'+h.temp+'</div>';
     hc.appendChild(cell);
   });
 
+  // 乾燥時間の目安 (幅を持たせた表現。塗料タイプで出し分け)
+  $('dryTime').textContent = DRY_TIME_TEXT[paintType];
+  // 油性選択時のみ、露点結露に関する補足を出す
+  const pn = $('paintNote');
+  if(paintType==='oil'){ pn.textContent = PAINT_NOTE_OIL; pn.classList.remove('hidden'); }
+  else{ pn.textContent=''; pn.classList.add('hidden'); }
+
   // 数日先
   const dc=$('days'); dc.innerHTML='';
   dates.forEach((d,i)=>{
-    const s=summarizeDay(days[d]);
+    const s=summarizeDay(days[d], paintType);
     const wd=['日','月','火','水','木','金','土'][new Date(d+'T00:00:00Z').getUTCDay()];
     const label = i===0 ? '今日' : (i===1 ? '明日' : (d.slice(5).replace('-','/')));
     const txt = s.state==='ok'?'塗れる':(s.state==='warn'?'注意':'厳しい');
@@ -443,6 +516,7 @@ async function run(getCoords){
   try{
     const c = await getCoords();
     const data = await getForecast(c.lat, c.lon);
+    lastData = data; lastPlaceName = c.name;
     render(data, c.name);
   }catch(e){
     err.textContent = e.message || '取得に失敗しました。少し待って再度お試しください。';
