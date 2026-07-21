@@ -30,7 +30,7 @@ const ALLOW_ORIGINS = [
 const CACHE_TTL = 900; // 秒。met.noは概ね30分更新なので15分キャッシュで十分(=met.no要件のproxyキャッシュ)
 
 export default {
-  async fetch(request, ctx) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const cors = corsHeaders(origin);
 
