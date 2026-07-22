@@ -1,0 +1,22 @@
+/* yzrswork_apps 共通デザイントークン(paper系)
+   正: 元kit/index.htmlの:rootブロック。各アプリの重複:root定義を統合。
+   --warn は元mem/hddの#b5451b(--terracottaと衝突)から#c98a2b(nurerukun由来のアンバー)へ修正済み。 */
+:root {
+  --paper: #f0ebe3;
+  --paper-2: #e8e1d4;
+  --card: #f6f2ea;
+  --ink: #1c1a16;
+  --ink-soft: #2b2823;
+  --muted: #6f675b;
+  --rule: #3a342c;
+  --rule-soft: rgba(58, 52, 44, 0.28);
+  --terracotta: #b5451b;
+  --terracotta-deep: #8e3514;
+  --ok: #4f6f3e;
+  --warn: #c98a2b;
+  --ng: #a83f22;
+  --shadow: 0 2px 10px rgba(58, 52, 44, 0.12);
+  --serif: "EB Garamond", "Times New Roman", serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "接着剤選びナビ",
+  "shortName": "接着剤選びナビ",
+  "title": "接着剤選びナビ | や印工務店の道具箱",
+  "metaDescription": "プラモの合わせ目、ガンプラの関節、レジンのガレキ、金属や木材。くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材が分からない時の見分け方つき。",
+  "ogDescription": "くっつけたい素材を2つ選ぶだけで、プラセメント・瞬間接着剤・エポキシなど接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。",
+  "twitterDescription": "素材を2つ選ぶだけで接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-glue.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/glue/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 1,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

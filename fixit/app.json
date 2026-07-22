@@ -1,0 +1,35 @@
+{
+  "name": "直し方ナビ",
+  "shortName": "直し方ナビ",
+  "title": "直し方ナビ — Fix-it Navigator",
+  "metaDescription": "iPhoneのYahoo!メールが繋がらない、Windows11 24H2で共有フォルダが見えない。よくあるトラブルを質問に答えるだけで切り分ける、オフライン対応の診断ナビ。",
+  "ogDescription": "よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。",
+  "twitterDescription": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-fixit.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/fixit/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 8,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

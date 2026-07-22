@@ -1,16 +1,17 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- BUILD:HEAD:START -->
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>工房の電卓 — Maker's Bench</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <meta name="theme-color" content="#f0ebe3" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="工房電卓" />
 <link rel="apple-touch-icon" href="../icons/icon-192.png" />
 <link rel="canonical" href="https://apps.yzrswork.com/bench/" />
-<meta name="description" content="電子工作の作業台に常駐するオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
@@ -22,23 +23,37 @@
 <meta name="twitter:title" content="工房の電卓 — Maker's Bench" />
 <meta name="twitter:description" content="電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-bench.png" />
+<meta name="description" content="電子工作の作業台に常駐するオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "工房の電卓",
+  "url": "https://apps.yzrswork.com/bench/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
 <style>
   :root {
-    --paper: #f0ebe3;
-    --paper-2: #e8e1d4;
-    --ink: #1c1a16;
-    --ink-soft: #2b2823;
-    --muted: #6f675b;
-    --rule: #3a342c;
-    --terracotta: #b5451b;
-    --terracotta-deep: #8e3514;
-    --serif: "EB Garamond", "Times New Roman", serif;
-    --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-    --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
 

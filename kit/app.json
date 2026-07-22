@@ -1,0 +1,35 @@
+{
+  "name": "装備ナビ",
+  "shortName": "装備ナビ",
+  "title": "装備ナビ — Maker's Starter Kit",
+  "metaDescription": "電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先の使い分けガイドつき。オフライン対応。",
+  "ogDescription": "電子工作の工具と部品ストックをステップ別にチェックして、Amazonの買い物リストに集約。調達先ガイドつき。",
+  "twitterDescription": "電子工作の工具・部品をステップ別にチェックして買い物リストに集約。調達先ガイドつき。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-kit.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/kit/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 7,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

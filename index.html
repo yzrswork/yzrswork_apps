@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <meta name="google-site-verification" content="Gx-rIx1a-8EGxWvW9O4_LmfSJxdIXqbgKj-RKIntctQ" />
-<meta name="theme-color" content="#b5532f">
+<meta name="theme-color" content="#f0ebe3">
 <title>や印工務店の道具箱 -- yzrswork apps</title>
 <meta name="description" content="や印工務店(yzrswork)の実用ツール集。電子工作の工具チェック、自作PCのパーツ選び、トラブル診断、DIYと模型の接着剤選びと塗装タイミング判定。オフラインで使える単一HTML製PWA。">
 <link rel="canonical" href="https://apps.yzrswork.com/">
@@ -37,33 +37,30 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/shared/tokens.css">
 <style>
-  :root{
-    --bg:#f7f3ee; --paper:#fffdfa; --ink:#2c2620; --sub:#7a6f63;
-    --terra:#b5532f; --terra-d:#8f3f22; --line:#e7ddd2; --shadow:0 2px 10px rgba(60,40,20,.08);
-  }
   *{box-sizing:border-box}
   body{
     margin:0; font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
-    background:var(--bg); color:var(--ink); line-height:1.6; -webkit-text-size-adjust:100%;
+    background:var(--paper); color:var(--ink); line-height:1.6; -webkit-text-size-adjust:100%;
   }
   .wrap{max-width:600px; margin:0 auto; padding:16px 16px 48px}
   header{padding:28px 0 8px; text-align:center}
   header h1{margin:0; font-size:1.6rem; letter-spacing:.02em}
-  header h1 .a{color:var(--terra)}
-  header .tag{margin:6px 0 0; color:var(--sub); font-size:.86rem}
+  header h1 .a{color:var(--terracotta)}
+  header .tag{margin:6px 0 0; color:var(--muted); font-size:.86rem}
   a.app{
-    display:block; text-decoration:none; color:inherit; background:var(--paper);
-    border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+    display:block; text-decoration:none; color:inherit; background:var(--card);
+    border:1px solid var(--rule-soft); border-radius:14px; box-shadow:var(--shadow);
     padding:16px 18px; margin:12px 0;
   }
   a.app:active{transform:translateY(1px)}
-  a.app .name{font-size:1.15rem; font-weight:700; color:var(--terra-d)}
-  a.app .desc{margin:6px 0 0; color:var(--sub); font-size:.88rem}
-  a.app .go{display:inline-block; margin-top:10px; font-size:.82rem; color:var(--terra); font-weight:600}
+  a.app .name{font-size:1.15rem; font-weight:700; color:var(--terracotta-deep)}
+  a.app .desc{margin:6px 0 0; color:var(--muted); font-size:.88rem}
+  a.app .go{display:inline-block; margin-top:10px; font-size:.82rem; color:var(--terracotta); font-weight:600}
   .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600; margin-top:18px}
   .about{font-size:.86rem; color:var(--ink); line-height:1.8; margin:18px 4px 24px}
-  .muted{color:var(--sub); font-size:.78rem}
+  .muted{color:var(--muted); font-size:.78rem}
   footer{text-align:center; margin-top:24px}
 </style>
 <script async src="analytics.js"></script>

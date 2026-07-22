@@ -1,0 +1,36 @@
+{
+  "name": "工房の電卓",
+  "shortName": "工房電卓",
+  "title": "工房の電卓 — Maker's Bench",
+  "metaDescription": "電子工作の作業台に常駐するオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
+  "ogDescription": "電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
+  "twitterDescription": "電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-bench.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/bench/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "manifestDescription": "電子工作の作業台に常駐する計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間をオフラインで。",
+  "hasServiceWorker": true,
+  "swVersion": 7,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": null,
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}
