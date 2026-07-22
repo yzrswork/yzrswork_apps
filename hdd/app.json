@@ -1,0 +1,36 @@
+{
+  "name": "HDD選びナビ",
+  "shortName": "HDD選び",
+  "title": "HDD選びナビ — WD色 & CMR/SMR",
+  "ogTitle": "HDD選びナビ — WD Color & CMR/SMR",
+  "metaDescription": "Western DigitalのHDDを用途から色で選び、CMR/SMRを型番末尾で確認する選び方ナビ。RAID/NASにSMRを避けるための早見つき。オフライン対応。",
+  "ogDescription": "WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避けるための早見。",
+  "twitterDescription": "WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避ける早見。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-hdd.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/hdd/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 7,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- BUILD:HEAD:START -->
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>HDD選びナビ — WD色 & CMR/SMR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <meta name="theme-color" content="#f0ebe3" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -23,21 +24,35 @@
 <meta name="twitter:description" content="WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避ける早見。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-hdd.png" />
 <meta name="description" content="Western DigitalのHDDを用途から色で選び、CMR/SMRを型番末尾で確認する選び方ナビ。RAID/NASにSMRを避けるための早見つき。オフライン対応。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "HDD選びナビ",
+  "url": "https://apps.yzrswork.com/hdd/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避けるための早見。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
 <style>
-  :root {
-    --paper: #f0ebe3; --paper-2: #e8e1d4; --card: #f6f2ea;
-    --ink: #1c1a16; --ink-soft: #2b2823; --muted: #6f675b;
-    --rule: #3a342c; --rule-soft: rgba(58,52,44,0.28);
-    --terracotta: #b5451b; --terracotta-deep: #8e3514;
-    --ok: #4f6f3e; --warn: #b5451b;
-    --serif: "EB Garamond","Times New Roman",serif;
-    --mono: "DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
-    --jp: "Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
-  }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -206,7 +221,9 @@
 
     <footer>
       <div>この早見は <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「WDの色の選び方ガイド」 ↗</a> と最新の公式情報をもとにしています。役に立ったら記事にスキをもらえると励みになります。</div>
-      <div><a href="../">← 道具箱（ほかの実用ツール）</a></div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END --></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
       <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
       <div class="footer-meta">© や印工務店 / yzrswork — HDD Picker</div>

@@ -21,6 +21,7 @@
 | 接着剤選びナビ | くっつけたい素材2つから接着剤タイプと推奨製品を診断。見分け方つき | `glue/` |
 | 塗れるくん | 住所から外壁塗装、DIY塗装ができるタイミングを気温、湿度等で判定。PWA | `nurerukun/` |
 | プライバシーポリシー | GA4、広告、Amazonアソシエイトについて | `privacy/` |
+| 運営者について | や印工務店、サイトの成り立ち、お問い合わせ | `about/` |
 
 ## 構成
 
@@ -28,6 +29,9 @@
 - リポジトリ直下の `index.html` がツール一覧のランディング
 - `analytics.js` が全ツール共通のGA4計測(ID未設定時はno-op)
 - `.nojekyll` でGitHub PagesのJekyll処理を無効化
+- `shared/tokens.css` が全ツール共通のデザイントークン(paper系)。各ツールは `<link>` で読み込む(重複定義しない)
+- `scripts/build.mjs` が各ツールの `app.json` から `sw.js` / `manifest.webmanifest` / `<head>`定型部分を生成する(`npm run build`)。生成物は必ずコミットする(Cloudflare Pages / GitHub Pagesともビルドレスでリポジトリ直下を配信するため)。`npm run build:check` はドリフト検知用(CIで実行)
+- `_template/` が新規アプリのひな形。色、フォントは shared/tokens.css を使い、`<head>`は可能なら app.json + build.mjs に乗せる
 
 ## GitHub Pages
 

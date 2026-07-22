@@ -35,23 +35,21 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // クロスオリジン（Google Fonts CDN等）は素通り
+  // クロスオリジン（Google Fonts等）は素通り
   if (url.origin !== self.location.origin) {
     return;
   }
 
-  // GET以外（POST/PUT/DELETE等）は素通り
+  // GET以外は素通り
   if (request.method !== 'GET') {
     return;
   }
 
-  // benchアプリの既知アセット以外は素通り
-  // → index.html, memo.html 等の他ページに影響しない
+  // benchアプリの既知アセット以外は素通り（他ページに介入しない）
   if (!BENCH_ASSET_URLS.has(url.href)) {
     return;
   }
 
-  // ここから先はbenchアプリのアセットのみ
   // Cache First + ネットワークフォールバック
   event.respondWith(
     caches.match(request).then((cached) => {
@@ -59,7 +57,6 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request)
         .then((response) => {
-          // 成功レスポンスのみキャッシュに追加
           if (response.ok && response.type === 'basic') {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
@@ -69,21 +66,18 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // ネットワーク失敗時：documentリクエストならindex.htmlを返す
           if (request.destination === 'document') {
             return caches.match('./index.html');
           }
-          // それ以外はそのままエラーを返す
         });
     })
   );
 });
 
 // === キャッシュ更新ルール ===
-// manifest.webmanifest や index.html を更新したら CACHE_NAME を bump すること
-// 例: 'bench-v1' → 'bench-v2'
+// index.html や manifest を更新したら app.json の swVersion を bump すること
+// （このファイルは scripts/build.mjs が自動生成する。直接編集しない）
 //
 // === キャッシュ範囲 ===
-// このSWはASSETS配列に列挙されたbenchアプリの既知アセットのみキャッシュする。
-// 同一オリジンの他ページ（ルートindex.html、memo.html等）には介入しない。
-// ASSETSに新規ファイルを追加した場合はCACHE_NAMEのbumpも必須。
+// このSWは /bench/ スコープで、ASSETS配列に列挙された既知アセットのみキャッシュする。
+// 他ページには介入しない。

@@ -1,0 +1,36 @@
+{
+  "name": "メモリ選びナビ",
+  "shortName": "メモリ選び",
+  "title": "メモリ選びナビ — DDR規格 & 容量",
+  "ogTitle": "メモリ選びナビ — DDR Spec & Capacity",
+  "metaDescription": "自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成（デュアルチャネル）で組むための選び方ナビ。オフライン対応。",
+  "ogDescription": "自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成で組むための選び方ナビ。",
+  "twitterDescription": "ソケットからDDR規格、用途から容量、2枚構成（デュアルチャネル）で。2026年の対応を反映。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-mem.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/mem/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 6,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

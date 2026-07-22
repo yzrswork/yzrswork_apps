@@ -1,0 +1,10 @@
+{
+  "name": "yzrswork_apps",
+  "private": true,
+  "type": "module",
+  "description": "や印工務店の道具箱(apps.yzrswork.com)。各アプリのsw.js/manifest/headをapp.jsonから生成するビルドスクリプトを含む。デプロイはCloudflare PagesとGitHub Pagesがリポジトリ直下を直接静的配信するため、生成物は必ずコミットする。",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:check": "node scripts/build.mjs --check"
+  }
+}

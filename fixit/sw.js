@@ -75,9 +75,9 @@ self.addEventListener('fetch', (event) => {
 });
 
 // === キャッシュ更新ルール ===
-// index.html や manifest.webmanifest を更新したら CACHE_NAME を bump すること
-// 例: 'fixit-v1' → 'fixit-v2'
+// index.html や manifest を更新したら app.json の swVersion を bump すること
+// （このファイルは scripts/build.mjs が自動生成する。直接編集しない）
 //
 // === キャッシュ範囲 ===
 // このSWは /fixit/ スコープで、ASSETS配列に列挙された既知アセットのみキャッシュする。
-// 他ページ（memo.html, bench/ 等）には介入しない。
+// 他ページには介入しない。

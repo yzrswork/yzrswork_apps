@@ -9,8 +9,10 @@
   5. 「コンポーネントギャラリー」セクションを削除
   6. 使わないコンポーネントも削除
 
-  デザイントークンはyzrsworkブランドで設定済み。
-  アプリ固有の調整は app-* 変数で上書き。
+  色とフォントのデザイントークンは shared/tokens.css（paper系、正）を <link> で読み込む。
+  このファイル内の :root は、テンプレート固有のレイアウト用トークン（--sp-* --text-* --r-* --terra-l）のみ。
+  sw.js / manifest.json / <head> の定型部分は scripts/build.mjs が app.json から自動生成する
+  （kit等の運用中アプリを参照。新規アプリでも app.json を作ってビルド対象に加えるとよい）。
 
   テラコッタを活かしつつ、DM Monoの表示書体で
   「半サイバー」の手触りを一段足している。
@@ -20,7 +22,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#b5532f">
+<meta name="theme-color" content="#f0ebe3">
 <!-- TODO: アプリ名に置換 -->
 <title>TODO_アプリ名 -- 一行説明</title>
 <meta name="description" content="TODO: 説明文">
@@ -45,22 +47,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/tokens.css">
 <style>
-/* ━━━ Design Tokens ━━━ */
+/* ━━━ Design Tokens ━━━
+   色とフォントの正は shared/tokens.css（paper系）。
+   ここではテンプレート固有のレイアウト用トークンだけを定義する。 */
 :root{
-  /* Palette */
-  --bg:#f7f3ee;
-  --paper:#fffdfa;
-  --ink:#2c2620;
-  --sub:#7a6f63;
-  --terra:#b5532f;
-  --terra-d:#8f3f22;
-  --terra-l:rgba(181,83,47,.12);
-  --line:#e7ddd2;
-  --shadow:0 2px 10px rgba(60,40,20,.08);
-  --ok:#3f7d4e;
-  --ng:#c0492f;
-  --warn:#c98a2b;
+  --terra-l:rgba(181,69,27,.12);
 
   /* Typography */
   --font-display:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
@@ -83,7 +76,7 @@
 *{box-sizing:border-box;margin:0}
 body{
   font-family:var(--font-body);font-size:var(--text-md);
-  background:var(--bg);color:var(--ink);line-height:1.6;
+  background:var(--paper);color:var(--ink);line-height:1.6;
   -webkit-text-size-adjust:100%;
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{
@@ -100,25 +93,25 @@ body{
 }
 .sec{
   font-family:var(--font-display);font-size:var(--text-sm);font-weight:500;
-  color:var(--terra-d);letter-spacing:.04em;text-transform:uppercase;
+  color:var(--terracotta-deep);letter-spacing:.04em;text-transform:uppercase;
   margin:var(--sp-lg) 0 var(--sp-sm);
 }
-.muted{color:var(--sub);font-size:var(--text-xs)}
+.muted{color:var(--muted);font-size:var(--text-xs)}
 
 /* ━━━ Header ━━━ */
 header{padding:28px 0 var(--sp-sm);text-align:center}
 header h1{font-size:var(--text-xl);margin:0}
-header h1 .a{color:var(--terra)}
-header .tag{color:var(--sub);font-size:.84rem;margin-top:var(--sp-xs)}
+header h1 .a{color:var(--terracotta)}
+header .tag{color:var(--muted);font-size:.84rem;margin-top:var(--sp-xs)}
 
 /* ━━━ Card ━━━ */
 .card{
-  background:var(--paper);border:1px solid var(--line);
+  background:var(--card);border:1px solid var(--rule-soft);
   border-radius:var(--r-lg);box-shadow:var(--shadow);
   padding:var(--sp-md) 18px;margin:12px 0;
 }
 .card:active{transform:translateY(1px)}
-.card-accent{border-left:3px solid var(--terra)}
+.card-accent{border-left:3px solid var(--terracotta)}
 
 /* ━━━ Button ━━━ */
 .btn{
@@ -129,27 +122,27 @@ header .tag{color:var(--sub);font-size:.84rem;margin-top:var(--sp-xs)}
   transition:opacity .15s;
 }
 .btn:active{transform:translateY(1px)}
-.btn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
-.btn-primary{background:var(--terra);color:#fff}
+.btn:focus-visible{outline:2px solid var(--terracotta);outline-offset:2px}
+.btn-primary{background:var(--terracotta);color:#fff}
 .btn-primary:active{opacity:.85}
-.btn-ghost{background:transparent;color:var(--terra);border:1px solid var(--terra)}
+.btn-ghost{background:transparent;color:var(--terracotta);border:1px solid var(--terracotta)}
 .btn-ghost:active{background:var(--terra-l)}
 .btn-small{padding:6px 10px;font-size:var(--text-xs);border-radius:var(--r-sm)}
 
 /* ━━━ Input ━━━ */
 .input{
-  width:100%;border:1px solid var(--line);border-radius:var(--r-md);
+  width:100%;border:1px solid var(--rule-soft);border-radius:var(--r-md);
   padding:10px 14px;font-size:var(--text-md);font-family:var(--font-body);
-  background:var(--paper);color:var(--ink);outline:none;
+  background:var(--card);color:var(--ink);outline:none;
 }
-.input:focus{border-color:var(--terra);box-shadow:0 0 0 2px var(--terra-l)}
-.input::placeholder{color:var(--sub)}
+.input:focus{border-color:var(--terracotta);box-shadow:0 0 0 2px var(--terra-l)}
+.input::placeholder{color:var(--muted)}
 
 /* ━━━ Toolbar (sticky) ━━━ */
 .toolbar{
   display:flex;gap:var(--sp-sm);align-items:center;
   position:sticky;top:0;z-index:50;
-  background:var(--bg);padding:6px 0 var(--sp-sm);
+  background:var(--paper);padding:6px 0 var(--sp-sm);
   margin:18px 0 var(--sp-sm);
 }
 
@@ -157,14 +150,14 @@ header .tag{color:var(--sub);font-size:.84rem;margin-top:var(--sp-xs)}
 .tag-row{display:flex;gap:6px;flex-wrap:wrap}
 .tag{
   display:inline-block;padding:4px 10px;
-  background:var(--terra-l);color:var(--terra-d);
+  background:var(--terra-l);color:var(--terracotta-deep);
   border-radius:20px;font-size:var(--text-xs);font-weight:500;
 }
 
 /* ━━━ Bottom Bar ━━━ */
 .bar{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:var(--paper);border-top:1px solid var(--line);
+  background:var(--card);border-top:1px solid var(--rule-soft);
   box-shadow:0 -2px 12px rgba(60,40,20,.1);
   padding:10px var(--sp-md) calc(10px + env(safe-area-inset-bottom,0px));
   display:flex;align-items:center;gap:var(--sp-sm);
@@ -192,7 +185,7 @@ header .tag{color:var(--sub);font-size:.84rem;margin-top:var(--sp-xs)}
 
 /* ━━━ States ━━━ */
 .empty-state{
-  text-align:center;color:var(--sub);font-size:var(--text-md);
+  text-align:center;color:var(--muted);font-size:var(--text-md);
   padding:var(--sp-xl) var(--sp-md);
 }
 .status-ok{color:var(--ok)}

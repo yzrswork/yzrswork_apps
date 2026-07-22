@@ -1,0 +1,35 @@
+{
+  "name": "自作PC 構成プランナー",
+  "shortName": "構成プランナー",
+  "title": "自作PC 構成プランナー — PC Build Planner",
+  "metaDescription": "自作PCの構成を、CPUソケットからDDR規格、用途からRAM容量、ストレージ、GPUから電源容量の目安まで一気に決める構成プランナー。組み立てチェックリストつき。オフライン対応。",
+  "ogDescription": "ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。",
+  "twitterDescription": "ソケット→DDR規格、用途→RAM容量、ストレージ、GPU→電源容量の目安を一気に。組み立てチェックリストつき。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-build.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/build/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "hasServiceWorker": true,
+  "swVersion": 3,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png"
+  ],
+  "manifestIcons": [
+    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "/shared/tokens.css"
+}

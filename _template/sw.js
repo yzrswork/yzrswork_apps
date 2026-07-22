@@ -1,4 +1,6 @@
-/* TODO: CACHE名をアプリ名に変更 */
+/* TODO: CACHE名をアプリ名に変更
+   推奨: 新規アプリは手書きせず、app.json を作って scripts/build.mjs でこのファイルを
+   自動生成する運用に乗せる（kit/ 等を参照）。これはビルド未対応の場合の最小フォールバック。 */
 var CACHE = 'TODO_slug-v1';
 var ASSETS = ['./', './index.html', './manifest.json'];
 

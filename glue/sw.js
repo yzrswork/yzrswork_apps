@@ -1,4 +1,4 @@
-const CACHE_NAME = 'build-v3';
+const CACHE_NAME = 'glue-v1';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,7 @@ const ASSETS = [
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）
-const BUILD_ASSET_URLS = new Set(
+const GLUE_ASSET_URLS = new Set(
   ASSETS.map(path => new URL(path, self.location.href).href)
 );
 
@@ -45,8 +45,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // buildアプリの既知アセット以外は素通り（他ページに介入しない）
-  if (!BUILD_ASSET_URLS.has(url.href)) {
+  // glueアプリの既知アセット以外は素通り（他ページに介入しない）
+  if (!GLUE_ASSET_URLS.has(url.href)) {
     return;
   }
 
@@ -79,5 +79,5 @@ self.addEventListener('fetch', (event) => {
 // （このファイルは scripts/build.mjs が自動生成する。直接編集しない）
 //
 // === キャッシュ範囲 ===
-// このSWは /build/ スコープで、ASSETS配列に列挙された既知アセットのみキャッシュする。
+// このSWは /glue/ スコープで、ASSETS配列に列挙された既知アセットのみキャッシュする。
 // 他ページには介入しない。
