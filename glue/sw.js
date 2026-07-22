@@ -1,11 +1,12 @@
-const CACHE_NAME = 'glue-v1';
+const CACHE_NAME = 'glue-v2';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   '../icons/icon-192.png',
   '../icons/icon-512.png',
-  '../icons/icon-512-maskable.png'
+  '../icons/icon-512-maskable.png',
+  '../shared/tokens.css'
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）
