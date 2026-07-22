@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- BUILD:HEAD:START -->
+<meta charset="utf-8" />
+<title>ねじ下穴ナビ | や印工務店の道具箱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="ねじ下穴ナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/neji/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="ねじ下穴ナビ | や印工務店の道具箱" />
+<meta property="og:description" content="タップの下穴、ボルトのバカ穴(通し穴)、木ねじの下穴を、ねじサイズを選ぶだけで表示。並目/細目ピッチ・計算式つきの早見ナビ。" />
+<meta property="og:url" content="https://apps.yzrswork.com/neji/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-neji.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="ねじ下穴ナビ | や印工務店の道具箱" />
+<meta name="twitter:description" content="タップ下穴・バカ穴・木ねじ下穴を、ねじサイズを選ぶだけで表示する早見ナビ。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-neji.png" />
+<meta name="description" content="M3・M4・M5・M6・M8のタップ下穴径、ボルトのバカ穴(通し穴)径、木ねじの下穴径を、ねじサイズを選ぶだけで表示。並目/細目ピッチ対応、下穴の計算式つき。DIY・電子工作・金工の早見表。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ねじ下穴ナビ",
+  "url": "https://apps.yzrswork.com/neji/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "タップの下穴、ボルトのバカ穴(通し穴)、木ねじの下穴を、ねじサイズを選ぶだけで表示。並目/細目ピッチ・計算式つきの早見ナビ。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header ───────────────────── */
+  header.hero { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 7.5vw, 40px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 10px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  /* ── Tabs ─────────────────────── */
+  .tabs { display: flex; gap: 8px; margin: 20px 0 22px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--jp); font-size: 13.5px; font-weight: 500;
+    padding: 9px 16px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 12px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Size / material picker chips ───────────── */
+  .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .matchip {
+    font-family: var(--jp); font-size: 13px; text-align: left;
+    padding: 9px 13px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
+    line-height: 1.4;
+  }
+  .matchip .mc-sub { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .matchip:hover { border-color: var(--terracotta); }
+  .matchip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .matchip.active .mc-sub { color: rgba(255,255,255,0.8); }
+
+  .condgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .condchip {
+    font-family: var(--jp); font-size: 12.5px; font-weight: 500;
+    padding: 7px 13px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .condchip .cc-sub { display: block; font-size: 10px; color: var(--muted); margin-top: 1px; font-weight: 400; }
+  .condchip.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .condchip.active .cc-sub { color: var(--paper-2); }
+
+  /* ── Result / Node card ───────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+    margin-top: 8px;
+  }
+  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.notice { border-color: var(--terracotta); }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .card.solution .kicker { color: var(--ok); }
+  .qtext { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
+  .principle { font-size: 14px; color: var(--ink-soft); margin: 0 0 16px; }
+
+  /* ── Big readout ───────────────── */
+  .bignum {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: 1.1;
+    margin: 2px 0 4px;
+    color: var(--ink);
+  }
+  .bignum .unit { font-size: 0.42em; font-weight: 500; color: var(--muted); margin-left: 5px; }
+  .subnum { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 0 0 16px; }
+  .formula-box {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 0 0 14px;
+  }
+
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(181, 69, 27, 0.05);
+    border-left: 3px solid var(--terracotta);
+    padding: 9px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px;
+  }
+  .warn {
+    font-size: 13.5px;
+    color: var(--terracotta-deep);
+    background: rgba(181, 69, 27, 0.09);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .note-box {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 0 0 10px;
+  }
+  .note-box b { color: var(--ink); }
+
+  /* ── Product list ───────────────── */
+  .plabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+  .products { display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 9px;
+    padding: 12px 13px;
+  }
+  .product .p-main { min-width: 0; }
+  .product .p-name { font-weight: 700; font-size: 14.5px; line-height: 1.4; }
+  .product .p-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .product .p-buy {
+    flex-shrink: 0;
+    font-family: var(--jp); font-size: 12.5px; font-weight: 700;
+    background: var(--ink); color: var(--paper); text-decoration: none;
+    border-radius: 8px; padding: 9px 12px; white-space: nowrap;
+  }
+  .product .p-buy:hover { background: var(--terracotta); }
+
+  ul.cautions { margin: 0 0 4px; padding: 0 0 0 1.1em; }
+  ul.cautions li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 4px; }
+
+  table.lookup { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; }
+  table.lookup th, table.lookup td { text-align: left; padding: 7px 6px; border-bottom: 1px dashed var(--rule-soft); vertical-align: top; }
+  table.lookup th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+  table.lookup tr.hl td { background: rgba(181, 69, 27, 0.08); font-weight: 700; color: var(--ink); }
+  table.lookup td.hl-col { font-weight: 700; color: var(--terracotta-deep); }
+  table.lookup .tbl-wrap { overflow-x: auto; }
+
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ── Links / affiliate ───────────────── */
+  .extras { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule-soft); }
+  .ext-link {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+    text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  }
+  .ext-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ── About ───────────────────── */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28, 26, 22, 0.55); z-index: 10;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; padding: 22px 20px; max-width: 420px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 500; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> ねじ下穴ナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>ねじ下穴ナビ<span class="en">— Tap &amp; Drill Advisor</span></h1>
+      <p>タップの下穴、ボルトのバカ穴、木ねじの下穴。ねじのサイズを選ぶだけで、開けるドリル径がわかります。</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-tap">タップ下穴</button>
+      <button class="tab" id="tab-clear">バカ穴(通し穴)</button>
+      <button class="tab" id="tab-wood">木ねじ下穴</button>
+    </div>
+
+    <div id="app"></div>
+
+    <section class="about">
+      <h2>「下穴、何ミリだっけ」を毎回調べ直す問題</h2>
+      <p>M6のタップを立てるのに、その都度スマホで「M6 タップ 下穴」と検索していないでしょうか。この検索、実は結構危険です。ネット上には並目と細目が混ざった表、単位を間違えた表、そもそも出典不明の数字がいくつも転がっています。タップ下穴は1本間違えると被害が大きい寸法です。下穴が小さすぎればタップに大きな負荷がかかって折れ、折れたタップは超硬合金並みに硬いため素材の中からほぼ抜けなくなります。逆に下穴が大きすぎるとねじ山の高さが足りず、締めても空転したりナメたりします。毎回検索し直す手間と、誤った数字を掴んでしまうリスクの両方を減らしたくて、このツールを作りました。</p>
+      <p>タップ下穴の原則はシンプルで、「下穴径 ＝ 呼び径 − ピッチ」という引き算だけです。これは幾何学的にねじ山が100%の高さで立つ計算になりますが、実務では100%山を狙うと抵抗が大きくタップが折れやすくなるため、75%山前後を狙うのが一般的とされています。柔らかいアルミや樹脂はやや大きめの下穴、鉄やステンレスのような硬い材は表通りかやや小さめ、という調整も併記しました。バカ穴(通し穴)側は逆に「ねじ山を切らず、ボルトがすっと通ればいい」穴なので、JIS B 1001が呼び径に対して1級(密)、2級(中)、3級(粗)の3段階の隙間を規定しています。位置精度が必要な組付けには1級、普段のDIYや電子工作なら2級で十分、という使い分けです。</p>
+      <p>木ねじの下穴は、金属用タップとは発想がまったく違います。金属ねじの下穴は「ねじ山を切るための溝」ですが、木ねじの下穴は「木材が割れるのを防ぐための逃がし」です。木は繊維方向に力がかかると簡単に裂けるため、下穴なしで木ねじを打つと、特に端部や硬い材で割れが起きます。目安として、SPFや杉、パインのような軟材はねじ径の60〜70%、オークや集成材、ラワンのような硬材は70〜90%(ねじの谷径に近い径)を下穴にする、という係数で考えます。これは測量や工務の現場でも、標識や仮設物を木材に留める場面でそのまま使える小ネタです。</p>
+      <p>結論として、このツールが出す数字はすべて「目安」です。材質のロット差、ドリルの摩耗、木材の含水率で最適な下穴径は前後します。本番の材で1本開ける前に、必ず端材で試し穴を開けて締まり具合を確かめてください。タップ作業では切削油を使うとタップ寿命が延び、木ねじ作業では頭を沈めたい場合に皿取り(面取り)をひと手間加えると仕上がりが安定します。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END --></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Tap &amp; Drill Advisor</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   ねじ下穴ナビ — Tap & Drill Advisor
+   依存ゼロの単一HTML。データ送信なし。
+   タップ下穴 / バカ穴(通し穴) / 木ねじ下穴 の3タブ早見ツール。
+   数値はSPEC定義のbaked値をそのまま使用。計算式のみJSで実装。
+   ========================================================= */
+
+/* ---------- 共通: メートルねじサイズ ---------- */
+const SIZES = ['M2', 'M2.5', 'M3', 'M4', 'M5', 'M6', 'M8', 'M10', 'M12'];
+const MAJOR = { 'M2': 2, 'M2.5': 2.5, 'M3': 3, 'M4': 4, 'M5': 5, 'M6': 6, 'M8': 8, 'M10': 10, 'M12': 12 };
+
+/* ---------- タブA: タップ下穴 ---------- */
+/* 並目ピッチ(mm) */
+const COARSE_PITCH = { 'M2': 0.4, 'M2.5': 0.45, 'M3': 0.5, 'M4': 0.7, 'M5': 0.8, 'M6': 1.0, 'M8': 1.25, 'M10': 1.5, 'M12': 1.75 };
+/* 細目ピッチ(代表, mm) — M2, M2.5 は代表細目なし */
+const FINE_PITCH = { 'M3': 0.35, 'M4': 0.5, 'M5': 0.5, 'M6': 0.75, 'M8': 1.0, 'M10': 1.25, 'M12': 1.25 };
+/* 並目タップ下穴 早見(検証済み、市販ドリル径に丸めた値) */
+const COARSE_DRILL = { 'M2': 1.6, 'M2.5': 2.0, 'M3': 2.5, 'M4': 3.3, 'M5': 4.2, 'M6': 5.0, 'M8': 6.8, 'M10': 8.5, 'M12': 10.2 };
+
+/* ---------- タブB: バカ穴(通し穴) JIS B 1001準拠(baked) ---------- */
+const CLEARANCE = {
+  'M2':   { 1: 2.2,  2: 2.4,  3: 2.6  },
+  'M2.5': { 1: 2.7,  2: 2.9,  3: 3.1  },
+  'M3':   { 1: 3.2,  2: 3.4,  3: 3.6  },
+  'M4':   { 1: 4.3,  2: 4.5,  3: 4.8  },
+  'M5':   { 1: 5.3,  2: 5.5,  3: 5.8  },
+  'M6':   { 1: 6.4,  2: 6.6,  3: 7.0  },
+  'M8':   { 1: 8.4,  2: 9.0,  3: 10.0 },
+  'M10':  { 1: 10.5, 2: 11.0, 3: 12.0 },
+  'M12':  { 1: 13.0, 2: 13.5, 3: 14.5 }
+};
+const GRADE_LABEL = { 1: '1級(密)', 2: '2級(中)', 3: '3級(粗)' };
+
+/* ---------- タブC: 木ねじ下穴(目安、経験則) ---------- */
+const WOOD_SIZES = [2.1, 2.4, 2.7, 3.1, 3.8, 4.2, 4.5];
+/* SPECに明記された参考早見値(目安) — 一致するサイズのみ表示、他は係数計算のみ */
+const WOOD_REF = {
+  '3.1': { soft: '2.0前後',    hard: '2.4前後'    },
+  '3.8': { soft: '2.4前後',    hard: '2.7〜3.0'   },
+  '4.2': { soft: '2.5〜2.7',  hard: '3.0〜3.2'   }
+};
+const WOOD_MATERIAL = {
+  soft: { label: '軟材', sub: 'SPF、杉、パイン', min: 0.6, max: 0.7 },
+  hard: { label: '硬材', sub: 'オーク、集成材、ラワン', min: 0.7, max: 0.9 }
+};
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+/* 数値表示: きりのいい値は小数1桁(5.0mm等)、細かい値は小数2桁(2.05mm等)で表示 */
+function fmt(n) {
+  const r = Math.round(n * 100) / 100;
+  const oneDecimal = Math.round(r * 10) / 10;
+  if (Math.abs(oneDecimal - r) < 1e-9) return oneDecimal.toFixed(1);
+  return r.toFixed(2);
+}
+/* 目安レンジ表示専用(常に小数1桁) */
+function fmt1(n) { return (Math.round(n * 10) / 10).toFixed(1); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('neji:amazonTag') || 'yzrs_apps-22';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+/* ---------- 状態 ---------- */
+let tab = 'tap';
+let tapSize = 'M6';
+let tapFine = false;
+let clearSize = 'M6';
+let clearGrade = 2;
+let woodSize = 3.8;
+let woodMaterial = 'soft';
+
+const appEl = document.getElementById('app');
+document.getElementById('tab-tap').addEventListener('click', () => setTab('tap'));
+document.getElementById('tab-clear').addEventListener('click', () => setTab('clear'));
+document.getElementById('tab-wood').addEventListener('click', () => setTab('wood'));
+
+function setTab(t) {
+  tab = t;
+  document.getElementById('tab-tap').classList.toggle('active', t === 'tap');
+  document.getElementById('tab-clear').classList.toggle('active', t === 'clear');
+  document.getElementById('tab-wood').classList.toggle('active', t === 'wood');
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  if (tab === 'tap') renderTap();
+  else if (tab === 'clear') renderClear();
+  else renderWood();
+}
+
+/* ==================== タブA: タップ下穴 ==================== */
+function renderTap() {
+  const sizeChips = SIZES.map(s =>
+    `<button class="matchip${tapSize === s ? ' active' : ''}" data-size="${esc(s)}">${esc(s)}</button>`).join('');
+  const pitchChips = `
+    <button class="condchip${!tapFine ? ' active' : ''}" data-fine="0">並目</button>
+    <button class="condchip${tapFine ? ' active' : ''}" data-fine="1">細目</button>`;
+
+  appEl.innerHTML = `
+    <div class="section-label">— ねじ径</div>
+    <div class="matgrid" id="grid-size">${sizeChips}</div>
+    <div class="section-label">— ピッチ</div>
+    <div class="condgrid" id="grid-pitch">${pitchChips}</div>
+    <div id="tap-result"></div>`;
+
+  appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
+    btn.addEventListener('click', () => { tapSize = btn.getAttribute('data-size'); renderTap(); });
+  });
+  appEl.querySelectorAll('#grid-pitch .condchip').forEach(btn => {
+    btn.addEventListener('click', () => { tapFine = btn.getAttribute('data-fine') === '1'; renderTap(); });
+  });
+
+  renderTapResult();
+}
+
+function renderTapResult() {
+  const el = document.getElementById('tap-result');
+  if (!el) return;
+
+  const major = MAJOR[tapSize];
+  const pitch = tapFine ? FINE_PITCH[tapSize] : COARSE_PITCH[tapSize];
+
+  if (tapFine && pitch === undefined) {
+    el.innerHTML = `
+      <div class="card notice" style="margin-top:16px;">
+        <div class="kicker">${esc(tapSize)} 細目</div>
+        <p class="qtext">この呼び径の代表的な細目ピッチデータはありません</p>
+        <p class="principle">${esc(tapSize)}は並目のみを掲載しています。並目タブに切り替えてご利用ください。</p>
+      </div>`;
+    return;
+  }
+
+  const exact = major - pitch;
+  const marketDrill = !tapFine ? COARSE_DRILL[tapSize] : null;
+  const headline = marketDrill !== null ? marketDrill : exact;
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(tapSize)} ${tapFine ? '細目' : '並目'}(ピッチ ${esc(fmt(pitch))}mm)</div>
+      <p class="qtext">推奨下穴径</p>
+      <div class="bignum">${esc(fmt(headline))}<span class="unit">mm</span></div>
+      <div class="subnum">計算値 = 呼び径 ${esc(fmt(major))} − ピッチ ${esc(fmt(pitch))} = ${esc(fmt(exact))}mm${marketDrill !== null ? `（市販ドリル径は ${esc(fmt(marketDrill))}mm に丸め）` : ''}</div>
+      <div class="formula-box">下穴径 ＝ 呼び径 − ピッチ</div>
+      <ul class="cautions">
+        <li>完全ねじ山(100%)ではなく、実務ではねじ山75%前後を狙うのが一般的です。表の値はこの前提での目安です。</li>
+        <li>柔らかい材(アルミ、樹脂)はやや大きめ、硬い材(鉄、SUSなど)は表通りかやや小さめに調整してください。</li>
+        <li>下穴が大きすぎるとねじ山が持たず、小さすぎるとタップが折れます。切削油を使うとタップの寿命が延びます。</li>
+        ${tapFine ? '<li>細目ピッチは並目より許容範囲がシビアです。ここでは計算値を表示しています。実在するドリル径(0.05mm刻みなど)に丸めて使ってください。</li>' : ''}
+      </ul>
+    </div>`;
+
+  html += `
+    <div class="plabel">並目タップ下穴 早見表(検証済み)</div>
+    <div class="tbl-scroll"><table class="lookup">
+      <tr><th>呼び径</th><th>ピッチ</th><th>計算値</th><th>市販ドリル径</th></tr>
+      ${SIZES.map(s => {
+        const p = COARSE_PITCH[s];
+        const ex = MAJOR[s] - p;
+        const md = COARSE_DRILL[s];
+        return `<tr class="${!tapFine && s === tapSize ? 'hl' : ''}"><td>${esc(s)}</td><td>${esc(fmt(p))}</td><td>${esc(fmt(ex))}mm</td><td>${esc(fmt(md))}mm</td></tr>`;
+      }).join('')}
+    </table></div>`;
+
+  if (tapFine) {
+    html += `
+    <div class="plabel">細目ピッチ(代表) 計算値(目安)</div>
+    <div class="tbl-scroll"><table class="lookup">
+      <tr><th>呼び径</th><th>ピッチ(代表)</th><th>下穴径(計算)</th></tr>
+      ${SIZES.map(s => {
+        const p = FINE_PITCH[s];
+        if (p === undefined) return `<tr><td>${esc(s)}</td><td>-</td><td>-</td></tr>`;
+        const ex = MAJOR[s] - p;
+        return `<tr class="${s === tapSize ? 'hl' : ''}"><td>${esc(s)}</td><td>${esc(fmt(p))}</td><td>${esc(fmt(ex))}mm</td></tr>`;
+      }).join('')}
+    </table></div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+/* ==================== タブB: バカ穴(通し穴) ==================== */
+function renderClear() {
+  const sizeChips = SIZES.map(s =>
+    `<button class="matchip${clearSize === s ? ' active' : ''}" data-size="${esc(s)}">${esc(s)}</button>`).join('');
+  const gradeChips = [1, 2, 3].map(g =>
+    `<button class="condchip${clearGrade === g ? ' active' : ''}" data-grade="${g}">${esc(GRADE_LABEL[g])}</button>`).join('');
+
+  appEl.innerHTML = `
+    <div class="section-label">— ボルト径</div>
+    <div class="matgrid" id="grid-size">${sizeChips}</div>
+    <div class="section-label">— 級（精度）</div>
+    <div class="condgrid" id="grid-grade">${gradeChips}</div>
+    <div id="clear-result"></div>`;
+
+  appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
+    btn.addEventListener('click', () => { clearSize = btn.getAttribute('data-size'); renderClear(); });
+  });
+  appEl.querySelectorAll('#grid-grade .condchip').forEach(btn => {
+    btn.addEventListener('click', () => { clearGrade = Number(btn.getAttribute('data-grade')); renderClear(); });
+  });
+
+  renderClearResult();
+}
+
+function renderClearResult() {
+  const el = document.getElementById('clear-result');
+  if (!el) return;
+
+  const d = CLEARANCE[clearSize][clearGrade];
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(clearSize)} ${esc(GRADE_LABEL[clearGrade])}</div>
+      <p class="qtext">通し穴径(バカ穴)</p>
+      <div class="bignum">${esc(fmt(d))}<span class="unit">mm</span></div>
+      <div class="subnum">JIS B 1001 準拠</div>
+      <ul class="cautions">
+        <li>通し穴は「呼び径 + 少しの隙間」で、ねじ山は切らずボルトがすっと通ればよい穴です。</li>
+        <li>1級(密)は位置精度が要る組付け、2級(中)は一般的なDIY、3級(粗)はラフな用途向けです。</li>
+        <li>ザグリ(座グリ)や皿穴が必要な場合は、通し穴とは別に加工してください。</li>
+      </ul>
+    </div>`;
+
+  html += `
+    <div class="plabel">JIS B 1001 バカ穴(通し穴) 早見表</div>
+    <div class="tbl-scroll"><table class="lookup">
+      <tr><th>ねじ</th><th>1級(密)</th><th>2級(中)</th><th>3級(粗)</th></tr>
+      ${SIZES.map(s => {
+        const row = CLEARANCE[s];
+        const isHl = s === clearSize;
+        return `<tr class="${isHl ? 'hl' : ''}"><td>${esc(s)}</td>` +
+          [1, 2, 3].map(g => `<td class="${isHl && g === clearGrade ? 'hl-col' : ''}">${esc(fmt(row[g]))}</td>`).join('') +
+          `</tr>`;
+      }).join('')}
+    </table></div>`;
+
+  el.innerHTML = html;
+}
+
+/* ==================== タブC: 木ねじ下穴 ==================== */
+function renderWood() {
+  const sizeChips = WOOD_SIZES.map(s =>
+    `<button class="matchip${woodSize === s ? ' active' : ''}" data-size="${esc(fmt(s))}">${esc(fmt(s))}mm</button>`).join('');
+  const matChips = ['soft', 'hard'].map(m => {
+    const info = WOOD_MATERIAL[m];
+    return `<button class="condchip${woodMaterial === m ? ' active' : ''}" data-mat="${m}">${esc(info.label)}<span class="cc-sub">${esc(info.sub)}</span></button>`;
+  }).join('');
+
+  appEl.innerHTML = `
+    <div class="section-label">— 木ねじの太さ（呼び径）</div>
+    <div class="matgrid" id="grid-size">${sizeChips}</div>
+    <div class="section-label">— 材質</div>
+    <div class="condgrid" id="grid-mat">${matChips}</div>
+    <div id="wood-result"></div>`;
+
+  appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
+    btn.addEventListener('click', () => { woodSize = Number(btn.getAttribute('data-size')); renderWood(); });
+  });
+  appEl.querySelectorAll('#grid-mat .condchip').forEach(btn => {
+    btn.addEventListener('click', () => { woodMaterial = btn.getAttribute('data-mat'); renderWood(); });
+  });
+
+  renderWoodResult();
+}
+
+function renderWoodResult() {
+  const el = document.getElementById('wood-result');
+  if (!el) return;
+
+  const info = WOOD_MATERIAL[woodMaterial];
+  const lo = woodSize * info.min;
+  const hi = woodSize * info.max;
+  const ref = WOOD_REF[String(woodSize)];
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">ねじ径 ${esc(fmt(woodSize))}mm × ${esc(info.label)}(${esc(info.sub)})</div>
+      <p class="qtext">下穴径の目安</p>
+      <div class="bignum">${esc(fmt1(lo))}〜${esc(fmt1(hi))}<span class="unit">mm</span></div>
+      <div class="subnum">計算 = ねじ径 ${esc(fmt(woodSize))}mm × ${esc(Math.round(info.min * 100))}〜${esc(Math.round(info.max * 100))}%（目安）</div>
+      ${ref ? `<div class="note-box"><b>参考早見(SPEC掲載の目安値)</b>: 軟材 ${esc(ref.soft)} / 硬材 ${esc(ref.hard)}</div>` : ''}
+      <ul class="cautions">
+        <li>木ねじの下穴は「ねじ山を切る」ためではなく「木材が割れるのを防ぐ」ための逃がしです。</li>
+        <li>下穴なしで硬材や端部に打つと割れやすくなります。端から近い箇所ほど下穴は必須です。</li>
+        <li>下穴の深さはねじ長の2/3程度が目安です。</li>
+        <li>頭を沈めたい場合は皿取り(面取り)をひと手間加えると仕上がりが安定します。</li>
+      </ul>
+      <div class="extras">
+        <a class="ext-link" href="${esc(amazonUrl('下穴錐 皿取り 木工 ビット'))}" data-track-label="下穴錐、皿取りビット" target="_blank" rel="noopener sponsored nofollow">
+          <span class="lab">TOOL</span> 下穴錐、皿取りビットをAmazonで探す ↗
+        </a>
+      </div>
+    </div>`;
+
+  el.innerHTML = html;
+}
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('neji:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('neji:amazonTag', v);
+  else localStorage.removeItem('neji:amazonTag');
+  tagSaved.textContent = '保存しました';
+  if (tab === 'wood') renderWoodResult();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('neji:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>

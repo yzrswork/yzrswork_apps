@@ -9,6 +9,10 @@
   <url><loc>https://apps.yzrswork.com/fixit/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/glue/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/nurerukun/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/usbc/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/neji/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/handa/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://apps.yzrswork.com/pinout/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://apps.yzrswork.com/about/</loc><priority>0.4</priority></url>
   <url><loc>https://apps.yzrswork.com/privacy/</loc><priority>0.3</priority></url>
 </urlset>

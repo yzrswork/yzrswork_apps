@@ -1,0 +1,55 @@
+{
+  "name": "ピンアサインナビ",
+  "shortName": "ピンアサインナビ",
+  "title": "ピンアサインナビ | や印工務店の道具箱",
+  "metaDescription": "Raspberry Piの40ピンGPIO、Arduino Unoのピン配置、ESP32 DevKitのGPIOを色分けで表示。電源・GND・I2C・SPI・UART・PWM・ADCと、3.3V注意やストラッピングピンなどの落とし穴つき。オフライン早見リファレンス。",
+  "ogDescription": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。I2C/SPI/UART/PWM/ADCと使用上の注意つきの早見リファレンス。",
+  "twitterDescription": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示するオフライン早見リファレンス。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-pinout.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/pinout/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "manifestDescription": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。オフライン早見リファレンス。",
+  "hasServiceWorker": true,
+  "swVersion": 1,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png",
+    "../shared/tokens.css"
+  ],
+  "manifestIcons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "backLink": {
+    "href": "../",
+    "text": "← 道具箱（ほかの実用ツール）"
+  },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "../shared/tokens.css"
+}

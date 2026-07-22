@@ -1,0 +1,32 @@
+{
+  "name": "USB-C見分けナビ",
+  "short_name": "USB-C見分けナビ",
+  "description": "USB-Cケーブルの能力の見分け方と用途からの選び方。W数・転送速度・映像出力をオフラインで確認。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ja",
+  "background_color": "#f0ebe3",
+  "theme_color": "#f0ebe3",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

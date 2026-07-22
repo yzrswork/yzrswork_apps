@@ -1,0 +1,55 @@
+{
+  "name": "USB-C見分けナビ",
+  "shortName": "USB-C見分けナビ",
+  "title": "USB-C見分けナビ | や印工務店の道具箱",
+  "metaDescription": "100W充電できる? 4Kモニターは映る? 外付けSSDの速度は出る? USB-Cケーブルの見分け方と、用途から選ぶ診断ナビ。W数・転送速度・映像出力・e-marker・EPRを整理。",
+  "ogDescription": "手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれかを診断。W数・転送速度・映像出力・e-marker・EPR(240W)を整理したナビ。",
+  "twitterDescription": "USB-Cケーブルで何ができるか、用途に必要なのはどれか。W数・転送速度・映像出力を切り分ける診断ナビ。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-usbc.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/usbc/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "manifestDescription": "USB-Cケーブルの能力の見分け方と用途からの選び方。W数・転送速度・映像出力をオフラインで確認。",
+  "hasServiceWorker": true,
+  "swVersion": 1,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png",
+    "../shared/tokens.css"
+  ],
+  "manifestIcons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "backLink": {
+    "href": "../",
+    "text": "← 道具箱（ほかの実用ツール）"
+  },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "../shared/tokens.css"
+}
