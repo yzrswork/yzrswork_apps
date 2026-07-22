@@ -13,23 +13,42 @@
   "manifestHref": "./manifest.webmanifest",
   "manifestFile": "manifest.webmanifest",
   "hasServiceWorker": true,
-  "swVersion": 3,
+  "swVersion": 4,
   "assets": [
     "./",
     "./index.html",
     "./manifest.webmanifest",
     "../icons/icon-192.png",
     "../icons/icon-512.png",
-    "../icons/icon-512-maskable.png"
+    "../icons/icon-512-maskable.png",
+    "../shared/tokens.css"
   ],
   "manifestIcons": [
-    { "src": "../icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "../icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "../icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
-  "backLink": { "href": "../", "text": "← 道具箱（ほかの実用ツール）" },
+  "backLink": {
+    "href": "../",
+    "text": "← 道具箱（ほかの実用ツール）"
+  },
   "robots": null,
   "applicationCategory": "UtilitiesApplication",
   "analyticsSrc": "../analytics.js",
-  "tokensHref": "/shared/tokens.css"
+  "tokensHref": "../shared/tokens.css"
 }
