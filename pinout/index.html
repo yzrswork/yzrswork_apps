@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- BUILD:HEAD:START -->
+<meta charset="utf-8" />
+<title>ピンアサインナビ | や印工務店の道具箱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="ピンアサインナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/pinout/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="ピンアサインナビ | や印工務店の道具箱" />
+<meta property="og:description" content="Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。I2C/SPI/UART/PWM/ADCと使用上の注意つきの早見リファレンス。" />
+<meta property="og:url" content="https://apps.yzrswork.com/pinout/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-pinout.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="ピンアサインナビ | や印工務店の道具箱" />
+<meta name="twitter:description" content="Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示するオフライン早見リファレンス。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-pinout.png" />
+<meta name="description" content="Raspberry Piの40ピンGPIO、Arduino Unoのピン配置、ESP32 DevKitのGPIOを色分けで表示。電源・GND・I2C・SPI・UART・PWM・ADCと、3.3V注意やストラッピングピンなどの落とし穴つき。オフライン早見リファレンス。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ピンアサインナビ",
+  "url": "https://apps.yzrswork.com/pinout/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。I2C/SPI/UART/PWM/ADCと使用上の注意つきの早見リファレンス。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header ───────────────────── */
+  header.hero { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 7.5vw, 40px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 10px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  /* ── Tabs (board picker) ─────────────── */
+  .tabs { display: flex; gap: 8px; margin: 20px 0 22px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--jp); font-size: 13.5px; font-weight: 500;
+    padding: 9px 16px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 12px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Legend ───────────────── */
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 0 0 4px; }
+  .legend .li { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); }
+  .legend .sw { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; border: 1px solid var(--rule-soft); }
+  .sw.power { background: var(--terracotta); border-color: var(--terracotta); }
+  .sw.gnd { background: var(--ink); border-color: var(--ink); }
+  .sw.gpio { background: var(--card); }
+  .sw.i2c { background: var(--ok); border-color: var(--ok); }
+  .sw.spi { background: var(--terracotta-deep); border-color: var(--terracotta-deep); }
+  .sw.uart { background: var(--warn); border-color: var(--warn); }
+  .sw.pwm { background: var(--paper); border: 1px solid var(--ink); }
+  .sw.adc { background: var(--paper); border: 1px solid var(--ok); }
+
+  /* ── Pin badges ───────────────── */
+  .badge {
+    display: inline-flex; align-items: center;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em;
+    padding: 2px 6px; border-radius: 8px; line-height: 1.6; white-space: nowrap;
+    margin-left: 5px;
+  }
+  .badge.b-i2c { background: var(--ok); color: #fff; }
+  .badge.b-spi { background: var(--terracotta-deep); color: #fff; }
+  .badge.b-uart { background: var(--warn); color: #2a2114; }
+  .badge.b-pwm { background: transparent; border: 1px solid var(--ink); color: var(--ink); }
+  .badge.b-adc { background: transparent; border: 1px solid var(--ok); color: var(--ok); }
+  .badge.b-dac { background: transparent; border: 1px solid var(--ok); color: var(--ok); }
+  .badge.b-touch { background: transparent; border: 1px solid var(--muted); color: var(--muted); }
+
+  /* ── Raspberry Pi grid ───────────────── */
+  .pi-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px;
+    border: 1px solid var(--rule-soft); border-radius: 10px; padding: 8px;
+    background: var(--paper);
+  }
+  .pincell {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; border-radius: 6px; font-size: 12px; min-width: 0;
+    background: var(--card);
+  }
+  .pincell.power { background: var(--terracotta); color: #fff; }
+  .pincell.gnd { background: var(--ink); color: var(--paper); }
+  .pincell .pnum {
+    font-family: var(--mono); font-size: 10px; color: var(--muted);
+    width: 18px; text-align: right; flex-shrink: 0;
+  }
+  .pincell.power .pnum, .pincell.gnd .pnum { color: rgba(255,255,255,0.65); }
+  .pincell .plabel-text { flex: 1; min-width: 0; overflow-wrap: break-word; line-height: 1.3; }
+
+  /* ── Uno / list style pin rows ───────── */
+  .pinlist { display: flex; flex-direction: column; gap: 4px; }
+  .pinrow {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px; border-radius: 8px; font-size: 13px;
+    background: var(--card); border: 1px solid var(--rule-soft);
+  }
+  .pinrow.power { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .pinrow.gnd { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .pinrow .rn { font-family: var(--mono); font-size: 11.5px; font-weight: 500; min-width: 34px; flex-shrink: 0; }
+  .pinrow .rl { flex: 1; }
+
+  /* ── ESP32 category cards ───────────── */
+  .cat-card {
+    background: var(--card); border: 1px solid var(--rule-soft); border-radius: 10px;
+    padding: 14px 15px; margin-bottom: 10px;
+  }
+  .cat-card.tone-warn { border-color: var(--warn); }
+  .cat-card.tone-ng { border-color: var(--ng); }
+  .cat-card.tone-ok { border-color: var(--ok); }
+  .cat-title { font-size: 13.5px; font-weight: 700; margin: 0 0 6px; }
+  .cat-title .tag {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px;
+    padding: 1px 6px; border-radius: 8px; margin-right: 7px; vertical-align: middle;
+  }
+  .tone-warn .tag { background: var(--warn); color: #2a2114; }
+  .tone-ng .tag { background: var(--ng); color: #fff; }
+  .tone-ok .tag { background: var(--ok); color: #fff; }
+  .cat-desc { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 8px; line-height: 1.65; }
+  .pinchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pinchip {
+    font-family: var(--mono); font-size: 11px; background: var(--paper);
+    border: 1px solid var(--rule-soft); border-radius: 6px; padding: 3px 8px;
+  }
+
+  .deflist { display: flex; flex-direction: column; gap: 6px; margin: 0 0 4px; }
+  .defrow {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px;
+    padding: 8px 10px; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 8px;
+    font-size: 12.5px;
+  }
+  .defrow .dl { font-weight: 700; color: var(--ink); }
+  .defrow .dv { color: var(--ink-soft); font-family: var(--mono); font-size: 11.5px; }
+
+  /* ── Notice card ───────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 20px 18px 22px;
+    margin-top: 16px;
+  }
+  .card.notice { border-color: var(--terracotta); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .qtext { font-size: 16px; font-weight: 700; line-height: 1.5; margin: 0 0 10px; }
+  ul.cautions { margin: 0; padding: 0 0 0 1.1em; }
+  ul.cautions li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 4px; }
+
+  /* ── Product list (配線でそろえる物) ───── */
+  .plabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+  .products { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 9px;
+    padding: 12px 13px;
+  }
+  .product .p-main { min-width: 0; }
+  .product .p-name { font-weight: 700; font-size: 14px; line-height: 1.4; }
+  .product .p-buy {
+    flex-shrink: 0;
+    font-family: var(--jp); font-size: 12.5px; font-weight: 700;
+    background: var(--ink); color: var(--paper); text-decoration: none;
+    border-radius: 8px; padding: 9px 12px; white-space: nowrap;
+  }
+  .product .p-buy:hover { background: var(--terracotta); }
+
+  /* ── About ───────────────────── */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28, 26, 22, 0.55); z-index: 10;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; padding: 22px 20px; max-width: 420px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 500; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 15px; }
+    .pincell { font-size: 11px; padding: 6px 6px; }
+    .pincell .pnum { width: 15px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> ピンアサインナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>ピンアサインナビ<span class="en">— Pinout Reference</span></h1>
+      <p>Raspberry Pi・Arduino Uno・ESP32 のピン配置を色分けで表示。電源、GND、I2C/SPI/UART、PWM、ADCを一目で。</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-rpi">Raspberry Pi</button>
+      <button class="tab" id="tab-uno">Arduino Uno</button>
+      <button class="tab" id="tab-esp32">ESP32 DevKit</button>
+    </div>
+
+    <div id="app"></div>
+
+    <section class="about">
+      <h2>なぜピン配置を毎回確認するはめになるのか</h2>
+      <p>電子工作の作業机で一番よくある事故は、大それた失敗ではなく「ピンの取り違え」です。Raspberry Piの3.3Vロジックのピンに、Arduinoの感覚のまま5Vを繋いでしまう。I2Cのつもりで配線したら実はSPI専用のピンだった。オフラインの作業中にブラウザで検索する余裕がなく、うろ覚えのままジャンパーを挿して、後から基板の様子がおかしいことに気づく。ボードのシルク印刷は小さく、GPIO番号と物理ピン番号がずれていることも多いので、一度覚えたつもりでも次の作業では結局また調べ直す羽目になります。このツールは、その「毎回調べ直す」を減らすための早見表です。</p>
+      <p>Raspberry Piの40ピンヘッダは、GPIOがすべて3.3Vロジックで、5Vトレラント(5V入力への耐性)がありません。5Vのセンサーやモジュールをそのまま繋ぐと壊れる可能性があるため、レベル変換や分圧が必要です。もうひとつの混乱の元が、物理ピン番号(基板上の並び順)とBCM番号(プログラムで`GPIO2`のように指定する番号)が別物だという点です。物理ピンは1番から40番まで左右交互に並びますが、BCM番号はその並びと一致しません。I2C、SPI、UARTもそれぞれ決まった位置に割り当てられているので、初めて触るときは「どこが何か」を一覧できると迷いません。</p>
+      <p>Arduino UnoとESP32は、同じ「マイコンボード」でも性格が違います。Unoはロジックが5Vで、ピンの数も機能もシンプル。落とし穴があるとすれば、D13が内蔵LEDと直結していることや、D0/D1がUSBシリアル(スケッチの書き込み)と共有されていて、外部デバイスを繋いだままだと書き込みに失敗することがある、というくらいです。一方でESP32は3.3Vロジックで、機能が多い分だけ注意点も増えます。入力専用で出力に使えないピン、起動モードに影響するストラッピングピン、内蔵フラッシュメモリと直結していて実質使えないピン。これらを知らずに手近なGPIOへ適当に配線すると、書き込みができなくなったり、起動しなくなったりします。ESP32は基板の版によって物理的なピンの並びが変わるため、このツールでは物理配置ではなく「機能とGPIO番号」で整理しています。</p>
+      <p>結論はシンプルです。配線する前に、そのピンが何に使えて、何をしてはいけないかを先に確認する。3.3Vロジックのボードに5Vを入れない。UART書き込み用のピンを他の用途で塞がない。ここに載せた番号や割り当ては各ボードの標準的な仕様に基づく検証済みの情報ですが、購入したモジュールや拡張ボード側の対応電圧、ピン配置は必ず製品の説明書やデータシートでも確認してください。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END --></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Pinout Reference</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   ピンアサインナビ — Pinout Reference
+   依存ゼロの単一HTML。データ送信なし。
+   Raspberry Pi 40pin / Arduino Uno / ESP32 DevKit のピン配置を
+   色分け表示する早見リファレンス。
+   ピン番号、機能はSPEC定義の検証済みデータに忠実（推測での追加、並べ替えはしない）。
+   ========================================================= */
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('pinout:amazonTag') || 'yzrs_apps-22';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+function badgeHtml(list) {
+  if (!list || !list.length) return '';
+  const labels = { i2c: 'I2C', spi: 'SPI', uart: 'UART', pwm: 'PWM', adc: 'ADC', dac: 'DAC', touch: 'TOUCH' };
+  return list.map(b => `<span class="badge b-${esc(b)}">${esc(labels[b] || b.toUpperCase())}</span>`).join('');
+}
+
+/* ---------- Raspberry Pi 40ピン(物理順、baked) ---------- */
+const PI_PINS = [
+  { n: 1,  label: '3V3 電源',                     type: 'power' },
+  { n: 2,  label: '5V 電源',                       type: 'power' },
+  { n: 3,  label: 'GPIO2 (SDA1 · I2C)',            type: 'gpio', badges: ['i2c'] },
+  { n: 4,  label: '5V 電源',                       type: 'power' },
+  { n: 5,  label: 'GPIO3 (SCL1 · I2C)',            type: 'gpio', badges: ['i2c'] },
+  { n: 6,  label: 'GND',                           type: 'gnd' },
+  { n: 7,  label: 'GPIO4 (GPCLK0)',                type: 'gpio' },
+  { n: 8,  label: 'GPIO14 (TXD · UART)',           type: 'gpio', badges: ['uart'] },
+  { n: 9,  label: 'GND',                           type: 'gnd' },
+  { n: 10, label: 'GPIO15 (RXD · UART)',           type: 'gpio', badges: ['uart'] },
+  { n: 11, label: 'GPIO17',                        type: 'gpio' },
+  { n: 12, label: 'GPIO18 (PCM_CLK · PWM)',        type: 'gpio', badges: ['pwm'] },
+  { n: 13, label: 'GPIO27',                        type: 'gpio' },
+  { n: 14, label: 'GND',                           type: 'gnd' },
+  { n: 15, label: 'GPIO22',                        type: 'gpio' },
+  { n: 16, label: 'GPIO23',                        type: 'gpio' },
+  { n: 17, label: '3V3 電源',                      type: 'power' },
+  { n: 18, label: 'GPIO24',                        type: 'gpio' },
+  { n: 19, label: 'GPIO10 (MOSI · SPI0)',          type: 'gpio', badges: ['spi'] },
+  { n: 20, label: 'GND',                           type: 'gnd' },
+  { n: 21, label: 'GPIO9 (MISO · SPI0)',           type: 'gpio', badges: ['spi'] },
+  { n: 22, label: 'GPIO25',                        type: 'gpio' },
+  { n: 23, label: 'GPIO11 (SCLK · SPI0)',          type: 'gpio', badges: ['spi'] },
+  { n: 24, label: 'GPIO8 (CE0 · SPI0)',            type: 'gpio', badges: ['spi'] },
+  { n: 25, label: 'GND',                           type: 'gnd' },
+  { n: 26, label: 'GPIO7 (CE1 · SPI0)',            type: 'gpio', badges: ['spi'] },
+  { n: 27, label: 'GPIO0 (ID_SD)',                 type: 'gpio' },
+  { n: 28, label: 'GPIO1 (ID_SC)',                 type: 'gpio' },
+  { n: 29, label: 'GPIO5',                         type: 'gpio' },
+  { n: 30, label: 'GND',                           type: 'gnd' },
+  { n: 31, label: 'GPIO6',                         type: 'gpio' },
+  { n: 32, label: 'GPIO12 (PWM)',                  type: 'gpio', badges: ['pwm'] },
+  { n: 33, label: 'GPIO13 (PWM)',                  type: 'gpio', badges: ['pwm'] },
+  { n: 34, label: 'GND',                           type: 'gnd' },
+  { n: 35, label: 'GPIO19 (MISO · SPI1)',          type: 'gpio', badges: ['spi'] },
+  { n: 36, label: 'GPIO16',                        type: 'gpio' },
+  { n: 37, label: 'GPIO26',                        type: 'gpio' },
+  { n: 38, label: 'GPIO20 (MOSI · SPI1)',          type: 'gpio', badges: ['spi'] },
+  { n: 39, label: 'GND',                           type: 'gnd' },
+  { n: 40, label: 'GPIO21 (SCLK · SPI1)',          type: 'gpio', badges: ['spi'] }
+];
+
+/* ---------- Arduino Uno(baked) ---------- */
+const UNO_DIGITAL = [
+  { n: 'D0',  label: 'D0 (RX0)',                 badges: ['uart'] },
+  { n: 'D1',  label: 'D1 (TX0)',                 badges: ['uart'] },
+  { n: 'D2',  label: 'D2 (INT0)',                badges: [] },
+  { n: 'D3',  label: 'D3 (PWM~, INT1)',          badges: ['pwm'] },
+  { n: 'D4',  label: 'D4',                       badges: [] },
+  { n: 'D5',  label: 'D5 (PWM~)',                badges: ['pwm'] },
+  { n: 'D6',  label: 'D6 (PWM~)',                badges: ['pwm'] },
+  { n: 'D7',  label: 'D7',                       badges: [] },
+  { n: 'D8',  label: 'D8',                       badges: [] },
+  { n: 'D9',  label: 'D9 (PWM~)',                badges: ['pwm'] },
+  { n: 'D10', label: 'D10 (PWM~, SS)',           badges: ['pwm', 'spi'] },
+  { n: 'D11', label: 'D11 (PWM~, MOSI)',         badges: ['pwm', 'spi'] },
+  { n: 'D12', label: 'D12 (MISO)',               badges: ['spi'] },
+  { n: 'D13', label: 'D13 (SCK, 内蔵LED)',       badges: ['spi'] }
+];
+const UNO_ANALOG = [
+  { n: 'A0', label: 'A0', badges: [] },
+  { n: 'A1', label: 'A1', badges: [] },
+  { n: 'A2', label: 'A2', badges: [] },
+  { n: 'A3', label: 'A3', badges: [] },
+  { n: 'A4', label: 'A4 (SDA)', badges: ['i2c'] },
+  { n: 'A5', label: 'A5 (SCL)', badges: ['i2c'] }
+];
+const UNO_POWER = [
+  { n: 'VIN',   label: 'VIN 電源',   type: 'power' },
+  { n: '5V',    label: '5V 電源',    type: 'power' },
+  { n: '3V3',   label: '3V3 電源',   type: 'power' },
+  { n: 'GND',   label: 'GND（複数）', type: 'gnd' },
+  { n: 'IOREF', label: 'IOREF',      type: 'gpio' },
+  { n: 'RESET', label: 'RESET',      type: 'gpio' },
+  { n: 'AREF',  label: 'AREF',       type: 'gpio' }
+];
+
+/* ---------- ESP32 DevKit(機能ベース、baked。物理並びは断定しない) ---------- */
+const ESP32_CATS = [
+  {
+    title: '入力専用（出力、内部プルアップ不可）',
+    tone: 'warn', tag: '注意',
+    desc: '出力ピンとしては使えません。センサーの信号読み取りなど入力用途に限定してください。',
+    pins: ['GPIO34', 'GPIO35', 'GPIO36 (VP)', 'GPIO39 (VN)']
+  },
+  {
+    title: 'ストラッピングピン（起動モードに影響）',
+    tone: 'warn', tag: '注意',
+    desc: '起動時の状態で動作モードが決まるピンです。リレーやLEDなど、起動直後にHIGH/LOWが出ると困る出力には使わないでください。',
+    pins: ['GPIO0', 'GPIO2', 'GPIO5', 'GPIO12', 'GPIO15']
+  },
+  {
+    title: '使用不可（内蔵SPIフラッシュ直結）',
+    tone: 'ng', tag: '不可',
+    desc: '内蔵フラッシュメモリの読み書きに使われているため、外部配線には使えません。',
+    pins: ['GPIO6', 'GPIO7', 'GPIO8', 'GPIO9', 'GPIO10', 'GPIO11']
+  },
+  {
+    title: '安心して使える汎用GPIO',
+    tone: 'ok', tag: 'OK',
+    desc: '上の3分類（入力専用、ストラッピング、フラッシュ直結）に該当しないGPIOは、通常の入出力ピンとして使えます。ただしI2C/SPI/UART/ADC/DACのデフォルト割当と重複していないか、下の一覧もあわせて確認してください。',
+    pins: []
+  }
+];
+const ESP32_DEFAULTS = [
+  { label: 'I2C（デフォルト）',                    value: 'SDA = GPIO21 / SCL = GPIO22', badge: 'i2c' },
+  { label: 'SPI（デフォルト、VSPI）',               value: 'MOSI = GPIO23 / MISO = GPIO19 / SCK = GPIO18 / CS = GPIO5', badge: 'spi' },
+  { label: 'UART0',                                value: 'TX = GPIO1 / RX = GPIO3（USBシリアルと共用）', badge: 'uart' },
+  { label: 'UART2',                                value: 'TX = GPIO17 / RX = GPIO16', badge: 'uart' },
+  { label: 'ADC1（WiFi使用中も使用可）',            value: 'GPIO32〜39', badge: 'adc' },
+  { label: 'ADC2（WiFi使用中は不可）',              value: 'GPIO0, 2, 4, 12〜15, 25〜27', badge: 'adc' },
+  { label: 'DAC',                                  value: 'GPIO25, GPIO26', badge: 'dac' },
+  { label: 'タッチセンサ',                          value: 'GPIO0, 2, 4, 12, 13, 14, 15, 27, 32, 33', badge: 'touch' }
+];
+
+/* ---------- ボード注意カード ---------- */
+const NOTICES = {
+  rpi: {
+    title: 'Raspberry Pi の注意点',
+    items: [
+      'GPIOはすべて3.3Vロジックです。5Vトレラントではないため、5Vを直接入力すると壊れます。レベル変換や分圧をしてから接続してください。',
+      'GNDは8本あります（物理ピン 6 / 9 / 14 / 20 / 25 / 30 / 34 / 39）。3V3は物理ピン1と17、5Vは物理ピン2と4です。',
+      'BCM番号（プログラムで使う「GPIO2」のような番号）と、物理番号（基板上の位置番号）は別物です。混同しないでください。'
+    ]
+  },
+  uno: {
+    title: 'Arduino Uno の注意点',
+    items: [
+      'ロジックレベルは5Vです。Raspberry Piなど3.3V系のモジュールを直結しないでください。',
+      'D13は内蔵LEDに直結しています。他用途で使うとLEDの点灯と干渉します。',
+      'UnoはA6/A7を持たない6chのADCです（NanoやMegaなど他のAVR系ボードと混同しないでください）。',
+      'D0(RX)/D1(TX)はUSBシリアル（スケッチの書き込み）と共有しています。外部デバイスを繋いだままだと書き込みに失敗することがあります。'
+    ]
+  },
+  esp32: {
+    title: 'ESP32 DevKit の注意点',
+    items: [
+      'ロジックレベルは3.3Vです。5Vトレラントではないため、5Vを直接入力しないでください。',
+      'ADC2はWiFi使用中は使えません（WiFiと排他）。WiFiを使うスケッチではADC1側（GPIO32〜39）を優先してください。',
+      'ストラッピングピン、入力専用ピン、フラッシュ直結ピンの3種類は起動や動作に直結します。配線前に必ず確認してください。',
+      '物理ピンの並びはDevKitの基板バージョンによって異なるため、このツールでは機能とGPIO番号だけを示しています。'
+    ]
+  }
+};
+
+/* ---------- 配線でそろえる物(共通、軽めのAmazon) ---------- */
+const GEAR_PRODUCTS = [
+  { name: 'ブレッドボード', kw: 'ブレッドボード 電子工作' },
+  { name: 'ジャンパーワイヤ（オスメス）', kw: 'ジャンパーワイヤ オスメス' },
+  { name: 'Raspberry Pi用 T型GPIO拡張ボード', kw: 'Raspberry Pi GPIO 拡張ボード T型' }
+];
+
+/* ---------- 状態 ---------- */
+let board = 'rpi';
+const appEl = document.getElementById('app');
+
+document.getElementById('tab-rpi').addEventListener('click', () => setBoard('rpi'));
+document.getElementById('tab-uno').addEventListener('click', () => setBoard('uno'));
+document.getElementById('tab-esp32').addEventListener('click', () => setBoard('esp32'));
+
+function setBoard(b) {
+  board = b;
+  document.getElementById('tab-rpi').classList.toggle('active', b === 'rpi');
+  document.getElementById('tab-uno').classList.toggle('active', b === 'uno');
+  document.getElementById('tab-esp32').classList.toggle('active', b === 'esp32');
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---------- レンダリング ---------- */
+function render() {
+  let html = legendHtml(board);
+  if (board === 'rpi') html += renderRpi();
+  else if (board === 'uno') html += renderUno();
+  else html += renderEsp32();
+
+  html += noticeHtml(NOTICES[board]);
+  html += gearHtml();
+
+  appEl.innerHTML = html;
+}
+
+function legendHtml(b) {
+  let items = [
+    { sw: 'power', label: '電源(3V3/5V/VIN)' },
+    { sw: 'gnd',   label: 'GND' },
+    { sw: 'gpio',  label: 'GPIO' },
+    { sw: 'i2c',   label: 'I2C' },
+    { sw: 'spi',   label: 'SPI' },
+    { sw: 'uart',  label: 'UART' },
+    { sw: 'pwm',   label: 'PWM' },
+    { sw: 'adc',   label: 'ADC・DAC' }
+  ];
+  const lis = items.map(it => `<span class="li"><span class="sw ${esc(it.sw)}"></span>${esc(it.label)}</span>`).join('');
+  return `<div class="section-label">— 凡例</div><div class="legend">${lis}</div>`;
+}
+
+function renderRpi() {
+  const cells = PI_PINS.map(p => {
+    const cls = p.type === 'power' ? ' power' : (p.type === 'gnd' ? ' gnd' : '');
+    const badges = badgeHtml(p.badges);
+    return `<div class="pincell${cls}"><span class="pnum">${p.n}</span><span class="plabel-text">${esc(p.label)}${badges}</span></div>`;
+  }).join('');
+  return `
+    <div class="section-label">— Raspberry Pi 40ピン（物理配置。左=奇数、右=偶数）</div>
+    <div class="pi-grid">${cells}</div>`;
+}
+
+function pinlistHtml(list) {
+  return list.map(p => {
+    const type = p.type;
+    const cls = type === 'power' ? ' power' : (type === 'gnd' ? ' gnd' : '');
+    const badges = badgeHtml(p.badges);
+    return `<div class="pinrow${cls}"><span class="rn">${esc(p.n)}</span><span class="rl">${esc(p.label)}${badges}</span></div>`;
+  }).join('');
+}
+
+function renderUno() {
+  return `
+    <div class="section-label">— デジタルピン (D0〜D13)</div>
+    <div class="pinlist">${pinlistHtml(UNO_DIGITAL)}</div>
+    <div class="section-label">— アナログピン (A0〜A5、10bit ADC)</div>
+    <div class="pinlist">${pinlistHtml(UNO_ANALOG)}</div>
+    <div class="section-label">— 電源、その他</div>
+    <div class="pinlist">${pinlistHtml(UNO_POWER)}</div>`;
+}
+
+function renderEsp32() {
+  const cats = ESP32_CATS.map(c => {
+    const chips = c.pins.length
+      ? `<div class="pinchips">${c.pins.map(p => `<span class="pinchip">${esc(p)}</span>`).join('')}</div>`
+      : '';
+    return `
+      <div class="cat-card tone-${esc(c.tone)}">
+        <div class="cat-title"><span class="tag">${esc(c.tag)}</span>${esc(c.title)}</div>
+        <p class="cat-desc">${esc(c.desc)}</p>
+        ${chips}
+      </div>`;
+  }).join('');
+
+  const defs = ESP32_DEFAULTS.map(d =>
+    `<div class="defrow"><span class="dl">${esc(d.label)}</span>${badgeHtml([d.badge])}<span class="dv">${esc(d.value)}</span></div>`
+  ).join('');
+
+  return `
+    <div class="section-label">— ESP32 DevKit（機能ベース。物理並びは基板の版で異なるため断定しません）</div>
+    ${cats}
+    <div class="section-label">— デフォルトのI2C / SPI / UART / ADC / DAC</div>
+    <div class="deflist">${defs}</div>`;
+}
+
+function noticeHtml(n) {
+  const items = n.items.map(t => `<li>${esc(t)}</li>`).join('');
+  return `
+    <div class="card notice">
+      <div class="kicker">使用上の注意</div>
+      <p class="qtext">${esc(n.title)}</p>
+      <ul class="cautions">${items}</ul>
+    </div>`;
+}
+
+function gearHtml() {
+  const products = GEAR_PRODUCTS.map(p => `
+    <div class="product">
+      <div class="p-main"><div class="p-name">${esc(p.name)}</div></div>
+      <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+    </div>`).join('');
+  return `
+    <div class="plabel">配線でそろえる物</div>
+    <div class="products">${products}</div>`;
+}
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('pinout:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('pinout:amazonTag', v);
+  else localStorage.removeItem('pinout:amazonTag');
+  tagSaved.textContent = '保存しました';
+  render();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('pinout:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>

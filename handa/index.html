@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- BUILD:HEAD:START -->
+<meta charset="utf-8" />
+<title>はんだ付けナビ | や印工務店の道具箱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="はんだ付けナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/handa/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="はんだ付けナビ | や印工務店の道具箱" />
+<meta property="og:description" content="はんだの種類と作業から適正なこて先温度を提示。イモはんだ・ブリッジ等のトラブル診断と道具選びつきのはんだ付けナビ。" />
+<meta property="og:url" content="https://apps.yzrswork.com/handa/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-handa.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="はんだ付けナビ | や印工務店の道具箱" />
+<meta name="twitter:description" content="こて先温度・トラブル診断・道具選び。電子工作のはんだ付けを整理した診断ナビ。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-handa.png" />
+<meta name="description" content="鉛入り・鉛フリーで違うこて先温度、イモはんだ・ブリッジ・濡れない等のトラブル診断、こて/こて先/フラックス/はんだ径の選び方。電子工作のはんだ付けを整理した診断ナビ。SAC305・Sn63Pb37対応。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "はんだ付けナビ",
+  "url": "https://apps.yzrswork.com/handa/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "はんだの種類と作業から適正なこて先温度を提示。イモはんだ・ブリッジ等のトラブル診断と道具選びつきのはんだ付けナビ。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header ───────────────────── */
+  header.hero { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 7.5vw, 40px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 10px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  /* ── Tabs ─────────────────────── */
+  .tabs { display: flex; gap: 8px; margin: 20px 0 22px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--jp); font-size: 13.5px; font-weight: 500;
+    padding: 9px 16px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 12px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Chip pickers ───────────── */
+  .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .matchip {
+    font-family: var(--jp); font-size: 13px; text-align: left;
+    padding: 9px 13px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
+    line-height: 1.4;
+  }
+  .matchip .mc-sub { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .matchip:hover { border-color: var(--terracotta); }
+  .matchip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .matchip.active .mc-sub { color: rgba(255,255,255,0.8); }
+
+  .condgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .condchip {
+    font-family: var(--jp); font-size: 12.5px; font-weight: 500;
+    padding: 7px 13px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .condchip.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* ── Result / Node card ───────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+    margin-top: 8px;
+  }
+  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.notice { border-color: var(--terracotta); }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .card.solution .kicker { color: var(--ok); }
+  .qtext { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
+  .principle { font-size: 14px; color: var(--ink-soft); margin: 0 0 16px; }
+  .temp-readout {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--terracotta-deep);
+    line-height: 1.2;
+    margin: 0 0 4px;
+  }
+  .temp-readout .unit { font-size: 15px; color: var(--muted); margin-left: 4px; }
+  .temp-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 16px; }
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(181, 69, 27, 0.05);
+    border-left: 3px solid var(--terracotta);
+    padding: 9px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px;
+  }
+  .warn {
+    font-size: 13.5px;
+    color: var(--terracotta-deep);
+    background: rgba(181, 69, 27, 0.09);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .note-box {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 0 0 10px;
+  }
+  .note-box b { color: var(--ink); }
+
+  /* ── Product list ───────────────── */
+  .plabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+  .products { display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 9px;
+    padding: 12px 13px;
+  }
+  .product .p-main { min-width: 0; }
+  .product .p-name { font-weight: 700; font-size: 14.5px; line-height: 1.4; }
+  .product .p-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .product .p-buy {
+    flex-shrink: 0;
+    font-family: var(--jp); font-size: 12.5px; font-weight: 700;
+    background: var(--ink); color: var(--paper); text-decoration: none;
+    border-radius: 8px; padding: 9px 12px; white-space: nowrap;
+  }
+  .product .p-buy:hover { background: var(--terracotta); }
+
+  ul.cautions { margin: 0 0 4px; padding: 0 0 0 1.1em; }
+  ul.cautions li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 4px; }
+
+  table.lookup { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13.5px; }
+  table.lookup th, table.lookup td { text-align: left; padding: 7px 6px; border-bottom: 1px dashed var(--rule-soft); vertical-align: top; }
+  table.lookup th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+
+  .opt {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--terracotta); border: 1px solid var(--terracotta); border-radius: 9px;
+    padding: 11px 16px; font-size: 14px; font-weight: 500; font-family: var(--jp);
+    color: #fff; cursor: pointer; margin-top: 8px;
+  }
+  .opt:hover { background: var(--terracotta-deep); }
+
+  /* ── Links / affiliate ───────────────── */
+  .extras { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule-soft); }
+  .ext-link {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink);
+    text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  }
+  .ext-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ── About ───────────────────── */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28, 26, 22, 0.55); z-index: 10;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; padding: 22px 20px; max-width: 420px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 500; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 17px; }
+    .temp-readout { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> はんだ付けナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>はんだ付けナビ<span class="en">— Soldering Advisor</span></h1>
+      <p>こて先の温度、うまく付かない原因、道具の選び方。はんだの種類と作業から、適温とコツを引き出します。</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-temp">こて温度</button>
+      <button class="tab" id="tab-trouble">トラブル診断</button>
+      <button class="tab" id="tab-gear">道具の選び方</button>
+    </div>
+
+    <div id="app"></div>
+
+    <section class="about">
+      <h2>付かない、汚い、を減らすたった3つの要点</h2>
+      <p>はんだ付けの失敗は、突き詰めるとほとんどが「温度不足」か「酸化、清掃不足」のどちらかです。厄介なのは、この2つは症状がよく似ていて、初心者ほど逆方向に対処してしまうことです。うまく付かないと感じると、つい温度を上げたくなりますが、原因が清掃不足やフラックス切れだった場合、温度を上げても状況は変わらず、ランドが剥がれたり部品が壊れたりする悪循環に入ります。まずは「こて先がきれいで、はんだがきちんと乗っているか」を疑うのが先です。温度はその次の調整項目です。</p>
+      <p>有鉛はんだ(Sn63Pb37など)は融点183℃で、成分の配合比により一点で溶けて固まる「共晶はんだ」です。これに対して鉛フリーはんだ(SAC305など)は融点が約217〜220℃と30℃以上高く、しかも溶け始めから完全に固まるまでの温度幅があるため扱いにコツがいります。濡れにくく酸化しやすいので、フラックスの併用がほぼ前提になります。個人の電子工作であれば、法規制の対象でない限り扱いやすい有鉛はんだを選ぶのも現実的な判断です。ただし鉛は有害な金属なので、作業中の換気と、はんだ付け後の手洗いは必ず行ってください。</p>
+      <p>技術的な芯はひとつです。「こての上ではんだを溶かさない」こと。正しい手順は、こて先を対象(基板のランドや部品のリード線)に当てて数秒温め、そこにはんだを添えて対象の熱で溶かします。対象がきちんと温まっていれば、はんだは数秒でするりと濡れ広がります。逆に、こて先に溶かしたはんだを対象に運ぶように盛ると、表面だけがくっついた「イモはんだ」になりがちです。もうひとつの決め手はこて先の手入れです。こて先の表面は本来メッキで保護されていて、そこにはんだの薄い膜(予備はんだ)が乗っていることで熱がよく伝わります。酸化して黒くなったこて先は熱の伝わりが悪く、いくら温度を上げても仕事をしてくれません。だからといってヤスリで削るとメッキ自体が剥がれてしまうので、専用のこて先クリーナーやリフレッサーで手入れするのが正解です。</p>
+      <p>結論として必要なのは、温調式のこてと、作業に合ったこて先と、フラックスの3点です。まず自分の作業(基板の細かい部品か、太い線やGND面か、表面実装か)に合った適温を知り、こて先はこまめに拭いて清潔に保つ。この2つを習慣にするだけで、仕上がりは大きく変わります。このツールで示す温度や対処は代表的な目安です。使用するはんだやこての取扱説明書の推奨値も、あわせて確認してください。作業は換気の良い場所で行ってください。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END --></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — Soldering Advisor</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   はんだ付けナビ — Soldering Advisor
+   依存ゼロの単一HTML。データ送信なし。
+   はんだ種類×作業から適温を出す/症状からトラブルを診断する/道具を選ぶ、の3タブ。
+   温度・融点・症状の対処はSPEC定義に忠実（推測での数値追加はしない）。
+   ========================================================= */
+
+/* ---------- タブA: はんだ種類 ---------- */
+const SOLDERS = [
+  { id: 'leaded',    label: '鉛入り(Sn63Pb37 / Sn60Pb40)', sub: '融点183℃、初心者向き' },
+  { id: 'lead_free', label: '鉛フリー(SAC305)',            sub: '融点約217〜220℃' },
+  { id: 'low_temp',  label: '低温はんだ(Bi系)',            sub: '融点約138〜140℃' }
+];
+function solderLabel(id) { const s = SOLDERS.find(x => x.id === id); return s ? s.label : id; }
+
+/* ---------- タブA: 作業 ---------- */
+const WORKS = [
+  { id: 'fine',  label: '基板の細かい部品、IC足', sub: '' },
+  { id: 'heavy', label: '太い線、GNDベタ面、コネクタ', sub: '熱容量が大きい箇所' },
+  { id: 'smd',   label: '表面実装(チップ抵抗、コンデンサ)', sub: 'SMD' }
+];
+function workLabel(id) { const w = WORKS.find(x => x.id === id); return w ? w.label : id; }
+
+/* ---------- タブA: 種類ごとの基準温度と特性 ---------- */
+const SOLDER_BASE = {
+  leaded:    { lo: 320, hi: 340, trait: '共晶(Sn63Pb37)は一点で溶けるため温度管理がしやすく、濡れも良い初心者向きのはんだです。' },
+  lead_free: { lo: 340, hi: 370, trait: '有鉛より30℃以上高い温度が必要で、濡れにくく酸化しやすいためフラックスの併用がほぼ前提になります。' },
+  low_temp:  { lo: 240, hi: 270, trait: '部品を熱から守りたい時ややり直し作業に向きますが、強度は有鉛、鉛フリーより劣るため構造的な接続には不向きです。' }
+};
+
+/* ---------- タブA: 作業ごとの補正とコツ ---------- */
+const WORK_ADJUST = {
+  fine:  {
+    tempNote: 'はんだ種類の基準温度そのまま。',
+    contact: '2〜3秒',
+    tips: ['細いこて先(B型、BC型)を使う', '接触は2〜3秒を目安にし、長く当てすぎない']
+  },
+  heavy: {
+    tempNote: '熱が逃げやすい箇所のため、基準温度に+20〜30℃するか、ワット数(熱容量)の大きいこてを使う。',
+    contact: '3〜5秒(熱が逃げる分、面で伝える)',
+    tips: ['C型やD型など面で熱を伝えるこて先を使う', '温度を上げるより、こて自体のワット数、熱容量で対応するほうが安定する']
+  },
+  smd: {
+    tempNote: 'はんだ種類の基準温度そのまま(フラックスは必須)。',
+    contact: '2〜3秒',
+    tips: ['フラックスを先に塗布する', '片方のパッドに予備はんだ(プリコート)をしてから部品を位置決めし、反対側を付ける']
+  }
+};
+
+function tempRange(solderId, workId) {
+  const base = SOLDER_BASE[solderId];
+  if (workId === 'heavy') {
+    return { lo: base.lo + 20, hi: base.hi + 30 };
+  }
+  return { lo: base.lo, hi: base.hi };
+}
+
+/* ---------- タブB: トラブル症状 ---------- */
+const TROUBLES = [
+  {
+    id: 'imo', label: 'イモはんだ', sub: '丸く盛れて艶がなくボソボソ',
+    cause: '加熱不足、または冷却中に対象を動かして固めてしまった状態です。',
+    fix: [
+      'こて温度と接触時間を十分に確保する',
+      'フラックスを追加する',
+      'はんだが固まるまで対象を動かさない'
+    ]
+  },
+  {
+    id: 'bridge', label: 'ブリッジ', sub: '隣の端子とくっつく',
+    cause: 'はんだの量が多すぎるか、こて先が寝ていて広範囲に熱と溶けたはんだが伝わっている状態です。',
+    fix: [
+      '吸い取り線(ソルダーウィック)にフラックスを足して除去する',
+      'はんだの量そのものを減らす',
+      'こて先を立てて、はんだを引くように仕上げる'
+    ]
+  },
+  {
+    id: 'no_wet', label: '濡れない、弾く', sub: '玉になって乗らない',
+    cause: '酸化、フラックス切れ、温度不足、清掃不足のいずれかです。',
+    fix: [
+      'フラックスを塗布する',
+      'こて先を清掃してメッキ面を出す',
+      '母材(パッドや端子)を軽く磨く',
+      '鉛フリーはんだの場合は温度が足りているか確認する'
+    ]
+  },
+  {
+    id: 'tomb', label: '部品が立つ', sub: 'チップが片側で立ち上がる(ツームストーン)',
+    cause: '両パッドの加熱バランスが崩れ、片側だけ先に溶けて表面張力に引っ張られた状態です。',
+    fix: [
+      '予備はんだ(プリコート)は片側だけ薄く盛る',
+      '両パッドをできるだけ同時に加熱する',
+      'フラックスで表面張力のバランスを整える'
+    ]
+  },
+  {
+    id: 'cone', label: 'ツノが立つ、糸を引く', sub: '',
+    cause: '温度不足、またはこてを引き上げるタイミングが早すぎる状態です。',
+    fix: [
+      '十分に濡れてから、こてを寝かせ気味にしてすっと離す',
+      'こて先温度を確認する'
+    ]
+  },
+  {
+    id: 'black', label: 'こて先が黒く酸化', sub: 'はんだが乗らない',
+    cause: 'こて先の酸化、または空焼き(はんだを乗せずに高温で放置)が原因です。',
+    fix: [
+      'こて先クリーナーやリフレッサーで再メッキする',
+      'こまめに拭いて汚れを溜めない',
+      '待機温度を下げる、またはこまめに電源を切る'
+    ],
+    warn: 'こて先はヤスリで削らない(メッキが剥げて二度と使えなくなります)。'
+  }
+];
+function troubleLabel(id) { const t = TROUBLES.find(x => x.id === id); return t ? t.label : id; }
+
+/* ---------- タブC: 道具カタログ ---------- */
+const GEAR_SECTIONS = [
+  {
+    label: 'はんだごて、ステーション',
+    note: '温調式が基本。ワットは20〜40W級を目安に、太物用には余裕を見る。',
+    products: [
+      { name: '白光(HAKKO) FX600(温調ペン型)', kw: '温調 はんだごて 白光 FX600', note: '電子工作の定番。ペン型で扱いやすい' },
+      { name: '白光(HAKKO) FX951(温調ステーション)', kw: '白光 FX951 はんだごて ステーション', note: '据え置きステーション型。熱容量に余裕がある' },
+      { name: 'goot 温調はんだごて', kw: 'goot 温調 はんだごて', note: '白光と並ぶ定番ブランド' }
+    ]
+  },
+  {
+    label: 'こて先',
+    note: '形状の違い: B=汎用、C、BC=面で熱を伝える、D=マイナス型。細かい所はB、GND面などはC、Dで熱容量を稼ぐ。',
+    products: [
+      { name: '白光 こて先 T18-B(汎用)', kw: '白光 こて先 T18 B', note: '細かい部品向けの汎用形状' },
+      { name: '白光 こて先 T18-BC(面で伝熱)', kw: '白光 こて先 T18 BC', note: 'GND面など熱容量が要る箇所向け' }
+    ]
+  },
+  {
+    label: 'はんだ(糸はんだ)',
+    note: '電子工作なら径0.6〜1.0mmが目安(細かい所は0.6、汎用は0.8)。ヤニ入り(フラックス入り)を選ぶ。鉛入りは初心者向き、鉛フリーはRoHS対応や製品向け。',
+    products: [
+      { name: 'ヤニ入りはんだ 0.6mm(鉛入り)', kw: 'ヤニ入り はんだ 0.6mm 電子工作', note: '細かい部品向け' },
+      { name: 'ヤニ入りはんだ 0.8mm(鉛入り)', kw: 'ヤニ入り はんだ 0.8mm 電子工作', note: '汎用径' }
+    ]
+  },
+  {
+    label: 'フラックス',
+    note: '濡れ改善の要。無洗浄(no-clean)タイプが扱いやすい。ヤニ入りはんだでも面実装や修正で追いフラックスが効く。',
+    products: [
+      { name: 'フラックス(無洗浄タイプ)', kw: 'フラックス 電子工作 無洗浄', note: '濡れ改善の要。修正や面実装での追いフラックスに' }
+    ]
+  },
+  {
+    label: '補助具',
+    note: 'ブリッジの除去やこて先の手入れに。',
+    products: [
+      { name: 'はんだ吸い取り線(ソルダーウィック)', kw: 'はんだ 吸い取り線', note: 'ブリッジの除去に' },
+      { name: 'こて先クリーナー', kw: 'こて先クリーナー', note: '金属たわし型、水スポンジ型' }
+    ]
+  }
+];
+
+/* ---------- 状態 ---------- */
+let tab = 'temp';
+let solderSel = null;
+let workSel = null;
+let troubleSel = null;
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('handa:amazonTag') || 'yzrs_apps-22';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+/* ---------- タブ切替 ---------- */
+const appEl = document.getElementById('app');
+document.getElementById('tab-temp').addEventListener('click', () => setTab('temp'));
+document.getElementById('tab-trouble').addEventListener('click', () => setTab('trouble'));
+document.getElementById('tab-gear').addEventListener('click', () => setTab('gear'));
+function setTab(t) {
+  tab = t;
+  document.getElementById('tab-temp').classList.toggle('active', t === 'temp');
+  document.getElementById('tab-trouble').classList.toggle('active', t === 'trouble');
+  document.getElementById('tab-gear').classList.toggle('active', t === 'gear');
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  if (tab === 'temp') renderTemp();
+  else if (tab === 'trouble') renderTrouble();
+  else renderGear();
+}
+
+/* ---------- タブA: こて温度 ---------- */
+function renderTemp() {
+  const chipsSolder = SOLDERS.map(s =>
+    `<button class="matchip${solderSel === s.id ? ' active' : ''}" data-group="solder" data-id="${s.id}">
+       ${esc(s.label)}${s.sub ? `<span class="mc-sub">${esc(s.sub)}</span>` : ''}
+     </button>`).join('');
+  const chipsWork = WORKS.map(w =>
+    `<button class="matchip${workSel === w.id ? ' active' : ''}" data-group="work" data-id="${w.id}">
+       ${esc(w.label)}${w.sub ? `<span class="mc-sub">${esc(w.sub)}</span>` : ''}
+     </button>`).join('');
+
+  const html = `
+    <div class="section-label">— はんだの種類</div>
+    <div class="matgrid" id="grid-solder">${chipsSolder}</div>
+    <div class="section-label">— 作業</div>
+    <div class="matgrid" id="grid-work">${chipsWork}</div>
+    <div id="temp-result"></div>`;
+
+  appEl.innerHTML = html;
+
+  appEl.querySelectorAll('#grid-solder .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      solderSel = (solderSel === id ? null : id);
+      renderTemp();
+    });
+  });
+  appEl.querySelectorAll('#grid-work .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      workSel = (workSel === id ? null : id);
+      renderTemp();
+    });
+  });
+
+  renderTempResult();
+}
+
+function renderTempResult() {
+  const resultEl = document.getElementById('temp-result');
+  if (!resultEl) return;
+
+  if (!solderSel || !workSel) {
+    resultEl.innerHTML = `<p class="note-box" style="margin-top:16px;">はんだの種類と作業を1つずつ選ぶと、ここに推奨こて先温度が出ます。</p>`;
+    return;
+  }
+
+  const base = SOLDER_BASE[solderSel];
+  const adj = WORK_ADJUST[workSel];
+  const range = tempRange(solderSel, workSel);
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(solderLabel(solderSel))} × ${esc(workLabel(workSel))}</div>
+      <p class="temp-readout">${range.lo}〜${range.hi}<span class="unit">℃</span></p>
+      <p class="temp-sub">接触時間の目安: ${esc(adj.contact)}</p>
+      <p class="principle">${esc(base.trait)}</p>`;
+
+  if (workSel === 'heavy') {
+    html += `<div class="note-box">${esc(adj.tempNote)}</div>`;
+  }
+
+  html += '<div class="plabel">コツ</div><ul class="cautions">';
+  adj.tips.forEach(t => { html += `<li>${esc(t)}</li>`; });
+  html += '</ul>';
+
+  html += `<div class="help">共通の芯: 温度を上げるより、こて先を清掃し、はんだメッキした面で熱を伝えること。はんだは"こてで温めた対象"に当てて溶かします(こての上で溶かさない)。理想は数秒で濡れ広がる状態です。長時間の高温はランドはがれや部品破壊の元になります。</div>`;
+
+  html += '</div>';
+  resultEl.innerHTML = html;
+}
+
+/* ---------- タブB: トラブル診断 ---------- */
+function renderTrouble() {
+  const chips = TROUBLES.map(t =>
+    `<button class="matchip${troubleSel === t.id ? ' active' : ''}" data-id="${t.id}">
+       ${esc(t.label)}${t.sub ? `<span class="mc-sub">${esc(t.sub)}</span>` : ''}
+     </button>`).join('');
+
+  const html = `
+    <div class="section-label">— 症状を選ぶ</div>
+    <div class="matgrid" id="grid-trouble">${chips}</div>
+    <div id="trouble-result"></div>`;
+
+  appEl.innerHTML = html;
+
+  appEl.querySelectorAll('#grid-trouble .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      troubleSel = (troubleSel === id ? null : id);
+      renderTrouble();
+    });
+  });
+
+  renderTroubleResult();
+}
+
+function renderTroubleResult() {
+  const resultEl = document.getElementById('trouble-result');
+  if (!resultEl) return;
+
+  if (!troubleSel) {
+    resultEl.innerHTML = `<p class="note-box" style="margin-top:16px;">症状を1つ選ぶと、ここに原因と対処が出ます。</p>`;
+    return;
+  }
+
+  const t = TROUBLES.find(x => x.id === troubleSel);
+
+  let html = `
+    <div class="card notice" style="margin-top:16px;">
+      <div class="kicker">${esc(t.label)}${t.sub ? '　' + esc(t.sub) : ''}</div>
+      <p class="qtext">${esc(t.cause)}</p>
+      <div class="plabel">対処</div>
+      <ul class="cautions">`;
+  t.fix.forEach(f => { html += `<li>${esc(f)}</li>`; });
+  html += '</ul>';
+
+  if (t.warn) {
+    html += `<div class="warn">${esc(t.warn)}</div>`;
+  }
+
+  html += '</div>';
+  resultEl.innerHTML = html;
+}
+
+/* ---------- タブC: 道具の選び方 ---------- */
+function renderGear() {
+  let html = '';
+  GEAR_SECTIONS.forEach((sec, i) => {
+    html += `
+      <div class="card" style="margin-top:${i === 0 ? '0' : '14px'};">
+        <div class="kicker">${esc(sec.label)}</div>
+        <p class="principle">${esc(sec.note)}</p>
+        <div class="products">`;
+    sec.products.forEach(p => {
+      html += `
+          <div class="product">
+            <div class="p-main">
+              <div class="p-name">${esc(p.name)}</div>
+              ${p.note ? `<div class="p-note">${esc(p.note)}</div>` : ''}
+            </div>
+            <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+          </div>`;
+    });
+    html += '</div></div>';
+  });
+  appEl.innerHTML = html;
+}
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('handa:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('handa:amazonTag', v);
+  else localStorage.removeItem('handa:amazonTag');
+  tagSaved.textContent = '保存しました';
+  if (tab === 'gear') renderGear();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('handa:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>

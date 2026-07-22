@@ -1,0 +1,55 @@
+{
+  "name": "ねじ下穴ナビ",
+  "shortName": "ねじ下穴ナビ",
+  "title": "ねじ下穴ナビ | や印工務店の道具箱",
+  "metaDescription": "M3・M4・M5・M6・M8のタップ下穴径、ボルトのバカ穴(通し穴)径、木ねじの下穴径を、ねじサイズを選ぶだけで表示。並目/細目ピッチ対応、下穴の計算式つき。DIY・電子工作・金工の早見表。",
+  "ogDescription": "タップの下穴、ボルトのバカ穴(通し穴)、木ねじの下穴を、ねじサイズを選ぶだけで表示。並目/細目ピッチ・計算式つきの早見ナビ。",
+  "twitterDescription": "タップ下穴・バカ穴・木ねじ下穴を、ねじサイズを選ぶだけで表示する早見ナビ。",
+  "ogImage": "https://apps.yzrswork.com/icons/og-neji.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/neji/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "manifestDescription": "タップ下穴・バカ穴・木ねじ下穴の径を、ねじサイズから即座に表示。オフライン早見表。",
+  "hasServiceWorker": true,
+  "swVersion": 1,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png",
+    "../shared/tokens.css"
+  ],
+  "manifestIcons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "backLink": {
+    "href": "../",
+    "text": "← 道具箱（ほかの実用ツール）"
+  },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "../shared/tokens.css"
+}

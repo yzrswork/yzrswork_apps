@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- BUILD:HEAD:START -->
+<meta charset="utf-8" />
+<title>USB-C見分けナビ | や印工務店の道具箱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="USB-C見分けナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/usbc/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="USB-C見分けナビ | や印工務店の道具箱" />
+<meta property="og:description" content="手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれかを診断。W数・転送速度・映像出力・e-marker・EPR(240W)を整理したナビ。" />
+<meta property="og:url" content="https://apps.yzrswork.com/usbc/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/og-usbc.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="USB-C見分けナビ | や印工務店の道具箱" />
+<meta name="twitter:description" content="USB-Cケーブルで何ができるか、用途に必要なのはどれか。W数・転送速度・映像出力を切り分ける診断ナビ。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-usbc.png" />
+<meta name="description" content="100W充電できる? 4Kモニターは映る? 外付けSSDの速度は出る? USB-Cケーブルの見分け方と、用途から選ぶ診断ナビ。W数・転送速度・映像出力・e-marker・EPRを整理。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "USB-C見分けナビ",
+  "url": "https://apps.yzrswork.com/usbc/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれかを診断。W数・転送速度・映像出力・e-marker・EPR(240W)を整理したナビ。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ─────────────────────────── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  .topbar .brand { color: var(--ink); }
+  .topbar .brand .dot { color: var(--terracotta); }
+  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
+  .gear:hover { color: var(--terracotta); }
+
+  /* ── Header ───────────────────── */
+  header.hero { margin-bottom: 22px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(28px, 7.5vw, 40px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 10px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 42ch; margin: 0; }
+
+  /* ── Tabs ─────────────────────── */
+  .tabs { display: flex; gap: 8px; margin: 20px 0 22px; }
+  .tab {
+    font-family: var(--jp); font-size: 13.5px; font-weight: 500;
+    padding: 9px 16px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 26px 0 12px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Chip pickers ───────────── */
+  .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .matchip {
+    font-family: var(--jp); font-size: 13px; text-align: left;
+    padding: 9px 13px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
+    line-height: 1.4;
+  }
+  .matchip .mc-sub { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .matchip:hover { border-color: var(--terracotta); }
+  .matchip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .matchip.active .mc-sub { color: rgba(255,255,255,0.8); }
+  .matchip.unknown { border-style: dashed; }
+
+  /* ── Result / Node card ───────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+    margin-top: 8px;
+  }
+  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.notice { border-color: var(--terracotta); }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 10px;
+  }
+  .card.solution .kicker { color: var(--ok); }
+  .qtext { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 12px; }
+  .principle { font-size: 14px; color: var(--ink-soft); margin: 0 0 16px; }
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(181, 69, 27, 0.05);
+    border-left: 3px solid var(--terracotta);
+    padding: 9px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px;
+  }
+  .warn {
+    font-size: 13.5px;
+    color: var(--terracotta-deep);
+    background: rgba(181, 69, 27, 0.09);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .note-box {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 0 0 10px;
+  }
+  .note-box b { color: var(--ink); }
+
+  /* ── Product list ───────────────── */
+  .plabel { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+  .products { display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 9px;
+    padding: 12px 13px;
+  }
+  .product .p-main { min-width: 0; }
+  .product .p-name { font-weight: 700; font-size: 14.5px; line-height: 1.4; }
+  .product .p-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .product .p-buy {
+    flex-shrink: 0;
+    font-family: var(--jp); font-size: 12.5px; font-weight: 700;
+    background: var(--ink); color: var(--paper); text-decoration: none;
+    border-radius: 8px; padding: 9px 12px; white-space: nowrap;
+  }
+  .product .p-buy:hover { background: var(--terracotta); }
+
+  ul.cautions { margin: 0 0 4px; padding: 0 0 0 1.1em; }
+  ul.cautions li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 4px; }
+
+  table.lookup { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13.5px; }
+  table.lookup th, table.lookup td { text-align: left; padding: 7px 6px; border-bottom: 1px dashed var(--rule-soft); vertical-align: top; }
+  table.lookup th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+  table.lookup td.tag { width: 4.5em; font-family: var(--mono); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+
+  .opt {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--terracotta); border: 1px solid var(--terracotta); border-radius: 9px;
+    padding: 11px 16px; font-size: 14px; font-weight: 500; font-family: var(--jp);
+    color: #fff; cursor: pointer; margin-top: 8px;
+  }
+  .opt:hover { background: var(--terracotta-deep); }
+
+  /* ── About ───────────────────── */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* ── Footer ──────────────────────────── */
+  footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Settings modal ──────────────────── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28, 26, 22, 0.55); z-index: 10;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; padding: 22px 20px; max-width: 420px; width: 100%; border: 1px solid var(--rule); }
+  .modal h2 { font-size: 17px; margin: 0 0 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
+  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .row button {
+    flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 500; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  }
+  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+    .qtext { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot">●</span> USB-C見分けナビ</span>
+      <button class="gear" id="gear" aria-label="設定">⚙</button>
+    </div>
+
+    <header class="hero">
+      <h1>USB-C見分けナビ<span class="en">— USB-C Cable Advisor</span></h1>
+      <p>手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれか。ワット数、転送速度、映像出力を切り分けます。</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-check">手持ちを見分ける</button>
+      <button class="tab" id="tab-choose">用途から選ぶ</button>
+    </div>
+
+    <div id="app"></div>
+
+    <section class="about">
+      <h2>なぜ同じ形なのに中身がバラバラなのか</h2>
+      <p>USB-Cケーブルほど「見た目では判断できない」規格も珍しいと思います。端子の形はどれも同じUSB-C(角の丸い長方形)なのに、あるケーブルはノートPCを100Wで急速充電でき、あるケーブルは充電はできてもデータ転送が480Mbpsしか出ず、あるケーブルは外部モニターに映像を出せて、あるケーブルは充電専用で何もできない。実際に手持ちのケーブルをかき集めて1本ずつ試してみると、「これ何年も充電専用だと思ってなかったのに、実はデータ転送もできた」「逆にこれは太くて立派に見えるのに映像は出ない」といったことがざらにあります。中身(内部のプロトコルと配線)がまったく別物なのに、外側の形状規格だけが統一されている。これがUSB-Cの分かりにくさの正体です。</p>
+      <p>電力周りで特に重要なのが「e-marker(イーマーカー)」というチップの存在です。USB-Cケーブルは何も表示がなければ安全のため3A(60W相当)までしか電流を流せない決まりになっていて、それを超えて5A(100W)まで流すには、ケーブル自身が「私は5Aまで対応しています」と機器に伝えるe-markerチップを内蔵している必要があります。パッケージや端子に「100W」「5A」と書かれたケーブルは、このチップが入っている証拠です。逆に言えば、太くて頑丈そうに見えるケーブルでもe-markerが入っていなければ100Wは出ず、充電器やノートPC側が100W対応でも、ケーブルが原因で60Wに制限されてしまいます。さらに240W(48V×5A)まで対応する「EPR」はPD 3.1の新しい規格で、通常の100Wケーブルとは別物の専用e-markerが必要になります。</p>
+      <p>データ転送の速度にも、USB2.0(480Mbps)からUSB4(40Gbps、次世代のv2では80Gbps)まで、体感でまったく違う階層があります。外付けSSDを買ったのに思ったほど速度が出ない、と感じた時の原因は、SSD本体でもPC側のポートでもなく、間に挟まっているケーブルだった、ということが実務では少なくありません。特に付属のケーブルはコストの都合でUSB2.0止まりのことが多く、SSD側もPC側も高速対応なのにケーブルだけがボトルネックになっている、というのはありがちな落とし穴です。刻印(SSや10、20といった数字)や、稲妻(Thunderbolt)、DisplayPort(D字)のロゴは、こうした対応状況を推測する手がかりにはなりますが、あくまで手がかりであって、断定はできません。</p>
+      <p>結論としては、まず「何に使うか」を先に決めて、そこから必要なスペックを逆算してケーブルを選ぶのが一番失敗しません。手持ちのケーブルが何者か分からない時は、無表記の細いケーブルはUSB2.0 + 3A(最大60W)相当と割り切って充電専用にまわし、必要な性能がはっきりしている用途には、パッケージの仕様表示やUSB-IF認証(Certified USB)ロゴが入った製品を選ぶのが確実です。最終的に一番信頼できるのは、実際に使う機器の組み合わせで試してみることです。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています ↗</a>
+      </div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END --></div>
+      <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">© や印工務店 / yzrswork — USB-C Cable Advisor</div>
+    </footer>
+  </main>
+
+  <!-- Settings modal -->
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
+      <h2>設定</h2>
+      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
+      <label for="tag-input">Amazon アソシエイトタグ</label>
+      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
+      <div class="saved" id="tag-saved"></div>
+      <div class="row">
+        <button id="tag-clear">クリア</button>
+        <button class="save" id="tag-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   USB-C見分けナビ — USB-C Cable Advisor
+   依存ゼロの単一HTML。データ送信なし。
+   タブA: 手持ちの手がかり(複数選択)からケーブルの能力を推定。
+   タブB: 用途を1つ選ぶと必要スペックと推奨製品を出す。
+   数値、規格、製品名は仕様定義に忠実（推測での追加はしない）。
+   ========================================================= */
+
+/* ---------- タブA: 手がかり定義 ---------- */
+const CLUES = [
+  { id: 'thin',       label: '細くて軽い',                       sub: '100均、おまけ付属品' },
+  { id: 'thick',      label: '太くて硬い',                       sub: '端子が金属で立派' },
+  { id: 'ss',         label: '「SS」「10」「20」などの刻印',      sub: '端子やケーブルのロゴ' },
+  { id: 'logo_tb',    label: '稲妻(Thunderbolt)ロゴがある',       sub: '' },
+  { id: 'logo_usb4',  label: '「USB4」表記がある',                sub: '' },
+  { id: 'logo_dp',    label: 'DisplayPort(D字)ロゴがある',        sub: '' },
+  { id: 'label_100w', label: '「100W」「5A」「240W」「EPR」表記', sub: 'パッケージ、ケーブル本体' },
+  { id: 'only_charge',label: '「充電専用(Charge only)」表記',     sub: '' }
+];
+
+/* ---------- タブA: 優先順位付きの推定ロジック ----------
+   優先順位: only_charge > logo_tb/usb4(最上位) > label_100w >
+   logo_dp > ss/thick(USB3.x) > thin(USB2.0のみ) > 手がかりなし
+*/
+function checkResult(set) {
+  const has = (id) => set.has(id);
+
+  if (has('only_charge')) {
+    return {
+      kicker: '手がかり: 充電専用表記',
+      title: '充電専用ケーブルです',
+      principle: '「充電専用(Charge only)」の表記があるケーブルは、データ線を省略、または速度を大きく絞った作りです。データ通信は期待できず、映像出力もできません。',
+      power: '表記のW数に従う（表記がなければ3A/60W程度が目安）',
+      data: '不可、またはごく低速（機器の認識のみなど）',
+      video: '不可',
+      cautions: ['充電以外の用途（データ転送、映像出力）には使わないでください。']
+    };
+  }
+  if (has('logo_tb') || has('logo_usb4')) {
+    return {
+      kicker: has('logo_tb') ? '手がかり: 稲妻(Thunderbolt)ロゴ' : '手がかり: 「USB4」表記',
+      title: '最上位クラスの可能性が高いケーブルです',
+      principle: 'Thunderboltロゴ、または「USB4」表記のあるケーブルは、40Gbps級のデータ転送と、DisplayPort Alt Mode／Thunderbolt経由の映像出力に対応している可能性が高い組み合わせです。充電も比較的高いワット数まで通せることが多くあります。',
+      power: '多くは100W対応。240W(EPR)対応は「240W」または「EPR」の表記がある場合のみ',
+      data: '40Gbps級(USB4、Thunderbolt)の可能性が高い',
+      video: '対応の可能性が高い（DP Alt Mode、Thunderbolt経由）',
+      cautions: ['ロゴや表記があっても、接続するPCやディスプレイ側がUSB4/Thunderbolt対応でなければ性能は発揮されません。']
+    };
+  }
+  if (has('label_100w')) {
+    return {
+      kicker: '手がかり: 100W/5A/EPR表記',
+      title: '高出力対応（e-markerチップ入り）の可能性が高いケーブルです',
+      principle: '「100W」「5A」のような表記があるケーブルには、5Aまでの電流を機器に伝えるe-marker（識別チップ）が内蔵されています。表記のないケーブルは安全のため3A(60W)までに制限されると考えてください。',
+      power: '100W(5A)まで対応の可能性が高い。「240W」または「EPR」の表記があれば240Wにも対応',
+      data: '表記だけでは不明。刻印(SS等)やロゴを別途確認',
+      video: '表記だけでは不明。DPロゴ等を別途確認',
+      cautions: []
+    };
+  }
+  if (has('logo_dp')) {
+    return {
+      kicker: '手がかり: DisplayPort(D字)ロゴ',
+      title: '映像出力(DP Alt Mode)対応の可能性があるケーブルです',
+      principle: 'DisplayPortロゴ(D字マーク)は、DP Alt Modeでの映像出力に対応していることを示す目印です。ただし映像が実際に出るかは、接続するPC側のポートがDP Alt Mode、USB4、Thunderboltのいずれかに対応しているかにもよります。',
+      power: '表記だけでは不明',
+      data: '表記だけでは不明',
+      video: '対応の可能性がある（PC側ポートの対応が別途必要）',
+      cautions: ['ケーブルが対応していても、PC側のポートが非対応なら映像は出ません。']
+    };
+  }
+  if (has('ss') || has('thick')) {
+    return {
+      kicker: has('ss') ? '手がかり: SS等の速度刻印' : '手がかり: 太くて硬いケーブル',
+      title: 'USB 3.x系のデータ転送に対応している可能性があるケーブルです',
+      principle: '「SS」「10」「20」などの刻印は、USB 3.x(5〜20Gbps)のデータ転送に対応していることを示すことが多くあります。ケーブルが太く、導体が太いほど電力伝送や放熱にも有利です。',
+      power: '目安3A(60W)程度。「100W」等の表記があれば別',
+      data: 'USB 3.x(5〜20Gbps)の可能性',
+      video: '表記次第（DPロゴ等を別途確認）',
+      cautions: []
+    };
+  }
+  if (has('thin')) {
+    return {
+      kicker: '手がかり: 細くて軽い/おまけ付属品',
+      title: 'USB2.0 + 充電専用相当と考えるのが安全です',
+      principle: '細くて軽い、100均やおまけで付属するケーブルは、USB2.0(480Mbps)止まりで、電流も3A(60W)までしか流せない作りであることが大半です。',
+      power: '3A(60W)までが目安',
+      data: 'USB2.0(480Mbps)相当',
+      video: '不可と考えるのが安全',
+      cautions: []
+    };
+  }
+  return null;
+}
+
+/* ---------- タブB: 用途定義 ---------- */
+const P = {
+  p100w:   { name: '100W(5A)PD対応 USB-Cケーブル', kw: 'USB-C ケーブル 100W PD 5A eMarker', note: 'e-markerチップ内蔵、65〜100W充電に' },
+  p240w:   { name: '240W EPR対応 USB-Cケーブル', kw: 'USB-C ケーブル 240W EPR PD3.1', note: 'PD3.1のEPR規格に対応した専用e-marker入り' },
+  pTb4:    { name: 'USB4/Thunderbolt 4対応ケーブル(40Gbps)', kw: 'Thunderbolt4 ケーブル 40Gbps USB4', note: '映像、データ、給電をまとめて1本で' },
+  pGen2:   { name: 'USB 3.2 Gen2(10Gbps)データケーブル', kw: 'USB-C ケーブル 10Gbps USB3.2 Gen2', note: '外付けSSD、大容量転送向け' },
+  pTester: { name: 'USB PDテスター（電圧、電流チェッカー）', kw: 'USB PDテスター 電圧電流チェッカー', note: '実際に流れているW数、規格を確認できる（任意）' }
+};
+
+const USES = [
+  {
+    id: 'laptop_fast', label: 'ノートPCを急速充電', sub: '65W〜100W',
+    title: '100W(5A)対応ケーブルが必要です',
+    principle: '60W(20V/3A)までは無表記のケーブルでも出ますが、65Wを超えて100Wまで使うには「100W」または「5A」表記のあるe-marker入りケーブルが必須です。これ未満のケーブルを使うと最大60Wに制限されます。',
+    products: [P.p100w, P.pTester],
+    cautions: ['データ対応は用途上必須ではありませんが、迷ったらUSB3対応のものを選ぶと汎用性が上がります。']
+  },
+  {
+    id: 'laptop_240', label: 'ハイエンドノート/ゲーミングを最速充電', sub: '240W',
+    title: '240W(EPR)対応ケーブルが必須です',
+    principle: '240W(48V/5A)はUSB PD 3.1のEPR（拡張電力レンジ）機能で実現します。通常の100Wケーブルでは240Wは出ません。EPR対応の専用e-marker入りケーブルと、充電器、PC本体の両方がPD3.1/EPRに対応していることが条件です。',
+    products: [P.p240w, P.pTester],
+    cautions: ['充電器とPCの両方がEPR対応でなければ、ケーブルだけ対応していても240Wは出ません。']
+  },
+  {
+    id: 'phone', label: 'スマホ、タブレットを普通に充電', sub: '18W〜30W級',
+    title: '3Aまでなら無表記ケーブルで足ります',
+    principle: 'スマホ、タブレットの急速充電は一般に18W〜30W級で、3Aまでの電流なら無表記の標準的なケーブルで問題ありません。ただしPD(Power Delivery)などの急速規格に対応した充電器とケーブルの組み合わせが必要で、安すぎる充電専用ケーブルだと速度が出ないこともあります。',
+    products: [P.p100w, P.pTester],
+    cautions: ['手持ちのケーブルで速度が出ているか不安な場合は、PDテスターで実測すると安心です。']
+  },
+  {
+    id: 'monitor', label: 'USB-Cで外部モニターに映像出力', sub: '4K',
+    title: 'DP Alt Mode対応ケーブルとPC側ポートの両対応が必要です',
+    principle: '映像出力には、ケーブルがDisplayPort Alt Mode（またはUSB4、Thunderbolt）に対応しているだけでなく、PC側のポートも同じ規格に対応している必要があります。充電専用やUSB2.0専用のケーブルでは映像は出ません。4K60Hzは帯域を多く使うため、確実を取るならUSB4/Thunderbolt 4認証のケーブルを選んでください。',
+    products: [P.pTb4, P.pGen2],
+    cautions: ['ケーブルとPCポートのどちらか一方でも非対応だと映像は出ません。PC側の仕様も確認してください。']
+  },
+  {
+    id: 'ssd', label: '外付けSSD/HDDで速度を出したい', sub: '',
+    title: 'USB 3.2 Gen2(10Gbps)以上のケーブルが必要です',
+    principle: 'USB2.0のケーブルを使うと480Mbps（実測で数十MB/s）に頭打ちになります。SSDの速度を活かすにはUSB 3.2 Gen2(10Gbps)以上に対応したケーブルが必要です。20Gbps(Gen2x2)やUSB4対応のSSDなら、同等の規格に対応したケーブルを選んでください。',
+    products: [P.pGen2, P.pTb4],
+    cautions: ['SSD本体、ケーブル、接続するポートの3つとも同じ規格以上に対応していないと、最も遅い部分の速度に制限されます。']
+  },
+  {
+    id: 'dock', label: 'ドック、ハブを1本で（映像+データ+給電）', sub: '',
+    title: 'USB4/Thunderbolt 4認証ケーブルが確実です',
+    principle: 'ドックやハブに映像、データ、給電(PD)をまとめて1本で通すには、USB4またはThunderbolt 4認証のケーブルが最も確実です。認証ケーブルは長さが短いほど安定するため、0.8m前後を選ぶと通信、給電ともにトラブルが起きにくくなります。',
+    products: [P.pTb4, P.pTester],
+    cautions: ['長いケーブル(2m以上)は認証されていても速度や給電が不安定になることがあります。']
+  },
+  {
+    id: 'data_only', label: '写真やファイルを速くPCへ転送', sub: '',
+    title: 'USB 3.2 Gen2(10Gbps)以上のケーブルを選んでください',
+    principle: '写真や動画のファイル転送を速くしたい場合も、SSDと同じくUSB 3.2 Gen2(10Gbps)以上のケーブルが必要です。大量のデータをまとめて転送するなら、Gen2x2(20Gbps)やUSB4対応のケーブルも検討してください。',
+    products: [P.pGen2, P.pTb4],
+    cautions: ['転送元、転送先の機器がGen2以上に対応していないと、ケーブルだけ良くしても速度は上がりません。']
+  }
+];
+function useLabel(id) { const u = USES.find(x => x.id === id); return u ? u.label : id; }
+
+/* ---------- 状態 ---------- */
+let tab = 'check';
+const clues = new Set();
+let useSel = null;
+
+/* ---------- ユーティリティ ---------- */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function amazonUrl(keyword) {
+  const tag = localStorage.getItem('usbc:amazonTag') || 'yzrs_apps-22';
+  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
+  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+}
+
+/* ---------- レンダリング: タブ ---------- */
+const appEl = document.getElementById('app');
+document.getElementById('tab-check').addEventListener('click', () => setTab('check'));
+document.getElementById('tab-choose').addEventListener('click', () => setTab('choose'));
+function setTab(t) {
+  tab = t;
+  document.getElementById('tab-check').classList.toggle('active', t === 'check');
+  document.getElementById('tab-choose').classList.toggle('active', t === 'choose');
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  if (tab === 'check') renderCheck(); else renderChoose();
+}
+
+/* ---------- タブA: 手持ちを見分ける ---------- */
+function renderCheck() {
+  const chips = CLUES.map(c =>
+    `<button class="matchip${clues.has(c.id) ? ' active' : ''}" data-clue="${c.id}">
+       ${esc(c.label)}${c.sub ? `<span class="mc-sub">${esc(c.sub)}</span>` : ''}
+     </button>`).join('');
+
+  appEl.innerHTML = `
+    <div class="section-label">— 分かる手がかりを選ぶ（複数選択可）</div>
+    <div class="matgrid" id="grid-clue">${chips}</div>
+    <div id="check-result"></div>`;
+
+  appEl.querySelectorAll('#grid-clue .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-clue');
+      if (clues.has(id)) clues.delete(id); else clues.add(id);
+      btn.classList.toggle('active', clues.has(id));
+      renderCheckResult();
+    });
+  });
+
+  renderCheckResult();
+}
+
+function renderCheckResult() {
+  const el = document.getElementById('check-result');
+  if (!el) return;
+
+  if (clues.size === 0) {
+    el.innerHTML = `
+      <div class="note-box" style="margin-top:16px;">
+        まずは以下の3つを確認しましょう。<br>
+        1. 端子やケーブル本体の刻印（SS、10、20、USB4など）<br>
+        2. ケーブルの太さと硬さ（太いほど電力、放熱に有利）<br>
+        3. パッケージの表記（100W、5A、EPR、充電専用など）
+      </div>`;
+    return;
+  }
+
+  const r = checkResult(clues);
+  if (!r) { el.innerHTML = ''; return; }
+
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(r.kicker)}</div>
+      <p class="qtext">${esc(r.title)}</p>
+      <p class="principle">${esc(r.principle)}</p>
+      <table class="lookup">
+        <tr><td class="tag">電力</td><td>${esc(r.power)}</td></tr>
+        <tr><td class="tag">データ</td><td>${esc(r.data)}</td></tr>
+        <tr><td class="tag">映像</td><td>${esc(r.video)}</td></tr>
+      </table>`;
+
+  if (r.cautions && r.cautions.length) {
+    html += '<div class="plabel">注意点</div><ul class="cautions">';
+    r.cautions.forEach(c => { html += `<li>${esc(c)}</li>`; });
+    html += '</ul>';
+  }
+
+  html += `
+      <div class="plabel">確実に知る方法</div>
+      <div class="note-box">見た目だけでは断定できません。確実なのは (1) パッケージ、製品仕様の記載 (2) USB-IF認証（Certified USB）ロゴ (3) 実機でのテスト、の3つです。無表記の付属品や細いケーブルは、USB2.0 + 3A(最大60W)相当とみなすのが安全です。</div>
+    </div>`;
+
+  el.innerHTML = html;
+}
+
+/* ---------- タブB: 用途から選ぶ ---------- */
+function renderChoose() {
+  const chips = USES.map(u =>
+    `<button class="matchip${useSel === u.id ? ' active' : ''}" data-use="${u.id}">
+       ${esc(u.label)}${u.sub ? `<span class="mc-sub">${esc(u.sub)}</span>` : ''}
+     </button>`).join('');
+
+  appEl.innerHTML = `
+    <div class="section-label">— やりたいことを選ぶ</div>
+    <div class="matgrid" id="grid-use">${chips}</div>
+    <div id="choose-result"></div>`;
+
+  appEl.querySelectorAll('#grid-use .matchip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-use');
+      useSel = (useSel === id ? null : id);
+      renderChoose();
+    });
+  });
+
+  renderChooseResult();
+}
+
+function renderChooseResult() {
+  const el = document.getElementById('choose-result');
+  if (!el) return;
+
+  if (!useSel) {
+    el.innerHTML = `<p class="note-box" style="margin-top:16px;">やりたいことを1つ選ぶと、必要なスペックと推奨製品が出ます。</p>`;
+    return;
+  }
+
+  const u = USES.find(x => x.id === useSel);
+  let html = `
+    <div class="card solution" style="margin-top:16px;">
+      <div class="kicker">${esc(useLabel(useSel))}</div>
+      <p class="qtext">${esc(u.title)}</p>
+      <p class="principle">${esc(u.principle)}</p>`;
+
+  html += '<div class="plabel">推奨製品</div><div class="products">';
+  u.products.forEach(p => {
+    html += `
+      <div class="product">
+        <div class="p-main">
+          <div class="p-name">${esc(p.name)}</div>
+          ${p.note ? `<div class="p-note">${esc(p.note)}</div>` : ''}
+        </div>
+        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+      </div>`;
+  });
+  html += '</div>';
+
+  if (u.cautions && u.cautions.length) {
+    html += '<div class="plabel">注意点</div><ul class="cautions">';
+    u.cautions.forEach(c => { html += `<li>${esc(c)}</li>`; });
+    html += '</ul>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+/* ---------- 設定モーダル ---------- */
+const modalBg = document.getElementById('modal-bg');
+const tagInput = document.getElementById('tag-input');
+const tagSaved = document.getElementById('tag-saved');
+document.getElementById('gear').addEventListener('click', () => {
+  tagInput.value = localStorage.getItem('usbc:amazonTag') || '';
+  tagSaved.textContent = '';
+  modalBg.classList.add('open');
+});
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.getElementById('tag-save').addEventListener('click', () => {
+  const v = tagInput.value.trim();
+  if (v) localStorage.setItem('usbc:amazonTag', v);
+  else localStorage.removeItem('usbc:amazonTag');
+  tagSaved.textContent = '保存しました';
+  if (tab === 'choose') renderChooseResult();
+});
+document.getElementById('tag-clear').addEventListener('click', () => {
+  localStorage.removeItem('usbc:amazonTag');
+  tagInput.value = '';
+  tagSaved.textContent = 'クリアしました';
+});
+
+/* ---------- 起動 ---------- */
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW登録失敗', e));
+  });
+}
+</script>
+</body>
+</html>
