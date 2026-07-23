@@ -1,4 +1,5 @@
 const CACHE_NAME = 'usbc-v1';
+const CACHE_PREFIX = 'usbc-';
 const ASSETS = [
   './',
   './index.html',
@@ -25,7 +26,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+        keys
+          .filter((k) => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
       )
     )
   );
