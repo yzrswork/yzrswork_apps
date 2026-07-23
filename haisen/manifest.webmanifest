@@ -1,0 +1,32 @@
+{
+  "name": "配線ナビ(初級)",
+  "short_name": "配線ナビ",
+  "description": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。オフライン早見リファレンス。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ja",
+  "background_color": "#f0ebe3",
+  "theme_color": "#f0ebe3",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

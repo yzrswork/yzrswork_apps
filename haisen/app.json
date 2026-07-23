@@ -1,0 +1,55 @@
+{
+  "name": "配線ナビ(初級)",
+  "shortName": "配線ナビ",
+  "title": "配線ナビ(初級) | や印工務店の道具箱",
+  "metaDescription": "はんだづけ初心者がつまずく部品の端子と極性の早見。ステレオ/モノラルジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグルスイッチ、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータを色分け表示。テスターでの確かめ方つき。",
+  "ogDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。テスターやデータシートでの確かめ方つきの早見リファレンス。",
+  "twitterDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示するオフライン早見リファレンス。",
+  "ogImage": "https://apps.yzrswork.com/icons/icon-512.png",
+  "themeColor": "#f0ebe3",
+  "canonical": "https://apps.yzrswork.com/haisen/",
+  "appleTouchIcon": "../icons/icon-192.png",
+  "hasManifest": true,
+  "manifestHref": "./manifest.webmanifest",
+  "manifestFile": "manifest.webmanifest",
+  "manifestDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。オフライン早見リファレンス。",
+  "hasServiceWorker": true,
+  "swVersion": 1,
+  "assets": [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "../icons/icon-192.png",
+    "../icons/icon-512.png",
+    "../icons/icon-512-maskable.png",
+    "../shared/tokens.css"
+  ],
+  "manifestIcons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "backLink": {
+    "href": "../",
+    "text": "道具箱に戻る"
+  },
+  "robots": null,
+  "applicationCategory": "UtilitiesApplication",
+  "analyticsSrc": "../analytics.js",
+  "tokensHref": "../shared/tokens.css"
+}

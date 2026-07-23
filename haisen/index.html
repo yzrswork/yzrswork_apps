@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- BUILD:HEAD:START -->
+<meta charset="utf-8" />
+<title>配線ナビ(初級) | や印工務店の道具箱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#f0ebe3" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="配線ナビ" />
+<link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="canonical" href="https://apps.yzrswork.com/haisen/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="や印工務店 — YZRS WORK" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="配線ナビ(初級) | や印工務店の道具箱" />
+<meta property="og:description" content="はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。テスターやデータシートでの確かめ方つきの早見リファレンス。" />
+<meta property="og:url" content="https://apps.yzrswork.com/haisen/" />
+<meta property="og:image" content="https://apps.yzrswork.com/icons/icon-512.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="配線ナビ(初級) | や印工務店の道具箱" />
+<meta name="twitter:description" content="はんだづけ初心者がつまずく部品の端子と極性を色分けで表示するオフライン早見リファレンス。" />
+<meta name="twitter:image" content="https://apps.yzrswork.com/icons/icon-512.png" />
+<meta name="description" content="はんだづけ初心者がつまずく部品の端子と極性の早見。ステレオ/モノラルジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグルスイッチ、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータを色分け表示。テスターでの確かめ方つき。" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "配線ナビ(初級)",
+  "url": "https://apps.yzrswork.com/haisen/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "description": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。テスターやデータシートでの確かめ方つきの早見リファレンス。",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "や印工務店 (yzrswork)",
+    "url": "https://note.com/yzrswork"
+  }
+}
+</script>
+<script async src="../analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<!-- BUILD:HEAD:END -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--jp);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 22px;
+  }
+  .topbar .brand { color: var(--ink); display: inline-flex; align-items: center; gap: 7px; }
+  .topbar .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); display: inline-block; }
+
+  /* Header */
+  header.hero { margin-bottom: 18px; }
+  .hero h1 {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(26px, 7vw, 38px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .hero .en {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .hero p { font-size: 14px; color: var(--ink-soft); max-width: 44ch; margin: 0; }
+
+  /* Group segmented control */
+  .groups {
+    display: flex;
+    gap: 6px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 4px;
+    margin: 20px 0 16px;
+  }
+  .group-btn {
+    flex: 1;
+    font-family: var(--jp);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 8px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .group-btn .gb-sub { display: block; font-family: var(--mono); font-size: 9.5px; font-weight: 400; letter-spacing: 0.04em; opacity: 0.75; margin-top: 2px; }
+  .group-btn.active { background: var(--terracotta); color: #fff; box-shadow: var(--shadow); }
+
+  /* Component picker */
+  .picker { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .pick {
+    font-family: var(--jp); font-size: 13px; font-weight: 500;
+    padding: 8px 13px; border-radius: 18px; cursor: pointer;
+    border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink-soft);
+    line-height: 1.3;
+  }
+  .pick:hover { border-color: var(--terracotta); }
+  .pick.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+
+  /* Detail */
+  .detail-head { margin: 6px 0 4px; }
+  .detail-head h2 { font-size: 19px; font-weight: 700; margin: 0; }
+  .detail-head .dh-en { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
+
+  .diagram {
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 12px;
+    padding: 14px 12px; margin: 12px 0 4px;
+  }
+  .diagram svg { width: 100%; height: auto; display: block; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 10px 2px 0; }
+  .legend .li { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-soft); }
+  .legend .sw { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; border: 1px solid var(--rule-soft); }
+
+  .block { margin-top: 18px; }
+  .block-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin: 0 0 8px;
+  }
+  .block p { margin: 0 0 8px; font-size: 14px; color: var(--ink-soft); }
+  .block p:last-child { margin-bottom: 0; }
+  .block b { color: var(--ink); }
+
+  .rows { display: flex; flex-direction: column; gap: 6px; }
+  .row {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    background: var(--card); border: 1px solid var(--rule-soft);
+    font-size: 13.5px;
+  }
+  .row .tag {
+    font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 3px 8px; border-radius: 7px; flex-shrink: 0; min-width: 62px; text-align: center;
+  }
+  .row .rtxt { flex: 1; color: var(--ink-soft); }
+  .row .rtxt b { color: var(--ink); }
+
+  ul.list { margin: 0; padding: 0 0 0 1.1em; }
+  ul.list li { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 5px; }
+
+  .check {
+    background: var(--card); border: 1px solid var(--ok); border-radius: 12px;
+    padding: 14px 15px; margin-top: 18px;
+  }
+  .check .block-label { color: var(--ok); }
+
+  .warn-card {
+    background: #f7ede0; border: 1px solid var(--ng); border-radius: 12px;
+    padding: 13px 15px; margin-top: 14px;
+  }
+  .warn-card .block-label { color: var(--ng); margin-bottom: 6px; }
+  .warn-card p { font-size: 13.5px; color: var(--ink); margin: 0; }
+
+  /* About */
+  .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
+  .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
+  .about p { margin: 0 0 14px; }
+
+  /* Footer */
+  footer {
+    margin-top: 34px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 22px 16px 36px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span class="brand"><span class="dot"></span> 配線ナビ(初級)</span>
+    </div>
+
+    <header class="hero">
+      <h1>配線ナビ<span class="en">Wiring Guide for Beginners</span></h1>
+      <p>はんだづけで毎回迷う部品の端子と極性を色分けで確認。「どの足が何か」と「テスターでの確かめ方」を1部品ずつ表示します。</p>
+    </header>
+
+    <div class="groups" id="groups">
+      <button class="group-btn active" data-group="wire">端子の見分け<span class="gb-sub">Terminals</span></button>
+      <button class="group-btn" data-group="pol">極性 / 向き<span class="gb-sub">Polarity</span></button>
+    </div>
+
+    <div class="picker" id="picker"></div>
+
+    <div id="detail"></div>
+
+    <section class="about">
+      <h2>配線の何でつまずくのか</h2>
+      <p>電子工作で作業台の手が止まる原因は、大きな失敗よりも「端子の取り違え」です。ステレオジャックのLとRがどっちの足かわからない。DCジャックの3つの端子のどれが何か。タクトスイッチの4本足を、押していないのにつながる向きに挿してしまう。電解コンデンサやLEDを逆向きにつけてしまう。どれも部品を見ただけでは判断しづらく、一度覚えても次の作業ではまた迷います。</p>
+      <p>やっかいなのは、同じ種類の部品でも型番や品物によって足の並びが変わることです。トランジスタや三端子レギュレータは特にそうで、「この型番はこの並び」を思い込みで決めると壊します。だからこのナビは、配置の早見だけでなく、テスターの導通チェックやデータシートで「自分の手元の部品を自分で確かめる」やり方をセットで載せています。確かめ方さえ身につけば、載っていない部品でも迷わなくなります。</p>
+      <p>ここに載せた配置や極性は、代表的な仕様や各部品の一般的な決まりに基づいています。ただし手元の部品が本当にその通りかは、配線する前にテスターや製品のデータシートでも確認してください。</p>
+    </section>
+
+    <footer>
+      <div>
+        役に立ったら、元記事に「スキ」をもらえると次の記事の励みになります。
+        <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">note で書いています</a>
+      </div>
+      <div><!-- BUILD:BACKLINK:START -->
+<a href="../">道具箱に戻る</a>
+<!-- BUILD:BACKLINK:END --></div>
+      <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
+      <div class="footer-meta">(c) や印工務店 / yzrswork -- Wiring Guide</div>
+    </footer>
+  </main>
+
+<script>
+/* =========================================================
+   配線ナビ(初級) -- Wiring Guide for Beginners
+   依存ゼロの単一HTML。データ送信なし。
+   はんだづけ初心者がつまずく部品の端子と極性を色分け表示し、
+   テスターやデータシートでの確かめ方を添える早見リファレンス。
+   配置や極性は検証済みの一般仕様に基づく(推測での断定はしない)。
+   ========================================================= */
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* 端子ロールの色(凡例と共通) */
+var C = {
+  sig:  'var(--terracotta)',       // 信号 / L / Tip / プラス
+  r:    'var(--terracotta-deep)',  // R / Ring
+  gnd:  'var(--ink)',              // GND / マイナス / Sleeve
+  sw:   'var(--warn)',             // スイッチ / コモン / 特殊
+  mid:  'var(--ok)',               // ワイパー / 中間
+  plain:'var(--card)'
+};
+function textOn(bg) { return (bg === C.gnd) ? 'var(--paper)' : (bg === C.sw ? '#2a2114' : '#fff'); }
+
+/* ---------- 端子行(共通の見た目) ---------- */
+function termRow(color, tag, txt) {
+  return '<div class="row"><span class="tag" style="background:' + color + ';color:' + textOn(color) + '">' + esc(tag) + '</span><span class="rtxt">' + txt + '</span></div>';
+}
+
+/* =========================================================
+   図(SVG) -- 各部品ごとに描く。文字はASCIIとかな漢字のみ。
+   ========================================================= */
+
+/* ステレオ / モノラル 3.5mmプラグの断面マップ */
+function svgJack() {
+  return '<svg viewBox="0 0 320 190" role="img" aria-label="3.5mmプラグの断面。Tip Ring Sleeveの位置と役割">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">ステレオ(3極 TRS)</text>'
+    // sleeve handle
+    + '<rect x="188" y="30" width="120" height="26" rx="5" fill="' + C.gnd + '"/>'
+    // sleeve band
+    + '<rect x="150" y="30" width="34" height="26" fill="' + C.gnd + '"/>'
+    // ring band
+    + '<rect x="112" y="30" width="30" height="26" fill="' + C.r + '"/>'
+    // tip
+    + '<path d="M112 30 L70 30 L52 43 L70 56 L112 56 Z" fill="' + C.sig + '"/>'
+    // gaps
+    + '<rect x="142" y="30" width="8" height="26" fill="var(--paper)"/>'
+    + '<rect x="104" y="30" width="8" height="26" fill="var(--paper)"/>'
+    + '<text x="70" y="78" font-family="var(--mono)" font-size="12" font-weight="600" fill="' + C.sig + '">Tip</text>'
+    + '<text x="112" y="78" font-family="var(--mono)" font-size="12" font-weight="600" fill="' + C.r + '">Ring</text>'
+    + '<text x="188" y="78" font-family="var(--mono)" font-size="12" font-weight="600" fill="var(--ink)">Sleeve</text>'
+    + '<text x="70" y="93" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">L(左)</text>'
+    + '<text x="112" y="93" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">R(右)</text>'
+    + '<text x="188" y="93" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">GND</text>'
+    // mono row
+    + '<text x="10" y="126" font-family="var(--mono)" font-size="10" fill="var(--muted)">モノラル(2極 TS)</text>'
+    + '<rect x="150" y="138" width="158" height="24" rx="5" fill="' + C.gnd + '"/>'
+    + '<path d="M112 138 L70 138 L52 150 L70 162 L112 162 Z" fill="' + C.sig + '"/>'
+    + '<rect x="142" y="138" width="8" height="24" fill="var(--paper)"/>'
+    + '<text x="70" y="182" font-family="var(--mono)" font-size="12" font-weight="600" fill="' + C.sig + '">Tip = 信号</text>'
+    + '<text x="200" y="182" font-family="var(--mono)" font-size="12" font-weight="600" fill="var(--ink)">Sleeve = GND</text>'
+    + '</svg>';
+}
+
+/* DCジャック(3端子) */
+function svgDcjack() {
+  return '<svg viewBox="0 0 320 108" role="img" aria-label="3端子DCジャックの3つの端子">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">3端子 DCジャック(パネル用)</text>'
+    // body
+    + '<rect x="40" y="34" width="150" height="60" rx="8" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    + '<circle cx="66" cy="64" r="12" fill="none" stroke="var(--muted)" stroke-width="2"/>'
+    + '<circle cx="66" cy="64" r="4" fill="' + C.sig + '"/>'
+    // terminals
+    + '<rect x="196" y="38" width="14" height="14" rx="3" fill="' + C.sig + '"/>'
+    + '<text x="216" y="49" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--ink)">センターピン</text>'
+    + '<rect x="196" y="60" width="14" height="14" rx="3" fill="' + C.gnd + '"/>'
+    + '<text x="216" y="71" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--ink)">スリーブ</text>'
+    + '<rect x="196" y="82" width="14" height="14" rx="3" fill="' + C.sw + '"/>'
+    + '<text x="216" y="93" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--ink)">スイッチ端子</text>'
+    + '</svg>';
+}
+
+/* タクトスイッチ(4本足) */
+function svgTact() {
+  return '<svg viewBox="0 0 300 132" role="img" aria-label="タクトスイッチの4本足と内部の2ペア">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">タクトスイッチ(上から見た図)</text>'
+    // body
+    + '<rect x="95" y="35" width="110" height="80" rx="10" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    + '<circle cx="150" cy="75" r="20" fill="var(--paper-2)" stroke="var(--rule-soft)"/>'
+    // legs left pair
+    + '<rect x="70" y="45" width="26" height="10" rx="3" fill="' + C.sig + '"/>'
+    + '<rect x="70" y="95" width="26" height="10" rx="3" fill="' + C.sig + '"/>'
+    + '<line x1="72" y1="50" x2="72" y2="100" stroke="' + C.sig + '" stroke-width="2.5"/>'
+    // legs right pair
+    + '<rect x="204" y="45" width="26" height="10" rx="3" fill="' + C.r + '"/>'
+    + '<rect x="204" y="95" width="26" height="10" rx="3" fill="' + C.r + '"/>'
+    + '<line x1="228" y1="50" x2="228" y2="100" stroke="' + C.r + '" stroke-width="2.5"/>'
+    // press bridge
+    + '<line x1="130" y1="75" x2="170" y2="75" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4"/>'
+    + '<text x="150" y="128" text-anchor="middle" font-family="var(--jp)" font-size="10.5" fill="var(--muted)">同じ色=内部で連結</text>'
+    + '</svg>';
+}
+
+/* 3PDTフットスイッチ(9ピン) */
+function svgFootsw() {
+  var s = '<svg viewBox="0 0 300 162" role="img" aria-label="3PDTフットスイッチの9ラグと中央コモン">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">3PDT(裏から見た9ラグ)</text>';
+  var cols = ['1','2','3'];
+  var rows = [{y:40,label:'上段',fill:C.plain},{y:88,label:'中段',fill:C.sw},{y:136,label:'下段',fill:C.plain}];
+  for (var ri=0; ri<3; ri++) {
+    for (var ci=0; ci<3; ci++) {
+      var x = 90 + ci*60, y = rows[ri].y;
+      s += '<circle cx="' + x + '" cy="' + y + '" r="13" fill="' + rows[ri].fill + '" stroke="var(--rule-soft)"/>';
+    }
+    s += '<text x="40" y="' + (rows[ri].y + 4) + '" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">' + rows[ri].label + '</text>';
+  }
+  s += '<text x="150" y="' + (88 + 4) + '" text-anchor="middle" font-family="var(--mono)" font-size="10" font-weight="600" fill="#2a2114">COM</text>';
+  s += '</svg>';
+  return s;
+}
+
+/* 可変抵抗(3ピン) */
+function svgPot() {
+  return '<svg viewBox="0 0 300 150" role="img" aria-label="可変抵抗の3ピンとワイパー">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">可変抵抗(端子側から見た図)</text>'
+    + '<rect x="60" y="40" width="180" height="40" rx="8" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    // pins
+    + '<rect x="78" y="80" width="12" height="26" rx="2" fill="' + C.gnd + '"/>'
+    + '<rect x="144" y="80" width="12" height="26" rx="2" fill="' + C.mid + '"/>'
+    + '<rect x="210" y="80" width="12" height="26" rx="2" fill="' + C.sig + '"/>'
+    // wiper arrow (triangle) on center
+    + '<polygon points="150,34 143,22 157,22" fill="' + C.mid + '"/>'
+    + '<text x="84" y="122" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--ink)">1</text>'
+    + '<text x="150" y="122" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="' + C.mid + '">2</text>'
+    + '<text x="216" y="122" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="600" fill="var(--ink)">3</text>'
+    + '<text x="84" y="138" text-anchor="middle" font-family="var(--jp)" font-size="10.5" fill="var(--ink-soft)">端</text>'
+    + '<text x="150" y="138" text-anchor="middle" font-family="var(--jp)" font-size="10.5" fill="var(--ink-soft)">ワイパー</text>'
+    + '<text x="216" y="138" text-anchor="middle" font-family="var(--jp)" font-size="10.5" fill="var(--ink-soft)">端</text>'
+    + '</svg>';
+}
+
+/* トグルスイッチ(SPDT中心) */
+function svgToggle() {
+  return '<svg viewBox="0 0 300 134" role="img" aria-label="トグルスイッチSPDTの3端子と共通">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">SPDT(1回路2切替 / 3端子)</text>'
+    + '<rect x="120" y="34" width="60" height="34" rx="6" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    + '<rect x="144" y="20" width="12" height="20" rx="4" fill="var(--muted)"/>'
+    // three pins
+    + '<rect x="124" y="90" width="14" height="16" rx="3" fill="' + C.plain + '" stroke="var(--rule-soft)"/>'
+    + '<rect x="163" y="90" width="14" height="16" rx="3" fill="' + C.sw + '"/>'
+    + '<rect x="202" y="90" width="14" height="16" rx="3" fill="' + C.plain + '" stroke="var(--rule-soft)"/>'
+    + '<text x="131" y="124" text-anchor="middle" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">切替A</text>'
+    + '<text x="170" y="124" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="600" fill="#2a2114">コモン</text>'
+    + '<text x="209" y="124" text-anchor="middle" font-family="var(--jp)" font-size="11" fill="var(--ink-soft)">切替B</text>'
+    + '</svg>';
+}
+
+/* 電解コンデンサ */
+function svgEcap() {
+  return '<svg viewBox="0 0 300 170" role="img" aria-label="電解コンデンサの極性。長い足がプラス、帯側がマイナス">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">電解コンデンサ(横から見た図)</text>'
+    // body
+    + '<rect x="110" y="34" width="80" height="70" rx="10" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    // minus stripe
+    + '<rect x="170" y="34" width="20" height="70" rx="0" fill="' + C.gnd + '"/>'
+    + '<text x="180" y="76" text-anchor="middle" font-family="var(--mono)" font-size="16" font-weight="700" fill="var(--paper)">-</text>'
+    // legs
+    + '<rect x="126" y="104" width="8" height="46" fill="' + C.sig + '"/>'
+    + '<rect x="166" y="104" width="8" height="28" fill="' + C.gnd + '"/>'
+    + '<text x="130" y="164" text-anchor="middle" font-family="var(--jp)" font-size="11" font-weight="600" fill="' + C.sig + '">長い足 = +</text>'
+    + '<text x="210" y="120" font-family="var(--jp)" font-size="11" font-weight="600" fill="var(--ink)">短い足 / 帯側 = -</text>'
+    + '</svg>';
+}
+
+/* LED */
+function svgLed() {
+  return '<svg viewBox="0 0 300 170" role="img" aria-label="LEDの極性。長い足がアノード、フラット側がカソード">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">LED(横から見た図)</text>'
+    // dome with flat side
+    + '<path d="M112 96 L112 60 A38 38 0 0 1 188 60 L188 96 Z" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    // flat side marker (right = cathode)
+    + '<line x1="188" y1="60" x2="188" y2="96" stroke="' + C.gnd + '" stroke-width="4"/>'
+    // legs
+    + '<rect x="126" y="96" width="8" height="52" fill="' + C.sig + '"/>'
+    + '<rect x="166" y="96" width="8" height="34" fill="' + C.gnd + '"/>'
+    + '<text x="130" y="164" text-anchor="middle" font-family="var(--jp)" font-size="11" font-weight="600" fill="' + C.sig + '">長い足 = + アノード</text>'
+    + '<text x="205" y="120" font-family="var(--jp)" font-size="11" font-weight="600" fill="var(--ink)">短い足 / フラット = - カソード</text>'
+    + '</svg>';
+}
+
+/* ダイオード */
+function svgDiode() {
+  return '<svg viewBox="0 0 300 130" role="img" aria-label="ダイオードの向き。帯のある側がカソード">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">ダイオード(横から見た図)</text>'
+    + '<line x1="40" y1="66" x2="96" y2="66" stroke="var(--muted)" stroke-width="3"/>'
+    + '<rect x="96" y="46" width="108" height="40" rx="7" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    // band near cathode side (right)
+    + '<rect x="182" y="46" width="10" height="40" fill="' + C.gnd + '"/>'
+    + '<line x1="204" y1="66" x2="262" y2="66" stroke="var(--muted)" stroke-width="3"/>'
+    + '<text x="70" y="104" text-anchor="middle" font-family="var(--jp)" font-size="11" font-weight="600" fill="' + C.sig + '">アノード(+)</text>'
+    + '<text x="230" y="104" text-anchor="middle" font-family="var(--jp)" font-size="11" font-weight="600" fill="var(--ink)">帯 = カソード(-)</text>'
+    + '</svg>';
+}
+
+/* トランジスタ(TO-92) */
+function svgTransistor() {
+  return '<svg viewBox="0 0 300 175" role="img" aria-label="トランジスタTO-92 2SC1815のピン。平らな面から左からECB">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">2SC1815 (平らな面を手前 / 足を下)</text>'
+    // TO-92 flat body (D shape)
+    + '<path d="M100 34 L200 34 L200 92 A50 30 0 0 1 100 92 Z" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    + '<text x="150" y="66" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">2SC1815</text>'
+    // legs
+    + '<rect x="118" y="92" width="8" height="44" fill="' + C.sig + '"/>'
+    + '<rect x="146" y="92" width="8" height="52" fill="' + C.r + '"/>'
+    + '<rect x="174" y="92" width="8" height="44" fill="' + C.gnd + '"/>'
+    + '<text x="122" y="160" text-anchor="middle" font-family="var(--mono)" font-size="13" font-weight="700" fill="' + C.sig + '">E</text>'
+    + '<text x="150" y="168" text-anchor="middle" font-family="var(--mono)" font-size="13" font-weight="700" fill="' + C.r + '">C</text>'
+    + '<text x="178" y="160" text-anchor="middle" font-family="var(--mono)" font-size="13" font-weight="700" fill="var(--ink)">B</text>'
+    + '<text x="150" y="30" text-anchor="middle" font-family="var(--jp)" font-size="10.5" fill="var(--muted)">型番で並びが変わる。必ずデータシートで確認。</text>'
+    + '</svg>';
+}
+
+/* 三端子レギュレータ(TO-220) */
+function svgReg() {
+  return '<svg viewBox="0 0 300 180" role="img" aria-label="三端子レギュレータTO-220 7805のピン。印字面から左からIN GND OUT">'
+    + '<text x="10" y="16" font-family="var(--mono)" font-size="10" fill="var(--muted)">7805 (印字面を手前 / 足を下)</text>'
+    // tab
+    + '<rect x="112" y="30" width="76" height="14" rx="3" fill="var(--paper-2)" stroke="var(--rule-soft)"/>'
+    + '<circle cx="150" cy="37" r="4" fill="none" stroke="var(--muted)"/>'
+    // body
+    + '<rect x="108" y="44" width="84" height="54" rx="4" fill="var(--card)" stroke="var(--rule-soft)"/>'
+    + '<text x="150" y="76" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">7805</text>'
+    // legs
+    + '<rect x="120" y="98" width="8" height="46" fill="' + C.sig + '"/>'
+    + '<rect x="146" y="98" width="8" height="54" fill="' + C.gnd + '"/>'
+    + '<rect x="172" y="98" width="8" height="46" fill="' + C.r + '"/>'
+    + '<text x="124" y="168" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="' + C.sig + '">IN</text>'
+    + '<text x="150" y="176" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="var(--ink)">GND</text>'
+    + '<text x="176" y="168" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="' + C.r + '">OUT</text>'
+    + '</svg>';
+}
+
+/* =========================================================
+   部品データ
+   ========================================================= */
+var COMPONENTS = [
+  /* ---- グループA: 端子の見分け ---- */
+  {
+    id: 'jack', group: 'wire', name: 'ステレオ / モノラルジャック', en: '3.5mm audio jack',
+    svg: svgJack,
+    legend: [ {c:C.sig,t:'Tip(信号/L)'}, {c:C.r,t:'Ring(R)'}, {c:C.gnd,t:'Sleeve(GND)'} ],
+    role: [
+      termRow(C.sig, 'Tip', '先端の接点。<b>ステレオならL(左)</b>、モノラルなら信号。'),
+      termRow(C.r, 'Ring', '中間の接点。<b>ステレオのR(右)</b>。モノラルには無い。'),
+      termRow(C.gnd, 'Sleeve', '根元の接点。<b>GND(グランド)</b>。')
+    ].join(''),
+    wiring: '<p>ステレオは Tip=L / Ring=R / Sleeve=GND。モノラルは Ring が無く、<b>Tip=信号 / Sleeve=GND</b> の2本だけです。</p><p>ステレオのプラグをモノラルのジャックに挿すと、RがGNDに落ちて音が痩せることがあります。</p>',
+    check: '<p>プラグを挿し、テスターの導通モードでプラグの各部(先端 / 中間の輪 / 根元)と、ジャックの各ラグの導通を1本ずつ調べます。</p><p>先端とつながるラグが Tip、根元とつながるラグが Sleeve。これで見た目に頼らず特定できます。</p>',
+    gotcha: [
+      'LとRを逆に配線しても音は出るので、鳴ってから気づきにくい。',
+      'MJ-073Hなど絶縁タイプは、Sleeveがパネルから浮いている(シャーシに落ちない)。',
+      'モノラル機器にステレオプラグを使うと、Rの扱いで不具合が出ることがある。'
+    ]
+  },
+  {
+    id: 'dcjack', group: 'wire', name: 'DCジャック(3端子)', en: '5.5 x 2.1mm switched',
+    svg: svgDcjack,
+    legend: [ {c:C.sig,t:'センターピン'}, {c:C.gnd,t:'スリーブ'}, {c:C.sw,t:'スイッチ端子'} ],
+    role: [
+      termRow(C.sig, 'センター', 'プラグの中心に触れる端子。極性は機器による(下の注意)。'),
+      termRow(C.gnd, 'スリーブ', 'プラグの外筒に触れる端子。'),
+      termRow(C.sw, 'スイッチ', 'プラグ未挿入のときスリーブとつながり、<b>挿すと離れる</b>。')
+    ].join(''),
+    wiring: '<p><b>電池とアダプタの自動切替</b>: 電池のマイナスをスイッチ端子へ、電池のプラスを回路へ、アダプタのマイナス側をスリーブへつなぎます。</p><p>アダプタのプラグを挿すとスイッチ端子が離れ、電池が切り離されてアダプタ側に切り替わります(電池の消耗を防げる定番回路)。</p>',
+    check: '<p>テスターの導通モードで、<b>プラグを挿さない状態で導通する2端子</b>を探すと、それがスリーブとスイッチ端子。プラグを挿すとその導通が切れます。</p><p>残りがセンターピン。極性はテスターの電圧レンジでアダプタを挿して実測すると確実です。</p>',
+    gotcha: [
+      'エフェクターはセンターマイナスが多く、一般の機器はセンタープラスが多い。思い込みで配線しない。',
+      '電池とアダプタで極性や電圧が違うと、抜き挿しで逆流の恐れ。逆流防止ダイオードを入れると安全。',
+      '2端子のスイッチ無しタイプもある。手元の端子数をまず数える。'
+    ]
+  },
+  {
+    id: 'tact', group: 'wire', name: 'タクトスイッチ(4本足)', en: 'tactile switch',
+    svg: svgTact,
+    legend: [ {c:C.sig,t:'左ペア(内部連結)'}, {c:C.r,t:'右ペア(内部連結)'} ],
+    role: '<p>4本足のうち<b>2本ずつが最初から内部でつながっています</b>(左ペア / 右ペア)。ボタンを押すと左ペアと右ペアがつながって電気が流れます。</p>',
+    wiring: '<p>使うのは「押していないときは切れていて、押すとつながる」組み合わせ。<b>左ペアから1本、右ペアから1本</b>を選んで配線します。</p>',
+    check: '<p>テスターの導通モードで、<b>押していないのにつながる2本(同じペア)は使わない</b>。押していないとき切れていて、押したときだけ鳴る2本を選べば正解です。</p>',
+    gotcha: [
+      '90度回して挿すと、最初からつながっている2本を使ってしまい「押していないのに常時ON」になる。',
+      'ユニバーサル基板では足の向きを間違えやすい。挿す前にテスターで1回確認するのが確実。'
+    ]
+  },
+  {
+    id: 'footsw', group: 'wire', name: '3PDTフットスイッチ(9ピン)', en: '3PDT true-bypass',
+    svg: svgFootsw,
+    legend: [ {c:C.sw,t:'中段=コモン'}, {c:C.plain,t:'上段/下段=切替先'} ],
+    role: '<p>9つのラグは3列×3段。<b>各列の中段がコモン(共通)</b>で、踏むごとに中段が上段か下段につながります。3回路を同時に切り替えられるスイッチです。</p>',
+    wiring: '<p>エフェクターのトゥルーバイパスでは、2列を信号のON/OFFに、残り1列をLEDの点灯に使うのが定番です。</p><p>列をまたぐ配線図は決まった形があるので、はじめは配線図どおりに写すのが安全です。</p>',
+    check: '<p>テスターの導通モードで、踏む前と後で<b>中段とつながる相手が上段/下段で入れ替わる</b>ことを確認すれば、どのラグが中段(コモン)かがわかります。</p>',
+    gotcha: [
+      '中段(コモン)を上段や下段と取り違えると、切り替わらない or 常時つながりっぱなしになる。',
+      'ラグは裏から見るので、配線図の向き(表/裏)を合わせないと左右が逆になる。'
+    ]
+  },
+  {
+    id: 'pot', group: 'wire', name: '可変抵抗(ポット)', en: 'potentiometer',
+    svg: svgPot,
+    legend: [ {c:C.mid,t:'2=ワイパー(中央)'}, {c:C.sig,t:'1/3=両端'} ],
+    role: [
+      termRow(C.plain, '1(端)', '抵抗体の片端。'),
+      termRow(C.mid, '2(中央)', '<b>ワイパー(中央の可動接点)</b>。回すとここの抵抗が変わる。'),
+      termRow(C.plain, '3(端)', '抵抗体のもう片端。')
+    ].join(''),
+    wiring: '<p><b>ボリューム(音量など)</b>: 両端(1と3)に信号とGND、<b>中央(2)から出力</b>を取ります。1と3を入れ替えると回す向きが逆になります。</p><p><b>可変抵抗(抵抗を変えたいだけ)</b>: 中央(2)と、どちらか片端の2本だけを使います。</p>',
+    check: '<p>テスターの抵抗レンジで、<b>回しても抵抗が変わらない2本が両端(1-3)</b>。中央(2)を挟むと回すたびに抵抗が変わります。これでワイパーが特定できます。</p>',
+    gotcha: [
+      '中央を使わずに両端だけで配線すると、ただの固定抵抗になり音量が変わらない。',
+      'Aカーブ(音量向け)とBカーブ(素直な変化)で用途が違う。型番の A/B を確認。'
+    ]
+  },
+  {
+    id: 'toggle', group: 'wire', name: 'トグルスイッチ', en: 'toggle switch',
+    svg: svgToggle,
+    legend: [ {c:C.sw,t:'コモン(中央)'}, {c:C.plain,t:'切替先'} ],
+    role: '<p>端子の数で種類がわかります。<b>SPST=2端子(ONかOFF)</b>、<b>SPDT=3端子(中央がコモンで2方向に切替)</b>、<b>DPDT=6端子(3端子の切替を2組)</b>。</p>',
+    wiring: '<p>SPDTは真ん中がコモン。倒した側の端子とコモンがつながります。片側だけ使えば単なるON/OFFにもできます。</p>',
+    check: '<p>テスターの導通モードで、倒す向きを変えても<b>いつも導通に絡む端子がコモン</b>。DPDTは同じ関係が2組あります。</p>',
+    gotcha: [
+      '3端子(SPDT)を、どれがコモンか確かめずに配線すると切り替わらない。',
+      'ON-OFF-ONやON-OFF(中立あり)など、倒し位置の仕様も型番で違う。'
+    ]
+  },
+
+  /* ---- グループB: 極性 / 向き ---- */
+  {
+    id: 'ecap', group: 'pol', name: '電解コンデンサ', en: 'electrolytic capacitor',
+    svg: svgEcap,
+    legend: [ {c:C.sig,t:'長い足 = +'}, {c:C.gnd,t:'帯側 / 短い足 = -'} ],
+    role: [
+      termRow(C.sig, '長い足', '<b>プラス(+)</b>。'),
+      termRow(C.gnd, '短い足', '<b>マイナス(-)</b>。本体の帯(白線)がある側。')
+    ].join(''),
+    wiring: '<p>回路のプラス側に長い足、マイナス側に帯のある短い足をつなぎます。足を切ってしまったら、<b>帯のある側がマイナス</b>で見分けます。</p>',
+    check: '<p>足を切る前に長い方を覚えておくのが確実。切った後は本体側面の<b>帯(白い縦線)がマイナス</b>です。</p>',
+    gotcha: [
+      '逆向きに電源へつなぐと発熱し、破裂して中身が飛び散ることがある。ここは最重要。',
+      '無極性(両極性)タイプもある。本体に極性表示が無ければ無極性。'
+    ]
+  },
+  {
+    id: 'led', group: 'pol', name: 'LED', en: 'light-emitting diode',
+    svg: svgLed,
+    legend: [ {c:C.sig,t:'長い足 = + アノード'}, {c:C.gnd,t:'フラット/短い足 = - カソード'} ],
+    role: [
+      termRow(C.sig, 'アノード', '<b>プラス(+)</b>。足が長い方。'),
+      termRow(C.gnd, 'カソード', '<b>マイナス(-)</b>。足が短く、本体のふちが平ら(フラット)な側。')
+    ].join(''),
+    wiring: '<p>電流はアノード(+)からカソード(-)へ流れます。必ず抵抗を直列に入れてから使います(直結だと壊れやすい)。抵抗の計算は工房の電卓へ。</p>',
+    check: '<p>足を切ってしまったら、本体のふちが平らな側がカソード(-)。中の金属が大きく見える側がカソードのことが多いです。テスターのダイオードモードでもかすかに光って向きがわかります。</p>',
+    gotcha: [
+      '逆向きだと光らないだけのことが多いが、抵抗なしで逆電圧をかけると壊れることもある。',
+      '抵抗を入れ忘れて直結すると一瞬で切れる。'
+    ]
+  },
+  {
+    id: 'diode', group: 'pol', name: 'ダイオード', en: 'diode',
+    svg: svgDiode,
+    legend: [ {c:C.sig,t:'アノード(+)'}, {c:C.gnd,t:'帯 = カソード(-)'} ],
+    role: [
+      termRow(C.sig, 'アノード', '帯の無い側。ここから電流が入る。'),
+      termRow(C.gnd, 'カソード', '<b>帯(ライン)がある側</b>。電流が出る。')
+    ].join(''),
+    wiring: '<p>電流はアノードからカソード(帯側)へ一方向だけ流れます。逆流防止や整流に使うときは、<b>流したい向きにカソードの帯を向けます</b>。</p>',
+    check: '<p>テスターのダイオードモードで、<b>数値が出る(順方向)ときの黒プローブ側がカソード</b>。本体の帯と一致するか確認できます。</p>',
+    gotcha: [
+      '帯の向きを逆にすると電流が流れず、回路が動かない。',
+      'ショットキーや整流用など種類で耐圧/電流が違う。型番も確認。'
+    ]
+  },
+  {
+    id: 'transistor', group: 'pol', name: 'トランジスタ', en: 'transistor (TO-92)',
+    svg: svgTransistor,
+    legend: [ {c:C.sig,t:'E'}, {c:C.r,t:'C'}, {c:C.gnd,t:'B'} ],
+    role: [
+      termRow(C.sig, 'E', 'エミッタ。'),
+      termRow(C.r, 'C', 'コレクタ。'),
+      termRow(C.gnd, 'B', 'ベース。')
+    ].join(''),
+    wiring: '<p>図は<b>2SC1815の場合</b>。平らな面を手前にして足を下に向けると、左から E / C / B です。</p>',
+    check: '<p>トランジスタは<b>型番でピンの並びが変わります</b>。2SC1815はECBですが、2N3904などはEBCで違います。手元の型番のデータシートで必ず確認してください。</p>',
+    gotcha: [
+      '同じTO-92の見た目でも並びが違う。思い込みでECBに決めると動かない/壊れる。',
+      'EとCを逆に挿すと増幅せず、ほとんど動かない。'
+    ]
+  },
+  {
+    id: 'reg', group: 'pol', name: '三端子レギュレータ', en: 'voltage regulator (TO-220)',
+    svg: svgReg,
+    legend: [ {c:C.sig,t:'IN'}, {c:C.gnd,t:'GND'}, {c:C.r,t:'OUT'} ],
+    role: [
+      termRow(C.sig, 'IN', '入力(元の電圧を入れる)。'),
+      termRow(C.gnd, 'GND', 'グランド(共通)。'),
+      termRow(C.r, 'OUT', '出力(安定した電圧が出る)。')
+    ].join(''),
+    wiring: '<p>図は<b>7805(78xxの正電圧)の場合</b>。印字面を手前にして足を下に向けると、左から IN / GND / OUT です。入力と出力に小容量のコンデンサを添えると安定します。</p>',
+    check: '<p><b>型番でピンが全く違います</b>。78xx(正電圧)と79xx(負電圧)は並びが違い、LM317(可変)は ADJ / OUT / IN です。必ず型番のデータシートで確認してください。</p>',
+    gotcha: [
+      '79xxを78xxのつもりで挿すと、GNDとINが入れ替わっていて壊れる。',
+      '入力と出力を逆に挿すと動かない。放熱もお忘れなく。'
+    ]
+  }
+];
+
+/* =========================================================
+   描画
+   ========================================================= */
+var state = { group: 'wire', id: 'jack' };
+var pickerEl = document.getElementById('picker');
+var detailEl = document.getElementById('detail');
+var groupsEl = document.getElementById('groups');
+
+function componentsInGroup(g) { return COMPONENTS.filter(function (c) { return c.group === g; }); }
+
+function renderPicker() {
+  var list = componentsInGroup(state.group);
+  pickerEl.innerHTML = list.map(function (c) {
+    var active = c.id === state.id ? ' active' : '';
+    return '<button class="pick' + active + '" data-id="' + c.id + '">' + esc(c.name) + '</button>';
+  }).join('');
+}
+
+function legendHtml(items) {
+  if (!items || !items.length) return '';
+  var lis = items.map(function (it) {
+    return '<span class="li"><span class="sw" style="background:' + it.c + '"></span>' + esc(it.t) + '</span>';
+  }).join('');
+  return '<div class="legend">' + lis + '</div>';
+}
+
+function renderDetail() {
+  var c = COMPONENTS.filter(function (x) { return x.id === state.id; })[0];
+  if (!c) { detailEl.innerHTML = ''; return; }
+  var html = '';
+  html += '<div class="detail-head"><h2>' + esc(c.name) + '</h2><span class="dh-en">' + esc(c.en) + '</span></div>';
+  html += '<div class="diagram">' + c.svg() + '</div>';
+  html += legendHtml(c.legend);
+
+  html += '<div class="block"><div class="block-label">端子 / 極性</div>';
+  if (c.role.indexOf('<div class="row"') === 0) html += '<div class="rows">' + c.role + '</div>';
+  else html += c.role;
+  html += '</div>';
+
+  if (c.wiring) {
+    html += '<div class="block"><div class="block-label">配線のしかた</div>' + c.wiring + '</div>';
+  }
+
+  html += '<div class="check"><div class="block-label">確かめ方</div>' + c.check + '</div>';
+
+  if (c.gotcha && c.gotcha.length) {
+    html += '<div class="block"><div class="block-label">やらかしポイント</div><ul class="list">'
+      + c.gotcha.map(function (g) { return '<li>' + esc(g) + '</li>'; }).join('')
+      + '</ul></div>';
+  }
+  detailEl.innerHTML = html;
+}
+
+function selectGroup(g) {
+  state.group = g;
+  var first = componentsInGroup(g)[0];
+  state.id = first ? first.id : null;
+  Array.prototype.forEach.call(groupsEl.querySelectorAll('.group-btn'), function (b) {
+    b.classList.toggle('active', b.getAttribute('data-group') === g);
+  });
+  renderPicker();
+  renderDetail();
+}
+
+function selectId(id) {
+  state.id = id;
+  if (history.replaceState) history.replaceState(null, '', '#' + id);
+  renderPicker();
+  renderDetail();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+groupsEl.addEventListener('click', function (e) {
+  var b = e.target.closest('.group-btn');
+  if (b) selectGroup(b.getAttribute('data-group'));
+});
+pickerEl.addEventListener('click', function (e) {
+  var b = e.target.closest('.pick');
+  if (b) selectId(b.getAttribute('data-id'));
+});
+
+/* 起動(URLハッシュで部品を直接開ける) */
+(function initFromHash() {
+  var h = (location.hash || '').replace('#', '');
+  var comp = COMPONENTS.filter(function (x) { return x.id === h; })[0];
+  if (comp) {
+    state.group = comp.group;
+    state.id = comp.id;
+    Array.prototype.forEach.call(groupsEl.querySelectorAll('.group-btn'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-group') === state.group);
+    });
+  }
+})();
+renderPicker();
+renderDetail();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (e) { console.warn('SW登録失敗', e); });
+  });
+}
+</script>
+</body>
+</html>
