@@ -176,7 +176,14 @@
   .badge.b-dac { background: transparent; border: 1px solid var(--ok); color: var(--ok); }
   .badge.b-touch { background: transparent; border: 1px solid var(--muted); color: var(--muted); }
 
-  /* ── Raspberry Pi grid ───────────────── */
+  /* 基板図(SVG) */
+  .board-diagram {
+    background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 10px;
+    padding: 10px; margin: 0 0 4px;
+  }
+  .board-svg { width: 100%; height: auto; display: block; }
+
+  /* Raspberry Pi grid */
   .pi-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px;
     border: 1px solid var(--rule-soft); border-radius: 10px; padding: 8px;
@@ -411,6 +418,35 @@ function badgeHtml(list) {
   return list.map(b => `<span class="badge b-${esc(b)}">${esc(labels[b] || b.toUpperCase())}</span>`).join('');
 }
 
+/* ---------- SVG基板図(色分け)用ヘルパー ----------
+   凡例(legendHtml)、既存バッジCSSと同じ色対応を使う。新しい色やピン配置は作らず、
+   PI_PINS / UNO_* / ESP32_CATS の既存(検証済み)データをそのまま図に流し込むだけ。 */
+function pinBadgeColor(b) {
+  switch (b) {
+    case 'i2c':  return { fill: 'var(--ok)', textColor: '#fff' };
+    case 'spi':  return { fill: 'var(--terracotta-deep)', textColor: '#fff' };
+    case 'uart': return { fill: 'var(--warn)', textColor: '#2a2114' };
+    case 'pwm':  return { fill: 'var(--card)', stroke: 'var(--ink)', textColor: 'var(--ink)' };
+    case 'adc':  return { fill: 'var(--paper)', stroke: 'var(--ok)', textColor: 'var(--ok)' };
+    case 'dac':  return { fill: 'var(--paper)', stroke: 'var(--ok)', textColor: 'var(--ok)' };
+    default:     return null;
+  }
+}
+function pinCellStyle(p) {
+  if (p.type === 'power') return { fill: 'var(--terracotta)', stroke: 'var(--terracotta)', textColor: '#fff' };
+  if (p.type === 'gnd')   return { fill: 'var(--ink)', stroke: 'var(--ink)', textColor: 'var(--paper)' };
+  const priority = ['i2c', 'spi', 'uart', 'pwm', 'adc'];
+  const b = (p.badges || []).find(x => priority.includes(x));
+  if (b) {
+    const c = pinBadgeColor(b);
+    return { fill: c.fill, stroke: c.stroke || c.fill, textColor: c.textColor };
+  }
+  return { fill: 'var(--card)', stroke: 'var(--rule-soft)', textColor: 'var(--ink)' };
+}
+function shortLabel(label) {
+  return esc(label.split(/[\s(]/)[0]);
+}
+
 /* ---------- Raspberry Pi 40ピン(物理順、baked) ---------- */
 const PI_PINS = [
   { n: 1,  label: '3V3 電源',                     type: 'power' },
@@ -565,6 +601,97 @@ const GEAR_PRODUCTS = [
   { name: 'Raspberry Pi用 T型GPIO拡張ボード', kw: 'Raspberry Pi GPIO 拡張ボード T型' }
 ];
 
+/* ---------- SVG基板図 ----------
+   Raspberry Piは物理配置(PI_PINSの並び=物理順)をそのまま図にする。
+   Arduino Uno / ESP32 は物理位置を断定できないため(既存の注意書きの通り)、
+   機能分類の色分けのみを示す模式図にとどめる。座標やピン数はすべて上のbaked配列から算出し、
+   このセクション内で新しい数値を作らない。 */
+function svgRpi() {
+  const padX = 10, capH = 16, cellW = 94, cellH = 16, gapX = 6, gapY = 3, cols = 2, rows = 20;
+  const width = padX * 2 + cellW * cols + gapX * (cols - 1);
+  const y0 = capH + 8;
+  const height = y0 + rows * cellH + (rows - 1) * gapY + 10;
+  let cells = '';
+  for (let i = 0; i < rows; i++) {
+    for (let c = 0; c < cols; c++) {
+      const p = PI_PINS[i * cols + c];
+      const x = padX + c * (cellW + gapX);
+      const y = y0 + i * (cellH + gapY);
+      const style = pinCellStyle(p);
+      cells += `<g>
+        <rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" rx="3" fill="${style.fill}" stroke="${style.stroke}" stroke-width="1"><title>${esc(p.label)}</title></rect>
+        <text x="${x + 6}" y="${y + cellH / 2 + 3}" font-family="var(--mono)" font-size="7.5" fill="${style.textColor}" opacity="0.8">${p.n}</text>
+        <text x="${x + 24}" y="${y + cellH / 2 + 3}" font-family="var(--mono)" font-size="9" font-weight="600" fill="${style.textColor}">${shortLabel(p.label)}</text>
+      </g>`;
+    }
+  }
+  const p1x = padX, p1y = y0;
+  return `<svg class="board-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Raspberry Pi 40ピンGPIOヘッダーの物理配置図(物理ピン番号順)">
+    <text x="${padX}" y="12" font-family="var(--mono)" font-size="9" fill="var(--muted)">左上がPIN1(物理配置。左列=奇数、右列=偶数)</text>
+    <rect x="${p1x - 3}" y="${p1y - 3}" width="6" height="6" fill="var(--terracotta)"/>
+    ${cells}
+  </svg>`;
+}
+
+function tickRow(list, y, startX, tickW, gap) {
+  return list.map((p, i) => {
+    const x = startX + i * (tickW + gap);
+    const style = pinCellStyle(p);
+    return `<rect x="${x}" y="${y}" width="${tickW}" height="14" rx="3" fill="${style.fill}" stroke="${style.stroke}" stroke-width="1"><title>${esc(p.label)}</title></rect>`;
+  }).join('');
+}
+function svgUno() {
+  const rowY = { digital: 55, analog: 88, power: 118 };
+  const startX = 95, tickW = 12, gap = 2;
+  const digital = tickRow(UNO_DIGITAL, rowY.digital, startX, tickW, gap);
+  const analog = tickRow(UNO_ANALOG, rowY.analog, startX, tickW, gap);
+  const power = tickRow(UNO_POWER, rowY.power, startX, tickW, gap);
+  return `<svg class="board-svg" viewBox="0 0 320 190" role="img" aria-label="Arduino Unoの模式図(機能分類の色分け。物理配置は正確な位置を示すものではない)">
+    <text x="20" y="14" font-family="var(--mono)" font-size="8" fill="var(--muted)">模式図(物理配置ではなく機能分類の色分け)</text>
+    <rect x="20" y="24" width="280" height="140" rx="14" fill="var(--card)" stroke="var(--rule-soft)" stroke-width="1.5"/>
+    <rect x="8" y="50" width="18" height="34" rx="3" fill="var(--muted)" opacity="0.35"/>
+    <text x="17" y="98" text-anchor="middle" font-family="var(--mono)" font-size="7" fill="var(--muted)">USB</text>
+    <circle cx="17" cy="132" r="11" fill="var(--muted)" opacity="0.35"/>
+    <text x="17" y="150" text-anchor="middle" font-family="var(--mono)" font-size="7" fill="var(--muted)">DC</text>
+    <text x="30" y="${rowY.digital + 10}" font-family="var(--mono)" font-size="8.5" fill="var(--ink-soft)">D0-13</text>
+    ${digital}
+    <text x="30" y="${rowY.analog + 10}" font-family="var(--mono)" font-size="8.5" fill="var(--ink-soft)">A0-5</text>
+    ${analog}
+    <text x="30" y="${rowY.power + 10}" font-family="var(--mono)" font-size="8.5" fill="var(--ink-soft)">電源</text>
+    ${power}
+  </svg>`;
+}
+
+function svgEsp32() {
+  const toneColor = { warn: 'var(--warn)', ng: 'var(--ng)', ok: 'var(--ok)' };
+  let legend = '';
+  const legendW = 60, legendGap = 8, legendX0 = 20, legendY = 150;
+  const seenTags = new Set();
+  const uniqueCats = ESP32_CATS.filter(c => {
+    if (seenTags.has(c.tag)) return false;
+    seenTags.add(c.tag);
+    return true;
+  });
+  uniqueCats.forEach((c, i) => {
+    const x = legendX0 + i * (legendW + legendGap);
+    legend += `<rect x="${x}" y="${legendY}" width="14" height="14" rx="3" fill="${toneColor[c.tone]}"/><text x="${x + 20}" y="${legendY + 11}" font-family="var(--mono)" font-size="9" fill="var(--ink-soft)">${esc(c.tag)}</text>`;
+  });
+  let leftDots = '', rightDots = '';
+  for (let i = 0; i < 9; i++) {
+    const y = 25 + i * 10;
+    leftDots += `<circle cx="60" cy="${y}" r="3" fill="var(--paper)" stroke="var(--rule-soft)"/>`;
+    rightDots += `<circle cx="240" cy="${y}" r="3" fill="var(--paper)" stroke="var(--rule-soft)"/>`;
+  }
+  return `<svg class="board-svg" viewBox="0 0 300 175" role="img" aria-label="ESP32 DevKitの模式図と機能分類の色分け(実際の物理ピン配置は基板の版により異なる)">
+    <text x="20" y="12" font-family="var(--mono)" font-size="8" fill="var(--muted)">模式図(実物の物理配置は基板により異なる)</text>
+    <rect x="70" y="18" width="160" height="100" rx="10" fill="var(--card)" stroke="var(--rule-soft)" stroke-width="1.5"/>
+    ${leftDots}${rightDots}
+    <rect x="135" y="118" width="30" height="12" rx="3" fill="var(--muted)" opacity="0.35"/>
+    <text x="150" y="140" text-anchor="middle" font-family="var(--mono)" font-size="7" fill="var(--muted)">USB</text>
+    ${legend}
+  </svg>`;
+}
+
 /* ---------- 状態 ---------- */
 let board = 'rpi';
 const appEl = document.getElementById('app');
@@ -617,6 +744,8 @@ function renderRpi() {
     return `<div class="pincell${cls}"><span class="pnum">${p.n}</span><span class="plabel-text">${esc(p.label)}${badges}</span></div>`;
   }).join('');
   return `
+    <div class="section-label">— 基板図</div>
+    <div class="board-diagram">${svgRpi()}</div>
     <div class="section-label">— Raspberry Pi 40ピン（物理配置。左=奇数、右=偶数）</div>
     <div class="pi-grid">${cells}</div>`;
 }
@@ -632,6 +761,8 @@ function pinlistHtml(list) {
 
 function renderUno() {
   return `
+    <div class="section-label">— 基板図</div>
+    <div class="board-diagram">${svgUno()}</div>
     <div class="section-label">— デジタルピン (D0〜D13)</div>
     <div class="pinlist">${pinlistHtml(UNO_DIGITAL)}</div>
     <div class="section-label">— アナログピン (A0〜A5、10bit ADC)</div>
@@ -658,6 +789,8 @@ function renderEsp32() {
   ).join('');
 
   return `
+    <div class="section-label">— 基板図</div>
+    <div class="board-diagram">${svgEsp32()}</div>
     <div class="section-label">— ESP32 DevKit（機能ベース。物理並びは基板の版で異なるため断定しません）</div>
     ${cats}
     <div class="section-label">— デフォルトのI2C / SPI / UART / ADC / DAC</div>
