@@ -178,25 +178,6 @@
     line-height: 1.7;
   }
 
-  /* Settings button */
-  .settings-btn {
-    flex-shrink: 0;
-    background: none;
-    border: 1px solid rgba(58,52,44,0.4);
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: border-color 150ms, color 150ms;
-    white-space: nowrap;
-  }
-  .settings-btn:hover {
-    border-color: var(--terracotta);
-    color: var(--terracotta);
-  }
-
   /* ── Section labels ──────────────────────────── */
   .section-head {
     display: flex;
@@ -539,92 +520,6 @@
     text-transform: uppercase;
   }
 
-  /* ── Settings modal ──────────────────────────── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(28,26,22,0.6);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--paper);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    padding: 24px;
-    position: relative;
-  }
-  .modal h2 {
-    font-family: var(--jp);
-    font-weight: 700;
-    font-size: 18px;
-    margin-bottom: 20px;
-    color: var(--ink);
-  }
-  .modal-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-  .modal-field label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-  }
-  .modal-field input {
-    font-family: var(--mono);
-    font-size: 14px;
-    background: var(--paper-2);
-    border: 1px solid rgba(58,52,44,0.3);
-    border-radius: 6px;
-    padding: 10px 12px;
-    color: var(--ink);
-    width: 100%;
-  }
-  .modal-field input:focus {
-    outline: none;
-    border-color: var(--terracotta);
-  }
-  .modal-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: -8px;
-    margin-bottom: 8px;
-    line-height: 1.6;
-  }
-  .modal-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-top: 8px;
-  }
-  .modal-actions button {
-    padding: 9px 18px;
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 13px;
-    cursor: pointer;
-    border: none;
-    transition: background 150ms;
-  }
-  .btn-cancel {
-    background: var(--paper-2);
-    color: var(--muted);
-  }
-  .btn-cancel:hover { background: var(--rule); color: var(--paper); }
-  .btn-save {
-    background: var(--terracotta);
-    color: white;
-  }
-  .btn-save:hover { background: var(--terracotta-deep); }
 
   /* ── Utility ─────────────────────────────────── */
   .mt8 { margin-top: 8px; }
@@ -637,27 +532,10 @@
     .fields.triple { grid-template-columns: 1fr 1fr; }
     .ohm-inputs { grid-template-columns: 1fr 1fr; }
     header { flex-direction: column; }
-    .settings-btn { align-self: flex-start; }
   }
 </style>
 </head>
 <body>
-
-<!-- Settings Modal -->
-<div class="modal-overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-label="設定">
-  <div class="modal">
-    <h2>設定</h2>
-    <div class="modal-field">
-      <label for="amazonTagInput">Amazonアソシエイトタグ</label>
-      <input type="text" id="amazonTagInput" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
-    </div>
-    <p class="modal-hint">設定すると「部品を探す」リンクにタグが付与され、購入を通じて制作を支援できます。未設定でも通常リンクで部品検索できます。</p>
-    <div class="modal-actions">
-      <button class="btn-cancel" id="modalCancel">キャンセル</button>
-      <button class="btn-save" id="modalSave">保存</button>
-    </div>
-  </div>
-</div>
 
 <main class="page">
 
@@ -678,7 +556,6 @@
       </div>
       <p class="tagline">電子工作の作業台に常駐する計算ツール集。オフライン動作・データ送信なし。</p>
     </div>
-    <button class="settings-btn" id="settingsBtn" aria-label="設定を開く">⚙ 設定</button>
   </header>
 
   <!-- ── Free Tools ───────────────────────────── -->
@@ -998,9 +875,7 @@ function escHtml(s) {
 
 /* ── Affiliate link helper ───────────────────────────── */
 function amazonLink(keyword) {
-  const tag = localStorage.getItem('bench:amazonTag') || 'yzrs_apps-22';
-  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
-  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
 }
 function showAmzLink(elId, keyword) {
   const el = document.getElementById(elId);
@@ -1484,42 +1359,6 @@ function showAmzLink(elId, keyword) {
     }
     return v.toExponential(3);
   }
-})();
-
-/* =========================================================
-   Settings Modal
-   ========================================================= */
-(function() {
-  const overlay = document.getElementById('settingsOverlay');
-  const tagInput = document.getElementById('amazonTagInput');
-
-  document.getElementById('settingsBtn').addEventListener('click', function() {
-    tagInput.value = localStorage.getItem('bench:amazonTag') || '';
-    overlay.classList.add('open');
-    tagInput.focus();
-  });
-
-  document.getElementById('modalCancel').addEventListener('click', function() {
-    overlay.classList.remove('open');
-  });
-
-  document.getElementById('modalSave').addEventListener('click', function() {
-    const tag = tagInput.value.trim();
-    if (tag) {
-      localStorage.setItem('bench:amazonTag', tag);
-    } else {
-      localStorage.removeItem('bench:amazonTag');
-    }
-    overlay.classList.remove('open');
-  });
-
-  overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') overlay.classList.remove('open');
-  });
 })();
 
 /* =========================================================

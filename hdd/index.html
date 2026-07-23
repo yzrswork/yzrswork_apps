@@ -71,8 +71,6 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 20px; }
   .topbar .brand { color: var(--ink); }
   .topbar .brand .dot { color: var(--terracotta); }
-  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
-  .gear:hover { color: var(--terracotta); }
 
   header.hero { margin-bottom: 18px; }
   .hero h1 { font-weight: 700; font-size: clamp(26px, 7vw, 36px); line-height: 1.15; margin: 0 0 8px; }
@@ -148,25 +146,12 @@
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
   .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 
-  /* Settings modal */
-  .modal-bg { position: fixed; inset: 0; background: rgba(28,26,22,0.55); z-index: 20; display: none; align-items: center; justify-content: center; padding: 18px; }
-  .modal-bg.open { display: flex; }
-  .modal { background: var(--paper); border-radius: 13px; padding: 20px 18px; max-width: 440px; width: 100%; border: 1px solid var(--rule); }
-  .modal h2 { font-size: 17px; margin: 0 0 4px; }
-  .modal .m-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
-  .modal label.m-lab { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
-  .modal input.m-in { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
-  .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
-  .modal .m-row button { flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
-  .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
-  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
 </style>
 </head>
 <body>
   <main class="page">
     <div class="topbar">
       <span class="brand"><span class="dot">●</span> HDD選びナビ</span>
-      <button class="gear" id="gear" aria-label="設定">⚙</button>
     </div>
 
     <header class="hero">
@@ -230,21 +215,6 @@
     </footer>
   </main>
 
-  <!-- Settings modal -->
-  <div class="modal-bg" id="set-bg">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
-      <h2>設定</h2>
-      <p class="m-sub">AmazonアソシエイトのトラッキングIDを入れると、「探す」リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
-      <label class="m-lab" for="tag-input">Amazon アソシエイトタグ</label>
-      <input type="text" id="tag-input" class="m-in" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
-      <div class="saved" id="tag-saved"></div>
-      <div class="m-row">
-        <button id="tag-clear">クリア</button>
-        <button class="primary" id="tag-save">保存</button>
-      </div>
-    </div>
-  </div>
-
 <script>
 /* =========================================================
    HDD選びナビ — WD Color & CMR/SMR
@@ -294,9 +264,7 @@ const EXAMPLES = ['WD40EFPX', 'WD40EFZX', 'WD20EFRX', 'WD20EARZ', 'WD20EZAZ', 'W
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(kw) {
-  const tag = localStorage.getItem('hdd:amazonTag') || 'yzrs_apps-22';
-  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw);
-  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw) + '&tag=yzrs_apps-22';
 }
 const VTAG = {
   cmr: '<span class="sr-tag rec-cmr">CMR</span>',
@@ -356,23 +324,6 @@ function renderExamples() {
     c.addEventListener('click', () => { const m = document.getElementById('model'); m.value = c.getAttribute('data-ex'); checkModel(m.value); }));
 }
 
-/* ---------- 設定モーダル ---------- */
-const setBg = document.getElementById('set-bg');
-const tagInput = document.getElementById('tag-input');
-const tagSaved = document.getElementById('tag-saved');
-document.getElementById('gear').addEventListener('click', () => {
-  tagInput.value = localStorage.getItem('hdd:amazonTag') || '';
-  tagSaved.textContent = ''; setBg.classList.add('open');
-});
-setBg.addEventListener('click', e => { if (e.target === setBg) setBg.classList.remove('open'); });
-document.getElementById('tag-save').addEventListener('click', () => {
-  const v = tagInput.value.trim();
-  if (v) localStorage.setItem('hdd:amazonTag', v); else localStorage.removeItem('hdd:amazonTag');
-  tagSaved.textContent = '保存しました（リンクに反映）'; renderResult();
-});
-document.getElementById('tag-clear').addEventListener('click', () => {
-  localStorage.removeItem('hdd:amazonTag'); tagInput.value = ''; tagSaved.textContent = 'クリアしました'; renderResult();
-});
 
 document.getElementById('model').addEventListener('input', e => checkModel(e.target.value));
 

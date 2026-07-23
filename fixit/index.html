@@ -106,18 +106,7 @@
   }
   .topbar .brand { color: var(--ink); cursor: pointer; }
   .topbar .brand .dot { color: var(--terracotta); }
-  .gear {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px 6px;
-    color: var(--muted);
-    line-height: 1;
-  }
-  .gear:hover { color: var(--terracotta); }
-
-  /* ── Header (home) ───────────────────── */
+  /*── Header (home) ───────────────────── */
   header.hero { margin-bottom: 30px; }
   .hero h1 {
     font-family: var(--jp);
@@ -392,55 +381,6 @@
     color: var(--muted);
   }
 
-  /* ── Settings modal ──────────────────── */
-  .modal-bg {
-    position: fixed;
-    inset: 0;
-    background: rgba(28, 26, 22, 0.55);
-    z-index: 10;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-bg.open { display: flex; }
-  .modal {
-    background: var(--paper);
-    border-radius: 12px;
-    padding: 22px 20px;
-    max-width: 420px;
-    width: 100%;
-    border: 1px solid var(--rule);
-  }
-  .modal h2 { font-size: 17px; margin: 0 0 6px; }
-  .modal p { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
-  .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em; }
-  .modal input {
-    width: 100%;
-    padding: 11px 12px;
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    font-family: var(--mono);
-    font-size: 14px;
-    background: var(--card);
-    color: var(--ink);
-  }
-  .modal .row { display: flex; gap: 10px; margin-top: 16px; }
-  .modal .row button {
-    flex: 1;
-    padding: 11px;
-    border-radius: 8px;
-    font-family: var(--jp);
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    border: 1px solid var(--rule);
-    background: var(--paper);
-    color: var(--ink);
-  }
-  .modal .row button.save { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
-  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
-
   @media (max-width: 480px) {
     .page { padding: 22px 16px 36px; }
     .qtext { font-size: 18px; }
@@ -451,7 +391,6 @@
   <main class="page">
     <div class="topbar">
       <span class="brand" id="brand"><span class="dot">●</span> 直し方ナビ</span>
-      <button class="gear" id="gear" aria-label="設定">⚙</button>
     </div>
 
     <div id="app"></div>
@@ -469,21 +408,6 @@
       <div class="footer-meta">© や印工務店 / yzrswork — Fix-it Navigator</div>
     </footer>
   </main>
-
-  <!-- Settings modal -->
-  <div class="modal-bg" id="modal-bg">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
-      <h2>設定</h2>
-      <p>AmazonアソシエイトのトラッキングIDを入れると、紹介リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
-      <label for="tag-input">Amazon アソシエイトタグ</label>
-      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
-      <div class="saved" id="tag-saved"></div>
-      <div class="row">
-        <button id="tag-clear">クリア</button>
-        <button class="save" id="tag-save">保存</button>
-      </div>
-    </div>
-  </div>
 
 <script>
 /* =========================================================
@@ -1034,9 +958,7 @@ function esc(s) {
 }
 // stepsとhelpは<code>タグを意図的に含むので、エスケープせずそのまま使う（データは内製・固定）
 function amazonUrl(keyword) {
-  const tag = localStorage.getItem('fixit:amazonTag') || 'yzrs_apps-22';
-  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
-  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
 }
 
 /* ---------- レンダリング ---------- */
@@ -1206,29 +1128,6 @@ window.addEventListener('hashchange', () => {
   }
 });
 
-/* ---------- 設定モーダル ---------- */
-const modalBg = document.getElementById('modal-bg');
-const tagInput = document.getElementById('tag-input');
-const tagSaved = document.getElementById('tag-saved');
-document.getElementById('gear').addEventListener('click', () => {
-  tagInput.value = localStorage.getItem('fixit:amazonTag') || '';
-  tagSaved.textContent = '';
-  modalBg.classList.add('open');
-});
-modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.remove('open'); });
-document.getElementById('tag-save').addEventListener('click', () => {
-  const v = tagInput.value.trim();
-  if (v) localStorage.setItem('fixit:amazonTag', v);
-  else localStorage.removeItem('fixit:amazonTag');
-  tagSaved.textContent = '保存しました';
-  // 表示中ノードを再描画してリンクへ反映
-  if (current) { const t = TREES[current.treeId]; renderNode(t, t.nodes[current.nodeId]); }
-});
-document.getElementById('tag-clear').addEventListener('click', () => {
-  localStorage.removeItem('fixit:amazonTag');
-  tagInput.value = '';
-  tagSaved.textContent = 'クリアしました';
-});
 
 /* ---------- 起動 ---------- */
 routeFromHash();

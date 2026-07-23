@@ -89,9 +89,6 @@
   }
   .topbar .brand { color: var(--ink); }
   .topbar .brand .dot { color: var(--terracotta); }
-  .gear { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; color: var(--muted); line-height: 1; }
-  .gear:hover { color: var(--terracotta); }
-
   header.hero { margin-bottom: 22px; }
   .hero h1 { font-weight: 700; font-size: clamp(28px, 7.5vw, 40px); line-height: 1.15; margin: 0 0 10px; }
   .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 15px; letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
@@ -206,7 +203,6 @@
   <main class="page">
     <div class="topbar">
       <span class="brand"><span class="dot">●</span> 装備ナビ</span>
-      <button class="gear" id="gear" aria-label="設定">⚙</button>
     </div>
 
     <header class="hero">
@@ -254,7 +250,7 @@
   <div class="modal-bg" id="cart-bg">
     <div class="modal" role="dialog" aria-modal="true" aria-label="買い物リスト">
       <h2>買い物リスト</h2>
-      <p class="m-sub">「探す」でAmazonの検索が開きます。設定でアソシエイトIDを入れると紹介リンクになります。</p>
+      <p class="m-sub">「探す」でAmazonの検索が開きます。</p>
       <div id="cart-items"></div>
       <div class="m-row">
         <button id="copyList">リストをコピー</button>
@@ -262,21 +258,6 @@
         <button class="primary" id="closeCart">閉じる</button>
       </div>
       <div class="saved" id="copyMsg"></div>
-    </div>
-  </div>
-
-  <!-- Settings modal -->
-  <div class="modal-bg" id="set-bg">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="設定">
-      <h2>設定</h2>
-      <p class="m-sub">AmazonアソシエイトのトラッキングIDを入れると、買い物リンクにあなたのタグが付きます（任意・端末内にのみ保存）。</p>
-      <label for="tag-input">Amazon アソシエイトタグ</label>
-      <input type="text" id="tag-input" placeholder="yourtag-22" autocomplete="off" spellcheck="false" />
-      <div class="saved" id="tag-saved"></div>
-      <div class="m-row">
-        <button id="tag-clear">クリア</button>
-        <button class="primary" id="tag-save">保存</button>
-      </div>
     </div>
   </div>
 
@@ -342,9 +323,7 @@ function loadSet(key) {
 function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(keyword) {
-  const tag = localStorage.getItem('kit:amazonTag') || 'yzrs_apps-22';
-  const base = 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword);
-  return tag ? base + '&tag=' + encodeURIComponent(tag) : base;
+  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
 }
 function byId(id) { return ITEMS.find(i => i.id === id); }
 
@@ -453,7 +432,6 @@ function cartAsText() {
 
 /* ---------- イベント結線 ---------- */
 const cartBg = document.getElementById('cart-bg');
-const setBg = document.getElementById('set-bg');
 document.getElementById('openCart').addEventListener('click', () => { renderCart(); cartBg.classList.add('open'); });
 document.getElementById('closeCart').addEventListener('click', () => cartBg.classList.remove('open'));
 cartBg.addEventListener('click', e => { if (e.target === cartBg) cartBg.classList.remove('open'); });
@@ -480,25 +458,6 @@ hideOwnedEl.addEventListener('change', () => {
   hideOwned = hideOwnedEl.checked;
   localStorage.setItem('kit:hideOwned', hideOwned ? '1' : '0');
   renderList();
-});
-
-// 設定モーダル
-const tagInput = document.getElementById('tag-input');
-const tagSaved = document.getElementById('tag-saved');
-document.getElementById('gear').addEventListener('click', () => {
-  tagInput.value = localStorage.getItem('kit:amazonTag') || '';
-  tagSaved.textContent = '';
-  setBg.classList.add('open');
-});
-setBg.addEventListener('click', e => { if (e.target === setBg) setBg.classList.remove('open'); });
-document.getElementById('tag-save').addEventListener('click', () => {
-  const v = tagInput.value.trim();
-  if (v) localStorage.setItem('kit:amazonTag', v); else localStorage.removeItem('kit:amazonTag');
-  tagSaved.textContent = '保存しました（リンクに反映）';
-  renderList();          // 買い物リンクへ反映
-});
-document.getElementById('tag-clear').addEventListener('click', () => {
-  localStorage.removeItem('kit:amazonTag'); tagInput.value = ''; tagSaved.textContent = 'クリアしました'; renderList();
 });
 
 /* ---------- 起動 ---------- */
