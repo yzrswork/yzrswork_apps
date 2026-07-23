@@ -40,6 +40,7 @@ function renderSw(app) {
   const varName = app.slug.toUpperCase().replace(/[^A-Z0-9]/g, '_') + '_ASSET_URLS';
   const assets = app.assets.map((a) => `  '${a}'`).join(',\n');
   return `const CACHE_NAME = '${app.slug}-v${app.swVersion}';
+const CACHE_PREFIX = '${app.slug}-';
 const ASSETS = [
 ${assets}
 ];
@@ -60,7 +61,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+        keys
+          .filter((k) => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
       )
     )
   );
