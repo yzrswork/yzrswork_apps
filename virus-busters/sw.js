@@ -1,10 +1,25 @@
-const CACHE='yapps-virus-busters-v1';
-self.addEventListener('install',e=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(caches.open(CACHE).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
-    if(resp&&resp.ok&&new URL(e.request.url).origin===location.origin){c.put(e.request,resp.clone());}
-    return resp;
-  }).catch(()=>r))));
+const CACHE_PREFIXES = ["yapps-virus-busters-"];
+const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))
+    );
+
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(
+      windows
+        .filter((client) => client.url.startsWith(self.registration.scope))
+        .map((client) => client.navigate(RETIRED_URL))
+    );
+  })());
 });
