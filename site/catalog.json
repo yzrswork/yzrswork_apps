@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "name": "や印工務店の道具箱",
+    "baseUrl": "https://apps.yzrswork.com/",
+    "legacyBaseUrl": "https://yzrswork.github.io/yzrswork_apps/"
+  },
+  "featured": {
+    "slug": "fixit",
+    "eyebrow": "いちばん使われているツール",
+    "linkText": "開く -"
+  },
+  "categories": [
+    {
+      "id": "electronics",
+      "name": "電子工作"
+    },
+    {
+      "id": "pc",
+      "name": "自作PC"
+    },
+    {
+      "id": "diy",
+      "name": "DIYと模型"
+    }
+  ],
+  "apps": [
+    {
+      "slug": "kit",
+      "name": "装備ナビ",
+      "description": "電子工作の工具と部品ストックをステップ別にチェック。足りないものだけ買い物リストに集約。",
+      "readmeDescription": "電子工作の工具と部品ストックをステップ別にチェック",
+      "category": "electronics",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "bench",
+      "name": "工房の電卓",
+      "description": "LED抵抗計算、カラーコード読み、555タイマー、電池駆動時間。作業台に常駐する計算ツール集。",
+      "readmeDescription": "LED抵抗、カラーコード、555タイマー、電池駆動時間",
+      "category": "electronics",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "handa",
+      "name": "はんだ付けナビ",
+      "description": "はんだの種類と作業から適正なこて先温度を提示。イモはんだやブリッジのトラブル診断と道具選びつき。",
+      "readmeDescription": "はんだの種類と作業から適正なこて先温度。トラブル診断と道具選びつき",
+      "category": "electronics",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "pinout",
+      "name": "ピンアサインナビ",
+      "description": "Raspberry Pi、Arduino Uno、ESP32のピン配置を色分けで表示。3.3V注意やストラッピングピンの落とし穴つき。",
+      "readmeDescription": "Raspberry Pi、Arduino Uno、ESP32のピン配置を色分け表示。落とし穴つき",
+      "category": "electronics",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "haisen",
+      "name": "配線ナビ(初級)",
+      "description": "ジャックやDCジャック、タクトスイッチ、LEDや電解コンデンサなど、初心者がつまずく部品の端子と極性を色分け表示。テスターでの確かめ方つき。",
+      "readmeDescription": "初心者がつまずく部品の端子と極性を色分け表示。ジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグル、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータ。テスターでの確かめ方つき",
+      "category": "electronics",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "mem",
+      "name": "メモリ選びナビ",
+      "description": "ソケットからDDR規格を確認し、用途から容量を選び、2枚構成で組むための選び方ナビ。",
+      "readmeDescription": "ソケットからDDR規格、用途から容量を選ぶ",
+      "category": "pc",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "hdd",
+      "name": "HDD選びナビ",
+      "description": "WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。NASにSMRを避ける早見つき。",
+      "readmeDescription": "WDの色とCMR/SMR判定",
+      "category": "pc",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "build",
+      "name": "自作PC構成プランナー",
+      "description": "CPU、GPU、ストレージを選ぶと、電源容量の目安と構成サマリーが出る。組み立てチェックリストつき。",
+      "readmeDescription": "構成サマリーと電源容量の目安",
+      "category": "pc",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "usbc",
+      "name": "USB-C見分けナビ",
+      "description": "手持ちのUSB-Cケーブルで何ができるか、用途に必要なのはどれか。W数、転送速度、映像出力を切り分け。",
+      "readmeDescription": "手持ちのUSB-Cケーブルの能力の見分け方と用途からの選び方。W数、転送速度、映像出力",
+      "category": "pc",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "fixit",
+      "name": "直し方ナビ",
+      "description": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期に対応。",
+      "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期)",
+      "category": null,
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "glue",
+      "name": "接着剤選びナビ",
+      "description": "くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かる診断ナビ。素材の見分け方つき。",
+      "readmeDescription": "くっつけたい素材2つから接着剤タイプと推奨製品を診断。見分け方つき",
+      "category": "diy",
+      "managed": true,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "nurerukun",
+      "name": "塗れるくん",
+      "description": "住所を入れるだけで、外壁塗装やDIY塗装ができるタイミングを気温、湿度、露点、降水から判定。",
+      "readmeDescription": "住所から外壁塗装、DIY塗装ができるタイミングを気温、湿度等で判定。PWA",
+      "category": "diy",
+      "managed": false,
+      "sitemapPriority": 0.8
+    },
+    {
+      "slug": "neji",
+      "name": "ねじ下穴ナビ",
+      "description": "タップの下穴、ボルトのバカ穴、木ねじの下穴。ねじのサイズを選ぶだけで開けるドリル径がわかる早見ナビ。",
+      "readmeDescription": "タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見",
+      "category": "diy",
+      "managed": true,
+      "sitemapPriority": 0.8
+    }
+  ],
+  "pages": [
+    {
+      "slug": "about",
+      "name": "運営者について",
+      "readmeDescription": "や印工務店、サイトの成り立ち、お問い合わせ",
+      "readmeOrder": 2,
+      "sitemapPriority": 0.4
+    },
+    {
+      "slug": "privacy",
+      "name": "プライバシーポリシー",
+      "readmeDescription": "GA4、広告、Amazonアソシエイトについて",
+      "readmeOrder": 1,
+      "sitemapPriority": 0.3
+    }
+  ],
+  "retiredApps": [
+    {
+      "slug": "asobou",
+      "name": "あそぼう",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/project/",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-asobou-"
+      ]
+    },
+    {
+      "slug": "fireworks",
+      "name": "花火",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/fireworks.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-fireworks-"
+      ]
+    },
+    {
+      "slug": "grid",
+      "name": "Grid Instrument",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/grid.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-grid-"
+      ]
+    },
+    {
+      "slug": "metronome",
+      "name": "Metronome Watch",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/metronome-watch.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-metronome-"
+      ]
+    },
+    {
+      "slug": "mizu",
+      "name": "Mizu — Watercolor Trace",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/grid_v2.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-mizu-"
+      ]
+    },
+    {
+      "slug": "news",
+      "name": "電子工作通信",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/news.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-news-"
+      ]
+    },
+    {
+      "slug": "otamatone",
+      "name": "OTAMATONE WEB",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/otamatone.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-otamatone-"
+      ]
+    },
+    {
+      "slug": "prompt-forge",
+      "name": "Prompt Forge",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/prompt-forge.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-prompt-forge-"
+      ]
+    },
+    {
+      "slug": "virus-busters",
+      "name": "ウィルスバスターズ",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/virus-busters.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-virus-busters-"
+      ]
+    },
+    {
+      "slug": "yzrsynth",
+      "name": "YZRsynth",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/yzrsynth.html",
+      "destinationLabel": "デジタル作品置き場で開く",
+      "cachePrefixes": [
+        "yapps-yzrsynth-"
+      ]
+    },
+    {
+      "slug": "vault-path",
+      "name": "Vault パスコピ",
+      "destination": "https://apps.yzrswork.com/",
+      "destinationLabel": "道具箱に戻る",
+      "cachePrefixes": [
+        "vault-path-"
+      ],
+      "reason": "個人Vault構造を扱うため公開を終了しました。"
+    }
+  ]
+}

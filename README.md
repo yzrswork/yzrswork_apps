@@ -10,6 +10,7 @@
 
 ## 収録ツール
 
+<!-- BUILD:README-TOOLS:START -->
 | ツール | 説明 | パス |
 |---|---|---|
 | 装備ナビ | 電子工作の工具と部品ストックをステップ別にチェック | `kit/` |
@@ -27,6 +28,7 @@
 | ねじ下穴ナビ | タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見 | `neji/` |
 | プライバシーポリシー | GA4、広告、Amazonアソシエイトについて | `privacy/` |
 | 運営者について | や印工務店、サイトの成り立ち、お問い合わせ | `about/` |
+<!-- BUILD:README-TOOLS:END -->
 
 ## 構成
 
@@ -35,8 +37,21 @@
 - `analytics.js` が全ツール共通のGA4計測(ID未設定時はno-op)
 - `.nojekyll` でGitHub PagesのJekyll処理を無効化
 - `shared/tokens.css` が全ツール共通のデザイントークン(paper系)。各ツールは `<link>` で読み込む(重複定義しない)
-- `scripts/build.mjs` が各ツールの `app.json` から `sw.js` / `manifest.webmanifest` / `<head>`定型部分を生成する(`npm run build`)。生成物は必ずコミットする(Cloudflare Pages / GitHub Pagesともビルドレスでリポジトリ直下を配信するため)。`npm run build:check` はドリフト検知用(CIで実行)
+- `site/catalog.json` が公開ツール、カテゴリ、掲載順、サイトマップ、退役アプリ移転先の正。トップ、READMEの収録表、sitemapをここから生成する
+- `scripts/build.mjs` がcatalogと各ツールの `app.json` から、トップ/README/sitemap、`sw.js`、`manifest.webmanifest`、`<head>`定型部分、退役スタブを生成する(`npm run build`)。生成物は必ずコミットする(Cloudflare Pages / GitHub Pagesともビルドレスでリポジトリ直下を配信するため)
+- `npm run check` が生成ドリフト、catalog整合性、参照アセット、公開状態、全Service Workerの構文とキャッシュ削除範囲を検証する(CIでも実行)
 - `_template/` が新規アプリのひな形。色、フォントは shared/tokens.css を使い、`<head>`は可能なら app.json + build.mjs に乗せる
+
+## 開発
+
+```bash
+npm run build
+npm run check
+```
+
+公開ツールを追加、並べ替え、説明変更するときは、まず `site/catalog.json` を変更してビルドする。生成マーカー内のトップ、README、sitemap、各PWA生成物は直接編集しない。
+
+デジタル作品置き場へ移した旧アプリは、インストール済みPWAのキャッシュを安全に解除するため、最小の `index.html` と `sw.js` だけを旧パスに残している。作品本体の正は `yzrswork_ai-skill-recipe`。
 
 ## GitHub Pages
 

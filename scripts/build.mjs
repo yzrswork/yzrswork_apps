@@ -8,6 +8,11 @@
 //     <!-- BUILD:HEAD:START/END --> <!-- BUILD:BACKLINK:START/END --> の
 //     マーカーコメントで囲まれた区間だけ書き換える。<body>内のアプリ固有
 //     マークアップ、<script>ロジックには一切触れない。
+// site/catalog.json を正として、以下も生成する:
+//   - ルートindex.htmlのツール一覧
+//   - README.mdの収録ツール表
+//   - sitemap.xml
+//   - デジタル作品置き場へ移したアプリの退役index.html / sw.js
 //
 // 使い方: node scripts/build.mjs [--check]
 //   --check: 書き込まず、生成結果と現状ファイルの差分があれば非0で終了(CI用)
@@ -18,6 +23,11 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CHECK = process.argv.includes('--check');
+const CATALOG_PATH = join(ROOT, 'site', 'catalog.json');
+
+function loadCatalog() {
+  return JSON.parse(readFileSync(CATALOG_PATH, 'utf8'));
+}
 
 function listAppDirs() {
   return readdirSync(ROOT, { withFileTypes: true })
@@ -223,6 +233,163 @@ const HEAD_START = '<!-- BUILD:HEAD:START -->';
 const HEAD_END = '<!-- BUILD:HEAD:END -->';
 const BACKLINK_START = '<!-- BUILD:BACKLINK:START -->';
 const BACKLINK_END = '<!-- BUILD:BACKLINK:END -->';
+const CATALOG_START = '<!-- BUILD:CATALOG:START -->';
+const CATALOG_END = '<!-- BUILD:CATALOG:END -->';
+const README_TOOLS_START = '<!-- BUILD:README-TOOLS:START -->';
+const README_TOOLS_END = '<!-- BUILD:README-TOOLS:END -->';
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function renderCatalog(catalog) {
+  const featured = catalog.apps.find((app) => app.slug === catalog.featured.slug);
+  if (!featured) {
+    throw new Error(`featured.slug に対応するアプリがない: ${catalog.featured.slug}`);
+  }
+
+  const lines = [
+    `<a class="featured" href="${escapeHtml(featured.slug)}/">`,
+    `  <span class="f-eyebrow">${escapeHtml(catalog.featured.eyebrow)}</span>`,
+    `  <div class="name">${escapeHtml(featured.name)}</div>`,
+    `  <p class="desc">${escapeHtml(featured.description)}</p>`,
+    `  <span class="go">${escapeHtml(catalog.featured.linkText)}</span>`,
+    `</a>`,
+  ];
+
+  for (const category of catalog.categories) {
+    const apps = catalog.apps.filter((app) => app.category === category.id);
+    lines.push('');
+    lines.push(
+      `<div class="cat-head"><h2>${escapeHtml(category.name)}</h2><span class="cnt">${apps.length} TOOLS</span></div>`
+    );
+    lines.push('<div class="grid">');
+    for (const app of apps) {
+      lines.push(`  <a class="app" href="${escapeHtml(app.slug)}/">`);
+      lines.push(`    <div class="name">${escapeHtml(app.name)}</div>`);
+      lines.push(`    <p class="desc">${escapeHtml(app.description)}</p>`);
+      lines.push('  </a>');
+    }
+    lines.push('</div>');
+  }
+
+  return lines.map((line) => (line ? `  ${line}` : '')).join('\n');
+}
+
+function renderReadmeTools(catalog) {
+  const entries = [
+    ...catalog.apps,
+    ...[...catalog.pages].sort((a, b) => (a.readmeOrder || 0) - (b.readmeOrder || 0)),
+  ];
+  const lines = ['| ツール | 説明 | パス |', '|---|---|---|'];
+  for (const entry of entries) {
+    lines.push(
+      `| ${entry.name} | ${entry.readmeDescription} | \`${entry.slug}/\` |`
+    );
+  }
+  return lines.join('\n');
+}
+
+function renderSitemap(catalog) {
+  const baseUrl = catalog.site.baseUrl;
+  const lines = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    `  <url><loc>${baseUrl}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
+  ];
+  for (const app of catalog.apps) {
+    lines.push(
+      `  <url><loc>${baseUrl}${app.slug}/</loc><changefreq>monthly</changefreq><priority>${app.sitemapPriority}</priority></url>`
+    );
+  }
+  for (const page of catalog.pages) {
+    lines.push(
+      `  <url><loc>${baseUrl}${page.slug}/</loc><priority>${page.sitemapPriority}</priority></url>`
+    );
+  }
+  lines.push('</urlset>');
+  return `${lines.join('\n')}\n`;
+}
+
+function renderRetiredIndex(app) {
+  const reason = app.reason || 'この作品はデジタル作品置き場へ移動しました。';
+  const destination = escapeHtml(app.destination);
+  return `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <meta http-equiv="refresh" content="5;url=${destination}" />
+  <link rel="canonical" href="${destination}" />
+  <title>${escapeHtml(app.name)} — 移転のお知らせ</title>
+  <style>
+    :root { color-scheme: light; --paper:#f0ebe3; --ink:#26211d; --terra:#a54832; --rule:#c9bca9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--paper); color:var(--ink); font-family:"Noto Sans JP",system-ui,sans-serif; }
+    main { width:min(560px,100%); padding:32px; border:1px solid var(--rule); border-radius:14px; background:#fffaf2; box-shadow:0 12px 36px rgba(38,33,29,.08); }
+    h1 { margin:0 0 14px; font-size:clamp(1.4rem,5vw,2rem); }
+    p { line-height:1.8; }
+    a { display:inline-block; margin-top:10px; color:#fff; background:var(--terra); padding:12px 18px; border-radius:8px; font-weight:700; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>${escapeHtml(app.name)}</h1>
+    <p>${escapeHtml(reason)}</p>
+    <p>旧PWAのキャッシュを安全に解除してから移動します。</p>
+    <a href="${destination}">${escapeHtml(app.destinationLabel)}</a>
+  </main>
+  <script>
+    const destination = ${JSON.stringify(app.destination)};
+    const move = () => window.location.replace(destination);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => registration.update())
+        .catch(() => {})
+        .finally(() => window.setTimeout(move, 1800));
+    } else {
+      window.setTimeout(move, 600);
+    }
+  </script>
+</body>
+</html>
+`;
+}
+
+function renderRetiredSw(app) {
+  return `const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};
+const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))
+    );
+
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(
+      windows
+        .filter((client) => client.url.startsWith(self.registration.scope))
+        .map((client) => client.navigate(RETIRED_URL))
+    );
+  })());
+});
+`;
+}
 
 function replaceMarked(html, startMarker, endMarker, content) {
   const startIdx = html.indexOf(startMarker);
@@ -244,17 +411,23 @@ function buildIndexHtml(app) {
   return html;
 }
 
+function normalizeText(content) {
+  return content.replaceAll('\r\n', '\n');
+}
+
 function writeIfChanged(path, content, results) {
   const exists = existsSync(path);
   const current = exists ? readFileSync(path, 'utf8') : null;
-  const changed = current !== content;
+  const normalizedContent = normalizeText(content);
+  const changed = current === null || normalizeText(current) !== normalizedContent;
   results.push({ path, changed, exists });
   if (changed && !CHECK) {
-    writeFileSync(path, content);
+    writeFileSync(path, normalizedContent);
   }
 }
 
 function main() {
+  const catalog = loadCatalog();
   const slugs = listAppDirs();
   const results = [];
   for (const slug of slugs) {
@@ -269,6 +442,29 @@ function main() {
     writeIfChanged(join(app.dir, 'index.html'), html, results);
   }
 
+  const rootIndex = replaceMarked(
+    readFileSync(join(ROOT, 'index.html'), 'utf8'),
+    CATALOG_START,
+    CATALOG_END,
+    renderCatalog(catalog)
+  );
+  writeIfChanged(join(ROOT, 'index.html'), rootIndex, results);
+
+  const readme = replaceMarked(
+    readFileSync(join(ROOT, 'README.md'), 'utf8'),
+    README_TOOLS_START,
+    README_TOOLS_END,
+    renderReadmeTools(catalog)
+  );
+  writeIfChanged(join(ROOT, 'README.md'), readme, results);
+  writeIfChanged(join(ROOT, 'sitemap.xml'), renderSitemap(catalog), results);
+
+  for (const retiredApp of catalog.retiredApps) {
+    const dir = join(ROOT, retiredApp.slug);
+    writeIfChanged(join(dir, 'index.html'), renderRetiredIndex(retiredApp), results);
+    writeIfChanged(join(dir, 'sw.js'), renderRetiredSw(retiredApp), results);
+  }
+
   const changedFiles = results.filter((r) => r.changed);
   if (CHECK) {
     if (changedFiles.length > 0) {
@@ -276,9 +472,13 @@ function main() {
       for (const r of changedFiles) console.error(`  ${r.path}`);
       process.exit(1);
     }
-    console.log(`[build --check] 差分なし。${slugs.length}アプリ確認済み。`);
+    console.log(
+      `[build --check] 差分なし。公開${catalog.apps.length}アプリ、生成対象${slugs.length}アプリ、退役${catalog.retiredApps.length}アプリ確認済み。`
+    );
   } else {
-    console.log(`[build] ${slugs.length}アプリ処理。更新${changedFiles.length}件。`);
+    console.log(
+      `[build] 公開${catalog.apps.length}アプリ、生成対象${slugs.length}アプリ、退役${catalog.retiredApps.length}アプリ処理。更新${changedFiles.length}件。`
+    );
     for (const r of changedFiles) console.log(`  ${r.path}`);
   }
 }

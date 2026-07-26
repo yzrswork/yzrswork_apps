@@ -1,19 +1,25 @@
-var CACHE = 'vault-path-v2';
-var ASSETS = ['./', './index.html', './manifest.json'];
+const CACHE_PREFIXES = ["vault-path-"];
+const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
 
-self.addEventListener('install', function(e) {
-  e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(ASSETS) }).then(function() { return self.skipWaiting() }));
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener('activate', function(e) {
-  e.waitUntil(
-    caches.keys().then(function(keys) { return Promise.all(keys.filter(function(k) { return k !== CACHE }).map(function(k) { return caches.delete(k) })) })
-      .then(function() { return self.clients.claim() })
-  );
-});
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))
+    );
 
-self.addEventListener('fetch', function(e) {
-  var url = new URL(e.request.url);
-  if (url.origin !== location.origin) return;
-  e.respondWith(caches.match(e.request).then(function(r) { return r || fetch(e.request) }));
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(
+      windows
+        .filter((client) => client.url.startsWith(self.registration.scope))
+        .map((client) => client.navigate(RETIRED_URL))
+    );
+  })());
 });
