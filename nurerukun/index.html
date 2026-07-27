@@ -93,6 +93,12 @@
   .affi h2{color:var(--terracotta-deep)}
   .affi .slot{font-size:.86rem; color:var(--muted); padding:8px 0}
   .affi-link{display:inline-block; margin-left:4px; color:var(--terracotta-deep); font-weight:600; text-decoration:underline}
+  .guide h2{font-size:1rem; margin:0 0 10px; color:var(--terracotta-deep)}
+  .guide h3{font-size:.9rem; margin:16px 0 6px}
+  .guide p,.guide li{font-size:.86rem; color:var(--muted)}
+  .guide p{margin:0 0 10px}
+  .guide ul{margin:0; padding-left:1.25rem}
+  .guide li{margin:5px 0}
   .note-cta{display:block; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:13px; border-radius:10px; font-weight:600}
   .muted{color:var(--muted); font-size:.78rem}
   .muted a{color:inherit; text-decoration:underline}
@@ -165,6 +171,20 @@
     </div>
   </div>
 
+  <section class="card guide">
+    <h2>DIY塗装で、天気のどこを見る?</h2>
+    <p>塗装は「雨が降らなければ大丈夫」とは限りません。乾燥中に気温が下がったり、湿度が上がったり、塗る面に結露が出たりすると、乾きの遅れ、白化、密着不良につながります。塗れるくんは、天気予報から次の条件をまとめて確認するための目安ツールです。</p>
+    <ul>
+      <li>気温が低すぎないか、高すぎないか</li>
+      <li>湿度が85%以上になっていないか</li>
+      <li>気温と露点の差が小さく、結露しやすい状態ではないか</li>
+      <li>乾燥時間まで含めて、雨や強い風を避けられるか</li>
+    </ul>
+    <h3>使い方のコツ</h3>
+    <p>住所や地名を検索し、使う塗料が水性か油性かを選びます。「塗れそう」と出ても、実際の外壁、木部、金属面の温度は気温と違うことがあります。日陰、朝露が残る場所、雨上がりは、放射温度計や温湿度計でも確認すると安心です。</p>
+    <p>塗料ごとに施工可能な温度、湿度、乾燥時間は異なります。最後は必ず製品の仕様書と現場の状態を優先してください。表示する道具は、DIYの段取りを助ける候補であり、購入が判定条件になるものではありません。</p>
+  </section>
+
   <!-- note 導線 -->
   <div class="card">
     <a class="note-cta" href="https://note.com/yzrswork" target="_blank" rel="noopener">塗装と段取りの話を note で読む</a>
@@ -174,6 +194,8 @@
   <footer>
     <p class="muted">判定はあくまで目安です。最終判断は作業場所の状況と塗料の仕様書で。</p>
     <p class="muted">天気データ: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 住所検索: 国土地理院</p>
+    <p class="muted">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</p>
+    <p class="muted"><a href="../privacy/">プライバシーポリシー</a></p>
   </footer>
 </div>
 
@@ -245,7 +267,7 @@ const PAINT_NOTE_OIL = '油性(溶剤系)は気温や湿度の影響を比較的
    - 商品追加は asin と linkId(SiteStripeのリンクから)を足すだけ。
    ============================================================ */
 const AFF = {
-  tag: "yzrswork-22",  // アソシエイトタグ。空にするとリンクを出さない
+  tag: "yzrs_apps-22",  // yzrswork_apps専用タグ。空にするとリンクを出さない
   dry: {  // スロット① 乾燥管理
     lead: "乾燥管理に、これがあると安心:",
     normal: [
