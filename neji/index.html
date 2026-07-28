@@ -130,6 +130,7 @@
   /* ── Tabs ─────────────────────── */
   .tabs { display: flex; gap: 8px; margin: 20px 0 22px; flex-wrap: wrap; }
   .tab {
+    min-height: 44px;
     font-family: var(--jp); font-size: 13.5px; font-weight: 500;
     padding: 9px 16px; border-radius: 20px; cursor: pointer;
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
@@ -149,6 +150,7 @@
   /* ── Size / material picker chips ───────────── */
   .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
   .matchip {
+    min-height: 44px;
     font-family: var(--jp); font-size: 13px; text-align: left;
     padding: 9px 13px; border-radius: 9px; cursor: pointer;
     border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
@@ -161,6 +163,7 @@
 
   .condgrid { display: flex; flex-wrap: wrap; gap: 8px; }
   .condchip {
+    min-height: 44px;
     font-family: var(--jp); font-size: 12.5px; font-weight: 500;
     padding: 7px 13px; border-radius: 20px; cursor: pointer;
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
@@ -334,10 +337,10 @@
 
     <section class="about">
       <h2>「下穴、何ミリだっけ」を毎回調べ直す問題</h2>
-      <p>M6のタップを立てるのに、その都度スマホで「M6 タップ 下穴」と検索していないでしょうか。この検索、実は結構危険です。ネット上には並目と細目が混ざった表、単位を間違えた表、そもそも出典不明の数字がいくつも転がっています。タップ下穴は1本間違えると被害が大きい寸法です。下穴が小さすぎればタップに大きな負荷がかかって折れ、折れたタップは超硬合金並みに硬いため素材の中からほぼ抜けなくなります。逆に下穴が大きすぎるとねじ山の高さが足りず、締めても空転したりナメたりします。毎回検索し直す手間と、誤った数字を掴んでしまうリスクの両方を減らしたくて、このツールを作りました。</p>
-      <p>タップ下穴の原則はシンプルで、「下穴径 ＝ 呼び径 − ピッチ」という引き算だけです。これは幾何学的にねじ山が100%の高さで立つ計算になりますが、実務では100%山を狙うと抵抗が大きくタップが折れやすくなるため、75%山前後を狙うのが一般的とされています。柔らかいアルミや樹脂はやや大きめの下穴、鉄やステンレスのような硬い材は表通りかやや小さめ、という調整も併記しました。バカ穴(通し穴)側は逆に「ねじ山を切らず、ボルトがすっと通ればいい」穴なので、JIS B 1001が呼び径に対して1級(密)、2級(中)、3級(粗)の3段階の隙間を規定しています。位置精度が必要な組付けには1級、普段のDIYや電子工作なら2級で十分、という使い分けです。</p>
+      <p>M6のタップを立てるのに、その都度スマホで「M6 タップ 下穴」と検索していないでしょうか。ネット上には並目と細目が混ざった表、単位を間違えた表、出典不明の数字もあります。下穴が小さすぎればタップの負荷が増えて折損し、折れたタップの除去は難しい作業になります。逆に下穴が大きすぎると有効なねじ山が不足します。毎回検索し直す手間と、根拠が不明な数字を使うリスクの両方を減らすために、このツールを作りました。</p>
+      <p>タップ下穴の「呼び径 − ピッチ」は、並目でよく使われる簡便な目安です。実際にはねじ精度、タップ形状、被削材、ねじ込み長さなどによって許容下穴径に幅があるため、使用するタップメーカーの下穴表を優先します。特に高硬度材や加工負荷が高い条件では、許容範囲内で下穴を大きめにして切削負荷を軽くする場合があり、「硬い材ほど小さくする」という一律の調整はしません。バカ穴(通し穴)側は逆に「ねじ山を切らず、ボルトが通る」ための穴で、必要な位置精度と組立余裕に応じて穴径を選びます。</p>
       <p>木ねじの下穴は、金属用タップとは発想がまったく違います。金属ねじの下穴は「ねじ山を切るための溝」ですが、木ねじの下穴は「木材が割れるのを防ぐための逃がし」です。木は繊維方向に力がかかると簡単に裂けるため、下穴なしで木ねじを打つと、特に端部や硬い材で割れが起きます。目安として、SPFや杉、パインのような軟材はねじ径の60〜70%、オークや集成材、ラワンのような硬材は70〜90%(ねじの谷径に近い径)を下穴にする、という係数で考えます。これは測量や工務の現場でも、標識や仮設物を木材に留める場面でそのまま使える小ネタです。</p>
-      <p>結論として、このツールが出す数字はすべて「目安」です。材質のロット差、ドリルの摩耗、木材の含水率で最適な下穴径は前後します。本番の材で1本開ける前に、必ず端材で試し穴を開けて締まり具合を確かめてください。タップ作業では切削油を使うとタップ寿命が延び、木ねじ作業では頭を沈めたい場合に皿取り(面取り)をひと手間加えると仕上がりが安定します。</p>
+      <p>結論として、このツールが出す数字はすべて「目安」です。材質のロット差、ドリルの摩耗、木材の含水率で最適な下穴径は前後します。本番の材で1本開ける前に、端材で試し穴を開けて締まり具合を確かめてください。タップ作業では被削材とタップに適合する切削油を選び、木ねじ作業ではねじメーカーの下穴案内も優先します。頭を沈めたい場合は皿取り(面取り)の適否も確認してください。タップ下穴の考え方は、OSGの<a href="https://www.osg.co.jp/media_dl/mail_magazine/2017/01/133.html" target="_blank" rel="noopener noreferrer">技術情報「タップ下穴径」</a>と<a href="https://faq.osg.co.jp/faq/show/8323" target="_blank" rel="noopener noreferrer">FAQ「下穴径を大きくするメリット」</a>も参照してください。</p>
     </section>
 
     <footer>
@@ -346,6 +349,15 @@
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
       </div>
       <div><!-- BUILD:BACKLINK:START -->
+<nav class="yapps-related" aria-label="関連情報">
+  <span class="yapps-related-label">次に使える道具</span>
+  <div class="yapps-related-links">
+    <a href="../glue/" data-related-slug="glue">接着剤選びナビ</a>
+    <a href="../nurerukun/" data-related-slug="nurerukun">塗れるくん</a>
+    <a href="../kit/" data-related-slug="kit">装備ナビ</a>
+  </div>
+  <a class="yapps-source-note" href="https://note.com/yzrswork/n/nb0529c27f4a4" target="_blank" rel="noopener noreferrer">実作例: 2mm下穴から109個の穴を広げた記録 ↗</a>
+</nav>
 <a href="../">← 道具箱（ほかの実用ツール）</a>
 <!-- BUILD:BACKLINK:END --></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
@@ -494,20 +506,20 @@ function renderTapResult() {
   let html = `
     <div class="card solution" style="margin-top:16px;">
       <div class="kicker">${esc(tapSize)} ${tapFine ? '細目' : '並目'}(ピッチ ${esc(fmt(pitch))}mm)</div>
-      <p class="qtext">推奨下穴径</p>
+      <p class="qtext">下穴径の目安</p>
       <div class="bignum">${esc(fmt(headline))}<span class="unit">mm</span></div>
       <div class="subnum">計算値 = 呼び径 ${esc(fmt(major))} − ピッチ ${esc(fmt(pitch))} = ${esc(fmt(exact))}mm${marketDrill !== null ? `（市販ドリル径は ${esc(fmt(marketDrill))}mm に丸め）` : ''}</div>
       <div class="formula-box">下穴径 ＝ 呼び径 − ピッチ</div>
       <ul class="cautions">
-        <li>完全ねじ山(100%)ではなく、実務ではねじ山75%前後を狙うのが一般的です。表の値はこの前提での目安です。</li>
-        <li>柔らかい材(アルミ、樹脂)はやや大きめ、硬い材(鉄、SUSなど)は表通りかやや小さめに調整してください。</li>
-        <li>下穴が大きすぎるとねじ山が持たず、小さすぎるとタップが折れます。切削油を使うとタップの寿命が延びます。</li>
+        <li>「呼び径 − ピッチ」は一般的な簡便目安です。許容下穴径には幅があるため、使用するタップメーカーの下穴表を優先してください。</li>
+        <li>高硬度材や加工負荷が高い条件では、許容範囲内で下穴を大きめにして切削負荷を軽くする場合があります。材質だけで一律に小さくしないでください。</li>
+        <li>下穴が大きすぎると有効なねじ山が不足し、小さすぎるとタップの負荷が増えます。被削材とタップに適合する切削油は、切削抵抗や焼き付きを抑える助けになります。</li>
         ${tapFine ? '<li>細目ピッチは並目より許容範囲がシビアです。ここでは計算値を表示しています。実在するドリル径(0.05mm刻みなど)に丸めて使ってください。</li>' : ''}
       </ul>
     </div>`;
 
   html += `
-    <div class="plabel">並目タップ下穴 早見表(検証済み)</div>
+    <div class="plabel">並目タップ下穴 早見表(一般目安)</div>
     <div class="tbl-scroll"><table class="lookup">
       <tr><th>呼び径</th><th>ピッチ</th><th>計算値</th><th>市販ドリル径</th></tr>
       ${SIZES.map(s => {

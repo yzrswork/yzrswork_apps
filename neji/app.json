@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "タップ下穴・バカ穴・木ねじ下穴の径を、ねじサイズから即座に表示。オフライン早見表。",
   "hasServiceWorker": true,
-  "swVersion": 1,
+  "swVersion": 2,
   "assets": [
     "./",
     "./index.html",

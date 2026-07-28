@@ -224,9 +224,37 @@ function renderHead(app) {
   return lines.join('\n');
 }
 
-function renderBackLink(app) {
+function renderBackLink(app, catalog) {
   if (!app.backLink) return '';
-  return `<a href="${app.backLink.href}">${app.backLink.text}</a>`;
+
+  const catalogApp = catalog.apps.find((entry) => entry.slug === app.slug);
+  const related = (catalogApp?.related || [])
+    .map((slug) => catalog.apps.find((entry) => entry.slug === slug))
+    .filter(Boolean);
+  const lines = [];
+
+  if (related.length > 0 || catalogApp?.sourceNote) {
+    lines.push('<nav class="yapps-related" aria-label="関連情報">');
+    if (related.length > 0) {
+      lines.push('  <span class="yapps-related-label">次に使える道具</span>');
+      lines.push('  <div class="yapps-related-links">');
+      for (const entry of related) {
+        lines.push(
+          `    <a href="../${escapeHtml(entry.slug)}/" data-related-slug="${escapeHtml(entry.slug)}">${escapeHtml(entry.name)}</a>`
+        );
+      }
+      lines.push('  </div>');
+    }
+    if (catalogApp?.sourceNote) {
+      lines.push(
+        `  <a class="yapps-source-note" href="${escapeHtml(catalogApp.sourceNote.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(catalogApp.sourceNote.label)} ↗</a>`
+      );
+    }
+    lines.push('</nav>');
+  }
+
+  lines.push(`<a href="${app.backLink.href}">${app.backLink.text}</a>`);
+  return lines.join('\n');
 }
 
 const HEAD_START = '<!-- BUILD:HEAD:START -->';
@@ -254,7 +282,7 @@ function renderCatalog(catalog) {
   }
 
   const lines = [
-    `<a class="featured" href="${escapeHtml(featured.slug)}/">`,
+    `<a class="featured" id="trouble" href="${escapeHtml(featured.slug)}/">`,
     `  <span class="f-eyebrow">${escapeHtml(catalog.featured.eyebrow)}</span>`,
     `  <div class="name">${escapeHtml(featured.name)}</div>`,
     `  <p class="desc">${escapeHtml(featured.description)}</p>`,
@@ -266,7 +294,7 @@ function renderCatalog(catalog) {
     const apps = catalog.apps.filter((app) => app.category === category.id);
     lines.push('');
     lines.push(
-      `<div class="cat-head"><h2>${escapeHtml(category.name)}</h2><span class="cnt">${apps.length} TOOLS</span></div>`
+      `<div class="cat-head" id="category-${escapeHtml(category.id)}"><h2>${escapeHtml(category.name)}</h2><span class="cnt">${apps.length} TOOLS</span></div>`
     );
     lines.push('<div class="grid">');
     for (const app of apps) {
@@ -402,11 +430,11 @@ function replaceMarked(html, startMarker, endMarker, content) {
   return `${before}\n${content}\n${after}`;
 }
 
-function buildIndexHtml(app) {
+function buildIndexHtml(app, catalog) {
   let html = readFileSync(join(app.dir, 'index.html'), 'utf8');
   html = replaceMarked(html, HEAD_START, HEAD_END, renderHead(app));
   if (app.backLink) {
-    html = replaceMarked(html, BACKLINK_START, BACKLINK_END, renderBackLink(app));
+    html = replaceMarked(html, BACKLINK_START, BACKLINK_END, renderBackLink(app, catalog));
   }
   return html;
 }
@@ -438,7 +466,7 @@ function main() {
     if (app.hasManifest) {
       writeIfChanged(join(app.dir, app.manifestFile || 'manifest.webmanifest'), renderManifest(app), results);
     }
-    const html = buildIndexHtml(app);
+    const html = buildIndexHtml(app, catalog);
     writeIfChanged(join(app.dir, 'index.html'), html, results);
   }
 

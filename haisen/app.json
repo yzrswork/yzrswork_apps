@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。オフライン早見リファレンス。",
   "hasServiceWorker": true,
-  "swVersion": 1,
+  "swVersion": 3,
   "assets": [
     "./",
     "./index.html",

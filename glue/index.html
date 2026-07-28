@@ -130,6 +130,7 @@
   /* ── Tabs ─────────────────────── */
   .tabs { display: flex; gap: 8px; margin: 20px 0 22px; }
   .tab {
+    min-height: 44px;
     font-family: var(--jp); font-size: 13.5px; font-weight: 500;
     padding: 9px 16px; border-radius: 20px; cursor: pointer;
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
@@ -149,6 +150,7 @@
   /* ── Material picker chips ───────────── */
   .matgrid { display: flex; flex-wrap: wrap; gap: 8px; }
   .matchip {
+    min-height: 44px;
     font-family: var(--jp); font-size: 13px; text-align: left;
     padding: 9px 13px; border-radius: 9px; cursor: pointer;
     border: 1px solid var(--rule-soft); background: var(--card); color: var(--ink);
@@ -162,6 +164,7 @@
 
   .condgrid { display: flex; flex-wrap: wrap; gap: 8px; }
   .condchip {
+    min-height: 44px;
     font-family: var(--jp); font-size: 12.5px; font-weight: 500;
     padding: 7px 13px; border-radius: 20px; cursor: pointer;
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
@@ -329,9 +332,9 @@
     <section class="about">
       <h2>なぜ素材で接着剤を変えるのか</h2>
       <p>「接着剤」は1本あれば何でもくっつく、と思って買うと、たいてい痛い目を見ます。プラモデルの合わせ目に瞬間接着剤を盛って表面が荒れたり、ポリキャップにどんな接着剤を使っても数日で剥がれたり。原因は、素材によって「くっつき方」がまったく違うからです。大きく分けると2種類あります。ひとつは、PS(ポリスチレン)同士のように、接着剤で貼るのではなく樹脂そのものを溶剤で溶かして一体化させる「溶剤溶着」。もうひとつは、金属やガラス、木材と異素材のように、溶剤では溶けない素材を、接着剤という別の層で機械的に貼り合わせる「機械的接着」です。この違いを知らずに製品を選ぶと、強度が出なかったり、逆に素材そのものを傷めたりします。</p>
-      <p>溶剤溶着が使える代表がPSとABSです。プラモデルのタミヤセメントやMr.セメントは、接着剤というより「PSやABSを溶かす薬品」で、乾けば元と同じ樹脂として一体化するため、他のどんな接着剤よりも強く仕上がります。ただしABSはラッカー系の溶剤に弱く、塗装済みの面や特定の薬品でケミカルクラックというひび割れを起こすことがあるため注意が必要です。逆に、ポリキャップやタッパーに使われるPE、PPは表面エネルギーが低く、接着剤がそもそも表面で濡れずに弾かれてしまうため、プライマー(下地処理剤)とセットになった専用品以外はほぼ効きません。同じ「プラスチック」でも中身が違えば正解の道具がまったく違う、というのがこの分野の分かりにくさです。</p>
+      <p>溶剤溶着が使える代表がPSとABSです。プラモデル用セメントは対応する樹脂の表面を溶かして一体化するため、適合する未塗装材同士の接合では有力な方法です。ただし、荷重が接合面を引きはがす「剥離」方向に繰り返しかかる箇所や、着脱・再作業が必要な箇所では、接着剤だけに頼らない固定も検討します。ABSは溶剤でケミカルクラックを起こす場合があるため、製品の適合表示と端材試験が必要です。逆に、ポリキャップやタッパーに使われるPE、PPは表面エネルギーが低い難接着素材です。プライマーとセットの専用品でも、用途、荷重、屋外適合を製品表示で確認してください。</p>
       <p>この使い分けの多くは、プラモデルを作る人たちの文化から学びました。ガンプラの関節がABS、ボディの大部分がPSと分けて成形されているのも、可動と見た目それぞれに向いた樹脂を使い分けているからです。合わせ目を消すのに「流し込みタイプ」を選ぶ、クリアパーツには白化(接着面が白く曇る現象)を避けて水性の接着剤を選ぶ、といった知恵は、模型誌やモデラーの間で長年積み重ねられてきたものです。このナビは、そうした素材ごとの相性を、模型以外の日用品や工作にもそのまま当てはめられる形に整理したものです。</p>
-      <p>接着剤選びで失敗しないコツは、結局のところ「素材を正しく特定すること」と「目立たない場所で試してから本番に使うこと」の2つです。溶剤系の接着剤を使う時は必ず換気をしながら作業してください。このツールで示す組み合わせは代表的なパターンで、実際の製品には対応素材の表示があるので、購入前にパッケージも確認することをおすすめします。</p>
+      <p>接着剤選びでは「素材」「荷重方向」「着脱・再作業の有無」を先に確認します。位置決めが難しい作業は、少量の瞬間接着剤や両面テープで仮固定し、適合する本固定材で受け持たせる方法もあります。<a href="https://note.com/yzrswork/n/nc614297f457f" target="_blank" rel="noopener noreferrer">Re:Drive製作の実例</a>では、部位と再作業性に応じて2液エポキシとスポンジ両面テープを使い分けています。ここで示すのは代表例なので、目立たない場所や端材で試し、購入前・施工前に製品ラベルの対応素材、使用環境、硬化時間を確認してください。溶剤系を使う時は必ず換気してください。</p>
     </section>
 
     <footer>
@@ -340,6 +343,15 @@
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
       </div>
       <div><!-- BUILD:BACKLINK:START -->
+<nav class="yapps-related" aria-label="関連情報">
+  <span class="yapps-related-label">次に使える道具</span>
+  <div class="yapps-related-links">
+    <a href="../nurerukun/" data-related-slug="nurerukun">塗れるくん</a>
+    <a href="../neji/" data-related-slug="neji">ねじ下穴ナビ</a>
+    <a href="../kit/" data-related-slug="kit">装備ナビ</a>
+  </div>
+  <a class="yapps-source-note" href="https://note.com/yzrswork/n/nc614297f457f" target="_blank" rel="noopener noreferrer">実作例: エポキシと両面テープの使い分け ↗</a>
+</nav>
 <a href="../">← 道具箱（ほかの実用ツール）</a>
 <!-- BUILD:BACKLINK:END --></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
@@ -378,6 +390,9 @@ function matLabel(id) { const m = MATERIALS.find(x => x.id === id); return m ? m
 const CONDITIONS = [
   { id: 'clear_finish', label: '透明に仕上げたい' },
   { id: 'strength',     label: '強度重視' },
+  { id: 'peel',         label: '端から剥がす力がかかる' },
+  { id: 'removable',    label: 'あとで外す・やり直す' },
+  { id: 'staged',       label: '仮固定してから本固定' },
   { id: 'outdoor',      label: '屋外、水がかかる' },
   { id: 'fast',         label: 'とにかく速く' },
   { id: 'gap',          label: '隙間を埋めたい' }
@@ -416,10 +431,10 @@ function baseRule(a, b) {
     return {
       key: 'pepp',
       title: '難接着素材の組み合わせです',
-      principle: 'PE(ポリエチレン)、PP(ポリプロピレン)は表面エネルギーが低く、接着剤が表面で濡れずにほとんど接着しません。プライマー(下地処理剤)とセットになった専用品以外は基本的に効かないと考えてください。',
+      principle: 'PE(ポリエチレン)、PP(ポリプロピレン)は表面エネルギーが低く、多くの一般用接着剤では十分な接着強度を得にくい素材です。PE・PPへの適合を明記した専用品と、指定されたプライマーや表面処理を組み合わせてください。',
       products: [P.aronAlphaPrimer, P.cemedinePPX],
       cautions: [
-        'プライマーを先に塗って乾かしてから接着剤を塗るのが前提の製品です。プライマーを省くとすぐ剥がれます。',
+        'プライマー併用が指定された製品では、塗布・乾燥・接着の順序と時間を取扱説明書どおりに守ってください。省略すると設計された性能が得られません。',
         '接着面はできるだけ広く取り、荷重がかかる箇所は接着だけに頼らず、はめ込みなど機械的な固定も検討してください。'
       ]
     };
@@ -439,8 +454,8 @@ function baseRule(a, b) {
   if (both('ps')) {
     return {
       key: 'ps-ps',
-      title: 'PS同士 — プラセメントによる溶剤溶着が最強です',
-      principle: '接着剤で貼るのではなく、溶剤でPSそのものを溶かして一体化させる「溶剤溶着」です。硬化後は同じ樹脂として繋がるため、他のどの接着剤よりも強く仕上がります。',
+      title: 'PS同士 — 適合する未塗装材なら溶剤溶着が第一候補です',
+      principle: '溶剤でPSの表面を溶かして一体化させる「溶剤溶着」です。適合する未塗装のPS同士を十分な面積で接合する用途に向きますが、剥離荷重や可動部、再分解が必要な箇所には別の固定方法も検討してください。',
       products: [P.tamiyaCement, P.tamiyaFlow, P.mrCementS, P.tamiyaLimonene],
       cautions: [
         '有機溶剤でPSを溶かして接着するため、換気をしながら作業してください。',
@@ -538,7 +553,7 @@ function baseRule(a, b) {
     return {
       key: 'clear',
       title: 'クリアパーツが絡む組み合わせです',
-      principle: 'クリアパーツは接着剤の白化（接着面が白く曇る現象）が目立ちやすい素材です。白化しない水性のセメダイン ハイグレード模型用が定番で、エポキシ系も透明な仕上がりになります。',
+      principle: 'クリアパーツは接着剤の白化（接着面が白く曇る現象）が目立ちやすい素材です。水性の模型用接着剤など、製品表示で透明部品への適合を確認できるものが候補です。エポキシ系も製品によって色味や黄変、気泡の出方が異なります。',
       products: [P.cemedineHighGrade, P.epoxy],
       cautions: ['瞬間接着剤は硬化時に白化（ブルーミング）が起きやすいため、目立つ面には避けるか、目立たない場所で試してから使ってください。']
     };
@@ -556,19 +571,44 @@ function baseRule(a, b) {
 function conditionNotes(conds, ruleKey) {
   const notes = [];
   if (conds.has('outdoor')) {
-    notes.push('屋外、水がかかる場所なら、セメダイン スーパーXかエポキシ系のような耐水性のある接着剤を優先してください。');
+    if (ruleKey === 'pepp' || ruleKey === 'foam') {
+      notes.push('この素材は候補が限られます。一般的な屋外用接着剤へ置き換えず、素材への適合と耐水・耐候表示を両方満たす専用品だけを選んでください。');
+    } else {
+      notes.push('屋外や水がかかる場所では、素材への適合に加えて耐水・耐候表示がある製品を選んでください。水中、常時湿潤、紫外線、温度変化への適合は別項目です。');
+    }
   }
   if (conds.has('fast')) {
-    notes.push('とにかく速く仕上げたいなら、瞬間接着剤（数十秒で硬化）か、プラセメントの流し込みタイプ（速乾）を優先してください。');
+    notes.push('速硬化品でも、初期固定時間と実用強度に達する時間は製品・塗布量・温湿度で異なります。ラベル記載の保持時間と完全硬化時間を確認し、急いで荷重をかけないでください。');
   }
   if (conds.has('gap')) {
-    notes.push('隙間があるなら、垂れにくいゼリー状瞬間接着剤か、パテのように盛れるエポキシ系を優先してください。');
+    if (ruleKey === 'pepp' || ruleKey === 'foam') {
+      notes.push('隙間があっても一般的なゼリー状瞬間接着剤やエポキシへ置き換えず、この素材への適合表示がある充填可能な専用品を確認してください。');
+    } else {
+      notes.push('隙間がある場合は、素材に適合し、充填できる粘度・硬化方式の製品を候補にしてください。隙間の大きさが製品の許容範囲内かも確認します。');
+    }
   }
   if (conds.has('strength')) {
-    notes.push('強度を重視するなら、瞬間接着剤よりエポキシ系（2液性）を優先してください。硬化後の強度に優れます。');
+    notes.push('「強度」は引張・せん断・剥離・衝撃で別です。製品の強度値だけでなく、実際の荷重方向と接着面積、母材への適合を優先してください。');
+  }
+  if (conds.has('peel')) {
+    notes.push('端からめくる剥離荷重は接着層に厳しい条件です。接着面を広げ、弾性のある適合品や、ねじ・はめ込み・バンドなどの機械固定との併用を検討してください。');
+  }
+  if (conds.has('removable')) {
+    notes.push('あとで外す・やり直す必要があるなら、永久接着より、ねじ・面ファスナー・再剥離テープなどを優先してください。接着剤を使う場合は除去方法と母材への影響を先に確認します。');
+  }
+  if (conds.has('staged')) {
+    if (ruleKey === 'pepp' || ruleKey === 'foam') {
+      notes.push('この素材では一般的な瞬間接着剤や両面テープを仮固定候補に混ぜません。治具・クリップなど接着面を汚さない機械的な位置決めを使い、本固定は素材適合品だけで行ってください。');
+    } else {
+      notes.push('位置決めには少量の瞬間接着剤や両面テープを使い、本固定は荷重を受け持つ適合材で行う方法があります。仮固定材が本固定材の接着面を塞がないよう、点や端に限定してください。');
+    }
   }
   if (conds.has('clear_finish') && ruleKey !== 'clear') {
-    notes.push('透明に仕上げたいなら、白化しない水性のセメダイン ハイグレード模型用が定番です。瞬間接着剤は白化のリスクがあるため、目立つ面では避けるか目立たない場所で試してください。');
+    if (ruleKey === 'pepp' || ruleKey === 'foam') {
+      notes.push('透明さより素材適合を優先してください。対応専用品の中に透明硬化の表示がある場合だけ候補にし、端材で白化・変色・溶損を確認します。');
+    } else {
+      notes.push('透明仕上げでは、素材適合に加えて透明硬化・白化・黄変の表示を確認してください。瞬間接着剤やエポキシも製品と条件により曇りや色味が出るため、目立たない場所で試します。');
+    }
   }
   return notes;
 }

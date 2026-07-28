@@ -20,3 +20,60 @@
   --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
 }
+
+/* ビルド生成の共通「次に使える道具」導線。各アプリ固有CSSと衝突しない接頭辞に限定。 */
+.yapps-related {
+  display: grid;
+  gap: 9px;
+  width: 100%;
+  margin: 8px 0 12px;
+  padding: 14px;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+}
+
+.yapps-related-label {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.yapps-related-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 7px;
+}
+
+.yapps-related .yapps-related-links a,
+.yapps-related .yapps-source-note {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 9px 11px;
+  color: var(--ink);
+  font-family: var(--jp);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+  text-decoration: none;
+  background: var(--paper);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+}
+
+.yapps-related .yapps-source-note {
+  color: var(--terracotta-deep);
+  font-weight: 500;
+}
+
+.yapps-related a:hover,
+.yapps-related a:focus-visible {
+  color: var(--terracotta-deep);
+  border-color: var(--terracotta);
+  outline: none;
+}

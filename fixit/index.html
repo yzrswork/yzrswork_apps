@@ -198,6 +198,9 @@
     text-transform: uppercase;
   }
   .crumb .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     background: none;
     border: 1px solid var(--rule-soft);
     border-radius: 6px;
@@ -358,6 +361,55 @@
   .affiliate:hover { background: var(--terracotta); }
   .affiliate .sub { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; opacity: 0.7; margin-top: 3px; letter-spacing: 0.04em; }
 
+  /* ── Static safety guides ────────────── */
+  .static-guides {
+    margin-top: 38px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .static-guides > h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.4;
+  }
+  .static-guides > p {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  .guide-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .safety-guide {
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid var(--rule-soft);
+    border-radius: 10px;
+    padding: 16px 17px;
+  }
+  .safety-guide h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .safety-guide p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+  .safety-guide a {
+    color: var(--terracotta);
+    text-underline-offset: 3px;
+  }
+  .safety-guide .guide-note {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
   /* ── Footer ──────────────────────────── */
   footer {
     margin-top: 40px;
@@ -395,12 +447,44 @@
 
     <div id="app"></div>
 
+    <section class="static-guides" aria-labelledby="safety-guides-title">
+      <h2 id="safety-guides-title">4つのトラブル：安全な確認順</h2>
+      <p>診断を始める前に読める、データ消失やセキュリティ低下を避けるための要点です。</p>
+      <div class="guide-grid">
+        <article class="safety-guide" id="guide-yahoo-mail">
+          <h3>Yahoo!メールがiPhoneで送受信できない</h3>
+          <p>パスワード要求を何度も繰り返さず、まずブラウザでYahoo! JAPAN公式へログインできるか確認します。次に公式ヘルプの最新値と照合し、IMAP・SMTPの利用許可、サーバー名、SSL、認証情報を一項目ずつ確認してください。IDやパスワードをこのサイトへ入力する必要はありません。</p>
+        </article>
+        <article class="safety-guide" id="guide-win-share">
+          <h3>Windows 11の共有フォルダーに接続できない</h3>
+          <p>信頼できる家庭内・社内ネットワークであることを確かめ、ネットワーク検出、ファイル共有、相手PCの資格情報を順に確認します。権限は特定ユーザーへ必要最小限だけ付与し、SMB1・安全でないゲストアクセス・IP帯全体の信頼設定を安易に有効化しないでください。</p>
+        </article>
+        <article class="safety-guide" id="guide-pc-beep">
+          <h3>自作PCが起動せずビープ音が鳴る</h3>
+          <p>電源を切ってコンセントを抜き、マザーボードの説明書でビープコードを確認してから、メモリ、GPU、補助電源、既知正常なケーブルやモニターを切り分けます。HDMIセレクターで再発しなくなった例はありますが、EDIDや信号タイミングが原因だったかは未検証です。</p>
+        </article>
+        <article class="safety-guide" id="guide-obsidian-sync">
+          <h3>ObsidianのiCloud同期がおかしい</h3>
+          <p>編集を止め、同期先ではない場所へ保管庫全体をバックアップして、読めることを確認してから診断します。Obsidian公式はiCloudをmacOS・iOS・iPadOS向けとし、Windows上のiCloud Driveでは重複や破損の恐れを案内しています。設定やプラグインを含む <code>.obsidian</code> は削除せず、Apple Accountのサインアウトも通常の解決手順にしません。</p>
+          <span class="guide-note"><a href="https://obsidian.md/help/sync-notes" target="_blank" rel="noopener noreferrer">Obsidian公式：端末間の同期</a> ／ <a href="https://obsidian.md/help/backup" target="_blank" rel="noopener noreferrer">バックアップ</a> ／ <a href="https://note.com/yzrswork/n/nbdf94c650c6c" target="_blank" rel="noopener noreferrer">過去記事（現在は非推奨手順の追記あり）</a></span>
+        </article>
+      </div>
+    </section>
+
     <footer>
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
       </div>
       <div id="footer-parent-link"><!-- BUILD:BACKLINK:START -->
+<nav class="yapps-related" aria-label="関連情報">
+  <span class="yapps-related-label">次に使える道具</span>
+  <div class="yapps-related-links">
+    <a href="../build/" data-related-slug="build">自作PC構成プランナー</a>
+    <a href="../mem/" data-related-slug="mem">メモリ選びナビ</a>
+    <a href="../hdd/" data-related-slug="hdd">HDD選びナビ</a>
+  </div>
+</nav>
 <a href="../">← 道具箱（ほかの実用ツール）</a>
 <!-- BUILD:BACKLINK:END --></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
@@ -572,7 +656,7 @@ const TREES = {
   'win-share': {
     num: '02',
     title: 'Windows11 24H2で共有フォルダに繋がらない',
-    sub: '24H2で認証が厳しくなった共有トラブルの切り分け',
+    sub: '元記事の環境で起きた共有トラブルを、安全な確認順で切り分け',
     article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' },
     start: 'w0',
     nodes: {
@@ -697,9 +781,8 @@ const TREES = {
         text: '残りの複合要因をつぶします',
         text2: '原因は1つとは限りません。よくあるのは「資格情報・Function Discovery・セキュリティソフト」の3つ重なりです。',
         steps: [
-          'セキュリティソフト（ESET等）のファイアウォールでSMB／ファイル共有が遮断されていないか',
-          '相手PC（やNAS・複合機）のIPを「信頼ゾーン」に追加する',
-          '共有フォルダのアクセス権に「Everyone」の変更権限があるか',
+          'セキュリティソフト（ESET等）のファイアウォールでSMB／ファイル共有が遮断されていないか、製品の公式ヘルプで確認する。IPやサブネット全体を安易に「信頼済み」にしない',
+          '共有のアクセス許可とNTFSの「セキュリティ」を両方確認し、必要な特定ユーザーだけに必要最小限の権限を付ける。「Everyone」に変更権限を与える方法は通常の解決策にしない',
           '共有名に全角文字が入っていないか（半角英数推奨）',
           'Function Discoveryが再起動で「手動」に戻っていないか（「自動」と「自動(遅延開始)」を切替）',
           'Windows 11同士の共有ではSMB1を有効にしない。SMB1は非推奨で、古い機器が明示的に要求する場合だけ隔離環境で検討する',
@@ -708,26 +791,25 @@ const TREES = {
         links: [{ label: 'Microsoft公式：SMB1は既定で未導入・非推奨', url: 'https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/smbv1-not-installed-by-default-in-windows' }],
         options: [
           { label: '繋がった！', next: 'wWin', style: 'primary' },
-          { label: '毎回の設定が面倒。根本解決したい', next: 'wNas' },
+          { label: '複数端末で共有する方法としてNASを比較する', next: 'wNas' },
           { label: '最初に戻る', next: '__home', style: 'ghost' }
         ]
       },
       wNas: {
         type: 'solution',
-        text: '根本解決したいなら NAS という手',
-        text2: '「毎回この設定が面倒」「PC以外からもアクセスしたい」なら、NAS導入が根本策です。Synologyの入門機 DS223j は設定がわかりやすく、自宅や小規模オフィスにちょうどいいサイズ感です。',
-        affiliate: { keyword: 'Synology NAS DS223j 2ベイ', label: 'Synology DS223j を探す', note: 'Amazonで価格・在庫を見る' },
+        text: '複数端末で共有する選択肢としてNASを比較する',
+        text2: 'NASはファイルの置き場所を集約する選択肢ですが、Windows側の認証・ネットワーク・権限設定を自動的に解決するものではありません。対応OS、バックアップ方法、メーカーサポート、必要容量と現行モデルを確認してから比較してください。',
         links: [{ label: '元記事で詳しく読む', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' }],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       },
       wWin: {
         type: 'solution',
         text: '解決しました。おつかれさまでした。',
-        text2: '24H2では匿名・ゲスト前提の共有が通りにくくなりました。元記事の環境では「資格情報未登録・Function Discovery手動化・セキュリティソフト」の複合が原因で、正しい資格情報の登録が復旧の決め手になりました。',
+        text2: '元記事の環境では「資格情報・Function Discovery・セキュリティソフト」の3点を確認・変更したあとに復旧しました。ただし各変更を個別には検証していないため、どれが原因・決め手だったかは分離できていません。',
         links: [{ label: '元記事で全手順を見る', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' }],
         options: [
           { label: '最初に戻る', next: '__home', style: 'ghost' },
-          { label: '根本解決（NAS）も見る', next: 'wNas', style: 'ghost' }
+          { label: 'NASという運用選択肢も見る', next: 'wNas', style: 'ghost' }
         ]
       }
     }
@@ -804,7 +886,7 @@ const TREES = {
       pVga: {
         type: 'question',
         text: '受け取り側（モニター・ケーブル・中継機器）を疑います',
-        help: '実例では原因がGPUではなく「モニターの信号受信タイミング」でした。映像は出るのにビープが鳴る場合は特にこのパターンの可能性。',
+        help: '元記事の構成では、モニターやケーブルを確認したあとにHDMIセレクターを挟むと再発しなくなりました。ただし、EDIDや信号タイミングが原因だったかは未検証の仮説です。まず別ポート、既知正常なケーブル、別モニターで切り分けます。',
         steps: [
           'モニターの入力ポートを変える（HDMI1／HDMI2／DisplayPort）',
           'ケーブルを別規格・別メーカーに交換する',
@@ -817,13 +899,12 @@ const TREES = {
       },
       pSelector: {
         type: 'solution',
-        text: 'HDMIセレクター／スプリッターを挟む',
-        text2: 'モニターとPCの間にHDMI切替器を挟むと、信号が保持されてエラーを回避できることがあります（実例ではこれで完全解消）。電源不要の安価なものでOK。',
+        text: 'HDMIセレクターで追加検証する',
+        text2: '切替器を挟むのは、映像経路を変えて反応を見る切り分けの一例です。元記事の構成ではその後再発しなくなりましたが、EDIDや信号タイミング説は未検証で、一般的な原因・解決策とは断定できません。改善しない場合は切替器を外し、マザーボード公式の診断へ進んでください。',
         steps: [
           'モニターとPCの間にHDMIセレクターを挟む',
           '起動してビープ音・表示を確認する'
         ],
-        affiliate: { keyword: 'HDMI 切替器 セレクター 4K 電源不要', label: 'HDMI切替器を探す', note: 'Amazonで仕様・在庫を見る' },
         options: [
           { label: '解消した！', next: 'pWin', style: 'primary' },
           { label: 'まだダメ', next: 'pBios' }
@@ -831,11 +912,12 @@ const TREES = {
       },
       pBios: {
         type: 'solution',
-        text: 'ソフト対処と最終手段',
+        text: 'マニュアルを確認してから行う最終段階',
         steps: [
-          'マザーボード公式から最新BIOSに更新（CPU世代対応・ファイル名のリネーム規則に注意）',
-          'CMOSクリアをもう一度試す',
-          'それでもダメならGPUの交換・RMA申請を検討'
+          'CMOSクリアはPCの電源を切ってコンセントを抜き、マザーボードの説明書にある端子と手順で行う',
+          'BIOS更新はマザーボードの正確な型番・リビジョンに一致する公式ファイルだけを使い、安定電源とBitLocker回復キーを準備して、説明書どおりに行う',
+          '画面が出ない、型番を確認できない、更新中の電源断が心配な場合は更新を行わず、販売店・メーカー・修理業者へ相談する',
+          '切り分け後も改善しない場合に、GPUの交換や保証対応を検討する'
         ],
         links: [
           { label: 'ビープ音トラブルの記事', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' },
@@ -846,7 +928,7 @@ const TREES = {
       pWin: {
         type: 'solution',
         text: '解決しました。おつかれさまでした。',
-        text2: 'ビープ音＝GPU故障とは限りません。接続環境（モニター・ケーブル・中継機器）も原因になります。高額パーツを疑う前に、安価な対処から順番に、が教訓。',
+        text2: 'ビープ音＝GPU故障とは限りません。モニター・ケーブル・中継機器を含めて一項目ずつ切り分けます。HDMIセレクターを挟んだ構成で再発しなくなった場合も、原因がEDIDや信号タイミングだったとは確定していません。',
         links: [{ label: '元記事で全手順を見る', url: 'https://note.com/yzrswork/n/n2c9286a10d3e' }],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       }
@@ -857,31 +939,58 @@ const TREES = {
     num: '04',
     title: 'iPhoneのObsidianがiCloudで同期できない',
     sub: '「Store in iCloud」が押せない／保管庫のマトリョーシカ現象',
-    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' },
+    article: { label: '過去記事（現在は非推奨手順の追記あり）', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' },
     start: 'o0',
     nodes: {
       o0: {
         type: 'question',
         text: 'iPhoneのObsidianをiCloudで同期したいのに、うまくいきませんか？',
-        help: 'Appleの作法でハマりがちです。症状から切り分けます。',
+        help: 'まず全端末で編集を止め、同期先ではない場所へ保管庫全体をバックアップし、実際にノートを読めることを確認してください。同期はバックアップではありません。',
         options: [
+          { label: 'Windows PCとiPhoneをiCloudで同期している', next: 'oWindows' },
           { label: '「Store in iCloud」が押せない／グレーアウト', next: 'oGray' },
           { label: '設定はONなのにアプリが「iCloudが有効でない」と言う', next: 'oGray' },
           { label: '一部ノートが見つからない／PCの変更が反映されない', next: 'oMatryoshka' },
           { label: 'これから新規に構築したい', next: 'oSetup' }
         ]
       },
-      oSetup: {
-        type: 'question',
-        text: '正しい作り方（PC先行は厳禁）',
-        help: '「ファイルを置けば同期される」ではありません。iPhone側で専用フォルダ（アジト）を作らせるのが先です。',
+      oWindows: {
+        type: 'solution',
+        text: 'Windows＋iCloud DriveでのObsidian同期は推奨されていません',
+        text2: 'Obsidian公式はiCloudの推奨環境をmacOS・iOS・iPadOSとし、Windows上のiCloud Driveではファイルの重複や破損につながる可能性があると案内しています。WindowsとiPhone間は、両方を公式対応するObsidian Syncなど別の方法を検討してください。',
+        warn: '移行前に全端末で編集を止め、保管庫全体を同期先ではない場所へコピーし、複数のノートと添付ファイルが開けることを確認します。',
         steps: [
-          'iPhone版Obsidianで Create new vault をタップ',
-          '「Store in iCloud」をONにして保管庫を作成（iCloud Driveに専用フォルダができる）',
-          'そのあとにPC側のデータをそのフォルダへ移す',
-          'Indexing が回って同期完了'
+          '現在の各端末で同期が止まっていることを確認する',
+          '最も完全な保管庫を1つ特定し、保管庫フォルダー全体をオフラインの別場所へコピーする',
+          'WindowsとiPhoneの両方に対応する同期方法を選ぶ。Obsidian SyncとiCloudなど、複数の同期サービスを同じ保管庫に重ねない',
+          '新しい同期先でテスト用のノートが往復することを確認してから、バックアップ済みのデータを移行する'
+        ],
+        links: [
+          { label: 'Obsidian公式：端末間の同期と推奨環境', url: 'https://obsidian.md/help/sync-notes' },
+          { label: 'Obsidian公式：同期はバックアップではない', url: 'https://obsidian.md/help/backup' }
         ],
         options: [
+          { label: 'バックアップと同期方法を確認した', next: 'oWin', style: 'primary' },
+          { label: '状況を整理してサポートへ進む', next: 'oStuck' }
+        ]
+      },
+      oSetup: {
+        type: 'solution',
+        text: '新規構築は対応OSとバックアップを先に決めます',
+        help: 'iCloudでのObsidian同期はmacOS・iOS・iPadOS向けです。Windowsを含む場合はiCloud Driveを使わず、Obsidian Syncなど両方のOSに対応する方法を選びます。',
+        steps: [
+          '既存データがある場合は、保管庫全体を同期先ではない場所へコピーし、読めることを確認する',
+          'Apple端末だけで使う場合は、iCloud DriveとObsidianのiCloud利用を有効にする',
+          'iPhone版Obsidianで「Create new vault」→「Store in iCloud」をONにして作成する',
+          'ファイルアプリで保管庫が <code>iCloud Drive/Obsidian/保管庫名</code> にあることを確認する',
+          '少量のテストノートが各端末で開けることを確認してから、バックアップ済みのデータを移す。ほかの同期サービスは同じ保管庫に重ねない'
+        ],
+        links: [
+          { label: 'Obsidian公式：iCloudでの作成場所と注意点', url: 'https://obsidian.md/help/sync-notes' },
+          { label: 'Obsidian公式：バックアップ', url: 'https://obsidian.md/help/backup' }
+        ],
+        options: [
+          { label: 'Windowsも使う', next: 'oWindows' },
           { label: 'スイッチがONにできない', next: 'oGray' },
           { label: '作ったがノートが反映されない', next: 'oMatryoshka' },
           { label: '同期できた', next: 'oWin', style: 'primary' }
@@ -889,51 +998,72 @@ const TREES = {
       },
       oGray: {
         type: 'solution',
-        text: '最後の手段は「Apple ID 再ログイン」',
-        text2: '設定ではONなのにアプリが認識しない時、iCloudの同期エンジンが根本でフリーズしていることがあります。Apple IDのサインアウト→再ログインが定番の特効薬です。',
-        warn: 'サインアウトはApple Pay等の紐付けが一時的に解除されます。時間に余裕をもって行ってください。',
+        text: 'Apple Accountからサインアウトせず、公式設定を確認します',
+        text2: 'Apple Accountのサインアウトは、iCloud Driveやバックアップなど多くのサービスを停止し、端末上のデータの扱いにも影響します。このナビでは通常の同期トラブル解決策として案内しません。',
+        warn: '先に保管庫全体の独立したバックアップを作成してください。サインアウトを試すのは、個別の状況を確認したApple Supportから指示された場合に限ります。',
         steps: [
-          'まず再起動・設定のON/OFFを一通り試す',
-          '<code>設定 → 自分の名前</code> からサインアウト',
-          '再度サインインする',
-          'Obsidianで Create new vault →「Store in iCloud」が押せるか確認'
+          '<code>設定 → 自分の名前 → iCloud → Drive</code> で「このiPhoneを同期」が有効か確認する',
+          'iCloudを使用するアプリの一覧でObsidianが有効か確認する',
+          'iCloudの空き容量、安定した通信、Appleのシステム状況を確認する',
+          'iOS・iPadOSとObsidianを更新し、Obsidian、必要なら端末を再起動する',
+          'ファイルアプリで <code>iCloud Drive/Obsidian</code> が見えるか確認する'
+        ],
+        links: [
+          { label: 'Apple公式：iCloud Driveを設定する', url: 'https://support.apple.com/guide/iphone/set-up-icloud-drive-iphbbcf8827d/ios' },
+          { label: 'Apple公式：サインアウト前の確認事項', url: 'https://support.apple.com/ja-jp/122682' }
         ],
         options: [
-          { label: '押せるようになった', next: 'oSetup', style: 'primary' },
+          { label: '設定を確認できた', next: 'oSetup', style: 'primary' },
           { label: 'まだダメ', next: 'oStuck' }
         ]
       },
       oMatryoshka: {
         type: 'solution',
-        text: '保管庫の中に保管庫（マトリョーシカ現象）を直す',
-        help: 'PCからドラッグした時に、空の保管庫の中へ保管庫を丸ごと入れてしまうと、<code>.obsidian</code> が二重になりアプリが混乱します。',
+        text: '削除せず、バックアップと保管庫パスを確認します',
+        help: '<code>.obsidian</code> は設定・テーマ・プラグインなどを含む構成フォルダーです。二重に見えても削除しないでください。',
+        warn: '同期中のフォルダーで、保管庫・ノート・「.obsidian」を直接削除、移動、統合しないでください。変更が全端末へ伝播する可能性があります。',
         steps: [
-          'PC側でiCloud Driveの階層を整理（保管庫フォルダ内の余計なフォルダを取り除く）',
-          '複数できた <code>.obsidian</code> のうち不要なものを削除し、設定フォルダを1つだけにする',
-          'iPhone版Obsidianを再起動して再スキャン',
-          'PCで金庫アイコンからVaultのパスが正しい場所か確認'
+          '全端末で編集を止め、最も完全な保管庫フォルダー全体を同期先ではない場所へコピーする',
+          'バックアップ内の複数のノートと添付ファイルが開けることを確認する',
+          'ファイルアプリで正規の場所 <code>iCloud Drive/Obsidian/保管庫名</code> を確認する',
+          'Obsidianの「保管庫を管理」で、各端末が同じ保管庫を開いているか確認する',
+          '入れ子や重複がある場合も原本と <code>.obsidian</code> は削除せず、完全なコピーを保持したままObsidian公式ヘルプまたはサポートへ相談する'
+        ],
+        links: [
+          { label: 'Obsidian公式：iCloudの正しい保管庫場所', url: 'https://obsidian.md/help/sync-notes' },
+          { label: 'Obsidian公式：先にバックアップする', url: 'https://obsidian.md/help/backup' }
         ],
         options: [
-          { label: '直った', next: 'oWin', style: 'primary' },
-          { label: 'まだ変', next: 'oStuck' }
+          { label: '正しい保管庫を確認できた', next: 'oWin', style: 'primary' },
+          { label: '重複・欠落が残る', next: 'oStuck' }
         ]
       },
       oStuck: {
         type: 'solution',
-        text: 'それでも不整合が残るなら',
+        text: 'これ以上変更せず、状況を保存してサポートへ',
+        text2: '重複や欠落が残る状態で操作を重ねると、正常なコピーまで同期で変わるおそれがあります。Apple Accountのサインアウトやフォルダー削除は行いません。',
         steps: [
-          '雲マーク（ストレージ最適化）をオフにし、ファイルを常にローカルに実体化させる',
-          'iOSのファイルアプリで実体がダウンロード済みか確認',
-          '最後の手段として Apple ID 再ログインをもう一度試す'
+          '全端末でObsidianの編集を止める',
+          '保管庫全体の独立したバックアップがあり、実際に読めるか再確認する',
+          '端末、OS、Obsidianのバージョン、保管庫のパス、表示されたエラー、欠けているファイル名を記録する',
+          'Appleのシステム状況とiCloud容量を確認する',
+          'Obsidian公式ヘルプ／サポートへ状況を伝える。iCloud自体が動かない場合はApple Supportへ相談する'
         ],
-        links: [{ label: '元記事で詳しく読む', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }],
+        links: [
+          { label: 'Obsidian公式ヘルプ', url: 'https://obsidian.md/help' },
+          { label: 'Apple Support', url: 'https://support.apple.com/contact' },
+          { label: '過去記事（現在は非推奨手順の追記あり）', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }
+        ],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       },
       oWin: {
         type: 'solution',
-        text: '同期できました。おつかれさまでした。',
-        text2: 'ポイントは「iPhone側でStore in iCloudを先行」「雲マーク最適化を避けてローカル実体化」「理屈で直らない時はApple ID再ログイン」の3つ。',
-        links: [{ label: '元記事で同期トラブルの経緯を読む', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }],
+        text: '安全な同期方法と保管庫を確認できました。',
+        text2: '今後も同期とは別のバックアップを維持し、同じ保管庫に複数の同期サービスを重ねないでください。Windows＋iCloud Drive、「.obsidian」の削除、Apple Accountのサインアウトは通常の解決手順にしません。',
+        links: [
+          { label: 'Obsidian公式：端末間の同期', url: 'https://obsidian.md/help/sync-notes' },
+          { label: '過去記事（現在は非推奨手順の追記あり）', url: 'https://note.com/yzrswork/n/nbdf94c650c6c' }
+        ],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       }
     }
@@ -998,7 +1128,7 @@ function renderHome() {
     <div class="section-label">— 診断メニュー</div>
     <ul class="menu">${cards}</ul>
     <section class="about">
-      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側で無効になっていたIMAP/SMTPを個別に有効化して復旧した話。Windows 11を24H2にした途端に社内の共有フォルダが見えなくなり、半日格闘した末に、資格情報・Function Discovery・ESET設定の複合原因へたどり着いた話。組み上げた自作PCがビープ音を鳴らして起動せず、高いパーツを疑う前にケーブルやモニター側から順に切り分けるべきだったと学んだ話。ObsidianとiCloudの同期がiPhone側で固まった話。トラブルの渦中では長い記事を読む余裕がないので、質問に答えていくだけで原因を絞り込めるように、それぞれの記事の切り分け手順をナビ形式に組み直しました。各診断の最後から、経緯と全手順をまとめた元記事に飛べます。</p>
+      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側の外部メール利用設定とIMAP・SMTPを確認して復旧した話。Windows 11の共有フォルダーが見えなくなり、資格情報・Function Discovery・ESET設定の3点を確認・変更したあとに復旧した話（個別の原因は未分離）。自作PCのビープ音が、ケーブルやモニターも含めた切り分け後、HDMIセレクターを挟んだ構成では再発しなくなった話（原因仮説は未検証）。ObsidianとiCloudの過去記事は現在の公式情報と非推奨追記を踏まえ、バックアップ優先の安全手順へ改訂しています。トラブルの渦中でも確認しやすいよう、観測事実と未確認の仮説を分けてナビ形式に組み直しました。</p>
     </section>`;
 
   appEl.querySelectorAll('.menu-card').forEach((btn) => {
