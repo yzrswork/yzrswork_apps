@@ -433,7 +433,7 @@ const TREES = {
       y0: {
         type: 'question',
         text: 'iPhoneの標準メールで、Yahoo!メールが急に送受信できなくなりましたか？',
-        help: '2026年2月26日に、Yahoo!が不正ログイン対策でサードパーティ製メールアプリの接続をデフォルト遮断しました。心当たりがなくても、これが主な原因です。',
+        help: 'Yahoo!は2026年2月26日、サードパーティ製メールアプリのアクセス設定を推奨状態へ順次変更すると告知しました。元記事の実例ではIMAP/SMTPが無効になっており、再度「利用する」にして復旧しています。同じ表示でも、IDロックやパスワード設定など別の原因もあります。',
         options: [
           { label: 'はい（パスワードは変えていない）', next: 'y1' },
           { label: 'パスワード自体を忘れた／変えた', next: 'yAcct' },
@@ -448,11 +448,12 @@ const TREES = {
         steps: [
           '受信 IMAP: <code>imap.mail.yahoo.co.jp</code> ／ ポート <code>993</code> ／ SSL(SSL/TLS) 有効',
           '受信 POP: <code>pop.mail.yahoo.co.jp</code> ／ ポート <code>995</code> ／ SSL 有効',
-          '送信 SMTP: <code>smtp.mail.yahoo.co.jp</code> ／ ポート <code>465</code> または <code>587</code> ／ SSL 有効・認証あり',
-          '2段階認証を使っている場合は「アプリパスワード」を発行して使う',
+          '送信 SMTP: <code>smtp.mail.yahoo.co.jp</code> ／ ポート <code>465</code> ／ SSL 有効・認証あり',
+          '認証にはYahoo! JAPAN IDのパスワードを使う（パスワード未設定のIDは、先にパスワードを設定）',
           'つながらない時は、先にアクセス許可（IMAP/SMTPを「利用する」）を確認'
         ],
-        help: 'サーバ値は変わることがあります。最新はYahoo!メール公式ヘルプでも確認してください。',
+        help: 'シークレットIDを使っている場合は、ログイン名にもシークレットIDを設定します。サーバ値は変わることがあるため、最新はYahoo!メール公式ヘルプで確認してください。',
+        links: [{ label: 'Yahoo!メール公式のサーバ設定', url: 'https://support.yahoo-net.jp/PccMail/s/article/H000007321' }],
         options: [
           { label: 'アクセス許可の設定手順へ', next: 'y3', style: 'primary' },
           { label: '最初に戻る', next: '__home', style: 'ghost' }
@@ -471,7 +472,8 @@ const TREES = {
       yOther: {
         type: 'solution',
         text: 'このナビはYahoo!のIMAP/SMTP遮断トラブル向けです',
-        text2: '症状が違う場合は、元記事に他の手がかりがあるかもしれません。',
+        text2: 'Yahoo!公式では、アクセス許可以外にもメールボックスのロック、設定値の誤り、パスワード未設定・変更、海外アクセス制限、セキュリティソフトなどを原因として案内しています。',
+        links: [{ label: 'Yahoo!公式の送受信トラブル確認項目', url: 'https://support.yahoo-net.jp/PccMail/s/article/H000007333' }],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       },
       y1: {
@@ -548,8 +550,11 @@ const TREES = {
         text: '考えられる原因をつぶします',
         steps: [
           'パスワードを連続入力してID一時ロック中かも → しばらく時間を置く',
+          'ブラウザ版Yahoo!メールへ一度ログインし、メールボックスのロックや追加認証を解除する',
           'iPhone側のパスワードをもう一度入力し直す（<code>設定 → メール → アカウント</code>）',
-          'IMAPとSMTPが両方「利用する」で保存済みか、PCで再確認する'
+          'IMAPとSMTPが両方「利用する」で保存済みか、PCで再確認する',
+          'パスワードを使わないログイン設定の場合は、メールソフト用にYahoo! JAPAN IDのパスワードを設定する',
+          '海外アクセス制限、セキュリティソフト／ルーター、Yahoo!側の送信制限も確認する'
         ],
         links: [{ label: '元記事で手順を見る', url: 'https://note.com/yzrswork/n/n1b799d6967c5' }],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
@@ -557,7 +562,7 @@ const TREES = {
       yWin: {
         type: 'solution',
         text: '解決しました。おつかれさまでした。',
-        text2: '原因は「Yahoo!が不正ログイン対策でデフォルト設定を変えたこと」、解決は「IMAP/SMTPアクセスをPC側で有効にすること」でした。',
+        text2: '元記事の実例では、Yahoo!側で無効になっていたIMAP/SMTPアクセスを個別に「利用する」へ戻すことで、送受信とも復旧しました。',
         links: [{ label: '元記事で詳しい設定手順を読む', url: 'https://note.com/yzrswork/n/n1b799d6967c5' }],
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       }
@@ -567,14 +572,14 @@ const TREES = {
   'win-share': {
     num: '02',
     title: 'Windows11 24H2で共有フォルダに繋がらない',
-    sub: '「資格情報の手動登録が必須」になった新仕様の切り分け',
+    sub: '24H2で認証が厳しくなった共有トラブルの切り分け',
     article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' },
     start: 'w0',
     nodes: {
       w0: {
         type: 'question',
         text: 'Windows 11を24H2にしてから、共有フォルダに繋がらなくなりましたか？',
-        help: '24H2から「資格情報の手動登録が必須」になりました。原因は複合しがちなので、上から順に切り分けます。',
+        help: '24H2ではSMB署名やゲストアクセスの扱いが厳しくなり、従来の匿名・ゲスト前提の共有が接続できなくなる場合があります。元記事のHome／Pro混在WORKGROUPでは、資格情報の登録・Function Discovery・ESET設定の3点で復旧しました。上から順に切り分けます。',
         options: [
           { label: 'はい、24H2にしてから', next: 'w1' },
           { label: 'バージョンは不明だが繋がらない', next: 'w1' },
@@ -665,7 +670,7 @@ const TREES = {
       w4cred: {
         type: 'question',
         text: '資格情報マネージャーに、相手PCのユーザー名・パスワードを登録しましたか？',
-        help: 'ここが24H2の核心。共有設定が全部OKでも、資格情報がないと接続エラーになります。',
+        help: '相手PCがユーザー認証を求める構成では、正しい資格情報が必要です。資格情報マネージャーへの手動登録は、毎回の入力を避けつつ接続を安定させる有効な対処法ですが、すべての24H2環境で必須という意味ではありません。',
         options: [
           { label: '登録していない', next: 'w4do' },
           { label: '登録済みでもダメ', next: 'w5eset' }
@@ -697,8 +702,10 @@ const TREES = {
           '共有フォルダのアクセス権に「Everyone」の変更権限があるか',
           '共有名に全角文字が入っていないか（半角英数推奨）',
           'Function Discoveryが再起動で「手動」に戻っていないか（「自動」と「自動(遅延開始)」を切替）',
+          'Windows 11同士の共有ではSMB1を有効にしない。SMB1は非推奨で、古い機器が明示的に要求する場合だけ隔離環境で検討する',
           '一度PCを再起動する'
         ],
+        links: [{ label: 'Microsoft公式：SMB1は既定で未導入・非推奨', url: 'https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/smbv1-not-installed-by-default-in-windows' }],
         options: [
           { label: '繋がった！', next: 'wWin', style: 'primary' },
           { label: '毎回の設定が面倒。根本解決したい', next: 'wNas' },
@@ -716,7 +723,7 @@ const TREES = {
       wWin: {
         type: 'solution',
         text: '解決しました。おつかれさまでした。',
-        text2: '24H2では "なんとなく繋がる共有" が "認証して初めて繋がる共有" に変わりました。定番の原因は「資格情報未登録・Function Discovery手動化・セキュリティソフト」の複合です。',
+        text2: '24H2では匿名・ゲスト前提の共有が通りにくくなりました。元記事の環境では「資格情報未登録・Function Discovery手動化・セキュリティソフト」の複合が原因で、正しい資格情報の登録が復旧の決め手になりました。',
         links: [{ label: '元記事で全手順を見る', url: 'https://note.com/yzrswork/n/n4a8c4a94122e' }],
         options: [
           { label: '最初に戻る', next: '__home', style: 'ghost' },
@@ -816,7 +823,7 @@ const TREES = {
           'モニターとPCの間にHDMIセレクターを挟む',
           '起動してビープ音・表示を確認する'
         ],
-        affiliate: { keyword: 'HDMI 切替器 セレクター 4K 電源不要', label: 'HDMI切替器を探す', note: '¥600前後から' },
+        affiliate: { keyword: 'HDMI 切替器 セレクター 4K 電源不要', label: 'HDMI切替器を探す', note: 'Amazonで仕様・在庫を見る' },
         options: [
           { label: '解消した！', next: 'pWin', style: 'primary' },
           { label: 'まだダメ', next: 'pBios' }
@@ -991,7 +998,7 @@ function renderHome() {
     <div class="section-label">— 診断メニュー</div>
     <ul class="menu">${cards}</ul>
     <section class="about">
-      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、調べたらYahoo!側が不正ログイン対策でサードパーティ製メールアプリの接続を止めた新仕様だった話。Windows 11を24H2にした途端に社内の共有フォルダが見えなくなり、半日格闘した末に「資格情報の手動登録が必須になった」という仕様変更にたどり着いた話。組み上げた自作PCがビープ音を鳴らして起動せず、高いパーツを疑う前にケーブルやモニター側から順に切り分けるべきだったと学んだ話。ObsidianとiCloudの同期がiPhone側で固まった話。トラブルの渦中では長い記事を読む余裕がないので、質問に答えていくだけで原因を絞り込めるように、それぞれの記事の切り分け手順をナビ形式に組み直しました。各診断の最後から、経緯と全手順をまとめた元記事に飛べます。</p>
+      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側で無効になっていたIMAP/SMTPを個別に有効化して復旧した話。Windows 11を24H2にした途端に社内の共有フォルダが見えなくなり、半日格闘した末に、資格情報・Function Discovery・ESET設定の複合原因へたどり着いた話。組み上げた自作PCがビープ音を鳴らして起動せず、高いパーツを疑う前にケーブルやモニター側から順に切り分けるべきだったと学んだ話。ObsidianとiCloudの同期がiPhone側で固まった話。トラブルの渦中では長い記事を読む余裕がないので、質問に答えていくだけで原因を絞り込めるように、それぞれの記事の切り分け手順をナビ形式に組み直しました。各診断の最後から、経緯と全手順をまとめた元記事に飛べます。</p>
     </section>`;
 
   appEl.querySelectorAll('.menu-card').forEach((btn) => {

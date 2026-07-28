@@ -183,7 +183,7 @@
       <p>選定の一部始終と価格高騰の話はnoteで: <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">DDR3からDDR5の進化と16GBのTEAMGROUPを選んだ話</a></p>
     </section>
 
-    <p class="disclaimer">※ 規格の最終判断は、マザーボードの製品ページ「メモリ」欄や対応リスト（QVL）で確認してください。メモリ・SSDは市況で価格が大きく動きます（2025〜2026年は高騰局面）。Intel LGA1700はマザーによりDDR4専用／DDR5専用が分かれます。情報は2026年6月時点。</p>
+    <p class="disclaimer">※ 規格・速度の最終判断は、CPUの公式仕様とマザーボードの製品ページ「メモリ」欄、対応リスト（QVL）で確認してください。EXPO / XMPはオーバークロック設定で、定格動作を保証するものではありません。Intel LGA1700はマザーによりDDR4専用／DDR5専用が分かれます。情報は2026年7月時点。</p>
 
     <footer>
       <div>この早見は <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">note「DDR3〜DDR5の進化と16GBのTEAMGROUPを選んだ話」 ↗</a> と最新の公式情報をもとにしています。</div>
@@ -204,12 +204,12 @@
    （規格→容量→2枚構成）を対話化し、2026年時点のソケット対応で更新。
    ========================================================= */
 
-/* ---------- ソケット → DDR規格（2026年6月時点） ---------- */
+/* ---------- ソケット → DDR規格（2026年7月時点） ---------- */
 const SOCKETS = [
-  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', search: 'DDR5', sweet: 'DDR5-6000（EXPO）が最適とされる', note: 'DDR4は使えません' },
+  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', search: 'DDR5', sweet: '公式定格はRyzen 7000がDDR5-5200、Ryzen 9000がDDR5-5600。DDR5-6000 EXPOは性能重視の定番目安（OC扱い）', note: 'DDR4は使えません。CPU型番とマザーQVLを確認してください' },
   { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4', search: 'DDR4-3200', sweet: 'DDR4-3200が定番（記事のRyzen 7 5700XもこれでOK）', note: 'DDR5は使えません' },
   { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: 'DDR4 または DDR5', search: '', sweet: 'マザーボードがどちらか一方に対応。スロット表記を必ず確認', note: 'DDR4専用マザーとDDR5専用マザーが別物です' },
-  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', search: 'DDR5', sweet: 'DDR5-6400前後が目安', note: 'DDR4は廃止。DDR5専用です' },
+  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', search: 'DDR5', sweet: 'DDR5専用。公式上限はCPU型番によりDDR5-6400〜7200 MT/s', note: 'CPU型番とマザーボードQVLで対応速度を確認してください' },
   { id: 'unknown', label: 'わからない', ddr: 'マザーボードで確認', search: '', sweet: 'マザーボードの製品ページ「メモリ」欄か、スロット脇の刻印（DDR4/DDR5）を確認', note: '規格はマザーボードで決まります' }
 ];
 
@@ -221,10 +221,11 @@ const USES = [
   { id: 'ai', label: '生成AI・機械学習', cap: '32GB以上', search: '32GB 16GBx2', hint: '余裕は正義（VRAM補助も考慮）。' }
 ];
 
-/* ---------- 定番モデル（記事 + 公式情報、DDR4） ---------- */
+/* ---------- 定番モデル（記事 + 公式情報、DDR別） ---------- */
 const PICKS = [
-  { name: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2）', sub: 'JEDEC定格・永久保証。刺せば定格で安定。', kw: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB 16GBx2' },
-  { name: 'Crucial DDR4-3200 16GB（CT16G4DFRA32A）', sub: 'Micronブランド。1枚から、Intel/AMD両対応。後で買い足し可。', kw: 'Crucial CT16G4DFRA32A DDR4-3200 16GB' }
+  { ddr: 'DDR4', name: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2）', sub: '永久保証。3200動作はCPU・マザー・BIOS設定に依存するため、QVLと実動作速度を確認。', kw: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB 16GBx2', asin: 'B093GNJS1T' },
+  { ddr: 'DDR4', name: 'Crucial Pro DDR4-3200 32GB（16GB×2・CP2K16G4DFRA32A）', sub: '現行の2枚組キット。XMP 2.0設定とマザーボードQVLを確認。', kw: 'Crucial CP2K16G4DFRA32A DDR4-3200 32GB', asin: 'B0C29R9LNL' },
+  { ddr: 'DDR5', name: 'Crucial Pro DDR5-6000 32GB（16GB×2・CP2K16G60C48U5）', sub: 'Intel XMP 3.0 / AMD EXPO対応。6000 MT/sはOC設定のため、CPU仕様とマザーボードQVLを確認。', kw: 'Crucial CP2K16G60C48U5 DDR5-6000 32GB', asin: 'B0CT9BMGLF' }
 ];
 
 let selSocket = null, selUse = null;
@@ -232,12 +233,18 @@ function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 function amazonUrl(kw) {
   return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw) + '&tag=yzrs_apps-22';
 }
+function amazonProductUrl(asin) {
+  return 'https://www.amazon.co.jp/dp/' + encodeURIComponent(asin) + '?tag=yzrs_apps-22';
+}
+function pickAmazonUrl(pick) {
+  return pick.asin ? amazonProductUrl(pick.asin) : amazonUrl(pick.kw);
+}
 
 function renderSockets() {
   document.getElementById('sockets').innerHTML = SOCKETS.map(s =>
     `<button class="opt-btn${selSocket === s.id ? ' active' : ''}" data-s="${s.id}"><span>${esc(s.label)}</span><span class="o-arrow">→</span></button>`).join('');
   document.querySelectorAll('#sockets .opt-btn').forEach(b =>
-    b.addEventListener('click', () => { selSocket = b.getAttribute('data-s'); renderSockets(); renderSocketInfo(); renderReco(); }));
+    b.addEventListener('click', () => { selSocket = b.getAttribute('data-s'); renderSockets(); renderSocketInfo(); renderReco(); renderPicks(); }));
 }
 function renderSocketInfo() {
   const el = document.getElementById('socket-info');
@@ -280,8 +287,13 @@ function renderReco() {
 }
 
 function renderPicks() {
-  document.getElementById('picks').innerHTML = PICKS.map(p =>
-    `<div class="pick"><div><div class="pk-name">${esc(p.name)}</div><div class="pk-sub">${esc(p.sub)}</div></div><a href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">探す</a></div>`).join('');
+  const socket = SOCKETS.find(s => s.id === selSocket);
+  const ddr = socket && socket.search;
+  const picks = ddr && /^DDR[45]/.test(ddr)
+    ? PICKS.filter(p => ddr.startsWith(p.ddr))
+    : PICKS;
+  document.getElementById('picks').innerHTML = picks.map(p =>
+    `<div class="pick"><div><div class="pk-name">${esc(p.name)}</div><div class="pk-sub">${esc(p.sub)}</div></div><a href="${esc(pickAmazonUrl(p))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">探す</a></div>`).join('');
 }
 
 

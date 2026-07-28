@@ -230,7 +230,7 @@
 
     <footer>
       <div>このリストは、noteの「電子工作」3部作をもとに、や印工務店が実際に使って選んだ道具をまとめたものです。</div>
-      <div>現行モデル確認: 2026年6月（HAKKO FX600 / AstroAI 4000カウント / Jesverty SPS-3010M）。価格・在庫は市況で変動します。</div>
+      <div>現行モデル確認: 2026年7月（HAKKO FX600 / AstroAI DT132A / Jesverty SPS-3010M）。価格・在庫はリンク先で確認してください。</div>
       <div><!-- BUILD:BACKLINK:START -->
 <a href="../">← 道具箱（ほかの実用ツール）</a>
 <!-- BUILD:BACKLINK:END --></div>
@@ -282,9 +282,9 @@ const ITEMS = [
   // Step 1
   { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: 'これがないと始まらない。最初から温度調整付きが正解。', pick: 'HAKKO FX600（温調 200〜500℃）＋こて台', kw: 'HAKKO FX600 はんだこて 温調 こて台 セット' },
   { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作' },
-  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット（1,500〜2,000円）', kw: 'ブレッドボード ジャンパー線 セット' },
+  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット', kw: 'ブレッドボード ジャンパー線 セット' },
   // Step 2
-  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '動かない原因の9割は「つながってない」か「電圧がおかしい」。切り分けが一気に楽になる。', pick: 'AstroAI 4000カウント（TRMS・3年保証）', kw: 'AstroAI デジタルマルチメーター 4000カウント TRMS' },
+  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '動かない原因の9割は「つながってない」か「電圧がおかしい」。切り分けが一気に楽になる。', pick: 'AstroAI DT132A（4000カウント・TRMS・オートレンジ）', kw: 'AstroAI DT132A デジタルマルチメーター 4000カウント TRMS', asin: 'B07FDBW1PT' },
   { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に刺しやすくなる。標準プローブの不満を解消。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03' },
   { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300' },
   { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '被覆を銅線を傷つけず剥がす。細いシリコン線もサクッと。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01' },
@@ -304,8 +304,8 @@ const ITEMS = [
 
 /* ---------- 調達先（vol.1） ---------- */
 const CHANNELS = [
-  { when: '急いでいる', name: 'Amazon', desc: 'すぐ欲しい・まず1セット試す最初の1手に。', url: 'https://www.amazon.co.jp/' },
-  { when: 'とにかく安く大量に', name: 'AliExpress', desc: '通称チャイナ便。今は2週間以内に届く。待てるならここ。', url: 'https://ja.aliexpress.com/' },
+  { when: '急いでいる', name: 'Amazon', desc: 'すぐ欲しい・まず1セット試す最初の1手に。', url: amazonUrl('電子工作 工具 部品 セット'), affiliate: true },
+  { when: 'とにかく安く大量に', name: 'AliExpress', desc: '通称チャイナ便。配送日数は商品・発送元・配送方法で変わるので、到着予定を確認して待てる物に。', url: 'https://ja.aliexpress.com/' },
   { when: '品質重視・定番部品', name: '秋月電子 / 千石電商', desc: 'マイコン・センサー・電源は国内定番が安心。', url: 'https://akizukidenshi.com/catalog/default.aspx' },
   { when: '変わった部品・宝探し', name: 'aitendo（通販）', desc: '変態パーツの聖地。実店舗は終了、通販は継続。', url: 'https://www.aitendo.com/' }
 ];
@@ -324,6 +324,12 @@ function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set]))
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(keyword) {
   return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+}
+function amazonProductUrl(asin) {
+  return 'https://www.amazon.co.jp/dp/' + encodeURIComponent(asin) + '?tag=yzrs_apps-22';
+}
+function itemAmazonUrl(item) {
+  return item.asin ? amazonProductUrl(item.asin) : amazonUrl(item.kw);
 }
 function byId(id) { return ITEMS.find(i => i.id === id); }
 
@@ -362,7 +368,7 @@ function renderList() {
           <div class="it-actions">
             <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
             <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
-            <a class="btn buy" href="${esc(amazonUrl(i.kw))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">🛒 探す</a>
+            <a class="btn buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">🛒 探す</a>
           </div>
         </div>`;
     });
@@ -396,7 +402,7 @@ function renderChannels() {
       <div class="ch-when">${esc(c.when)}</div>
       <div class="ch-name">${esc(c.name)}</div>
       <div class="ch-desc">${esc(c.desc)}</div>
-      <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>
+      <a href="${esc(c.url)}" target="_blank" rel="${c.affiliate ? 'noopener sponsored nofollow' : 'noopener noreferrer'}"${c.affiliate ? ' data-track-label="調達先 Amazon"' : ''}>開く ↗</a>
     </div>`).join('');
 }
 
@@ -415,7 +421,7 @@ function renderCart() {
       <div class="cart-item">
         <div><div class="ci-name">${esc(i.title)}</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
-          <a class="mini buy" href="${esc(amazonUrl(i.kw))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">探す</a>
+          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">探す</a>
           <button class="mini del" data-del="${i.id}">削除</button>
         </div>
       </div>`;

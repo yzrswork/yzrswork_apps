@@ -174,7 +174,7 @@
         <summary>配線</summary>
         <ul>
           <li>24ピン主電源＋<b>CPU補助電源（8ピン）</b>の挿し忘れに注意</li>
-          <li>GPUの補助電源（必要なら）。50系はPCIe 5.1 / 12V-2x6</li>
+          <li>GPUの補助電源（必要なら）。50系はカードごとに12V-2x6／16ピンまたは8ピン構成を確認</li>
           <li>フロントパネル配線（電源スイッチ/LED）はマニュアル通りに</li>
           <li>SSD/HDDのSATA電源＋データ、M.2はネジ留め</li>
         </ul>
@@ -194,7 +194,7 @@
       <p>計画から完成までの全記録はnoteで: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（ハブ記事）</a></p>
     </section>
 
-    <p class="disclaimer">※ 電源容量は一般的な目安です。CPU/GPUの世代・OC・周辺機器で変わります。最終的には各GPU/電源メーカーの推奨値とマザーの対応リスト（QVL）を確認してください。情報は2026年6月時点。</p>
+    <p class="disclaimer">※ 電源容量は、経年・増設・高負荷時の余裕を見込んだ当サイトの安全側ガイドです。NVIDIA公式の最小システム電力はRTX 5070が650W、RTX 5080が850Wですが、CPU/GPUの世代・OC・周辺機器・カードメーカー仕様で変わります。最終的には使用するGPUと電源メーカーの仕様、マザーの対応リスト（QVL）を確認してください。情報は2026年7月時点。</p>
 
     <footer>
       <div>関連: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（note）↗</a></div>
@@ -212,7 +212,8 @@
    自作PC 構成プランナー — PC Build Planner
    依存ゼロの単一HTML。データ送信なし、オフライン動作。
    note「はじめての自作PCまとめ」シリーズ（HDD/メモリ/ビープ等）の知見を
-   1つの構成決めフローに統合。電源目安は2026年6月時点の各社推奨に基づく。
+   1つの構成決めフローに統合。電源目安は2026年7月時点のメーカー最小値に、
+   経年・増設・高負荷時の余裕を加えた当サイトの安全側ガイド。
    ========================================================= */
 
 const SOCKETS = [
@@ -230,15 +231,15 @@ const USES = [
 const STORAGES = [
   { id: 'os', label: 'OS・アプリ（起動用）', reco: 'NVMe SSD（M.2・1TB目安）', search: 'NVMe SSD 1TB M.2' },
   { id: 'game', label: 'ゲーム・録画', reco: '大容量SSD or HDD', search: 'SSD 2TB' },
-  { id: 'nas', label: 'NAS・RAID・24時間', reco: 'HDD Red Plus（CMR必須）', search: 'WD Red Plus NAS HDD' },
+  { id: 'nas', label: 'NAS・RAID・24時間', reco: 'HDD Red Plus（RAID再構築・高負荷用途はCMRを強く推奨）', search: 'WD Red Plus NAS HDD' },
   { id: 'archive', label: '写真・動画の長期保存', reco: '大容量HDD（CMR推奨）', search: 'WD HDD 4TB CMR' }
 ];
 const GPUS = [
   { id: 'igpu', label: '内蔵GPU / ローエンド', psu: '450〜550W', search: '電源 550W 80PLUS' },
   { id: 't3060', label: 'RTX 3060 / 4060 級', psu: '550W 目安', search: '電源 550W 80PLUS Bronze' },
   { id: 't4070', label: 'RTX 4070 級', psu: '650W 目安', search: '電源 650W 80PLUS Gold' },
-  { id: 't5070', label: 'RTX 5070 級', psu: '750〜850W（PCIe 5.1 / 12V-2x6）', search: '電源 850W ATX3.1' },
-  { id: 't5080', label: 'RTX 5080 / ハイエンド', psu: '1000W以上（PCIe 5.1 / 12V-2x6）', search: '電源 1000W ATX3.1' }
+  { id: 't5070', label: 'RTX 5070 級', psu: '安全側750〜850W（NVIDIA公式最小650W。補助電源端子はカード仕様を確認）', search: '電源 850W ATX3.1' },
+  { id: 't5080', label: 'RTX 5080 / ハイエンド', psu: '安全側1000W以上（NVIDIA公式最小850W。補助電源端子はカード仕様を確認）', search: '電源 1000W ATX3.1' }
 ];
 
 const sel = { socket: null, use: null, storage: null, gpu: null };
@@ -289,7 +290,7 @@ function renderSummary() {
     html += '<div class="sum-note">LGA1700はマザーボードによりDDR4専用／DDR5専用が分かれます。スロット表記を必ず確認してください。</div>';
   }
   if (g && (g.id === 't5070' || g.id === 't5080')) {
-    html += '<div class="sum-note">RTX 50系は新しい電源コネクタ（12V-2x6）とPCIe 5.1対応電源（ATX 3.x）が安心です。</div>';
+    html += '<div class="sum-note">RTX 50系はPCIe CEM 5.1準拠のATX 3.x電源が安全側です。12V-2x6／16ピンや8ピンなど、実際の補助電源端子はカードメーカーの仕様を確認してください。</div>';
   }
   if (!s && !u && !st && !g) {
     html += '<div class="sum-note">上の1〜4を選ぶと、ここに構成と買い物リンクが集まります。</div>';

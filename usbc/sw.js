@@ -1,4 +1,4 @@
-const CACHE_NAME = 'usbc-v1';
+const CACHE_NAME = 'usbc-v2';
 const CACHE_PREFIX = 'usbc-';
 const ASSETS = [
   './',

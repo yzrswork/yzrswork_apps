@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f0ebe3">
-<title>塗れるくん -- 今日、外壁塗装・DIY塗装できる?</title>
-<meta name="description" content="住所を入れると、今日や数日先に外壁塗装やDIY塗装(家具・木部・スプレー缶)ができるか(気温・湿度・露点・降水)を判定します。や印工務店のニッチツール。">
+<title>塗れるくん -- 今日、DIY塗装できる?</title>
+<meta name="description" content="住所を入れると、今日や数日先にDIY塗装(家具・木部・金属・スプレー缶)ができるかを気温・湿度・露点・降水・風から判定します。や印工務店のニッチツール。">
 <link rel="canonical" href="https://apps.yzrswork.com/nurerukun/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="や印工務店 / yzrswork">
-<meta property="og:title" content="塗れるくん -- 今日、外壁塗装・DIY塗装できる?">
-<meta property="og:description" content="住所を入れると、今日や数日先に外壁塗装やDIY塗装(家具・木部・スプレー缶)ができるか(気温・湿度・露点・降水)を判定します。">
+<meta property="og:title" content="塗れるくん -- 今日、DIY塗装できる?">
+<meta property="og:description" content="住所を入れると、今日や数日先にDIY塗装(家具・木部・金属・スプレー缶)ができるかを気温・湿度・露点・降水・風から判定します。">
 <meta property="og:url" content="https://apps.yzrswork.com/nurerukun/">
 <meta property="og:image" content="https://apps.yzrswork.com/nurerukun/icon-512.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="塗れるくん -- 今日、外壁塗装・DIY塗装できる?">
-<meta name="twitter:description" content="住所から外壁塗装やDIY塗装(家具・木部・スプレー缶)の可否(気温・湿度・露点・降水)を判定するニッチツール。">
+<meta name="twitter:title" content="塗れるくん -- 今日、DIY塗装できる?">
+<meta name="twitter:description" content="住所からDIY塗装(家具・木部・金属・スプレー缶)のタイミングを気温・湿度・露点・降水・風から判定するニッチツール。">
 <meta name="twitter:image" content="https://apps.yzrswork.com/nurerukun/icon-512.png">
 <script type="application/ld+json">
 {
@@ -27,7 +27,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "住所から外壁塗装やDIY塗装(家具・木部・スプレー缶)の可否(気温・湿度・露点・降水・風)を判定するニッチツール。",
+  "description": "住所からDIY塗装(家具・木部・金属・スプレー缶)のタイミングを気温・湿度・露点・降水・風から判定するニッチツール。",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
   "author": { "@type": "Organization", "name": "や印工務店 (yzrswork)", "url": "https://note.com/yzrswork" }
 }
@@ -83,6 +83,7 @@
   .hour{flex:0 0 auto; width:42px; text-align:center; font-size:.7rem; color:var(--muted)}
   .hour .bar{height:46px; border-radius:6px; margin:4px 0; display:flex; align-items:flex-end; justify-content:center; color:#fff; font-size:.66rem; font-weight:700; padding-bottom:2px}
   .hour .bar.ok{background:var(--ok)} .hour .bar.ng{background:#e3c9c1} .hour .bar.warn{background:var(--warn)}
+  .hour .pop{font-size:.62rem; white-space:nowrap}
   .days{display:flex; flex-direction:column; gap:8px}
   .day{display:flex; align-items:center; justify-content:space-between; padding:8px 4px; border-bottom:1px solid var(--rule-soft)}
   .day:last-child{border-bottom:none}
@@ -114,7 +115,7 @@
 <div class="wrap">
   <header>
     <h1>塗<span class="drop">れる</span>くん</h1>
-    <p class="tag">今日、外壁塗装やDIY塗装(家具・木部・スプレー缶)できる? 気温・湿度・露点・降水でサッと判定</p>
+    <p class="tag">今日、DIY塗装(家具・木部・金属・スプレー缶)できる? 気温・湿度・露点・降水・風でサッと判定</p>
   </header>
 
   <!-- 入力 -->
@@ -143,13 +144,14 @@
     <ul id="reasons" class="reasons"></ul>
     <p id="dryTime" class="sub"></p>
     <p id="paintNote" class="sub hidden"></p>
+    <p id="weatherMeta" class="sub"></p>
   </div>
 
   <!-- 時間帯 -->
   <div id="hoursCard" class="card hidden">
     <h2 class="sec">今日の時間帯ごとの目安</h2>
     <div id="hours" class="hours"></div>
-    <p class="muted">数字は気温(℃)。緑=塗れる / 黄=注意 / 薄=避けたい</p>
+    <p class="muted">棒の数字は気温(℃)、下段の「降」は気象庁の降水確率。緑=塗れる / 黄=注意 / 薄=避けたい</p>
   </div>
 
   <!-- 数日先 -->
@@ -181,7 +183,7 @@
       <li>乾燥時間まで含めて、雨や強い風を避けられるか</li>
     </ul>
     <h3>使い方のコツ</h3>
-    <p>住所や地名を検索し、使う塗料が水性か油性かを選びます。「塗れそう」と出ても、実際の外壁、木部、金属面の温度は気温と違うことがあります。日陰、朝露が残る場所、雨上がりは、放射温度計や温湿度計でも確認すると安心です。</p>
+    <p>住所や地名を検索し、使う塗料が水性か油性かを選びます。「塗れそう」と出ても、実際の家具、木部、金属面の温度は気温と違うことがあります。日陰、朝露が残る場所、雨上がりは、放射温度計や温湿度計でも確認すると安心です。</p>
     <p>塗料ごとに施工可能な温度、湿度、乾燥時間は異なります。最後は必ず製品の仕様書と現場の状態を優先してください。表示する道具は、DIYの段取りを助ける候補であり、購入が判定条件になるものではありません。</p>
   </section>
 
@@ -193,7 +195,7 @@
 
   <footer>
     <p class="muted">判定はあくまで目安です。最終判断は作業場所の状況と塗料の仕様書で。</p>
-    <p class="muted">天気データ: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 住所検索: 国土地理院</p>
+    <p class="muted">地点予報: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 降水確率: <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁ホームページ</a>を加工して作成 / 住所・地域判定: 国土地理院・気象庁</p>
     <p class="muted">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</p>
     <p class="muted"><a href="../privacy/">プライバシーポリシー</a></p>
   </footer>
@@ -225,8 +227,8 @@ const CONFIG = {
   DEWPOINT_WARN: 5,     // 3-5℃は結露しやすく要注意 (WARN)
   // 降水
   PRECIP_MAX: 0.1,      // その時間の降水量がこれ超で見送り (NG, mm)
-  PRECIP_PROB_WARN: 30, // 降水確率がこれ超で要注意 (WARN, %)
-  PRECIP_PROB_NG: 60,   // 降水確率がこれ超で見送り (NG, %)
+  PRECIP_PROB_WARN: 30, // 気象庁の時間帯別降水確率がこれ超で要注意 (WARN, %)
+  PRECIP_PROB_NG: 60,   // 気象庁の時間帯別降水確率がこれ超で見送り (NG, %)
   // 風速 (m/s) -- 飛散・乾燥ムラ
   WIND_WARN: 7,         // これ超で要注意 (WARN)
   WIND_MAX: 10,         // これ超で見送り (NG)
@@ -238,7 +240,7 @@ const CONFIG = {
 
 /* ============================================================
    塗料タイプ (油性=溶剤系 / 水性) による判定の出し分け
-   出典: 外壁塗装業者向け解説記事による一般的な目安(数値の裏取り資料)。
+   出典: 塗料メーカー仕様・塗装作業向け解説による一般的な目安(数値の裏取り資料)。
 
    - NG/WARNの数値閾値(気温・湿度・露点・降水・風いずれもCONFIG参照)は
      塗料タイプに関わらず共通のまま変更しない(閾値を新規に発明しない)。
@@ -247,14 +249,13 @@ const CONFIG = {
      理由文言だけを水性向けに強める(judgeHour内で分岐)。
    - 油性(溶剤系)は気温・湿度の影響を比較的受けにくいが、露点接近時の結露は
      どちらの塗料も同じくNG。油性選択時は判定理由の補足としてこの旨を表示する。
-   - 乾燥時間の目安(気温23℃前後の標準条件、幅を持たせた表現。低温/高湿では
-     これより大幅に延びるため断定しない): 水性はおおむね3-4時間、油性は
-     おおむね6時間。
+   - 乾燥・塗り重ね時間は塗料の樹脂、用途、製品ごとの差が大きいため、
+     水性／油性だけで時間を断定しない。製品ラベル・仕様書を優先する。
    ============================================================ */
 const PAINT_TYPE_KEY = 'nurerukun_paintType';
 const DRY_TIME_TEXT = {
-  oil:   '乾燥時間の目安: 気温23℃前後の標準条件でおおむね6時間ほど(低温や高湿度ではこれより延びる場合があります)',
-  water: '乾燥時間の目安: 気温23℃前後の標準条件でおおむね3-4時間ほど(低温や高湿度ではこれより大幅に延びます)'
+  oil:   '乾燥・塗り重ね時間は製品ごとに異なります。塗料のラベルや仕様書を確認し、低温・高湿度では長めに見込んでください',
+  water: '乾燥・塗り重ね時間は製品ごとに異なります。塗料のラベルや仕様書を確認し、低温・高湿度では大幅な延長を見込んでください'
 };
 const PAINT_NOTE_OIL = '油性(溶剤系)は気温や湿度の影響を比較的受けにくい塗料ですが、露点が近づいたときの結露リスクはどちらの塗料も同じです。';
 
@@ -343,7 +344,7 @@ async function geocode(q){
   return { lat, lon, name: j[0].properties.title };
 }
 
-/* --- 予報取得 (MET Norway Locationforecast 2.0 を Cloudflare Worker proxy 経由で取得) ---
+/* --- 予報取得 (MET Norway + 気象庁を Cloudflare Worker proxy 経由で取得) ---
    Open-Meteo 無料版は非商用限定でアフィリエイト収益化(=商用)と衝突するため met.no へ移行。
    met.no は商用可(CC BY 4.0)だが、規約で「連絡先を含む識別 User-Agent」「caching proxy」を求め、
    「ブラウザからの直アクセスは本番非推奨」としている(ブラウザでは UA を付けられず CORS も通らない)。
@@ -403,8 +404,8 @@ function judgeHour(h, paintType){
 
   // 降水
   if(h.precip > CONFIG.PRECIP_MAX){ ng=true; reasons.push('降水あり('+h.precip+'mm)'); }
-  else if(h.prob > CONFIG.PRECIP_PROB_NG){ ng=true; reasons.push('降水確率が高い('+h.prob+'%)'); }
-  else if(h.prob > CONFIG.PRECIP_PROB_WARN){ warn=true; reasons.push('降水確率に注意('+h.prob+'%)'); }
+  else if(Number.isFinite(h.prob) && h.prob > CONFIG.PRECIP_PROB_NG){ ng=true; reasons.push('降水確率が高い('+h.prob+'%)'); }
+  else if(Number.isFinite(h.prob) && h.prob > CONFIG.PRECIP_PROB_WARN){ warn=true; reasons.push('降水確率に注意('+h.prob+'%)'); }
 
   // 風
   if(h.wind > CONFIG.WIND_MAX){ ng=true; reasons.push('風が強い('+h.wind+'m/s, 飛散リスク)'); }
@@ -413,9 +414,21 @@ function judgeHour(h, paintType){
   return { state: ng?'ng':(warn?'warn':'ok'), reasons };
 }
 
+function jmaProbabilityAt(time, jma){
+  if(!jma?.available || !Array.isArray(jma.slots)) return null;
+  const t = Date.parse(time);
+  if(!Number.isFinite(t)) return null;
+  const slot = jma.slots.find(s => {
+    const from = Date.parse(s.from), to = Date.parse(s.to);
+    return Number.isFinite(from) && Number.isFinite(to) && t >= from && t < to;
+  });
+  return slot && Number.isFinite(Number(slot.probability)) ? Number(slot.probability) : null;
+}
+
 /* --- 生データを日ごと・時間ごとに整形 (met.noの時刻はUTC -> JSTへ変換) --- */
 function parse(data){
   const ts = data.properties.timeseries;
+  const jma = data.yzrswork?.jma;
   const days = {};
   for(const e of ts){
     const n1 = e.data.next_1_hours;            // 毎時解像度がある区間だけ使う
@@ -432,7 +445,7 @@ function parse(data){
       humidity: Math.round(RH),
       dew: dewPoint(T, RH),
       precip: n1.details.precipitation_amount ?? 0,
-      prob: n1.details.probability_of_precipitation ?? 0, // JPは未提供のことが多い→0
+      prob: jmaProbabilityAt(e.time, jma),
       wind: det.wind_speed                       // m/s
     });
   }
@@ -491,7 +504,9 @@ function render(data, placeName){
   days[today].filter(h=>h.hour>=6 && h.hour<=19).forEach(h=>{
     const j=judgeHour(h, paintType);
     const cell=document.createElement('div'); cell.className='hour';
-    cell.innerHTML='<div>'+h.hour+'時</div><div class="bar '+j.state+'">'+h.temp+'</div>';
+    const prob = Number.isFinite(h.prob) ? ('降'+h.prob+'%') : '降--';
+    cell.innerHTML='<div>'+h.hour+'時</div><div class="bar '+j.state+'">'+h.temp+'</div><div class="pop">'+prob+'</div>';
+    cell.title = h.hour+'時: 気温'+h.temp+'℃、降水量'+h.precip+'mm、降水確率'+(Number.isFinite(h.prob)?h.prob+'%':'未取得');
     hc.appendChild(cell);
   });
 
@@ -501,6 +516,10 @@ function render(data, placeName){
   const pn = $('paintNote');
   if(paintType==='oil'){ pn.textContent = PAINT_NOTE_OIL; pn.classList.remove('hidden'); }
   else{ pn.textContent=''; pn.classList.add('hidden'); }
+  const jma = data.yzrswork?.jma;
+  $('weatherMeta').textContent = jma?.available
+    ? '降水確率: 気象庁 '+jma.areaName+'（時間帯別予報）'
+    : '降水確率: 未取得のため、MET Norwayの降水量だけで判定しています';
 
   // 数日先
   const dc=$('days'); dc.innerHTML='';
