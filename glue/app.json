@@ -13,7 +13,7 @@
   "manifestHref": "./manifest.webmanifest",
   "manifestFile": "manifest.webmanifest",
   "hasServiceWorker": true,
-  "swVersion": 2,
+  "swVersion": 3,
   "assets": [
     "./",
     "./index.html",

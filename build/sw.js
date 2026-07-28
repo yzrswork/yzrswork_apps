@@ -1,4 +1,4 @@
-const CACHE_NAME = 'build-v5';
+const CACHE_NAME = 'build-v6';
 const CACHE_PREFIX = 'build-';
 const ASSETS = [
   './',

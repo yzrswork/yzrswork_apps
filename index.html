@@ -48,7 +48,21 @@
   header h1{margin:0; font-size:1.6rem; letter-spacing:.02em}
   header h1 .a{color:var(--terracotta)}
   header .tag{margin:6px 0 0; color:var(--muted); font-size:.86rem}
-  .about{font-size:.86rem; color:var(--ink); line-height:1.8; margin:18px 4px 24px}
+  .intro{font-size:.9rem; color:var(--ink-soft); line-height:1.75; margin:16px 4px 12px}
+  .quick-nav{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0 2px}
+  .quick-nav a{
+    display:flex; align-items:center; min-height:46px; padding:10px 12px; text-decoration:none;
+    color:var(--ink); background:var(--card); border:1px solid var(--rule-soft); border-radius:10px;
+    font-size:.82rem; font-weight:650;
+  }
+  .quick-nav a:first-child{grid-column:1/-1; color:#fff; background:var(--terracotta); border-color:var(--terracotta)}
+  .quick-nav a:focus-visible{outline:2px solid var(--terracotta-deep); outline-offset:2px}
+  .about-detail{
+    margin:30px 0 0; padding:18px 19px; background:var(--card);
+    border:1px solid var(--rule-soft); border-radius:14px; box-shadow:var(--shadow);
+  }
+  .about-detail h2{font-size:1rem; margin:0 0 8px; color:var(--terracotta-deep)}
+  .about-detail p{font-size:.84rem; color:var(--ink-soft); line-height:1.8; margin:0}
 
   /* ── 人気ツール ── */
   a.featured{
@@ -71,7 +85,7 @@
   /* ── カテゴリ ── */
   .cat-head{
     display:flex; align-items:baseline; gap:8px; margin:28px 0 10px;
-    padding-bottom:6px; border-bottom:1px solid var(--rule-soft);
+    padding-bottom:6px; border-bottom:1px solid var(--rule-soft); scroll-margin-top:12px;
   }
   .cat-head h2{margin:0; font-size:.92rem; font-weight:700; letter-spacing:.02em}
   .cat-head .cnt{margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.04em}
@@ -101,17 +115,23 @@
     <p class="tag">電子工作、自作PC、DIYと模型のための実用ツール。全てオフライン対応、インストール不要。</p>
   </header>
 
-  <p class="about">や印工務店の道具箱は、電子工作と自作PCを趣味にしているや印工務店(yzrswork)が、自分の作業で実際に必要になった「計算」「選び方」「切り分け」をそのまま使える形にした実用ツール集です。工具と部品ストックのチェックリスト、メモリやHDDの選び方ナビ、電源容量の見積もり、トラブル診断、プラモや模型の接着剤選び、家具・木部・金属などのDIY塗装ができるタイミングの判定まで、すべて単一HTMLで動くPWAなので、一度開けばオフラインでも使えます。一部のツールは、部品の調達先選び、はじめての自作PC、古い機材をよみがえらせる工作など、noteに残してきた実体験をもとにしています。ツールに収まりきらない経緯や失敗談は、ページ下部のnote記事一覧から読めます。</p>
+  <p class="intro">実際の工作やPCトラブルで必要になった「計算・選び方・切り分け」を、登録なしですぐ使える道具にしています。</p>
+  <nav class="quick-nav" aria-label="目的から選ぶ">
+    <a href="#trouble">困りごとを診断する</a>
+    <a href="#category-electronics">電子工作</a>
+    <a href="#category-pc">自作PC</a>
+    <a href="#category-diy">DIYと模型</a>
+  </nav>
 
   <!-- BUILD:CATALOG:START -->
-  <a class="featured" href="fixit/">
-    <span class="f-eyebrow">いちばん使われているツール</span>
+  <a class="featured" id="trouble" href="fixit/">
+    <span class="f-eyebrow">まず、困りごとを直す</span>
     <div class="name">直し方ナビ</div>
     <p class="desc">質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期に対応。</p>
-    <span class="go">開く -</span>
+    <span class="go">診断を始める →</span>
   </a>
 
-  <div class="cat-head"><h2>電子工作</h2><span class="cnt">5 TOOLS</span></div>
+  <div class="cat-head" id="category-electronics"><h2>電子工作</h2><span class="cnt">5 TOOLS</span></div>
   <div class="grid">
     <a class="app" href="kit/">
       <div class="name">装備ナビ</div>
@@ -135,7 +155,7 @@
     </a>
   </div>
 
-  <div class="cat-head"><h2>自作PC</h2><span class="cnt">4 TOOLS</span></div>
+  <div class="cat-head" id="category-pc"><h2>自作PC</h2><span class="cnt">4 TOOLS</span></div>
   <div class="grid">
     <a class="app" href="mem/">
       <div class="name">メモリ選びナビ</div>
@@ -155,7 +175,7 @@
     </a>
   </div>
 
-  <div class="cat-head"><h2>DIYと模型</h2><span class="cnt">3 TOOLS</span></div>
+  <div class="cat-head" id="category-diy"><h2>DIYと模型</h2><span class="cnt">3 TOOLS</span></div>
   <div class="grid">
     <a class="app" href="glue/">
       <div class="name">接着剤選びナビ</div>
@@ -171,6 +191,11 @@
     </a>
   </div>
 <!-- BUILD:CATALOG:END -->
+
+  <section class="about-detail" aria-labelledby="about-tools">
+    <h2 id="about-tools">実体験と公式資料を、使える形に</h2>
+    <p>工具選び、はじめての自作PC、古い機材の再生、冬の塗装など、noteに残した失敗と試行錯誤を判断材料にしています。規格値や現在の仕様はメーカー・公式資料を優先し、価格や在庫は固定表示しません。各結果は目安として使い、購入前にはリンク先の型番・対応条件・お届け予定日を確認してください。全ツールは単一HTMLのPWAで、一度開けばオフラインでも使えます。</p>
+  </section>
 
   <a class="note-cta" href="https://note.com/yzrswork" target="_blank" rel="noopener">や印工務店の note 記事一覧を見る</a>
 

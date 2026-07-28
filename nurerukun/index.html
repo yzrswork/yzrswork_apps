@@ -55,6 +55,7 @@
   }
   input[type=text]:focus{outline:2px solid var(--terracotta); border-color:transparent}
   button{
+    min-height:44px;
     font-family:inherit; font-size:.95rem; border:none; border-radius:10px; cursor:pointer;
     padding:12px 14px; background:var(--terracotta); color:#fff; font-weight:600; white-space:nowrap;
   }
@@ -63,7 +64,7 @@
   .geobtn{width:100%; margin-top:8px}
   .paintrow{display:flex; gap:8px; margin-top:10px}
   .ptbtn{
-    flex:1; font-family:inherit; font-size:.86rem; font-weight:600; padding:9px 8px;
+    flex:1; min-height:44px; font-family:inherit; font-size:.86rem; font-weight:600; padding:9px 8px;
     border:1px solid var(--rule-soft); border-radius:10px; background:#fff; color:var(--muted); cursor:pointer;
   }
   .ptbtn.active{background:var(--terracotta); border-color:var(--terracotta); color:#fff}
@@ -151,7 +152,7 @@
   <div id="hoursCard" class="card hidden">
     <h2 class="sec">今日の時間帯ごとの目安</h2>
     <div id="hours" class="hours"></div>
-    <p class="muted">棒の数字は気温(℃)、下段の「降」は気象庁の降水確率。緑=塗れる / 黄=注意 / 薄=避けたい</p>
+    <p class="muted">棒の数字は気温(℃)、下段の「降」は気象庁の降水確率。緑=一般目安内 / 黄=注意 / 薄=避けたい</p>
   </div>
 
   <!-- 数日先 -->
@@ -171,6 +172,7 @@
       <!-- AFFILIATE slot 1: 塗料(条件に応じて) -->
       <span class="affi-text">この気温帯ならこの塗料、という紹介枠。</span>
     </div>
+    <p class="muted">表示品は仕様から選んだ候補で、当サイトでの実使用は未確認です。作業への適合は製品仕様を確認してください。</p>
   </div>
 
   <section class="card guide">
@@ -183,8 +185,8 @@
       <li>乾燥時間まで含めて、雨や強い風を避けられるか</li>
     </ul>
     <h3>使い方のコツ</h3>
-    <p>住所や地名を検索し、使う塗料が水性か油性かを選びます。「塗れそう」と出ても、実際の家具、木部、金属面の温度は気温と違うことがあります。日陰、朝露が残る場所、雨上がりは、放射温度計や温湿度計でも確認すると安心です。</p>
-    <p>塗料ごとに施工可能な温度、湿度、乾燥時間は異なります。最後は必ず製品の仕様書と現場の状態を優先してください。表示する道具は、DIYの段取りを助ける候補であり、購入が判定条件になるものではありません。</p>
+    <p>住所や地名を検索し、使う塗料が水性か油性かを選びます。「一般目安内」と出ても、実際の家具、木部、金属面の温度は気温と違うことがあります。日陰、朝露が残る場所、雨上がりは被塗面の温度と露点の差を確認し、結露している面には塗らないでください。</p>
+    <p>塗料ごとに対応素材、施工可能な温度・湿度、乾燥時間、必要な換気や保護具は異なります。製品ラベル・仕様書、被塗物の素材、現場の換気、被塗面温度と露点を、この予報判定より優先してください。表示する道具はDIYの段取りを助ける候補であり、購入が判定条件になるものではありません。</p>
   </section>
 
   <!-- note 導線 -->
@@ -194,7 +196,15 @@
   </div>
 
   <footer>
-    <p class="muted">判定はあくまで目安です。最終判断は作業場所の状況と塗料の仕様書で。</p>
+    <nav class="yapps-related" aria-label="関連情報">
+      <span class="yapps-related-label">次に使える道具</span>
+      <div class="yapps-related-links">
+        <a href="../glue/" data-related-slug="glue">接着剤選びナビ</a>
+        <a href="../neji/" data-related-slug="neji">ねじ下穴ナビ</a>
+        <a href="../kit/" data-related-slug="kit">装備ナビ</a>
+      </div>
+    </nav>
+    <p class="muted">判定は予報値を設定した一般目安と比べた結果です。製品ラベル、対応素材、換気条件、被塗面温度と露点を優先してください。</p>
     <p class="muted">地点予報: <a href="https://www.met.no/" target="_blank" rel="noopener">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, 露点は本アプリが算出) / 降水確率: <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">気象庁ホームページ</a>を加工して作成 / 住所・地域判定: 国土地理院・気象庁</p>
     <p class="muted">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</p>
     <p class="muted"><a href="../privacy/">プライバシーポリシー</a></p>
@@ -257,20 +267,20 @@ const DRY_TIME_TEXT = {
   oil:   '乾燥・塗り重ね時間は製品ごとに異なります。塗料のラベルや仕様書を確認し、低温・高湿度では長めに見込んでください',
   water: '乾燥・塗り重ね時間は製品ごとに異なります。塗料のラベルや仕様書を確認し、低温・高湿度では大幅な延長を見込んでください'
 };
-const PAINT_NOTE_OIL = '油性(溶剤系)は気温や湿度の影響を比較的受けにくい塗料ですが、露点が近づいたときの結露リスクはどちらの塗料も同じです。';
+const PAINT_NOTE_OIL = '油性(溶剤系)も、露点が近い面には施工できません。製品ラベルに従い、屋内や囲われた場所では十分な換気と指定の保護具を確保してください。';
 
 /* ============================================================
    アフィリエイト枠 (Amazonアソシエイト) -- 合わせ技モード
    - tag を空にすると枠は説明文のみ(リンクなし)に戻る。
    - スロット①(乾燥管理): 通常日は normal から、露点、低温、高湿リスクの日は
-     risk(高機能機)から1点をランダム表示。判定結果に連動。
-   - スロット②(段取り): items から毎回1点をランダム表示。
+     risk(高機能機)から先頭の1点を決定論的に表示。判定結果に連動。
+   - スロット②(段取り): items から先頭の1点を決定論的に表示。
    - 商品追加は asin と linkId(SiteStripeのリンクから)を足すだけ。
    ============================================================ */
 const AFF = {
   tag: "yzrs_apps-22",  // yzrswork_apps専用タグ。空にするとリンクを出さない
   dry: {  // スロット① 乾燥管理
-    lead: "乾燥管理に、これがあると安心:",
+    lead: "仕様から選んだ候補（実使用未確認）:",
     normal: [
       { name: "シンワ 放射温度計 B(73010)", asin: "B003004HSI", linkId: "d6e9f8a8a98846e1eb38ea572062b428" }
     ],
@@ -280,7 +290,7 @@ const AFF = {
     ]
   },
   tools: {  // スロット② 段取り
-    lead: "段取りに、職人の定番:",
+    lead: "段取り用に仕様から選んだ候補（実使用未確認）:",
     items: [
       { name: "大塚刷毛 PEACH ローラー", asin: "B009A30O4A", linkId: "7f5b7ac67df188f2a09754e391bcd429" },
       { name: "大塚刷毛 オールワン ローラー", asin: "B09Z2B3KYQ", linkId: "b1308c058843ad9cc87ec18b943dc8e0" },
@@ -294,7 +304,7 @@ function affHref(it){
   return 'https://www.amazon.co.jp/dp/'+encodeURIComponent(it.asin)+'?tag='+encodeURIComponent(AFF.tag)
     + (it.linkId ? '&linkId='+encodeURIComponent(it.linkId) : '');
 }
-function affPick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function affFirst(arr){ return Array.isArray(arr) ? arr[0] : null; }
 function affFill(slot, lead, it){
   if(!slot || !it) return;
   slot.textContent = '';  // 既定の説明文/前回の表示をクリア(再描画で重複しない)
@@ -302,14 +312,15 @@ function affFill(slot, lead, it){
   const a = document.createElement('a');
   a.href = affHref(it); a.target = '_blank'; a.rel = 'noopener sponsored nofollow';
   a.className = 'affi-link'; a.textContent = it.name;
+  a.setAttribute('data-track-label', it.name);
   slot.appendChild(t); slot.appendChild(a);
 }
 /* dryRisk: 今日の作業時間帯に低温・露点近・高湿があれば true (乾燥管理が重要な日) */
 function renderAffiliate(dryRisk){
   if(!AFF.tag) return;  // 未設定なら既定の説明文のまま
   const slots = document.querySelectorAll('#affiCard .slot');
-  affFill(slots[0], AFF.dry.lead, affPick(dryRisk ? AFF.dry.risk : AFF.dry.normal));
-  affFill(slots[1], AFF.tools.lead, affPick(AFF.tools.items));
+  affFill(slots[0], AFF.dry.lead, affFirst(dryRisk ? AFF.dry.risk : AFF.dry.normal));
+  affFill(slots[1], AFF.tools.lead, affFirst(AFF.tools.items));
 }
 
 const $ = id => document.getElementById(id);
@@ -483,10 +494,10 @@ function render(data, placeName){
 
   // 今日の判定
   const badge=$('badge'), lead=$('lead'), win=$('window');
-  if(sum.state==='ok'){ set(badge,'ok'); badge.textContent='塗れる'; lead.textContent='今日は塗装日和です'; }
-  else if(sum.state==='warn'){ set(badge,'warn'); badge.textContent='注意'; lead.textContent='塗れなくはないが、条件に注意'; }
+  if(sum.state==='ok'){ set(badge,'ok'); badge.textContent='一般目安内'; lead.textContent='予報上、設定した一般目安の範囲内です'; }
+  else if(sum.state==='warn'){ set(badge,'warn'); badge.textContent='注意'; lead.textContent='予報値が注意域です。製品条件を再確認してください'; }
   else{ set(badge,'ng'); badge.textContent='今日は厳しい'; lead.textContent='今日は見送りが無難です'; }
-  win.textContent = sum.best ? ('おすすめ: '+sum.best.start+'時 ～ '+(sum.best.end+1)+'時ごろ') : '作業時間帯に良い枠がありません';
+  win.textContent = sum.best ? ('予報上の候補: '+sum.best.start+'時 ～ '+(sum.best.end+1)+'時ごろ') : '作業時間帯に一般目安内の枠がありません';
 
   // 理由 (今日のOK枠 or NGの代表例)
   const rUl=$('reasons'); rUl.innerHTML='';
@@ -495,7 +506,7 @@ function render(data, placeName){
     if(sample.reasons.length){
       sample.reasons.forEach(r=>{ const li=document.createElement('li'); li.className='bad'; li.textContent=r; rUl.appendChild(li); });
     }else{
-      const li=document.createElement('li'); li.className='good'; li.textContent='気温・湿度・露点・降水・風、いずれも問題なし'; rUl.appendChild(li);
+      const li=document.createElement('li'); li.className='good'; li.textContent='予報上、気温・湿度・露点・降水・風が設定した一般目安の範囲内'; rUl.appendChild(li);
     }
   }
 
@@ -527,7 +538,7 @@ function render(data, placeName){
     const s=summarizeDay(days[d], paintType);
     const wd=['日','月','火','水','木','金','土'][new Date(d+'T00:00:00Z').getUTCDay()];
     const label = i===0 ? '今日' : (i===1 ? '明日' : (d.slice(5).replace('-','/')));
-    const txt = s.state==='ok'?'塗れる':(s.state==='warn'?'注意':'厳しい');
+    const txt = s.state==='ok'?'一般目安内':(s.state==='warn'?'注意':'厳しい');
     const row=document.createElement('div'); row.className='day';
     row.innerHTML='<span class="d">'+label+' ('+wd+')</span>'
       +'<span class="pill '+s.state+'">'+txt+(s.best?(' '+s.best.start+'-'+(s.best.end+1)+'時'):'')+'</span>';

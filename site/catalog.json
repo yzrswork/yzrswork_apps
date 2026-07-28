@@ -3,12 +3,17 @@
   "site": {
     "name": "や印工務店の道具箱",
     "baseUrl": "https://apps.yzrswork.com/",
-    "legacyBaseUrl": "https://yzrswork.github.io/yzrswork_apps/"
+    "legacyBaseUrl": "https://yzrswork.github.io/yzrswork_apps/",
+    "affiliate": {
+      "program": "amazon-jp",
+      "associateTag": "yzrs_apps-22",
+      "disclosure": "Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。"
+    }
   },
   "featured": {
     "slug": "fixit",
-    "eyebrow": "いちばん使われているツール",
-    "linkText": "開く -"
+    "eyebrow": "まず、困りごとを直す",
+    "linkText": "診断を始める →"
   },
   "categories": [
     {
@@ -32,6 +37,11 @@
       "readmeDescription": "電子工作の工具と部品ストックをステップ別にチェック",
       "category": "electronics",
       "managed": true,
+      "related": [
+        "handa",
+        "bench",
+        "haisen"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -41,6 +51,11 @@
       "readmeDescription": "LED抵抗、カラーコード、555タイマー、電池駆動時間",
       "category": "electronics",
       "managed": true,
+      "related": [
+        "kit",
+        "handa",
+        "pinout"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -50,6 +65,15 @@
       "readmeDescription": "はんだの種類と作業から適正なこて先温度。トラブル診断と道具選びつき",
       "category": "electronics",
       "managed": true,
+      "related": [
+        "kit",
+        "bench",
+        "haisen"
+      ],
+      "sourceNote": {
+        "label": "実体験: 最初に揃えたはんだ工具",
+        "url": "https://note.com/yzrswork/n/nd08cb43b6ca4"
+      },
       "sitemapPriority": 0.8
     },
     {
@@ -59,6 +83,11 @@
       "readmeDescription": "Raspberry Pi、Arduino Uno、ESP32のピン配置を色分け表示。落とし穴つき",
       "category": "electronics",
       "managed": true,
+      "related": [
+        "haisen",
+        "bench",
+        "kit"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -68,6 +97,15 @@
       "readmeDescription": "初心者がつまずく部品の端子と極性を色分け表示。ジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグル、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータ。テスターでの確かめ方つき",
       "category": "electronics",
       "managed": true,
+      "related": [
+        "pinout",
+        "handa",
+        "bench"
+      ],
+      "sourceNote": {
+        "label": "実作例: TRS端子をモノラル配線した記録",
+        "url": "https://note.com/yzrswork/n/ne871f1c34dd9"
+      },
       "sitemapPriority": 0.8
     },
     {
@@ -77,6 +115,11 @@
       "readmeDescription": "ソケットからDDR規格、用途から容量を選ぶ",
       "category": "pc",
       "managed": true,
+      "related": [
+        "build",
+        "hdd",
+        "fixit"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -86,6 +129,11 @@
       "readmeDescription": "WDの色とCMR/SMR判定",
       "category": "pc",
       "managed": true,
+      "related": [
+        "build",
+        "mem",
+        "fixit"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -95,6 +143,11 @@
       "readmeDescription": "構成サマリーと電源容量の目安",
       "category": "pc",
       "managed": true,
+      "related": [
+        "mem",
+        "hdd",
+        "fixit"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -104,6 +157,11 @@
       "readmeDescription": "手持ちのUSB-Cケーブルの能力の見分け方と用途からの選び方。W数、転送速度、映像出力",
       "category": "pc",
       "managed": true,
+      "related": [
+        "build",
+        "fixit",
+        "bench"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -113,6 +171,11 @@
       "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期)",
       "category": null,
       "managed": true,
+      "related": [
+        "build",
+        "mem",
+        "hdd"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -122,6 +185,15 @@
       "readmeDescription": "くっつけたい素材2つから接着剤タイプと推奨製品を診断。見分け方つき",
       "category": "diy",
       "managed": true,
+      "related": [
+        "nurerukun",
+        "neji",
+        "kit"
+      ],
+      "sourceNote": {
+        "label": "実作例: エポキシと両面テープの使い分け",
+        "url": "https://note.com/yzrswork/n/nc614297f457f"
+      },
       "sitemapPriority": 0.8
     },
     {
@@ -131,6 +203,11 @@
       "readmeDescription": "住所からDIY塗装ができるタイミングを気温、湿度、露点、降水、風で判定。PWA",
       "category": "diy",
       "managed": false,
+      "related": [
+        "glue",
+        "neji",
+        "kit"
+      ],
       "sitemapPriority": 0.8
     },
     {
@@ -140,6 +217,15 @@
       "readmeDescription": "タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見",
       "category": "diy",
       "managed": true,
+      "related": [
+        "glue",
+        "nurerukun",
+        "kit"
+      ],
+      "sourceNote": {
+        "label": "実作例: 2mm下穴から109個の穴を広げた記録",
+        "url": "https://note.com/yzrswork/n/nb0529c27f4a4"
+      },
       "sitemapPriority": 0.8
     }
   ],

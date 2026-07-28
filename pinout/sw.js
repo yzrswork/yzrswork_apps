@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pinout-v1';
+const CACHE_NAME = 'pinout-v2';
 const CACHE_PREFIX = 'pinout-';
 const ASSETS = [
   './',

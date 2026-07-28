@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。オフライン早見リファレンス。",
   "hasServiceWorker": true,
-  "swVersion": 1,
+  "swVersion": 2,
   "assets": [
     "./",
     "./index.html",

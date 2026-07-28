@@ -97,13 +97,14 @@
   /* ── Filter chips ── */
   .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
   .chip {
+    min-height: 44px;
     font-family: var(--jp); font-size: 13px; font-weight: 500;
     padding: 7px 14px; border-radius: 20px; cursor: pointer;
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
   }
   .chip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .toolbar-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; gap: 8px; }
-  .hide-owned { font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+  .hide-owned { min-height: 44px; font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
   .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
   .count-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
 
@@ -122,8 +123,17 @@
     transition: opacity 160ms ease;
   }
   .item.owned { opacity: 0.5; }
-  .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
   .item .it-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
+  .item .it-basis {
+    display: inline-flex; align-items: center; min-height: 22px; padding: 2px 8px;
+    border: 1px solid var(--rule-soft); border-radius: 999px;
+    font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .item .it-basis.basis-used { color: var(--ok); border-color: var(--ok); background: rgba(79, 111, 62, 0.07); }
+  .item .it-basis.basis-article { color: var(--terracotta-deep); border-color: var(--terracotta); background: rgba(181, 69, 27, 0.06); }
+  .item .it-basis.basis-spec { color: var(--muted); }
   .item .it-why { font-size: 13px; color: var(--muted); margin: 4px 0 8px; }
   .item .it-reco {
     font-size: 13px; color: var(--ink-soft);
@@ -134,7 +144,7 @@
   .item .it-tip { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; margin: 0 0 10px; }
   .item .it-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .btn { font-family: var(--jp); font-size: 13px; font-weight: 500; border-radius: 8px; padding: 9px 13px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .btn { min-height: 44px; font-family: var(--jp); font-size: 13px; font-weight: 500; border-radius: 8px; padding: 9px 13px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
   .btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
   .btn.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .btn.buy:hover { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
@@ -174,7 +184,7 @@
   .cartbar.show { transform: translateY(0); }
   .cartbar .ct-label { font-size: 13px; }
   .cartbar .ct-count { font-family: var(--mono); color: #f0c9b8; }
-  .cartbar button { font-family: var(--jp); font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; background: var(--terracotta); color: #fff; }
+  .cartbar button { min-height: 44px; font-family: var(--jp); font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; background: var(--terracotta); color: #fff; }
 
   /* ── Modal (cart + settings) ── */
   .modal-bg { position: fixed; inset: 0; background: rgba(28,26,22,0.55); z-index: 20; display: none; align-items: flex-end; justify-content: center; }
@@ -188,11 +198,11 @@
   .cart-item .ci-pick { font-size: 11.5px; color: var(--muted); }
   .cart-item .ci-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .cart-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
-  .mini { font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
+  .mini { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
   .mini.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .mini.del { color: var(--terracotta); }
   .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
-  .modal .m-row button { flex: 1; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal .m-row button { flex: 1; min-height: 44px; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
   .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin: 14px 0 6px; letter-spacing: 0.05em; }
   .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
@@ -224,14 +234,22 @@
     </section>
 
     <section class="about">
-      <p>電子工作を始めたころ、いちばん困ったのは「何をどこで買えばいいか分からない」ことでした。Amazonで検索すれば選択肢が多すぎて時間が溶け、秋月電子や千石電商は名前を聞いたことがあっても使い分けが分からない。AliExpressは安いけれど届くまで2週間、急ぎならAmazon、という感覚がつかめるまでにはけっこう遠回りをしました。工具も同じで、「とりあえず安いハンダごて」で始めると結局温度調整つきに買い直すことになるし、いざ作り始めてから「抵抗が足りない」「ハンダが切れた」で手が止まるのもお約束です。このツールは、そうした経験をもとに「最初にこれを買えばよかった」という工具と、切らすと作業が止まる消耗品や部品ストックをステップ別のチェックリストにしたものです。手持ちを確認しながら、足りないものだけを買い物リストに集約できます。掲載しているのは、や印工務店が実際に使って選んだ道具たちです。</p>
+      <p>電子工作を始めたころ、いちばん困ったのは「何をどこで買えばいいか分からない」ことでした。Amazon、AliExpress、秋月電子、千石電商などは品揃えや配送条件が異なり、使い分けが分かるまでにはけっこう遠回りをしました。工具も同じで、「とりあえず安いハンダごて」で始めると結局温度調整つきに買い直すことになるし、いざ作り始めてから「抵抗が足りない」「ハンダが切れた」で手が止まるのもお約束です。このツールは、そうした経験をもとに「最初にこれを買えばよかった」という工具と、切らすと作業が止まる消耗品や部品ストックをステップ別のチェックリストにしたものです。手持ちを確認しながら、足りないものだけを買い物リストに集約できます。掲載品には、原文で実使用が確認できる品、記事で紹介した品、必要仕様から探すための候補が混在するため、「実使用」「記事で紹介」「仕様候補」を商品ごとに表示しています。</p>
       <p>調達先の使い分けや工具選びの詳しい話は、noteの電子工作3部作で読めます： <a href="https://note.com/yzrswork/n/nf679f6a190d9" target="_blank" rel="noopener noreferrer">vol.1 部品調達編</a> / <a href="https://note.com/yzrswork/n/nd08cb43b6ca4" target="_blank" rel="noopener noreferrer">vol.2 工具編</a> / <a href="https://note.com/yzrswork/n/n65791c58ad52" target="_blank" rel="noopener noreferrer">vol.3 消耗品と部品ストック編</a></p>
     </section>
 
     <footer>
-      <div>このリストは、noteの「電子工作」3部作をもとに、や印工務店が実際に使って選んだ道具をまとめたものです。</div>
-      <div>現行モデル確認: 2026年7月（HAKKO FX600 / AstroAI DT132A / Jesverty SPS-3010M）。価格・在庫はリンク先で確認してください。</div>
+      <div>このリストは、noteの「電子工作」3部作をもとに、実使用品・記事で紹介した品・仕様候補を区別してまとめたものです。</div>
+      <div>記事・商品情報確認: 2026年7月（原文のはんだごてはHAKKO FX600A）。価格・在庫・販売元・配送予定・最新仕様は購入時にリンク先で確認してください。</div>
       <div><!-- BUILD:BACKLINK:START -->
+<nav class="yapps-related" aria-label="関連情報">
+  <span class="yapps-related-label">次に使える道具</span>
+  <div class="yapps-related-links">
+    <a href="../handa/" data-related-slug="handa">はんだ付けナビ</a>
+    <a href="../bench/" data-related-slug="bench">工房の電卓</a>
+    <a href="../haisen/" data-related-slug="haisen">配線ナビ(初級)</a>
+  </div>
+</nav>
 <a href="../">← 道具箱（ほかの実用ツール）</a>
 <!-- BUILD:BACKLINK:END --></div>
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
@@ -250,7 +268,7 @@
   <div class="modal-bg" id="cart-bg">
     <div class="modal" role="dialog" aria-modal="true" aria-label="買い物リスト">
       <h2>買い物リスト</h2>
-      <p class="m-sub">「探す」でAmazonの検索が開きます。</p>
+      <p class="m-sub">「探す」でAmazonの商品または検索結果が開きます。価格・在庫・販売元・配送予定・最新仕様は購入時に確認してください。</p>
       <div id="cart-items"></div>
       <div class="m-row">
         <button id="copyList">リストをコピー</button>
@@ -278,34 +296,35 @@ const GROUPS = [
 ];
 
 /* ---------- アイテム（vol.2 工具 / vol.3 部品ストック より） ---------- */
+const BASIS_LABELS = { used: '実使用', article: '記事で紹介', spec: '仕様候補' };
 const ITEMS = [
   // Step 1
-  { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: 'これがないと始まらない。最初から温度調整付きが正解。', pick: 'HAKKO FX600（温調 200〜500℃）＋こて台', kw: 'HAKKO FX600 はんだこて 温調 こて台 セット' },
-  { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作' },
-  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット', kw: 'ブレッドボード ジャンパー線 セット' },
+  { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: '電子工作の基本工具。最初から温度調整付きを選ぶと、作業の幅を広げやすく買い直しも減らせます。', pick: 'HAKKO FX600A（原文で紹介したAmazon限定クリアタイプ。FX-600系・温調200〜500℃）＋こて台', kw: 'HAKKO FX600A はんだこて 温調 こて台', basis: 'used' },
+  { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作', basis: 'article' },
+  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット', kw: 'ブレッドボード ジャンパー線 セット', basis: 'spec' },
   // Step 2
-  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '動かない原因の9割は「つながってない」か「電圧がおかしい」。切り分けが一気に楽になる。', pick: 'AstroAI DT132A（4000カウント・TRMS・オートレンジ）', kw: 'AstroAI DT132A デジタルマルチメーター 4000カウント TRMS', asin: 'B07FDBW1PT' },
-  { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に刺しやすくなる。標準プローブの不満を解消。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03' },
-  { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300' },
-  { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '被覆を銅線を傷つけず剥がす。細いシリコン線もサクッと。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01' },
+  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '導通や電圧を測り、「つながっていない」「電圧が想定と違う」といった原因候補を切り分けやすくします。', pick: 'AstroAI 4000カウントモデル（原文の実使用品。型番と現行仕様は購入時に照合）', kw: 'AstroAI テスター 4000カウント オートレンジ', basis: 'used' },
+  { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に刺しやすくなる。標準プローブの不満を解消。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03', basis: 'article' },
+  { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300', basis: 'used' },
+  { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '被覆を銅線を傷つけず剥がす。細いシリコン線もサクッと。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01', basis: 'used' },
   // Step 3
-  { id: 'psu', cat: 'tool-3', title: '直流安定化電源', why: '電圧・電流を自分で設定。ラズパイ/Arduinoで「電源を安定させたい」と思ってからで十分。', pick: 'Jesverty SPS-3010M（30V/10A・USB PD・エンコーダ）', kw: 'Jesverty 直流安定化電源 SPS-3010M 30V 10A' },
+  { id: 'psu', cat: 'tool-3', title: '直流安定化電源', why: '電圧・電流を自分で設定。ラズパイ/Arduinoで「電源を安定させたい」と思ってからで十分。', pick: 'Jesverty SPS-3010M（30V/10A・USB Type-A/Type-C端子・エンコーダ。最新仕様は購入時に確認）', kw: 'Jesverty 直流安定化電源 SPS-3010M 30V 10A', basis: 'article' },
   // 部品ストック
-  { id: 'jumper', cat: 'stock', title: 'ジャンパー線', why: 'オス-オス/オス-メス/メス-メスの3種セットでほぼ対応。', pick: 'ELEGOO 120pcs 多色デュポンワイヤー', kw: 'ELEGOO ジャンパーワイヤー 120本 セット', tip: '急ぎ→Amazon' },
-  { id: 'resistor', cat: 'stock', title: '抵抗セット', why: 'LEDを焼かないための必須部品。収納ケース付きが整理に効く。', pick: 'GOODCHI 600個（10Ω〜1MΩ・30種・各20）', kw: 'GOODCHI 金属皮膜抵抗 600個 セット 収納ケース', tip: '急ぎ→Amazon' },
-  { id: 'elcap', cat: 'stock', title: '電解コンデンサ', why: '電源の平滑化・低周波ノイズ除去。容量幅の広いセットが便利。', pick: 'YFFSDC 200個（0.1μF〜1000μF・15種）', kw: '電解コンデンサ セット 200個 0.1uF 1000uF', tip: '急ぎ→Amazon' },
-  { id: 'ceracap', cat: 'stock', title: 'セラミックコンデンサ', why: 'パスコン用。0.1μF（104）を大量に使うので多めに。', pick: 'オーディオファン 300個（2pF〜100nF・30種）', kw: 'セラミックコンデンサ セット 300個 30種類', tip: '急ぎ→Amazon' },
-  { id: 'led', cat: 'stock', title: 'LED（各色）', why: '動作確認でとにかく使う。赤緑青黄白を100本単位で。', pick: 'LED 5色アソートセット', kw: 'LED 5色 セット 電子工作 アソート', tip: '急ぎ→Amazon' },
-  { id: 'shrink', cat: 'stock', title: '熱収縮チューブ', why: '配線の絶縁。見た目もきれいに、ショートも防ぐ。', pick: '複数サイズ＋収納ケース付きセット', kw: '熱収縮チューブ セット 収納ケース', tip: '急ぎ→Amazon' },
-  { id: 'solder', cat: 'stock', title: 'ハンダ（消耗品）', why: '品質が作業に直結。チャイナ便は溶け方が微妙なことがある。', pick: 'goot SD-83（スズ60/鉛40・φ1.0mm・日本製）', kw: 'goot はんだ SD-83 1.0mm 日本製', tip: '消耗品は国産推奨' },
-  { id: 'wick', cat: 'stock', title: 'ハンダ吸い取り線', why: '失敗を吸い取る。こての出番より多いかも。国産はフラックスが素直。', pick: 'goot CP-3015（幅3.0mm・1.5m・日本製）', kw: 'goot はんだ吸取線 CP-3015 3.0mm', tip: '消耗品は国産推奨' },
-  { id: 'protoboard', cat: 'stock', title: 'ユニバーサル基板', why: '仮組みした回路をハンダ付けで固定。消耗が遅いのでまとめ買い向き。', pick: '各サイズ まとめ買い', kw: 'ユニバーサル基板 セット', tip: '安く大量→AliExpress' }
+  { id: 'jumper', cat: 'stock', title: 'ジャンパー線', why: 'オス-オス/オス-メス/メス-メスの3種セットでほぼ対応。', pick: 'ELEGOO 120pcs 多色デュポンワイヤー', kw: 'ELEGOO ジャンパーワイヤー 120本 セット', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'resistor', cat: 'stock', title: '抵抗セット', why: 'LEDを焼かないための必須部品。収納ケース付きが整理に効く。', pick: 'GOODCHI 600個（10Ω〜1MΩ・30種・各20）', kw: 'GOODCHI 金属皮膜抵抗 600個 セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'elcap', cat: 'stock', title: '電解コンデンサ', why: '電源の平滑化・低周波ノイズ除去。容量幅の広いセットが便利。', pick: 'YFFSDC 200個（0.1μF〜1000μF・15種）', kw: '電解コンデンサ セット 200個 0.1uF 1000uF', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'ceracap', cat: 'stock', title: 'セラミックコンデンサ', why: 'パスコン用。0.1μF（104）を大量に使うので多めに。', pick: 'オーディオファン 300個（2pF〜100nF・30種）', kw: 'セラミックコンデンサ セット 300個 30種類', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'led', cat: 'stock', title: 'LED（各色）', why: '動作確認でとにかく使う。赤緑青黄白を100本単位で。', pick: 'LED 5色アソートセット', kw: 'LED 5色 セット 電子工作 アソート', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
+  { id: 'shrink', cat: 'stock', title: '熱収縮チューブ', why: '配線の絶縁。見た目もきれいに、ショートも防ぐ。', pick: '複数サイズ＋収納ケース付きセット', kw: '熱収縮チューブ セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
+  { id: 'solder', cat: 'stock', title: 'ハンダ（消耗品）', why: '品質が作業に直結。チャイナ便は溶け方が微妙なことがある。', pick: 'goot SD-83（スズ60/鉛40・φ1.0mm・日本製）', kw: 'goot はんだ SD-83 1.0mm 日本製', tip: '消耗品は国産推奨', basis: 'used' },
+  { id: 'wick', cat: 'stock', title: 'ハンダ吸い取り線', why: '失敗を吸い取る。こての出番より多いかも。国産はフラックスが素直。', pick: 'goot CP-3015（幅3.0mm・1.5m・日本製）', kw: 'goot はんだ吸取線 CP-3015 3.0mm', tip: '消耗品は国産推奨', basis: 'used' },
+  { id: 'protoboard', cat: 'stock', title: 'ユニバーサル基板', why: '仮組みした回路をハンダ付けで固定。消耗が遅いのでまとめ買い向き。', pick: '必要な穴数・外形に合うサイズ', kw: 'ユニバーサル基板 セット', tip: '価格・数量・配送予定を購入時に比較', basis: 'spec' }
 ];
 
 /* ---------- 調達先（vol.1） ---------- */
 const CHANNELS = [
-  { when: '急いでいる', name: 'Amazon', desc: 'すぐ欲しい・まず1セット試す最初の1手に。', url: amazonUrl('電子工作 工具 部品 セット'), affiliate: true },
-  { when: 'とにかく安く大量に', name: 'AliExpress', desc: '通称チャイナ便。配送日数は商品・発送元・配送方法で変わるので、到着予定を確認して待てる物に。', url: 'https://ja.aliexpress.com/' },
+  { when: '配送予定を確認したい', name: 'Amazon', desc: '商品ごとの価格・在庫・販売元・お届け予定日・仕様を購入前に確認。', url: amazonUrl('電子工作 工具 部品 セット'), affiliate: true },
+  { when: 'まとめ買い候補を比べる', name: 'AliExpress', desc: '価格・最小数量・発送元・配送方法・到着予定を商品ごとに確認して選ぶ。', url: 'https://ja.aliexpress.com/' },
   { when: '品質重視・定番部品', name: '秋月電子 / 千石電商', desc: 'マイコン・センサー・電源は国内定番が安心。', url: 'https://akizukidenshi.com/catalog/default.aspx' },
   { when: '変わった部品・宝探し', name: 'aitendo（通販）', desc: '変態パーツの聖地。実店舗は終了、通販は継続。', url: 'https://www.aitendo.com/' }
 ];
@@ -331,6 +350,7 @@ function amazonProductUrl(asin) {
 function itemAmazonUrl(item) {
   return item.asin ? amazonProductUrl(item.asin) : amazonUrl(item.kw);
 }
+function basisLabel(item) { return BASIS_LABELS[item.basis] || BASIS_LABELS.spec; }
 function byId(id) { return ITEMS.find(i => i.id === id); }
 
 /* ---------- フィルタチップ ---------- */
@@ -361,7 +381,10 @@ function renderList() {
       const inCart = cart.has(i.id);
       html += `
         <div class="item${isOwned ? ' owned' : ''}">
-          <div class="it-top"><div class="it-title">${esc(i.title)}</div></div>
+          <div class="it-top">
+            <div class="it-title">${esc(i.title)}</div>
+            <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
+          </div>
           <div class="it-why">${esc(i.why)}</div>
           <div class="it-reco"><span class="pick">${esc(i.pick)}</span></div>
           ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
@@ -419,7 +442,7 @@ function renderCart() {
     const i = byId(id); if (!i) return '';
     return `
       <div class="cart-item">
-        <div><div class="ci-name">${esc(i.title)}</div><div class="ci-pick">${esc(i.pick)}</div></div>
+        <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
           <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">探す</a>
           <button class="mini del" data-del="${i.id}">削除</button>
@@ -432,7 +455,8 @@ function renderCart() {
 
 function cartAsText() {
   const lines = ['電子工作 買い物リスト（や印工務店 装備ナビ）'];
-  [...cart].forEach(id => { const i = byId(id); if (i) lines.push(`- ${i.title}: ${i.pick}`); });
+  [...cart].forEach(id => { const i = byId(id); if (i) lines.push(`- [${basisLabel(i)}] ${i.title}: ${i.pick}`); });
+  lines.push('※価格・在庫・販売元・配送予定・最新仕様は購入時に確認してください。');
   return lines.join('\n');
 }
 

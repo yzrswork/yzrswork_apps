@@ -50,17 +50,70 @@ const appSlugs = catalog.apps.map((app) => app.slug);
 const pageSlugs = catalog.pages.map((page) => page.slug);
 const retiredSlugs = catalog.retiredApps.map((app) => app.slug);
 const allSlugs = [...appSlugs, ...pageSlugs, ...retiredSlugs];
+const affiliate = catalog.site.affiliate;
+const expectedAffiliateDisclosure =
+  'Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。';
 
 assertUnique(categoryIds, 'category.id');
 assertUnique(allSlugs, 'slug');
 
+if (
+  affiliate?.program !== 'amazon-jp' ||
+  affiliate?.associateTag !== 'yzrs_apps-22' ||
+  affiliate?.disclosure !== expectedAffiliateDisclosure
+) {
+  fail('site.affiliate がAmazon Japanの開示設定と一致しない');
+}
+
 for (const app of catalog.apps) {
   const dir = join(ROOT, app.slug);
-  if (!existsSync(join(dir, 'index.html'))) {
+  const indexPath = join(dir, 'index.html');
+  if (!existsSync(indexPath)) {
     fail(`公開アプリのindex.htmlがない: ${app.slug}`);
   }
   if (app.category !== null && !categoryIds.includes(app.category)) {
     fail(`未定義カテゴリ: ${app.slug} -> ${app.category}`);
+  }
+  if (!Array.isArray(app.related) || app.related.length < 2 || app.related.length > 3) {
+    fail(`related は公開アプリを2〜3件指定する: ${app.slug}`);
+  } else {
+    if (new Set(app.related).size !== app.related.length) {
+      fail(`related が重複: ${app.slug}`);
+    }
+    for (const relatedSlug of app.related) {
+      if (!appSlugs.includes(relatedSlug)) {
+        fail(`related が未登録アプリを参照: ${app.slug} -> ${relatedSlug}`);
+      }
+      if (relatedSlug === app.slug) {
+        fail(`related が自分自身を参照: ${app.slug}`);
+      }
+    }
+  }
+  if (
+    app.sourceNote &&
+    (typeof app.sourceNote.label !== 'string' ||
+      !app.sourceNote.label.trim() ||
+      !/^https:\/\/note\.com\/yzrswork\//.test(app.sourceNote.url || ''))
+  ) {
+    fail(`sourceNote はラベルとや印工務店noteのHTTPS URLを指定する: ${app.slug}`);
+  }
+
+  if (existsSync(indexPath)) {
+    const html = read(indexPath);
+    for (const relatedSlug of app.related || []) {
+      const expectedLink = `href="../${relatedSlug}/" data-related-slug="${relatedSlug}"`;
+      if (!html.includes(expectedLink)) {
+        fail(`生成済み関連リンクがない: ${app.slug} -> ${relatedSlug}`);
+      }
+    }
+    if (/amazon\.co\.jp|yzrs_apps-22/.test(html)) {
+      if (!html.includes(expectedAffiliateDisclosure)) {
+        fail(`Amazon開示文がcatalogと一致しない: ${app.slug}`);
+      }
+      if (!html.includes('href="../privacy/"')) {
+        fail(`アフィリエイト利用ページにprivacyリンクがない: ${app.slug}`);
+      }
+    }
   }
 
   const configPath = join(dir, 'app.json');
@@ -203,7 +256,7 @@ for (const path of swFiles) {
   }
 }
 
-for (const script of ['scripts/build.mjs', 'scripts/check.mjs']) {
+for (const script of ['scripts/build.mjs', 'scripts/check.mjs', 'analytics.js']) {
   try {
     execFileSync(process.execPath, ['--check', join(ROOT, script)], { stdio: 'pipe' });
   } catch {
