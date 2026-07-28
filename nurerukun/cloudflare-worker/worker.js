@@ -103,17 +103,37 @@ async function fetchJmaPrecipitationProbability(lat, lon, ctx) {
   }
 }
 
+// 気象庁のclass20コードは「全国地方公共団体コード5桁 + 枝番2桁」。
+// 多くの市区町村は枝番が"00"だが、気象庁が市内を細分化している場合は連番になる
+// （例: 横浜市 -> 1410011 横浜市北部 / 1410012 横浜市南部。全国で89件）。
+// そのため完全一致ではなく5桁の前方一致で引く。
+function findClass20Codes(areaData, jisCode) {
+  return Object.keys(areaData?.class20s || {})
+    .filter((code) => code.startsWith(jisCode))
+    .sort();
+}
+
 export function resolveForecastArea(areaData, municipalityCode) {
   if (!/^\d{5}$/.test(municipalityCode)) return null;
 
-  // 通常の市区町村は5桁の全国地方公共団体コード + "00"。
-  // 政令指定都市の区は気象庁側で市単位のため、先頭3桁 + "0000"へフォールバックする。
-  const exactCode = municipalityCode + '00';
-  const cityCode = municipalityCode.slice(0, 3) + '0000';
-  const class20Code = areaData?.class20s?.[exactCode] ? exactCode
-    : (areaData?.class20s?.[cityCode] ? cityCode : null);
-  if (!class20Code) return null;
+  let matches = findClass20Codes(areaData, municipalityCode);
 
+  // 政令指定都市の区は気象庁側では市単位のため、区コードから市コードへ降ろす。
+  // 市コードは末尾が0で区はその連番（例: 福岡市 40130 に対し博多区 40132）。
+  // 先頭3桁で丸めると福岡市の区が北九州市(40100)に化けるため、末尾0の候補を順に試す。
+  if (!matches.length) {
+    const base = Number(municipalityCode);
+    for (let i = 1; i <= 30 && !matches.length; i++) {
+      const candidate = String(base - i).padStart(5, '0');
+      if (candidate.slice(0, 2) !== municipalityCode.slice(0, 2)) break; // 都道府県をまたがない
+      if (!candidate.endsWith('0')) continue;
+      matches = findClass20Codes(areaData, candidate);
+    }
+  }
+  if (!matches.length) return null;
+
+  // 細分化された市は候補が複数返る。ほとんどは同じ予報区(class10)に属するため先頭を採る。
+  const class20Code = matches[0];
   const class20 = areaData.class20s[class20Code];
   const class15 = areaData.class15s?.[class20.parent];
   const class10Code = class15?.parent || (
@@ -133,26 +153,44 @@ export function resolveForecastArea(areaData, municipalityCode) {
   };
 }
 
+// 気象庁は経過済みの時間帯の降水確率に空文字を返す。Number('')は0になるため、
+// 素通しすると「降水確率0%」と誤って断定してしまう（塗装可否では最も危険な向きの誤り）。
+// 数字表記でない値はここで捨てて、判定側にはその時間帯を渡さない。
+function toProbability(raw) {
+  const text = String(raw ?? '').trim();
+  if (!/^\d{1,3}$/.test(text)) return null;
+  const n = Number(text);
+  return n >= 0 && n <= 100 ? n : null;
+}
+
 export function extractJmaProbabilities(forecast, class10Code) {
   if (!Array.isArray(forecast)) return { slots: [] };
 
   for (const report of forecast) {
     for (const series of report?.timeSeries || []) {
-      const area = (series.areas || []).find(item =>
+      const timeDefines = Array.isArray(series?.timeDefines) ? series.timeDefines : [];
+      const area = (series?.areas || []).find(item =>
         item?.area?.code === class10Code && Array.isArray(item.pops)
       );
-      if (!area) continue;
+      if (!area || !timeDefines.length) continue;
+
+      // 短期予報は6時間刻み、週間予報は24時間刻み。最終スロットの終端はこの間隔から補う。
+      const stepMs = timeDefines.length > 1
+        ? Math.max(0, Date.parse(timeDefines[1]) - Date.parse(timeDefines[0])) || 6 * 3600000
+        : 6 * 3600000;
 
       const slots = [];
-      for (let i = 0; i < series.timeDefines.length; i++) {
-        const probability = Number(area.pops[i]);
-        const from = series.timeDefines[i];
-        const next = series.timeDefines[i + 1];
+      for (let i = 0; i < timeDefines.length; i++) {
+        const probability = toProbability(area.pops[i]);
+        const from = timeDefines[i];
         const fromMs = Date.parse(from);
-        if (!Number.isFinite(probability) || probability < 0 || probability > 100 || !Number.isFinite(fromMs)) continue;
-        const to = next || new Date(fromMs + 6 * 3600000).toISOString();
+        if (probability === null || !Number.isFinite(fromMs)) continue;
+        const to = timeDefines[i + 1] || new Date(fromMs + stepMs).toISOString();
         slots.push({ from, to, probability });
       }
+      // 全て空文字だった報は使わず、次の報を見る
+      if (!slots.length) continue;
+
       return {
         reportDatetime: report.reportDatetime || null,
         publishingOffice: report.publishingOffice || null,
