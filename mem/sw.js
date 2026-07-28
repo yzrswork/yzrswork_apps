@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mem-v7';
+const CACHE_NAME = 'mem-v8';
 const CACHE_PREFIX = 'mem-';
 const ASSETS = [
   './',

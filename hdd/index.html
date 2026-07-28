@@ -16,14 +16,14 @@
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="HDD選びナビ — WD Color & CMR/SMR" />
-<meta property="og:description" content="WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避けるための早見。" />
+<meta property="og:description" content="WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見。" />
 <meta property="og:url" content="https://apps.yzrswork.com/hdd/" />
 <meta property="og:image" content="https://apps.yzrswork.com/icons/og-hdd.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="HDD選びナビ — WD Color & CMR/SMR" />
-<meta name="twitter:description" content="WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避ける早見。" />
+<meta name="twitter:description" content="WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや高負荷NASでCMRを選ぶ早見。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-hdd.png" />
-<meta name="description" content="Western DigitalのHDDを用途から色で選び、CMR/SMRを型番末尾で確認する選び方ナビ。RAID/NASにSMRを避けるための早見つき。オフライン対応。" />
+<meta name="description" content="Western DigitalのHDDを用途から色で選び、CMR/SMRを型番から確認する選び方ナビ。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見つき。オフライン対応。" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -33,7 +33,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "WDのHDDを用途から色で選び、型番末尾でCMR/SMRを判定。RAID/NASにSMRを避けるための早見。",
+  "description": "WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見。",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -126,6 +126,8 @@
   .check-out .v-smr { color: var(--warn); }
   .check-out .v-unknown { color: var(--muted); }
   .check-out .v-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  .check-out .model-buy { display: inline-block; margin-top: 10px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 8px; padding: 9px 13px; font-weight: 700; font-size: 12.5px; }
+  .check-out .model-buy:hover { background: var(--terracotta); }
   .examples { margin-top: 12px; font-size: 12px; color: var(--muted); }
   .examples b { color: var(--ink-soft); font-weight: 500; }
   .examples code { font-family: var(--mono); background: var(--paper-2); padding: 1px 5px; border-radius: 4px; cursor: pointer; }
@@ -156,14 +158,14 @@
 
     <header class="hero">
       <h1>HDD選びナビ<span class="en">— WD Color & CMR/SMR</span></h1>
-      <p>Western DigitalのHDDを「用途から色」で選び、「CMR/SMR」を型番末尾で確認する選び方ナビ。RAID/NASにSMRを選ばないための早見つき。</p>
+      <p>Western DigitalのHDDを「用途から色」で選び、「CMR/SMR」を型番で確認する選び方ナビ。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見つき。</p>
     </header>
 
     <div class="rule3">
       <div class="r-title">迷ったらこの3手順</div>
       <ol>
         <li>用途から<b>色</b>を大まかに選ぶ</li>
-        <li>用途で<b>CMR/SMR</b>を選ぶ（特にRAID/NASは必ずCMR）</li>
+        <li>用途で<b>CMR/SMR</b>を選ぶ（RAID再構築や高負荷NASはCMRを強く推奨）</li>
         <li>最終判断は必ず<b>型番</b>の記録方式を確認</li>
       </ol>
     </div>
@@ -178,7 +180,7 @@
     <div class="series" id="series"></div>
 
     <!-- 3. 型番チェッカー -->
-    <div class="sec-head"><span class="s-jp">3. 型番末尾から記録方式</span><span class="s-en">Model checker</span></div>
+    <div class="sec-head"><span class="s-jp">3. 登録型番と末尾例を確認</span><span class="s-en">Model checker</span></div>
     <div class="checker">
       <label for="model">型番を入力（例: WD20EFRX）</label>
       <input type="text" id="model" placeholder="WD20EFRX" autocomplete="off" spellcheck="false" />
@@ -189,10 +191,10 @@
     <!-- 4. 避けるべき -->
     <div class="sec-head"><span class="s-jp">4. この使い方は避ける</span><span class="s-en">Avoid</span></div>
     <div class="avoid">
-      <div class="a-title">SMRを選んではいけない用途</div>
+      <div class="a-title">CMRを優先したい用途</div>
       <ul>
-        <li><b>RAID / NAS に SMR</b> ー 復旧が極端に遅く、数日〜数週間かかる例も。ここだけはCMR必須。</li>
-        <li><b>ゲーム用に SMR</b> ー ロード時間が増え、プレイ体験が悪化。</li>
+        <li><b>RAID / ZFS / 高負荷NAS</b> ー 再構築や大量書き込みでSMRの速度が大きく落ちる例があります。復旧時間と安定性を重視するならCMRを選ぶのが原則です。</li>
+        <li><b>ゲームの頻繁な追加・更新</b> ー 大容量の書き換えが続く用途ではSMRが遅くなる場合があります。容量だけでなくSSDも含めて選びます。</li>
         <li><b>頻繁な書き換えに SMR</b> ー ランダム書き込みで性能が急低下。</li>
       </ul>
     </div>
@@ -202,7 +204,7 @@
       <p>色と記録方式の詳しい整理はnoteで: <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">Western Digitalの色の選び方ガイド</a></p>
     </section>
 
-    <p class="disclaimer">※ 色だけでは記録方式（CMR/SMR）は確定できません。WDは旧Red Plus（EFRX）を現行のEFZX/EFPX（いずれもCMR）へ静かに置き換えており、容量・世代で末尾が変わります。最終判断は必ず型番の「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年6月時点）。</p>
+    <p class="disclaimer">※ WD Red（無印）のSMRモデルも小規模NAS向け製品ですが、RAID再構築・ZFS・頻繁な書き込みではCMRのRed Plus / Proが安全側です。色や末尾だけでは記録方式を常に確定できないため、最終判断は型番ごとの「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年7月時点）。</p>
 
     <footer>
       <div>この早見は <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「WDの色の選び方ガイド」 ↗</a> と最新の公式情報をもとにしています。役に立ったら記事にスキをもらえると励みになります。</div>
@@ -221,7 +223,7 @@
    依存ゼロの単一HTML。データ送信なし、オフライン動作。
    note「Western Digitalの色の選び方ガイド」をもとに、用途→色→
    記録方式（CMR/SMR）→型番確認の手順を対話化したもの。
-   型番例は2025年時点。最終判断は公式仕様を確認する前提。
+   型番例は2026年7月時点。最終判断は公式仕様を確認する前提。
    ========================================================= */
 
 /* ---------- 色データ ---------- */
@@ -249,17 +251,21 @@ const SERIES = [
   { name: 'Red（無印）', verdict: 'smr', text: '基本SMR' }
 ];
 
-/* ---------- 型番末尾ルール（2026年6月時点・WD公式で要確認） ---------- */
+/* ---------- 登録型番・末尾例（2026年7月時点・WD公式で要確認） ---------- */
 const SUFFIX = [
-  { suf: 'EFPX', v: 'cmr', note: '例: WD40EFPX（現行 Red Plus 4TB・CMR・256MB）' },
-  { suf: 'EFZX', v: 'cmr', note: '例: WD40EFZX（現行 Red Plus 4TB・CMR・128MB）' },
-  { suf: 'EFRX', v: 'cmr', note: '例: WD20EFRX（旧 Red Plus・CMR。現行はEFZX/EFPXへ置換）' },
-  { suf: 'EFAX', v: 'smr', note: '例: WD20EFAX（Red 無印 2TB・SMR）' },
-  { suf: 'EARZ', v: 'cmr', note: '例: WD20EARZ（Blue 2TB 新型・CMR）' },
-  { suf: 'EZBX', v: 'smr', note: '例: WD20EZBX（Blue 2TB 7200rpm・SMR）' },
-  { suf: 'EZAZ', v: 'smr', note: '例: WD20EZAZ（Blue 2TB 5400rpm・SMR）' }
+  { suf: 'EFPX', v: 'cmr', models: ['WD40EFPX'], note: '例: WD40EFPX（現行 Red Plus 4TB・CMR・256MB）' },
+  { suf: 'EFZZ', v: 'cmr', models: ['WD40EFZZ'], note: '例: WD40EFZZ（現行 Red Plus 4TB・CMR・128MB）' },
+  { suf: 'EFZX', v: 'cmr', models: ['WD60EFZX'], note: '例: WD60EFZX（現行 Red Plus 6TB・CMR・128MB）' },
+  { suf: 'EFRX', v: 'cmr', models: ['WD20EFRX'], note: '例: WD20EFRX（旧 Red Plus・CMR。現行はEFZX/EFPXへ置換）' },
+  { suf: 'EFAX', v: 'smr', models: ['WD20EFAX'], note: '例: WD20EFAX（Red 無印 2TB・SMR）' },
+  { suf: 'EARZ', v: 'cmr', models: ['WD20EARZ'], note: '例: WD20EARZ（Blue 2TB 新型・CMR）' },
+  { suf: 'EZAX', v: 'cmr', models: ['WD40EZAX'], note: '例: WD40EZAX（Blue 4TB・CMR）' },
+  { suf: 'EAAZ', v: 'cmr', models: ['WD80EAAZ'], note: '例: WD80EAAZ（Blue 8TB・CMR）' },
+  { suf: 'EAZZ', v: 'cmr', models: ['WD80EAZZ'], note: '例: WD80EAZZ（Blue 8TB・CMR）' },
+  { suf: 'EZBX', v: 'smr', models: ['WD20EZBX'], note: '例: WD20EZBX（Blue 2TB 7200rpm・SMR）' },
+  { suf: 'EZAZ', v: 'smr', models: ['WD20EZAZ'], note: '例: WD20EZAZ（Blue 2TB 5400rpm・SMR）' }
 ];
-const EXAMPLES = ['WD40EFPX', 'WD40EFZX', 'WD20EFRX', 'WD20EARZ', 'WD20EZAZ', 'WD20EFAX'];
+const EXAMPLES = ['WD40EFPX', 'WD40EFZZ', 'WD60EFZX', 'WD20EARZ', 'WD40EZAX', 'WD20EZAZ', 'WD20EFAX'];
 
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -308,12 +314,19 @@ function checkModel(raw) {
   const v = (raw || '').toUpperCase().replace(/\s/g, '');
   if (!v) { out.innerHTML = ''; return; }
   const hit = SUFFIX.find(s => v.endsWith(s.suf));
+  const buy = /^WD[A-Z0-9]{5,}$/.test(v)
+    ? `<a class="model-buy" href="${esc(amazonUrl(v))}" data-track-label="${esc(v)}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
+    : '';
   if (hit) {
     const cls = hit.v === 'cmr' ? 'v-cmr' : 'v-smr';
     const label = hit.v === 'cmr' ? 'CMR' : 'SMR';
-    out.innerHTML = `<span class="verdict ${cls}">${label}</span> と判定（末尾 ${esc(hit.suf)}）<div class="v-note">${esc(hit.note)}</div>`;
+    if (hit.models.includes(v)) {
+      out.innerHTML = `<span class="verdict ${cls}">${label}</span>（登録済み型番）<div class="v-note">${esc(hit.note)}</div>${buy}`;
+    } else {
+      out.innerHTML = `<span class="verdict ${cls}">この末尾の登録例は${label}。正式仕様を確認</span><div class="v-note">${esc(hit.note)}。入力した型番は未登録のため、WD公式の「Recording Technology」を確認してください。</div>${buy}`;
+    }
   } else {
-    out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">登録済みの末尾（EFRX / EFAX / EARZ / EZAZ / EZBX）に当てはまりません。型番の「Recording Technology」を公式で確認してください。</div>`;
+    out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">この早見に登録済みの末尾（EFPX / EFZZ / EFZX / EFRX / EFAX / EARZ / EZAX / EAAZ / EAZZ / EZBX / EZAZ）に当てはまりません。末尾だけで断定せず、型番の「Recording Technology」を公式で確認してください。</div>${buy}`;
   }
 }
 

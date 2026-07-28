@@ -1,52 +1,58 @@
-# 塗れるくん 天気プロキシ (Cloudflare Worker)
+# 塗れるくん 複合天気プロキシ (Cloudflare Worker)
 
-塗れるくんの天気データ(met.no / MET Norway)を、規約に準拠した形でブラウザへ渡すための無料プロキシ。
+塗れるくんで使う次のデータをまとめてブラウザへ返すWorker。
 
-## なぜproxyを挟むのか
+- MET Norway: 地点別の気温・湿度・降水量・風速
+- 気象庁: 予報区域別の時間帯降水確率
+- 国土地理院: 座標から市区町村コードを取得
 
-met.no はデータが CC BY 4.0 で **商用利用OK**。ただし API 利用規約で以下を求めている。
+MET Norwayの従来レスポンス形式は維持し、`yzrswork.jma`に気象庁データを追加する。Workerと静的アプリを別々に更新しても旧アプリが壊れない構成。
 
-1. 連絡先を含む **識別可能な User-Agent** を送ること
-2. **ブラウザからの直アクセスは本番非推奨**(CORS も通らない)
-3. ある程度のトラフィックには **caching proxy を必ず置く** こと
+## 地域判定
 
-ブラウザの `fetch` では User-Agent を付けられないため、Worker を1枚挟んで
-「正しい UA + エッジキャッシュ + CORS」を満たし、**商用でも規約違反にならない状態**にする。
-(Open-Meteo の無料版は非商用限定だったため met.no へ移行した経緯あり)
+1. 国土地理院の逆ジオコーダで座標から5桁の市区町村コードを取得
+2. 気象庁の地域階層データで、市区町村を一次細分区域と予報担当官署へ変換
+3. 担当官署の府県天気予報から、該当する一次細分区域の降水確率を抽出
 
-## デプロイ手順(無料・カード不要)
+政令指定都市の区は、気象庁側の市単位コードへフォールバックする。気象庁側の取得や地域判定に失敗した場合もMET Norwayの地点予報は返し、`yzrswork.jma.available`を`false`にする。
 
-1. https://dash.cloudflare.com にログイン(無料アカウントを作成)
-2. Workers & Pages -> Create -> Worker -> 名前を付ける(例: `nurerukun-weather`)
-3. 「Edit code」を開き、`worker.js` の中身を全部貼り付けて **Deploy**
-4. 発行された URL を控える
-   例: `https://nurerukun-weather.<自分のサブドメイン>.workers.dev`
-5. `nurerukun/index.html` 冒頭の `WEATHER_PROXY` にその URL を設定して push
+## キャッシュ
 
-現在の本番 Worker: `https://nurerukun-weather.yzrswork.workers.dev`(デプロイ済み)
+| データ | TTL |
+|---|---:|
+| MET Norway地点予報 | 15分 |
+| 気象庁府県天気予報 | 30分 |
+| 気象庁地域階層 | 24時間 |
+| 国土地理院の逆ジオコード結果 | 24時間 |
+
+## デプロイ
+
+このディレクトリで実行する。
+
+```powershell
+npx wrangler deploy
+```
+
+現在の本番Worker:
+
+`https://nurerukun-weather.yzrswork.workers.dev`
 
 ## 動作確認
 
-ブラウザかコマンドで:
-
+```text
+https://nurerukun-weather.yzrswork.workers.dev/health
+https://nurerukun-weather.yzrswork.workers.dev/forecast?lat=35.6812&lon=139.7671
 ```
-https://<your-worker>.workers.dev/forecast?lat=35.18&lon=136.9
-```
 
-met.no の JSON が返り、レスポンスヘッダに `Access-Control-Allow-Origin` が付いていれば成功。
+`/forecast`のレスポンスで次を確認する。
 
-## 編集ポイント(worker.js 冒頭)
+- `properties.timeseries`: MET Norwayの地点予報
+- `yzrswork.jma.available`: 気象庁データの取得可否
+- `yzrswork.jma.areaName`: 判定された一次細分区域
+- `yzrswork.jma.slots`: 時間帯別の降水確率
 
-| 定数 | 意味 |
-|---|---|
-| `CONTACT` | met.no に申告する連絡先(公開URLかメール)。既定はnoteプロフィール |
-| `APP_URL` | アプリのURL(User-Agentに入る) |
-| `ALLOW_ORIGINS` | このproxyを使ってよいオリジン。公開サイトのオリジンを入れる(open proxy化を防ぐ) |
-| `CACHE_TTL` | キャッシュ秒数(既定900=15分) |
+## 利用条件と表示
 
-## 帰属表示(CC BY 4.0)
-
-アプリ側フッターに以下を明記済み:
-- 提供元: MET Norway (met.no) へのリンク
-- ライセンス: CC BY 4.0 へのリンク
-- 加工の明示: 露点は本アプリが算出
+- MET Norway: CC BY 4.0。識別可能なUser-Agentとキャッシュプロキシを使用
+- 気象庁: 公共データ利用規約に従い、アプリ側で出典と加工を明記
+- 国土地理院: 住所・地域判定の提供元としてアプリ側に表示

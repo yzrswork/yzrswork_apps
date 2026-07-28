@@ -127,8 +127,8 @@
     {
       "slug": "nurerukun",
       "name": "塗れるくん",
-      "description": "住所を入れるだけで、外壁塗装やDIY塗装ができるタイミングを気温、湿度、露点、降水から判定。",
-      "readmeDescription": "住所から外壁塗装、DIY塗装ができるタイミングを気温、湿度等で判定。PWA",
+      "description": "住所を入れるだけで、家具・木部・金属などのDIY塗装ができるタイミングを気温、湿度、露点、降水、風から判定。",
+      "readmeDescription": "住所からDIY塗装ができるタイミングを気温、湿度、露点、降水、風で判定。PWA",
       "category": "diy",
       "managed": false,
       "sitemapPriority": 0.8

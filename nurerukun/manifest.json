@@ -1,7 +1,7 @@
 {
   "name": "塗れるくん -- 塗装タイミング判定",
   "short_name": "塗れるくん",
-  "description": "住所を入れると今日や数日先に外壁塗装ができるか(気温・湿度・露点・降水)を判定します。",
+  "description": "住所を入れると今日や数日先にDIY塗装ができるかを気温・湿度・露点・降水・風から判定します。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
