@@ -142,6 +142,11 @@
   .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
 
   .about { margin-top: 30px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
+  .about h2 { margin: 0 0 12px; color: var(--ink); font-size: 17px; line-height: 1.5; }
+  .about h3 { margin: 20px 0 6px; color: var(--ink); font-size: 14.5px; line-height: 1.5; }
+  .about p { margin: 0 0 10px; }
+  .about ul { margin: 0 0 12px; padding-left: 20px; }
+  .about li { margin-bottom: 6px; }
   .about a { color: var(--terracotta); }
   footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
@@ -188,20 +193,38 @@
       <div class="examples" id="examples"></div>
     </div>
 
-    <!-- 4. 避けるべき -->
-    <div class="sec-head"><span class="s-jp">4. この使い方は避ける</span><span class="s-en">Avoid</span></div>
+    <!-- 4. 記録方式が効く場面 -->
+    <div class="sec-head"><span class="s-jp">4. 記録方式が効く場面</span><span class="s-en">Workload</span></div>
     <div class="avoid">
-      <div class="a-title">CMRを優先したい用途</div>
+      <div class="a-title">書き込みが繰り返し続く用途はCMRを優先</div>
       <ul>
-        <li><b>RAID / ZFS / 高負荷NAS</b> ー 再構築や大量書き込みでSMRの速度が大きく落ちる例があります。復旧時間と安定性を重視するならCMRを選ぶのが原則です。</li>
-        <li><b>ゲームの頻繁な追加・更新</b> ー 大容量の書き換えが続く用途ではSMRが遅くなる場合があります。容量だけでなくSSDも含めて選びます。</li>
-        <li><b>頻繁な書き換えに SMR</b> ー ランダム書き込みで性能が急低下。</li>
+        <li><b>RAID再構築 / ZFS resilver</b> ー 長時間にわたって読み書きが集中するため、安定した書き込みを重視します。</li>
+        <li><b>高負荷NAS / 頻繁な追加・削除</b> ー 小さなランダム書き込みや上書きを繰り返す使い方では、CMRのほうが挙動を見通しやすくなります。</li>
+        <li><b>動画編集やゲームの大きな更新</b> ー 大容量の書き換えが続くなら、CMRだけでなくSSDも候補にします。</li>
       </ul>
     </div>
 
     <section class="about">
-      <p>仕事用のストレージが限界に近づくたびに、WDのHDDの「色」で毎回悩んでいました。Blueは普段使い、Red PlusはNAS向け、Purpleは監視カメラ、Blackは高性能ゲーム向け、と色でおおまかな用途は分かるのですが、落とし穴は記録方式です。CMRはランダム書き込みや頻繁な書き換えに強く、SMRは安くて大容量にしやすい代わりにランダム書き込みが苦手。そしてやっかいなことに、色だけでは記録方式は確定できません。同じ色でもCMRとSMRが混在しているためで、特にNASやRAIDにSMRを入れてしまうと、障害からの復旧が極端に遅くなることがあります。結局のところ「用途で色を選び、型番でCMRかSMRかを確認する」の二段構えが確実、というのが調べ回った結論でした。このナビはその手順をそのまま画面にしたもので、最終判断はWD公式の型番情報で確認できるようにしています。</p>
-      <p>色と記録方式の詳しい整理はnoteで: <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">Western Digitalの色の選び方ガイド</a></p>
+      <h2>色は入口、型番とWD公式仕様が結論</h2>
+      <p>WDのBlue、Red Plus、Purple、Blackといった色は、想定用途を絞るための製品ファミリーです。色だけで個々のドライブの記録方式、容量、回転数、キャッシュ、保証を確定することはできません。同じ色でも容量や世代によって仕様が変わる可能性があるため、「用途から色を絞る → 完全な型番を控える → 型番ごとのRecording TechnologyをWD公式で確認する」の順で選びます。このページの早見と末尾例は候補を探す入口で、購入判断の結論ではありません。</p>
+
+      <h3>CMRとSMRの差は、書き込み方に表れやすい</h3>
+      <p>CMRは各トラックを重ねずに記録します。SMRはトラックの一部を重ねて記録するため、既存データの近くを書き換えると周辺をまとめて整理し直す場合があります。そのため、読み出し中心では違いが目立たなくても、キャッシュを超える連続書き込み、細かなランダム書き込み、頻繁な追加・削除、RAID再構築のように書き込みが続く場面では差が出やすくなります。</p>
+      <ul>
+        <li><b>CMRを優先しやすい:</b> RAID / ZFS、高負荷NAS、作業データ、頻繁に更新する保存先</li>
+        <li><b>SMRも候補になりうる:</b> 一度まとめて保存し、その後は読み出し中心にする個人用アーカイブ</li>
+      </ul>
+      <p>実際の速度や回復時間は、製品、空き容量、キャッシュ、ファームウェア、接続方式、処理内容で変わります。「SMRなら必ず遅い」「CMRならどの用途でも速い」とは判断できません。</p>
+
+      <h3>判定できない型番は「不明」のまま公式へ</h3>
+      <p>チェッカーに型番がない、末尾例だけ一致する、販売ページの表記が省略されている場合は、CMRともSMRとも断定しません。箱やドライブ本体にある完全な型番を確認し、<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式のRecording Technology一覧</a>または製品データシートで照合します。早見に登録済みの型番でも、購入時には現行の公式仕様を再確認してください。</p>
+
+      <h3>RAIDとバックアップは別に考える</h3>
+      <p>冗長性のあるRAIDは一部のドライブ故障時にも運用を続けやすくする構成ですが、それだけで独立したバックアップにはなりません。誤削除、上書き、マルウェア、機器全体の故障、盗難や災害では複数台のデータを同時に失う可能性があります。残したいデータは、RAIDとは別の媒体や場所にも世代を分けて保存します。</p>
+
+      <h3>や印工務店の実例：2TBから4TBへ入れ替え</h3>
+      <p>元記事では、仕事用に約5年間使った2TBのストレージが一杯になったことをきっかけに、用途と記録方式を調べ直しました。そのうえで、型番がWD40EFZZのRed Plus 4TBをCMRと確認し、2台購入しています。これはその時の用途に合わせた一例であり、すべての人に同じ色・容量・台数を勧めるものではありません。必要容量、書き込み方、搭載ベイ数、接続方式、保証を確認して選んでください。</p>
+      <p>調査の経緯と当時の判断はnoteで: <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">Western Digitalの色の選び方ガイド</a></p>
     </section>
 
     <p class="disclaimer">※ WD Red（無印）のSMRモデルも小規模NAS向け製品ですが、RAID再構築・ZFS・頻繁な書き込みではCMRのRed Plus / Proが安全側です。色や末尾だけでは記録方式を常に確定できないため、最終判断は型番ごとの「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年7月時点）。</p>

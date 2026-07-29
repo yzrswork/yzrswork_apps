@@ -107,6 +107,11 @@
   .hide-owned { min-height: 44px; font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
   .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
   .count-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .list-hint {
+    margin: 0 0 16px; padding: 10px 12px;
+    border-left: 3px solid var(--terracotta); background: rgba(181, 69, 27, 0.05);
+    color: var(--ink-soft); font-size: 12.5px;
+  }
 
   /* ── Group heading ── */
   .group-head {
@@ -163,7 +168,31 @@
   .ch .ch-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
   .ch a { font-size: 12px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   .ch a:hover { color: var(--terracotta); border-color: var(--terracotta); }
+  .ch .ch-note { display: block; font-size: 11.5px; color: var(--ink-soft); }
   @media (max-width: 460px) { .ch-grid { grid-template-columns: 1fr; } }
+
+  /* ── Buying guide ── */
+  .buying-guide { margin-top: 30px; }
+  .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .guide-card {
+    background: var(--card); border: 1px solid var(--rule-soft);
+    border-radius: 10px; padding: 14px;
+  }
+  .guide-card.wide { grid-column: 1 / -1; }
+  .guide-card h2, .guide-card h3 { margin: 0 0 7px; font-size: 15px; line-height: 1.45; }
+  .guide-card p, .guide-card li { margin: 0; color: var(--ink-soft); font-size: 12.5px; }
+  .guide-card p + p { margin-top: 7px; }
+  .guide-card ol, .guide-card ul { margin: 0; padding-left: 1.4em; }
+  .guide-card li + li { margin-top: 5px; }
+  .guide-note {
+    margin: 10px 0 0; padding: 11px 13px;
+    border: 1px dashed var(--rule); border-radius: 9px;
+    color: var(--ink-soft); font-size: 12.5px;
+  }
+  @media (max-width: 520px) {
+    .guide-grid { grid-template-columns: 1fr; }
+    .guide-card.wide { grid-column: auto; }
+  }
 
   /* ── Footer ── */
   .about { margin-top: 30px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
@@ -194,8 +223,9 @@
   .modal h2 { font-size: 17px; margin: 0 0 4px; }
   .modal .m-sub { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
   .cart-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--rule-soft); }
+  .cart-item > div:first-child { min-width: 0; }
   .cart-item .ci-name { font-size: 13.5px; font-weight: 500; }
-  .cart-item .ci-pick { font-size: 11.5px; color: var(--muted); }
+  .cart-item .ci-pick { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
   .cart-item .ci-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .cart-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
   .mini { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
@@ -210,7 +240,7 @@
 </style>
 </head>
 <body>
-  <main class="page">
+  <main class="page" id="main-content" tabindex="-1">
     <div class="topbar">
       <span class="brand"><span class="dot">●</span> 装備ナビ</span>
     </div>
@@ -225,8 +255,44 @@
       <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
       <span class="count-note" id="ownCount"></span>
     </div>
+    <p class="list-hint">まず「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
 
     <div id="list"></div>
+
+    <section class="buying-guide" aria-labelledby="buying-guide-title">
+      <div class="group-head"><span class="g-jp">道具を選ぶ基準</span><span class="g-en">Before buying</span></div>
+      <div class="guide-grid">
+        <article class="guide-card wide">
+          <h2 id="buying-guide-title">買う前に決める3段階</h2>
+          <ol>
+            <li><strong>作るものを決める：</strong>まず試したい回路や工作を一つ決め、必要な作業を洗い出します。</li>
+            <li><strong>手持ちを確認する：</strong>代用できる工具や残っている部品を「持ってる」で消し込みます。</li>
+            <li><strong>今いる物だけ選ぶ：</strong>必須品から始め、補助工具や大量ストックは困りごとが出てから足します。</li>
+          </ol>
+        </article>
+        <article class="guide-card">
+          <h3>工具と消耗品の違い</h3>
+          <p>工具は繰り返し使うため、握りやすさ・調整範囲・交換部品の入手性を優先します。ハンダや吸い取り線などの消耗品は、作業性に直結する品質と残量を確認。抵抗やLEDなどの部品は、よく使う規格だけを少しずつ補充します。</p>
+        </article>
+        <article class="guide-card">
+          <h3>ラベルの読み方</h3>
+          <ul>
+            <li><strong>実使用：</strong>note原文で本人の使用を確認できた品。</li>
+            <li><strong>記事で紹介：</strong>原文で紹介した品。継続使用を意味するものではありません。</li>
+            <li><strong>仕様候補：</strong>必要な条件から探す入口。実使用は未確認です。</li>
+          </ul>
+        </article>
+        <article class="guide-card">
+          <h3>買い直しを減らす判断</h3>
+          <p>最安値だけで一式を揃えず、最初はStep 1に絞ります。温度調整のように後から必要になりやすい機能は先に確保し、直流安定化電源のような発展工具は用途が生まれてから。消耗品は、使い切る量と保管場所も含めて選びます。</p>
+        </article>
+        <article class="guide-card">
+          <h3>このナビの限界</h3>
+          <p>価格・在庫・販売元・配送日・現行仕様は変わるため、このページでは確定できません。候補をリスト化した後、メーカー情報と販売ページを照合してください。電圧や電流を扱う作業では、使用機器の説明書と安全条件を優先してください。</p>
+        </article>
+      </div>
+      <p class="guide-note"><strong>note 3部作の要約：</strong>vol.1は急ぎ・数量・品質・珍しさで調達先を使い分ける話、vol.2は必須工具から始めて困りごとに合わせて足す順番、vol.3は作業を止めやすい消耗品と定番部品を少しずつ備える考え方です。</p>
+    </section>
 
     <section class="channels">
       <div class="group-head"><span class="g-jp">部品はどこで買う？</span><span class="g-en">Where to buy</span></div>
@@ -265,10 +331,10 @@
   </div>
 
   <!-- Cart modal -->
-  <div class="modal-bg" id="cart-bg">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="買い物リスト">
-      <h2>買い物リスト</h2>
-      <p class="m-sub">「探す」でAmazonの商品または検索結果が開きます。価格・在庫・販売元・配送予定・最新仕様は購入時に確認してください。</p>
+  <div class="modal-bg" id="cart-bg" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
+      <h2 id="cart-title">買い物リスト</h2>
+      <p class="m-sub">リストに追加した候補だけ、1項目につき1つの「Amazonで確認」から検索できます。価格・在庫・販売元・配送予定・最新仕様は購入時に確認してください。</p>
       <div id="cart-items"></div>
       <div class="m-row">
         <button id="copyList">リストをコピー</button>
@@ -323,7 +389,7 @@ const ITEMS = [
 
 /* ---------- 調達先（vol.1） ---------- */
 const CHANNELS = [
-  { when: '配送予定を確認したい', name: 'Amazon', desc: '商品ごとの価格・在庫・販売元・お届け予定日・仕様を購入前に確認。', url: amazonUrl('電子工作 工具 部品 セット'), affiliate: true },
+  { when: '配送予定を確認したい', name: 'Amazon', desc: '商品ごとの価格・在庫・販売元・お届け予定日・仕様を購入前に確認。', note: '候補は「＋ リスト」後に、買い物リストから確認できます。' },
   { when: 'まとめ買い候補を比べる', name: 'AliExpress', desc: '価格・最小数量・発送元・配送方法・到着予定を商品ごとに確認して選ぶ。', url: 'https://ja.aliexpress.com/' },
   { when: '品質重視・定番部品', name: '秋月電子 / 千石電商', desc: 'マイコン・センサー・電源は国内定番が安心。', url: 'https://akizukidenshi.com/catalog/default.aspx' },
   { when: '変わった部品・宝探し', name: 'aitendo（通販）', desc: '変態パーツの聖地。実店舗は終了、通販は継続。', url: 'https://www.aitendo.com/' }
@@ -391,7 +457,6 @@ function renderList() {
           <div class="it-actions">
             <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
             <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
-            <a class="btn buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">🛒 探す</a>
           </div>
         </div>`;
     });
@@ -425,7 +490,9 @@ function renderChannels() {
       <div class="ch-when">${esc(c.when)}</div>
       <div class="ch-name">${esc(c.name)}</div>
       <div class="ch-desc">${esc(c.desc)}</div>
-      <a href="${esc(c.url)}" target="_blank" rel="${c.affiliate ? 'noopener sponsored nofollow' : 'noopener noreferrer'}"${c.affiliate ? ' data-track-label="調達先 Amazon"' : ''}>開く ↗</a>
+      ${c.url
+        ? `<a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>`
+        : `<span class="ch-note">${esc(c.note || '')}</span>`}
     </div>`).join('');
 }
 
@@ -444,13 +511,21 @@ function renderCart() {
       <div class="cart-item">
         <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
-          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">探す</a>
+          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">Amazonで確認</a>
           <button class="mini del" data-del="${i.id}">削除</button>
         </div>
       </div>`;
   }).join('');
   wrap.querySelectorAll('[data-del]').forEach(b =>
-    b.addEventListener('click', () => { cart.delete(b.getAttribute('data-del')); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); }));
+    b.addEventListener('click', () => {
+      cart.delete(b.getAttribute('data-del'));
+      saveSet('kit:cart', cart);
+      renderCart();
+      renderList();
+      updateCartBar();
+      const nextDelete = cartBg.querySelector('[data-del]');
+      (nextDelete || closeCartButton).focus();
+    }));
 }
 
 function cartAsText() {
@@ -462,9 +537,49 @@ function cartAsText() {
 
 /* ---------- イベント結線 ---------- */
 const cartBg = document.getElementById('cart-bg');
-document.getElementById('openCart').addEventListener('click', () => { renderCart(); cartBg.classList.add('open'); });
-document.getElementById('closeCart').addEventListener('click', () => cartBg.classList.remove('open'));
-cartBg.addEventListener('click', e => { if (e.target === cartBg) cartBg.classList.remove('open'); });
+const openCartButton = document.getElementById('openCart');
+const closeCartButton = document.getElementById('closeCart');
+function openCart() {
+  renderCart();
+  cartBg.classList.add('open');
+  cartBg.setAttribute('aria-hidden', 'false');
+  closeCartButton.focus();
+}
+function closeCart() {
+  cartBg.classList.remove('open');
+  cartBg.setAttribute('aria-hidden', 'true');
+  const firstVisibleAdd = [...document.querySelectorAll('[data-add]')]
+    .find(el => el.offsetParent !== null);
+  (cart.size > 0 ? openCartButton : (firstVisibleAdd || document.getElementById('main-content'))).focus();
+}
+openCartButton.addEventListener('click', openCart);
+closeCartButton.addEventListener('click', closeCart);
+cartBg.addEventListener('click', e => { if (e.target === cartBg) closeCart(); });
+document.addEventListener('keydown', e => {
+  if (!cartBg.classList.contains('open')) return;
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeCart();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const focusable = [...cartBg.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter(el => el.offsetParent !== null);
+  if (!focusable.length) {
+    e.preventDefault();
+    cartBg.querySelector('.modal').focus();
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+});
 document.getElementById('clearList').addEventListener('click', () => { cart.clear(); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); });
 document.getElementById('copyList').addEventListener('click', () => {
   const text = cartAsText();

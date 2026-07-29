@@ -227,6 +227,57 @@
   .about h2 { font-size: 15px; color: var(--ink); margin: 0 0 10px; }
   .about p { margin: 0 0 14px; }
 
+  /* Preflight guide */
+  .preflight {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .preflight h2 {
+    margin: 0 0 6px;
+    font-family: var(--jp);
+    font-size: 17px;
+    color: var(--ink);
+  }
+  .preflight > p {
+    margin: 0 0 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+  .preflight-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 12px;
+  }
+  .preflight-card {
+    padding: 16px;
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    background: var(--card);
+  }
+  .preflight-card h3 {
+    margin: 0 0 10px;
+    font-family: var(--jp);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .preflight-card ol,
+  .preflight-card ul {
+    margin: 0;
+    padding-left: 1.35em;
+  }
+  .preflight-card li,
+  .preflight-card p {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+  .preflight-card li + li { margin-top: 6px; }
+  .preflight-card p { margin: 0 0 10px; }
+  .preflight-card p:last-child { margin-bottom: 0; }
+  .preflight-card strong { color: var(--ink); }
+
   /* Footer */
   footer {
     margin-top: 34px;
@@ -250,6 +301,7 @@
 
   @media (max-width: 480px) {
     .page { padding: 22px 16px 36px; }
+    .preflight-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -272,6 +324,29 @@
     <div class="picker" id="picker"></div>
 
     <div id="detail"></div>
+
+    <section class="preflight" aria-labelledby="preflight-title">
+      <h2 id="preflight-title">通電前に確認する5原則</h2>
+      <p>図は端子を探す入口です。同じ種類に見えても、ラグの配置やピン順は型番、メーカー、見る向きで変わるため、手元の部品を電源オフで確かめてから配線します。</p>
+      <div class="preflight-grid">
+        <article class="preflight-card">
+          <h3>思い込みでつながない確認順</h3>
+          <ol>
+            <li><strong>電源を外す。</strong> 回路から電池やアダプターを外します。コンデンサの放電方法が分からない機器には触れません。</li>
+            <li><strong>型番と見る向きを確認する。</strong> 部品の刻印を読み、データシートの端子図が部品側、端子側、基板側のどの向きかを合わせます。</li>
+            <li><strong>テスターで端から対応を取る。</strong> 導通モードは無通電の部品に使い、端子を1本ずつ特定してメモします。</li>
+            <li><strong>配線後に導通と短絡を再確認する。</strong> つなぐ予定の点だけが導通し、電源とGNDや隣の端子が意図せず短絡していないかを調べます。</li>
+            <li><strong>一致しなければ通電しない。</strong> 図、データシート、実測の結果が合わないときは、推測で進めず型番と回路を調べ直します。</li>
+          </ol>
+        </article>
+        <article class="preflight-card">
+          <h3>例：TRSジャックをテスターで特定する</h3>
+          <p>プラグをジャックへ挿し、無通電の状態でプラグの<strong>先端（Tip）</strong>と各ラグの導通を順に調べます。同様に根元の<strong>Sleeve</strong>、中央の輪の<strong>Ring</strong>を調べれば、外見やラグ位置に頼らず対応を記録できます。</p>
+          <p>や印工務店のマイク改造例では、TRS外観のジャックをモノラルとして使い、Tipをスピーカーの＋、Sleeveを－、Ringを未接続にしました。これはその製作例の配線であり、すべての機器に共通する決まりではありません。</p>
+          <p><strong>止める目安：</strong>複数のラグが同時に鳴る、プラグの抜き差しで関係が変わる、型番の資料と測定が一致しない場合は、スイッチ接点を含む可能性があります。部品を回路から切り離して再測定するか、データシートを確認するまで通電しません。商用電源や高電圧を扱う機器は、この初心者向け手順の対象外です。</p>
+        </article>
+      </div>
+    </section>
 
     <section class="about">
       <h2>配線の何でつまずくのか</h2>
