@@ -8,6 +8,11 @@
       "program": "amazon-jp",
       "associateTag": "yzrs_apps-22",
       "disclosure": "Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。"
+    },
+    "adsense": {
+      "client": "ca-pub-8467165715973366",
+      "publisherId": "pub-8467165715973366",
+      "certificationAuthorityId": "f08c47fec0942fa0"
     }
   },
   "featured": {

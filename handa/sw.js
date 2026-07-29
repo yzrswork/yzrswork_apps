@@ -1,4 +1,4 @@
-const CACHE_NAME = 'handa-v2';
+const CACHE_NAME = 'handa-v3';
 const CACHE_PREFIX = 'handa-';
 const ASSETS = [
   './',

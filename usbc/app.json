@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "USB-Cケーブルの能力の見分け方と用途からの選び方。W数・転送速度・映像出力をオフラインで確認。",
   "hasServiceWorker": true,
-  "swVersion": 3,
+  "swVersion": 4,
   "assets": [
     "./",
     "./index.html",

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neji-v2';
+const CACHE_NAME = 'neji-v3';
 const CACHE_PREFIX = 'neji-';
 const ASSETS = [
   './',

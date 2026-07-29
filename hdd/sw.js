@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hdd-v11';
+const CACHE_NAME = 'hdd-v12';
 const CACHE_PREFIX = 'hdd-';
 const ASSETS = [
   './',
