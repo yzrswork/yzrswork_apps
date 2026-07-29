@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "電子工作の作業台に常駐する計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間をオフラインで。",
   "hasServiceWorker": true,
-  "swVersion": 9,
+  "swVersion": 10,
   "assets": [
     "./",
     "./index.html",
