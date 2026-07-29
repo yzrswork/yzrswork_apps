@@ -61,16 +61,11 @@ Settings -> Pages -> Source: **Deploy from a branch** -> Branch: **main** / **/(
 
 各ツールの詳細は各フォルダのindex.htmlを参照。
 
-## AdSense 導入時の ads.txt 追加手順
+## AdSense 設定
 
-ads.txtは必須ではないが、広告枠の不正販売を防ぐためGoogleが推奨している。AdSenseのサイト登録時にパブリッシャーIDが確認できたら、審査中または承認後の導入時に追加する。
+AdSenseのクライアントID、パブリッシャーID、認証機関IDは `site/catalog.json` の
+`site.adsense` を正とする。`npm run build` が公開アプリの確認コードと、リポジトリ
+直下の `ads.txt` を生成する。
 
-1. AdSense 管理画面で発行された `pub-XXXXXXXXXXXXXXXX`(パブリッシャーID)を控える
-2. リポジトリ直下(`apps.yzrswork.com/ads.txt` として配信される場所)に `ads.txt` を新規作成し、以下の1行を記載する
-
-   ```
-   google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-   ```
-
-3. pushしてCloudflare Pagesの自動デプロイを待つ
-4. `https://apps.yzrswork.com/ads.txt` がHTTP 200で表示され、パブリッシャーIDが正しいことを確認する
+変更時は `npm run build` と `npm run check` を実行し、デプロイ後に
+`https://apps.yzrswork.com/ads.txt` と各ページの `<head>` を確認する。

@@ -151,12 +151,30 @@ function renderManifest(app) {
   return JSON.stringify(manifest, null, 2) + '\n';
 }
 
-// --- <head> 生成 ---
-function renderHead(app) {
+// --- AdSense / <head> 生成 ---
+function renderAdsenseHead(catalog) {
+  const adsense = catalog.site.adsense;
+  if (!adsense?.client || !adsense?.publisherId || !adsense?.certificationAuthorityId) {
+    throw new Error('site.adsense の client / publisherId / certificationAuthorityId が必要');
+  }
+  return [
+    `<meta name="google-adsense-account" content="${adsense.client}" />`,
+    `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense.client}"`,
+    `     crossorigin="anonymous"></script>`,
+  ].join('\n');
+}
+
+function renderAdsTxt(catalog) {
+  const adsense = catalog.site.adsense;
+  return `google.com, ${adsense.publisherId}, DIRECT, ${adsense.certificationAuthorityId}\n`;
+}
+
+function renderHead(app, catalog) {
   const lines = [];
   lines.push(`<meta charset="utf-8" />`);
   lines.push(`<title>${app.title}</title>`);
   lines.push(`<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />`);
+  lines.push(renderAdsenseHead(catalog));
   if (app.hasManifest) {
     lines.push(`<link rel="manifest" href="${app.manifestHref}" />`);
   }
@@ -265,6 +283,8 @@ const CATALOG_START = '<!-- BUILD:CATALOG:START -->';
 const CATALOG_END = '<!-- BUILD:CATALOG:END -->';
 const README_TOOLS_START = '<!-- BUILD:README-TOOLS:START -->';
 const README_TOOLS_END = '<!-- BUILD:README-TOOLS:END -->';
+const ADSENSE_START = '<!-- BUILD:ADSENSE:START -->';
+const ADSENSE_END = '<!-- BUILD:ADSENSE:END -->';
 
 function escapeHtml(value) {
   return String(value)
@@ -432,7 +452,7 @@ function replaceMarked(html, startMarker, endMarker, content) {
 
 function buildIndexHtml(app, catalog) {
   let html = readFileSync(join(app.dir, 'index.html'), 'utf8');
-  html = replaceMarked(html, HEAD_START, HEAD_END, renderHead(app));
+  html = replaceMarked(html, HEAD_START, HEAD_END, renderHead(app, catalog));
   if (app.backLink) {
     html = replaceMarked(html, BACKLINK_START, BACKLINK_END, renderBackLink(app, catalog));
   }
@@ -470,13 +490,21 @@ function main() {
     writeIfChanged(join(app.dir, 'index.html'), html, results);
   }
 
-  const rootIndex = replaceMarked(
-    readFileSync(join(ROOT, 'index.html'), 'utf8'),
-    CATALOG_START,
-    CATALOG_END,
-    renderCatalog(catalog)
-  );
+  let rootIndex = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  rootIndex = replaceMarked(rootIndex, ADSENSE_START, ADSENSE_END, renderAdsenseHead(catalog));
+  rootIndex = replaceMarked(rootIndex, CATALOG_START, CATALOG_END, renderCatalog(catalog));
   writeIfChanged(join(ROOT, 'index.html'), rootIndex, results);
+
+  for (const app of catalog.apps.filter((entry) => entry.managed === false)) {
+    const indexPath = join(ROOT, app.slug, 'index.html');
+    const html = replaceMarked(
+      readFileSync(indexPath, 'utf8'),
+      ADSENSE_START,
+      ADSENSE_END,
+      renderAdsenseHead(catalog)
+    );
+    writeIfChanged(indexPath, html, results);
+  }
 
   const readme = replaceMarked(
     readFileSync(join(ROOT, 'README.md'), 'utf8'),
@@ -486,6 +514,7 @@ function main() {
   );
   writeIfChanged(join(ROOT, 'README.md'), readme, results);
   writeIfChanged(join(ROOT, 'sitemap.xml'), renderSitemap(catalog), results);
+  writeIfChanged(join(ROOT, 'ads.txt'), renderAdsTxt(catalog), results);
 
   for (const retiredApp of catalog.retiredApps) {
     const dir = join(ROOT, retiredApp.slug);

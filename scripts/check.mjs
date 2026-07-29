@@ -51,8 +51,12 @@ const pageSlugs = catalog.pages.map((page) => page.slug);
 const retiredSlugs = catalog.retiredApps.map((app) => app.slug);
 const allSlugs = [...appSlugs, ...pageSlugs, ...retiredSlugs];
 const affiliate = catalog.site.affiliate;
+const adsense = catalog.site.adsense;
 const expectedAffiliateDisclosure =
   'Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。';
+const expectedAdsenseMeta = `<meta name="google-adsense-account" content="${adsense?.client}"`;
+const expectedAdsenseScript =
+  `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense?.client}`;
 
 assertUnique(categoryIds, 'category.id');
 assertUnique(allSlugs, 'slug');
@@ -63,6 +67,14 @@ if (
   affiliate?.disclosure !== expectedAffiliateDisclosure
 ) {
   fail('site.affiliate がAmazon Japanの開示設定と一致しない');
+}
+
+if (
+  !/^ca-pub-\d+$/.test(adsense?.client || '') ||
+  adsense?.publisherId !== adsense.client.replace(/^ca-/, '') ||
+  !/^[0-9a-f]{16}$/.test(adsense?.certificationAuthorityId || '')
+) {
+  fail('site.adsense のID形式またはclientとpublisherIdの対応が不正');
 }
 
 for (const app of catalog.apps) {
@@ -100,6 +112,9 @@ for (const app of catalog.apps) {
 
   if (existsSync(indexPath)) {
     const html = read(indexPath);
+    if (!html.includes(expectedAdsenseMeta) || !html.includes(expectedAdsenseScript)) {
+      fail(`AdSense確認コードがない: ${app.slug}`);
+    }
     for (const relatedSlug of app.related || []) {
       const expectedLink = `href="../${relatedSlug}/" data-related-slug="${relatedSlug}"`;
       if (!html.includes(expectedLink)) {
@@ -216,6 +231,15 @@ for (const dir of listRootDirsWith('index.html')) {
 const rootIndex = read(join(ROOT, 'index.html'));
 const readme = read(join(ROOT, 'README.md'));
 const sitemap = read(join(ROOT, 'sitemap.xml'));
+const adsTxt = read(join(ROOT, 'ads.txt'));
+if (!rootIndex.includes(expectedAdsenseMeta) || !rootIndex.includes(expectedAdsenseScript)) {
+  fail('root indexにAdSense確認コードがない');
+}
+const expectedAdsTxt =
+  `google.com, ${adsense.publisherId}, DIRECT, ${adsense.certificationAuthorityId}\n`;
+if (adsTxt !== expectedAdsTxt) {
+  fail('ads.txtがsite.adsenseと一致しない');
+}
 for (const app of catalog.apps) {
   if (!rootIndex.includes(`href="${app.slug}/"`)) {
     fail(`root indexに未掲載: ${app.slug}`);
