@@ -254,7 +254,7 @@
     {
       "slug": "asobou",
       "name": "あそぼう",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/project/",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/asobou/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-asobou-"
@@ -263,7 +263,7 @@
     {
       "slug": "fireworks",
       "name": "花火",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/fireworks.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/fireworks/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-fireworks-"
@@ -272,7 +272,7 @@
     {
       "slug": "grid",
       "name": "Grid Instrument",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/grid.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/grid/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-grid-"
@@ -281,7 +281,7 @@
     {
       "slug": "metronome",
       "name": "Metronome Watch",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/metronome-watch.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/metronome/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-metronome-"
@@ -290,7 +290,7 @@
     {
       "slug": "mizu",
       "name": "Mizu — Watercolor Trace",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/grid_v2.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/mizu/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-mizu-"
@@ -299,7 +299,7 @@
     {
       "slug": "news",
       "name": "電子工作通信",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/news.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/news/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-news-"
@@ -308,7 +308,7 @@
     {
       "slug": "otamatone",
       "name": "OTAMATONE WEB",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/otamatone.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/otamatone/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-otamatone-"
@@ -317,7 +317,7 @@
     {
       "slug": "prompt-forge",
       "name": "Prompt Forge",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/prompt-forge.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/prompt-forge/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-prompt-forge-"
@@ -326,7 +326,7 @@
     {
       "slug": "virus-busters",
       "name": "ウィルスバスターズ",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/virus-busters.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/virus-busters/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-virus-busters-"
@@ -335,7 +335,7 @@
     {
       "slug": "yzrsynth",
       "name": "YZRsynth",
-      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/yzrsynth.html",
+      "destination": "https://yzrswork.github.io/yzrswork_ai-skill-recipe/yzrsynth/",
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-yzrsynth-"
