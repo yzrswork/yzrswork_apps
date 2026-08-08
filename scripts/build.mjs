@@ -469,9 +469,12 @@ function renderRetiredSw(app) {
 
 // --- 旧ホスト(yzrswork.github.io)退役スタブ生成 ---
 // GitHub Pagesの配信元をmainブランチの/docsへ切り替えることで、Cloudflare Pages側
-// (リポジトリ直下、apps.yzrswork.com)には一切手を触れずに旧ホストだけを退役させる。
-// docs/配下のスタブは canonical を書かない(noindexと別ドメインへのcanonicalの併用は
-// Googleが評価を誤って統合しうるため。apps.yzrswork.com側を巻き込んで消さないための防衛線)。
+// (リポジトリ直下、apps.yzrswork.com)の公開アプリ本体には触れずに旧ホストだけを
+// 退役させる(ただしCloudflare Pagesはリポジトリ直下を配信するため、_redirectsの
+// 追加など、リポジトリ側の設定変更は反映される。Cloudflareダッシュボード側の
+// 設定は変更しない、という意味)。docs/配下のスタブは canonical を書かない
+// (noindexと別ドメインへのcanonicalの併用はGoogle公式が推奨していない予防的な
+// 回避。apps.yzrswork.com側を巻き込んで消さないための防衛線)。
 function renderLegacyIndex({ name, destination, destinationLabel, hasSw, noticeSeconds }) {
   const dest = escapeHtml(destination);
   const label = escapeHtml(destinationLabel || 'apps.yzrswork.com で開く');

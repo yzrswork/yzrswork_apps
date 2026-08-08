@@ -297,8 +297,8 @@ if (legacyRetirement?.enabled) {
   }
 
   // docs/配下は退役アプリのミラーも含め、全htmlでcanonicalを禁止する
-  // (noindexと別ドメインへのcanonicalの併用はGoogleの評価統合を誤らせうるため。
-  // root側の同種ページ(退役アプリ)は対象外。root自体はcanonicalを維持したまま)。
+  // (noindexと別ドメインへのcanonicalの併用はGoogle公式が推奨していないため、
+  // 予防的に避ける。root側の同種ページ(退役アプリ)は対象外。root自体はcanonicalを維持したまま)。
   // getRegistrations()もサイト境界を越えて全SWを取得するため、docs全体で禁止する。
   const walkLegacy = (dir) => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -312,7 +312,7 @@ if (legacyRetirement?.enabled) {
         }
         if (entry.name === 'index.html' || entry.name === '404.html') {
           if (source.includes('rel="canonical"')) {
-            fail(`旧ホストスタブにcanonicalが残っている(noindexとの併用は別ドメインの評価を巻き込みうる): ${path.slice(ROOT.length + 1)}`);
+            fail(`旧ホストスタブにcanonicalが残っている(noindexとの併用はGoogle公式が非推奨): ${path.slice(ROOT.length + 1)}`);
           }
         }
       }
