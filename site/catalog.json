@@ -9,6 +9,15 @@
       "outDir": "docs",
       "noticeSeconds": 3
     },
+    "sharedOrigin": {
+      "host": "yzrswork.github.io",
+      "note": "yzrswork_apps と yzrswork_ai-skill-recipe は yzrswork.github.io 上でオリジンを共有し、CacheStorageも共有される。reservedCachePrefixes に前方一致するキャッシュ名は移転先の現役PWAが使用中のため、退役SWから削除してはいけない(削除すると移転先のオフラインキャッシュを破壊する)。",
+      "reservedCachePrefixes": [
+        "yapps-"
+      ],
+      "verifiedAgainst": "yzrswork_ai-skill-recipe@70b043d",
+      "verifiedAt": "2026-08-08"
+    },
     "affiliate": {
       "program": "amazon-jp",
       "associateTag": "yzrs_apps-22",
@@ -263,7 +272,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-asobou-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/asobou が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "fireworks",
@@ -272,7 +282,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-fireworks-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/fireworks が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "grid",
@@ -281,7 +292,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-grid-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/grid が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "metronome",
@@ -290,7 +302,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-metronome-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/metronome が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "mizu",
@@ -299,7 +312,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-mizu-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/mizu が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "news",
@@ -308,7 +322,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-news-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/news が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "otamatone",
@@ -317,7 +332,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-otamatone-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/otamatone が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "prompt-forge",
@@ -326,7 +342,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-prompt-forge-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/prompt-forge が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "virus-busters",
@@ -335,7 +352,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-virus-busters-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/virus-busters が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "yzrsynth",
@@ -344,7 +362,8 @@
       "destinationLabel": "デジタル作品置き場で開く",
       "cachePrefixes": [
         "yapps-yzrsynth-"
-      ]
+      ],
+      "cacheClearBlockedBy": "移転先 yzrswork_ai-skill-recipe/yzrsynth が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中"
     },
     {
       "slug": "vault-path",

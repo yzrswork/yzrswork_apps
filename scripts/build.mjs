@@ -410,8 +410,39 @@ function renderRetiredIndex(app) {
 `;
 }
 
-function renderRetiredSw(app) {
-  return `const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};
+// --- 退役SWの共通本体 ---
+// root(apps.yzrswork.com)側とdocs(yzrswork.github.io)側で同じ本体を使う。
+// 以前は2つの関数に同じ本文をコピーしていたため、片方だけ直すと安全性の差が生まれた。
+//
+// キャッシュ削除の可否は catalog の cacheClearBlockedBy で決める。
+// CacheStorageはオリジン単位で共有される。yzrswork.github.io は
+// yzrswork_ai-skill-recipe とオリジンを共有するため、移転先が現役で使っている
+// キャッシュ名(yapps-<slug>-vN)を退役SWが消すと、移転先PWAのオフラインキャッシュを
+// 破壊する。削除できるのは「移転先と名前が衝突しない」と確認できた退役アプリだけ。
+// 削除しない場合に残るのは、SW解除後は誰も参照しない孤児キャッシュだけで、
+// ブラウザのストレージ回収に任せられる(害は容量のみ)。
+// なお registration.unregister() はスコープ単位なので、移転先の登録には影響しない。
+function retiredSwSource(app, { navigateExpression }) {
+  const blockedBy = app.cacheClearBlockedBy;
+  const header = blockedBy
+    ? `// このSWはキャッシュを削除しない。
+// 理由: ${blockedBy}
+// 対象prefix: ${app.cachePrefixes.join(', ')}
+// 同一オリジンでCacheStorageを共有するため、削除すると移転先の現役PWAを壊す。
+// (site/catalog.json の site.sharedOrigin と cacheClearBlockedBy を参照)
+const CACHE_CLEAR_DISABLED = true;`
+    : `const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};`;
+  const clearStep = blockedBy
+    ? ''
+    : `    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))
+    );
+
+`;
+  return `${header}
 const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
 
 self.addEventListener('install', (event) => {
@@ -420,23 +451,20 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
-        .map((key) => caches.delete(key))
-    );
-
-    await self.registration.unregister();
+${clearStep}    await self.registration.unregister();
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     await Promise.all(
       windows
         .filter((client) => client.url.startsWith(self.registration.scope))
-        .map((client) => client.navigate(RETIRED_URL))
+        .map((client) => ${navigateExpression})
     );
   })());
 });
 `;
+}
+
+function renderRetiredSw(app) {
+  return retiredSwSource(app, { navigateExpression: 'client.navigate(RETIRED_URL)' });
 }
 
 // --- 旧ホスト(yzrswork.github.io)退役スタブ生成 ---
@@ -584,33 +612,12 @@ function renderLegacyRetiredIndex(app) {
 `;
 }
 
+// docs側はhashを引き継ぎ、uncontrolled clientでのnavigate rejectを握る点だけがrootと違う。
+// 本体(キャッシュ削除の可否を含む)は retiredSwSource に集約している。
 function renderLegacyRetiredSw(app) {
-  return `const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};
-const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(self.skipWaiting());
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
-        .map((key) => caches.delete(key))
-    );
-
-    await self.registration.unregister();
-    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    await Promise.all(
-      windows
-        .filter((client) => client.url.startsWith(self.registration.scope))
-        .map((client) => client.navigate(RETIRED_URL + new URL(client.url).hash).catch(() => {}))
-    );
-  })());
-});
-`;
+  return retiredSwSource(app, {
+    navigateExpression: 'client.navigate(RETIRED_URL + new URL(client.url).hash).catch(() => {})',
+  });
 }
 
 function legacyLiveTargets(catalog) {
