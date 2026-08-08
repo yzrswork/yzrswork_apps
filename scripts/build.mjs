@@ -364,9 +364,16 @@ function renderSitemap(catalog) {
   return `${lines.join('\n')}\n`;
 }
 
-function renderRetiredIndex(app) {
+function renderRetiredIndex(app, catalog) {
   const reason = app.reason || 'この作品はデジタル作品置き場へ移動しました。';
   const destination = escapeHtml(app.destination);
+  // destinationが自サイト内(=このアプリの退役先が道具箱トップ自身)の場合、
+  // noindexページのcanonicalがトップを指す形になり、Googleがnoindexシグナルを
+  // トップへ伝播させてトップごとインデックスから落とすリスクがある(公式非推奨の
+  // 組み合わせ)。selfCanonicalがtrueのエントリだけ、canonicalを自己参照にする。
+  const canonical = app.selfCanonical
+    ? escapeHtml(`${catalog.site.baseUrl}${app.slug}/`)
+    : destination;
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -374,7 +381,7 @@ function renderRetiredIndex(app) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, follow" />
   <meta http-equiv="refresh" content="5;url=${destination}" />
-  <link rel="canonical" href="${destination}" />
+  <link rel="canonical" href="${canonical}" />
   <title>${escapeHtml(app.name)} — 移転のお知らせ</title>
   <style>
     :root { color-scheme: light; --paper:#f0ebe3; --ink:#26211d; --terra:#a54832; --rule:#c9bca9; }
@@ -788,7 +795,7 @@ function main() {
 
   for (const retiredApp of catalog.retiredApps) {
     const dir = join(ROOT, retiredApp.slug);
-    writeIfChanged(join(dir, 'index.html'), renderRetiredIndex(retiredApp), results);
+    writeIfChanged(join(dir, 'index.html'), renderRetiredIndex(retiredApp, catalog), results);
     writeIfChanged(join(dir, 'sw.js'), renderRetiredSw(retiredApp), results);
   }
 
