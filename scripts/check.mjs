@@ -252,6 +252,28 @@ for (const app of catalog.retiredApps) {
   if (!app.destination.startsWith('https://')) {
     fail(`退役先はHTTPSに限定: ${app.slug} -> ${app.destination}`);
   }
+
+  // destinationが自サイト内を指すなら selfCanonical が必須(逆も同様)。
+  // noindexと別URLへのcanonicalの併用はGoogle公式が推奨していないため、
+  // 自サイト内へ退役するアプリは予防的に自己参照canonicalにする。
+  const destinationIsSelf = app.destination.startsWith(catalog.site.baseUrl);
+  if (destinationIsSelf && !app.selfCanonical) {
+    fail(`自サイト内へ退役するアプリはselfCanonicalが必須: ${app.slug}`);
+  }
+  if (!destinationIsSelf && app.selfCanonical) {
+    fail(`selfCanonicalは自サイト内へのdestinationにのみ許可: ${app.slug}`);
+  }
+
+  const retiredIndex = existsSync(join(dir, 'index.html')) ? read(join(dir, 'index.html')) : '';
+  const expectedCanonical = app.selfCanonical
+    ? `${catalog.site.baseUrl}${app.slug}/`
+    : app.destination;
+  if (!retiredIndex.includes(`rel="canonical" href="${expectedCanonical}"`)) {
+    fail(`退役スタブのcanonicalが期待値と不一致: ${app.slug} -> ${expectedCanonical}`);
+  }
+  if (app.selfCanonical && retiredIndex.includes(`rel="canonical" href="${app.destination}"`)) {
+    fail(`退役スタブのcanonicalがdestination(トップ等)を指したままになっている: ${app.slug}`);
+  }
 }
 
 // --- 旧ホスト(yzrswork.github.io)スタブの検証 ---

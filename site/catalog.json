@@ -373,7 +373,8 @@
       "cachePrefixes": [
         "vault-path-"
       ],
-      "reason": "個人Vault構造を扱うため公開を終了しました。"
+      "reason": "個人Vault構造を扱うため公開を終了しました。",
+      "selfCanonical": true
     }
   ]
 }
