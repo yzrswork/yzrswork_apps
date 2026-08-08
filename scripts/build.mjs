@@ -17,7 +17,7 @@
 // 使い方: node scripts/build.mjs [--check]
 //   --check: 書き込まず、生成結果と現状ファイルの差分があれば非0で終了(CI用)
 
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -439,6 +439,265 @@ self.addEventListener('activate', (event) => {
 `;
 }
 
+// --- 旧ホスト(yzrswork.github.io)退役スタブ生成 ---
+// GitHub Pagesの配信元をmainブランチの/docsへ切り替えることで、Cloudflare Pages側
+// (リポジトリ直下、apps.yzrswork.com)には一切手を触れずに旧ホストだけを退役させる。
+// docs/配下のスタブは canonical を書かない(noindexと別ドメインへのcanonicalの併用は
+// Googleが評価を誤って統合しうるため。apps.yzrswork.com側を巻き込んで消さないための防衛線)。
+function renderLegacyIndex({ name, destination, destinationLabel, hasSw, noticeSeconds }) {
+  const dest = escapeHtml(destination);
+  const label = escapeHtml(destinationLabel || 'apps.yzrswork.com で開く');
+  // hasSw時、SW側は退役完了後に ./index.html?retired=1 へ遷移させる(下のrenderLegacySw参照)。
+  // ここでそのマーカーを見て再登録をスキップしないと、reload -> 再register -> activate -> navigate の
+  // 周回でタイマーが振り出しに戻り、体感の移転までの時間が伸びる。
+  const swScript = hasSw
+    ? `if (location.search.includes('retired=1')) {
+      move();
+    } else if (location.hostname === 'yzrswork.github.io' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => registration.update())
+        .catch(() => {})
+        .finally(() => window.setTimeout(move, Math.max(${noticeSeconds} * 1000, 1800)));
+    } else {
+      window.setTimeout(move, ${noticeSeconds} * 1000);
+    }`
+    : `window.setTimeout(move, ${noticeSeconds} * 1000);`;
+  return `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <meta http-equiv="refresh" content="${noticeSeconds};url=${dest}" />
+  <title>${escapeHtml(name)} — 移転のお知らせ</title>
+  <style>
+    :root { color-scheme: light; --paper:#f0ebe3; --ink:#26211d; --terra:#a54832; --rule:#c9bca9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--paper); color:var(--ink); font-family:"Noto Sans JP",system-ui,sans-serif; }
+    main { width:min(560px,100%); padding:32px; border:1px solid var(--rule); border-radius:14px; background:#fffaf2; box-shadow:0 12px 36px rgba(38,33,29,.08); }
+    h1 { margin:0 0 14px; font-size:clamp(1.4rem,5vw,2rem); }
+    p { line-height:1.8; }
+    a { display:inline-block; margin-top:10px; color:#fff; background:var(--terra); padding:12px 18px; border-radius:8px; font-weight:700; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>${escapeHtml(name)}</h1>
+    <p>このページは <strong>apps.yzrswork.com</strong> へ移転しました。今後はそちらをご利用ください。</p>
+    <p>ホーム画面に追加したアイコンがあれば削除して、新しいURLから追加し直してください。</p>
+    <a href="${dest}">${label}</a>
+  </main>
+  <script>
+    const destination = ${JSON.stringify(destination)};
+    const move = () => window.location.replace(destination + window.location.hash);
+    ${swScript}
+  </script>
+</body>
+</html>
+`;
+}
+
+function renderLegacySw({ slug }) {
+  return `// yzrswork.github.io(旧ホスト)専用の退役SW。yzrswork.github.io は
+// yzrswork_ai-skill-recipe 等の別リポジトリとオリジンを共有しているため、
+// 削除対象は自分自身が生成したキャッシュ名(${slug}-v数字)への厳密一致に限定する。
+const CACHE_PREFIX = '${slug}-';
+const CACHE_RE = /^${slug}-v\\d+$/;
+const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => key.startsWith(CACHE_PREFIX) && CACHE_RE.test(key))
+        .map((key) => caches.delete(key))
+    );
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(
+      windows
+        .filter((client) => client.url.startsWith(self.registration.scope))
+        .map((client) => client.navigate(RETIRED_URL + new URL(client.url).hash).catch(() => {}))
+    );
+  })());
+});
+`;
+}
+
+// --- 退役アプリ(catalog.retiredApps)のdocs側ミラー ---
+// root側の renderRetiredIndex / renderRetiredSw は本番(apps.yzrswork.com)にも
+// そのまま配信されるため変更しない。docs側だけ以下の3点を変えた派生版を使う:
+//   1. canonical を書かない(退役ライブ16本と同じ理由。全docs配下で統一する)
+//   2. SW登録をhostname厳密一致でガードする(_redirectsの301はCloudflare側の
+//      設定に依存するため、apps.yzrswork.com/docs/<slug>/ に直接来られても
+//      正規ドメイン上にSW登録を作らないよう構造で防ぐ)
+//   3. client.navigate() のrejectを握る(uncontrolled clientでのTypeErrorを黙らせる)
+function renderLegacyRetiredIndex(app) {
+  const reason = app.reason || 'この作品はデジタル作品置き場へ移動しました。';
+  const destination = escapeHtml(app.destination);
+  return `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <meta http-equiv="refresh" content="5;url=${destination}" />
+  <title>${escapeHtml(app.name)} — 移転のお知らせ</title>
+  <style>
+    :root { color-scheme: light; --paper:#f0ebe3; --ink:#26211d; --terra:#a54832; --rule:#c9bca9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--paper); color:var(--ink); font-family:"Noto Sans JP",system-ui,sans-serif; }
+    main { width:min(560px,100%); padding:32px; border:1px solid var(--rule); border-radius:14px; background:#fffaf2; box-shadow:0 12px 36px rgba(38,33,29,.08); }
+    h1 { margin:0 0 14px; font-size:clamp(1.4rem,5vw,2rem); }
+    p { line-height:1.8; }
+    a { display:inline-block; margin-top:10px; color:#fff; background:var(--terra); padding:12px 18px; border-radius:8px; font-weight:700; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>${escapeHtml(app.name)}</h1>
+    <p>${escapeHtml(reason)}</p>
+    <p>旧PWAのキャッシュを安全に解除してから移動します。</p>
+    <a href="${destination}">${escapeHtml(app.destinationLabel)}</a>
+  </main>
+  <script>
+    const destination = ${JSON.stringify(app.destination)};
+    const move = () => window.location.replace(destination);
+    if (location.search.includes('retired=1')) {
+      move();
+    } else if (location.hostname === 'yzrswork.github.io' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => registration.update())
+        .catch(() => {})
+        .finally(() => window.setTimeout(move, 1800));
+    } else {
+      window.setTimeout(move, 600);
+    }
+  </script>
+</body>
+</html>
+`;
+}
+
+function renderLegacyRetiredSw(app) {
+  return `const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};
+const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))
+    );
+
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    await Promise.all(
+      windows
+        .filter((client) => client.url.startsWith(self.registration.scope))
+        .map((client) => client.navigate(RETIRED_URL + new URL(client.url).hash).catch(() => {}))
+    );
+  })());
+});
+`;
+}
+
+function legacyLiveTargets(catalog) {
+  return [
+    ...catalog.apps.map((app) => ({
+      slug: app.slug,
+      name: app.name,
+      hasSw: existsSync(join(ROOT, app.slug, 'sw.js')),
+    })),
+    ...catalog.pages.map((page) => ({ slug: page.slug, name: page.name, hasSw: false })),
+    {
+      slug: 'soubi-navi',
+      name: '装備ナビ(旧パス)',
+      hasSw: existsSync(join(ROOT, 'soubi-navi', 'sw.js')),
+      destination: `${catalog.site.baseUrl}kit/`,
+    },
+  ];
+}
+
+function buildLegacyHostStubs(catalog, results) {
+  const legacy = catalog.site.legacyRetirement;
+  if (!legacy?.enabled) return;
+  const outDir = join(ROOT, legacy.outDir || 'docs');
+  const noticeSeconds = legacy.noticeSeconds ?? 3;
+
+  writeIfChanged(join(outDir, '.nojekyll'), '', results);
+  writeIfChanged(
+    join(outDir, 'index.html'),
+    renderLegacyIndex({
+      name: catalog.site.name,
+      destination: catalog.site.baseUrl,
+      destinationLabel: '道具箱トップへ',
+      hasSw: false,
+      noticeSeconds,
+    }),
+    results
+  );
+  writeIfChanged(
+    join(outDir, '404.html'),
+    renderLegacyIndex({
+      name: 'ページが見つかりません',
+      destination: catalog.site.baseUrl,
+      destinationLabel: '道具箱トップへ',
+      hasSw: false,
+      noticeSeconds,
+    }),
+    results
+  );
+
+  for (const target of legacyLiveTargets(catalog)) {
+    const dir = join(outDir, target.slug);
+    const destination = target.destination || `${catalog.site.baseUrl}${target.slug}/`;
+    writeIfChanged(
+      join(dir, 'index.html'),
+      renderLegacyIndex({
+        name: target.name,
+        destination,
+        destinationLabel: 'apps.yzrswork.com で開く',
+        hasSw: target.hasSw,
+        noticeSeconds,
+      }),
+      results
+    );
+    if (target.hasSw) {
+      writeIfChanged(join(dir, 'sw.js'), renderLegacySw({ slug: target.slug }), results);
+    }
+  }
+
+  // 退役アプリはroot(apps.yzrswork.com)側でも移転スタブを配信しているが、
+  // docs側はcanonical省略・hostname厳密ガード・navigate rejectの握りを追加した
+  // 派生版(renderLegacyRetiredIndex/Sw)を使う。root側の生成物とは中身が異なる。
+  for (const retiredApp of catalog.retiredApps) {
+    const dir = join(outDir, retiredApp.slug);
+    writeIfChanged(join(dir, 'index.html'), renderLegacyRetiredIndex(retiredApp), results);
+    writeIfChanged(join(dir, 'sw.js'), renderLegacyRetiredSw(retiredApp), results);
+  }
+
+  // Search Console のURLプレフィックス検証(HTML file method)が旧ホスト側にも
+  // 発行されている場合、配信元切替と同時に検証が外れてプロパティを失う。
+  // root直下にある検証ファイルをそのままdocsにも複製しておく(安価な保険)。
+  for (const entry of readdirSync(ROOT, { withFileTypes: true })) {
+    if (entry.isFile() && /^google[0-9a-f]+\.html$/.test(entry.name)) {
+      writeIfChanged(join(outDir, entry.name), readFileSync(join(ROOT, entry.name), 'utf8'), results);
+    }
+  }
+}
+
 function replaceMarked(html, startMarker, endMarker, content) {
   const startIdx = html.indexOf(startMarker);
   const endIdx = html.indexOf(endMarker);
@@ -470,6 +729,7 @@ function writeIfChanged(path, content, results) {
   const changed = current === null || normalizeText(current) !== normalizedContent;
   results.push({ path, changed, exists });
   if (changed && !CHECK) {
+    mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, normalizedContent);
   }
 }
@@ -521,6 +781,8 @@ function main() {
     writeIfChanged(join(dir, 'index.html'), renderRetiredIndex(retiredApp), results);
     writeIfChanged(join(dir, 'sw.js'), renderRetiredSw(retiredApp), results);
   }
+
+  buildLegacyHostStubs(catalog, results);
 
   const changedFiles = results.filter((r) => r.changed);
   if (CHECK) {

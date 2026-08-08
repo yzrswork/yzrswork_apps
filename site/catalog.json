@@ -4,6 +4,11 @@
     "name": "や印工務店の道具箱",
     "baseUrl": "https://apps.yzrswork.com/",
     "legacyBaseUrl": "https://yzrswork.github.io/yzrswork_apps/",
+    "legacyRetirement": {
+      "enabled": true,
+      "outDir": "docs",
+      "noticeSeconds": 3
+    },
     "affiliate": {
       "program": "amazon-jp",
       "associateTag": "yzrs_apps-22",

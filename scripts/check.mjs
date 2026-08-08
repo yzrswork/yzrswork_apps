@@ -199,6 +199,70 @@ for (const app of catalog.retiredApps) {
   }
 }
 
+// --- 旧ホスト(yzrswork.github.io)スタブの検証 ---
+// docs/ は GitHub Pagesの配信元切り替え専用。yzrswork.github.io は他リポジトリと
+// オリジンを共有するため、キャッシュ削除範囲が広すぎないことを機械的に保証する。
+const legacyRetirement = catalog.site.legacyRetirement;
+if (legacyRetirement?.enabled) {
+  const docsDir = join(ROOT, legacyRetirement.outDir || 'docs');
+  if (!existsSync(join(docsDir, 'index.html')) || !existsSync(join(docsDir, '404.html'))) {
+    fail('docs/ のトップまたは404スタブが生成されていない');
+  }
+  if (!existsSync(join(docsDir, '.nojekyll'))) {
+    fail('docs/.nojekyll がない(Jekyll抑止用)');
+  }
+
+  const legacyLiveSlugs = [...appSlugs, ...pageSlugs, 'soubi-navi'];
+  for (const slug of legacyLiveSlugs) {
+    const indexPath = join(docsDir, slug, 'index.html');
+    if (!existsSync(indexPath)) {
+      fail(`旧ホストスタブのindex.htmlがない: docs/${slug}`);
+      continue;
+    }
+    const html = read(indexPath);
+    if (!html.includes('noindex')) {
+      fail(`旧ホストスタブにnoindexがない: docs/${slug}`);
+    }
+  }
+
+  for (const app of catalog.retiredApps) {
+    const indexPath = join(docsDir, app.slug, 'index.html');
+    const swPath = join(docsDir, app.slug, 'sw.js');
+    if (!existsSync(indexPath) || !existsSync(swPath)) {
+      fail(`旧ホスト側の退役スタブがない: docs/${app.slug}`);
+      continue;
+    }
+    const sw = read(swPath);
+    if (sw.includes(`'${app.slug}-'`)) {
+      fail(`旧ホスト退役SWに広すぎるprefixがある(他リポジトリの現役PWAを壊しうる): docs/${app.slug}`);
+    }
+  }
+
+  // docs/配下は退役アプリのミラーも含め、全htmlでcanonicalを禁止する
+  // (noindexと別ドメインへのcanonicalの併用はGoogleの評価統合を誤らせうるため。
+  // root側の同種ページ(退役アプリ)は対象外。root自体はcanonicalを維持したまま)。
+  // getRegistrations()もサイト境界を越えて全SWを取得するため、docs全体で禁止する。
+  const walkLegacy = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkLegacy(path);
+      } else if (entry.name.endsWith('.js') || entry.name.endsWith('.html')) {
+        const source = read(path);
+        if (source.includes('getRegistrations(')) {
+          fail(`旧ホストスタブでgetRegistrationsは禁止(サイト境界を越えて全SWを取得する): ${path.slice(ROOT.length + 1)}`);
+        }
+        if (entry.name === 'index.html' || entry.name === '404.html') {
+          if (source.includes('rel="canonical"')) {
+            fail(`旧ホストスタブにcanonicalが残っている(noindexとの併用は別ドメインの評価を巻き込みうる): ${path.slice(ROOT.length + 1)}`);
+          }
+        }
+      }
+    }
+  };
+  if (existsSync(docsDir)) walkLegacy(docsDir);
+}
+
 const nurerukunSw = read(join(ROOT, 'nurerukun', 'sw.js'));
 if (!nurerukunSw.includes("const CACHE_PREFIX = 'nurerukun-';")) {
   fail('塗れるくんSWのCACHE_PREFIXがない');
@@ -221,6 +285,7 @@ const allowedIndexDirs = new Set([
   ...retiredSlugs,
   '_template',
   'soubi-navi',
+  'docs',
 ]);
 for (const dir of listRootDirsWith('index.html')) {
   if (!allowedIndexDirs.has(dir)) {
