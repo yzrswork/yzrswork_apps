@@ -169,6 +169,63 @@ for (const page of catalog.pages) {
   }
 }
 
+// --- 退役SWのキャッシュ削除ポリシー ---
+// CacheStorageはオリジン単位で共有される。yzrswork.github.io では yzrswork_apps と
+// yzrswork_ai-skill-recipe が同じオリジンに同居するため、退役SWが移転先の現役PWAと
+// 同名のキャッシュを消すと、移転先のオフラインキャッシュを破壊する。
+// site.sharedOrigin.reservedCachePrefixes に前方一致する退役アプリは、
+// cacheClearBlockedBy を必ず持ち、生成SWからキャッシュ削除コードが消えていること。
+const sharedOrigin = catalog.site.sharedOrigin;
+const reservedCachePrefixes = sharedOrigin?.reservedCachePrefixes;
+if (!Array.isArray(reservedCachePrefixes) || reservedCachePrefixes.length === 0) {
+  fail('site.sharedOrigin.reservedCachePrefixes がない(共有オリジンのキャッシュ保護が無効化されている)');
+}
+
+// 削除は startsWith 判定なので、どちらかがもう一方の接頭辞なら衝突しうる
+const prefixOverlaps = (a, b) => a.startsWith(b) || b.startsWith(a);
+
+function conflictingPrefixes(app) {
+  if (!Array.isArray(app.cachePrefixes)) return [];
+  return app.cachePrefixes.filter((prefix) =>
+    (reservedCachePrefixes || []).some((reserved) => prefixOverlaps(prefix, reserved))
+  );
+}
+
+function assertRetiredSwCachePolicy(app, sw, label) {
+  const conflicts = conflictingPrefixes(app);
+  const blockedBy = app.cacheClearBlockedBy;
+
+  if (conflicts.length > 0 && !blockedBy) {
+    fail(
+      `退役アプリのcachePrefixが共有オリジンの予約prefixと衝突している。` +
+        `cacheClearBlockedBy を付けてキャッシュ削除を無効化すること: ${app.slug} -> ${conflicts.join(', ')}`
+    );
+    return;
+  }
+  if (blockedBy && typeof blockedBy !== 'string') {
+    fail(`cacheClearBlockedBy は理由を書いた文字列にする: ${app.slug}`);
+    return;
+  }
+
+  if (blockedBy) {
+    if (!sw.includes('const CACHE_CLEAR_DISABLED = true;')) {
+      fail(`cacheClearBlockedBy 付きの退役SWにCACHE_CLEAR_DISABLEDマーカーがない: ${label}`);
+    }
+    if (sw.includes('caches.delete') || sw.includes('caches.keys')) {
+      fail(
+        `cacheClearBlockedBy 付きの退役SWにキャッシュ削除が残っている(移転先の現役PWAを壊す): ${label}`
+      );
+    }
+  } else {
+    if (!sw.includes(`const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};`)) {
+      fail(`退役SWのcachePrefixesがcatalogと不一致: ${label}`);
+    }
+    if (!sw.includes('caches.delete')) {
+      fail(`退役SWにキャッシュ削除がない(cacheClearBlockedByも未設定): ${label}`);
+    }
+  }
+}
+
 for (const app of catalog.retiredApps) {
   const dir = join(ROOT, app.slug);
   const files = existsSync(dir)
@@ -190,13 +247,78 @@ for (const app of catalog.retiredApps) {
       }
     }
     const retiredSw = existsSync(join(dir, 'sw.js')) ? read(join(dir, 'sw.js')) : '';
-    if (!retiredSw.includes(`const CACHE_PREFIXES = ${JSON.stringify(app.cachePrefixes)};`)) {
-      fail(`退役SWのcachePrefixesがcatalogと不一致: ${app.slug}`);
-    }
+    assertRetiredSwCachePolicy(app, retiredSw, `${app.slug}/sw.js`);
   }
   if (!app.destination.startsWith('https://')) {
     fail(`退役先はHTTPSに限定: ${app.slug} -> ${app.destination}`);
   }
+}
+
+// --- 旧ホスト(yzrswork.github.io)スタブの検証 ---
+// docs/ は GitHub Pagesの配信元切り替え専用。yzrswork.github.io は他リポジトリと
+// オリジンを共有するため、キャッシュ削除範囲が広すぎないことを機械的に保証する。
+const legacyRetirement = catalog.site.legacyRetirement;
+if (legacyRetirement?.enabled) {
+  const docsDir = join(ROOT, legacyRetirement.outDir || 'docs');
+  if (!existsSync(join(docsDir, 'index.html')) || !existsSync(join(docsDir, '404.html'))) {
+    fail('docs/ のトップまたは404スタブが生成されていない');
+  }
+  if (!existsSync(join(docsDir, '.nojekyll'))) {
+    fail('docs/.nojekyll がない(Jekyll抑止用)');
+  }
+
+  const legacyLiveSlugs = [...appSlugs, ...pageSlugs, 'soubi-navi'];
+  for (const slug of legacyLiveSlugs) {
+    const indexPath = join(docsDir, slug, 'index.html');
+    if (!existsSync(indexPath)) {
+      fail(`旧ホストスタブのindex.htmlがない: docs/${slug}`);
+      continue;
+    }
+    const html = read(indexPath);
+    if (!html.includes('noindex')) {
+      fail(`旧ホストスタブにnoindexがない: docs/${slug}`);
+    }
+  }
+
+  for (const app of catalog.retiredApps) {
+    const indexPath = join(docsDir, app.slug, 'index.html');
+    const swPath = join(docsDir, app.slug, 'sw.js');
+    if (!existsSync(indexPath) || !existsSync(swPath)) {
+      fail(`旧ホスト側の退役スタブがない: docs/${app.slug}`);
+      continue;
+    }
+    const sw = read(swPath);
+    if (sw.includes(`'${app.slug}-'`)) {
+      fail(`旧ホスト退役SWに広すぎるprefixがある(他リポジトリの現役PWAを壊しうる): docs/${app.slug}`);
+    }
+    // 共有オリジンの本丸。docs側はまさに yzrswork.github.io に載るので、
+    // root側と同じキャッシュ削除ポリシーを機械的に強制する。
+    assertRetiredSwCachePolicy(app, sw, `docs/${app.slug}/sw.js`);
+  }
+
+  // docs/配下は退役アプリのミラーも含め、全htmlでcanonicalを禁止する
+  // (noindexと別ドメインへのcanonicalの併用はGoogle公式が推奨していないため、
+  // 予防的に避ける。root側の同種ページ(退役アプリ)は対象外。root自体はcanonicalを維持したまま)。
+  // getRegistrations()もサイト境界を越えて全SWを取得するため、docs全体で禁止する。
+  const walkLegacy = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkLegacy(path);
+      } else if (entry.name.endsWith('.js') || entry.name.endsWith('.html')) {
+        const source = read(path);
+        if (source.includes('getRegistrations(')) {
+          fail(`旧ホストスタブでgetRegistrationsは禁止(サイト境界を越えて全SWを取得する): ${path.slice(ROOT.length + 1)}`);
+        }
+        if (entry.name === 'index.html' || entry.name === '404.html') {
+          if (source.includes('rel="canonical"')) {
+            fail(`旧ホストスタブにcanonicalが残っている(noindexとの併用はGoogle公式が非推奨): ${path.slice(ROOT.length + 1)}`);
+          }
+        }
+      }
+    }
+  };
+  if (existsSync(docsDir)) walkLegacy(docsDir);
 }
 
 const nurerukunSw = read(join(ROOT, 'nurerukun', 'sw.js'));
@@ -221,6 +343,7 @@ const allowedIndexDirs = new Set([
   ...retiredSlugs,
   '_template',
   'soubi-navi',
+  'docs',
 ]);
 for (const dir of listRootDirsWith('index.html')) {
   if (!allowedIndexDirs.has(dir)) {

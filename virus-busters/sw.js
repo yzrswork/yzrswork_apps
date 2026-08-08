@@ -1,4 +1,9 @@
-const CACHE_PREFIXES = ["yapps-virus-busters-"];
+// このSWはキャッシュを削除しない。
+// 理由: 移転先 yzrswork_ai-skill-recipe/virus-busters が同一オリジン(yzrswork.github.io)で同名キャッシュを現役利用中
+// 対象prefix: yapps-virus-busters-
+// 同一オリジンでCacheStorageを共有するため、削除すると移転先の現役PWAを壊す。
+// (site/catalog.json の site.sharedOrigin と cacheClearBlockedBy を参照)
+const CACHE_CLEAR_DISABLED = true;
 const RETIRED_URL = new URL('./index.html?retired=1', self.registration.scope).href;
 
 self.addEventListener('install', (event) => {
@@ -7,13 +12,6 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter((key) => CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
-        .map((key) => caches.delete(key))
-    );
-
     await self.registration.unregister();
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     await Promise.all(

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <meta http-equiv="refresh" content="3;url=https://apps.yzrswork.com/build/" />
+  <title>自作PC構成プランナー — 移転のお知らせ</title>
+  <style>
+    :root { color-scheme: light; --paper:#f0ebe3; --ink:#26211d; --terra:#a54832; --rule:#c9bca9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--paper); color:var(--ink); font-family:"Noto Sans JP",system-ui,sans-serif; }
+    main { width:min(560px,100%); padding:32px; border:1px solid var(--rule); border-radius:14px; background:#fffaf2; box-shadow:0 12px 36px rgba(38,33,29,.08); }
+    h1 { margin:0 0 14px; font-size:clamp(1.4rem,5vw,2rem); }
+    p { line-height:1.8; }
+    a { display:inline-block; margin-top:10px; color:#fff; background:var(--terra); padding:12px 18px; border-radius:8px; font-weight:700; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>自作PC構成プランナー</h1>
+    <p>このページは <strong>apps.yzrswork.com</strong> へ移転しました。今後はそちらをご利用ください。</p>
+    <p>ホーム画面に追加したアイコンがあれば削除して、新しいURLから追加し直してください。</p>
+    <a href="https://apps.yzrswork.com/build/">apps.yzrswork.com で開く</a>
+  </main>
+  <script>
+    const destination = "https://apps.yzrswork.com/build/";
+    const move = () => window.location.replace(destination + window.location.hash);
+    if (location.search.includes('retired=1')) {
+      move();
+    } else if (location.hostname === 'yzrswork.github.io' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => registration.update())
+        .catch(() => {})
+        .finally(() => window.setTimeout(move, Math.max(3 * 1000, 1800)));
+    } else {
+      window.setTimeout(move, 3 * 1000);
+    }
+  </script>
+</body>
+</html>
