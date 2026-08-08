@@ -254,8 +254,8 @@ for (const app of catalog.retiredApps) {
   }
 
   // destinationが自サイト内を指すなら selfCanonical が必須(逆も同様)。
-  // noindex + 別URLへのcanonicalの併用は、destination先の評価を巻き込みうるため、
-  // 自サイト内へ退役するアプリは自己参照canonicalにしなければならない。
+  // noindexと別URLへのcanonicalの併用はGoogle公式が推奨していないため、
+  // 自サイト内へ退役するアプリは予防的に自己参照canonicalにする。
   const destinationIsSelf = app.destination.startsWith(catalog.site.baseUrl);
   if (destinationIsSelf && !app.selfCanonical) {
     fail(`自サイト内へ退役するアプリはselfCanonicalが必須: ${app.slug}`);

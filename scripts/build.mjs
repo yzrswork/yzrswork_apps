@@ -368,9 +368,9 @@ function renderRetiredIndex(app, catalog) {
   const reason = app.reason || 'この作品はデジタル作品置き場へ移動しました。';
   const destination = escapeHtml(app.destination);
   // destinationが自サイト内(=このアプリの退役先が道具箱トップ自身)の場合、
-  // noindexページのcanonicalがトップを指す形になり、Googleがnoindexシグナルを
-  // トップへ伝播させてトップごとインデックスから落とすリスクがある(公式非推奨の
-  // 組み合わせ)。selfCanonicalがtrueのエントリだけ、canonicalを自己参照にする。
+  // noindexページのcanonicalがトップを指す形になる。Google公式はnoindexと
+  // 別URLへのcanonicalの併用を推奨しておらず、実際の解釈は未検証だが、予防的に
+  // 避ける。selfCanonicalがtrueのエントリだけ、canonicalを自己参照にする。
   const canonical = app.selfCanonical
     ? escapeHtml(`${catalog.site.baseUrl}${app.slug}/`)
     : destination;
