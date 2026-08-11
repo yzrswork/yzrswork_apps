@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -495,7 +496,7 @@ let useSel = null;
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 
 /* ---------- レンダリング: タブ ---------- */
@@ -579,6 +580,7 @@ function renderCheckResult() {
     </div>`;
 
   el.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('usb_c_check', 'pc');
 }
 
 /* ---------- タブB: 用途から選ぶ ---------- */
@@ -641,6 +643,7 @@ function renderChooseResult() {
 
   html += '</div>';
   el.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('usb_c_recommendation', 'pc');
 }
 
 

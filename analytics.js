@@ -53,11 +53,19 @@ function yzrsStartAffiliateObserver() {
   if (!window.MutationObserver || !document.body) return;
   new MutationObserver(function (records) {
     records.forEach(function (record) {
+      if (record.type === "attributes" && record.target) {
+        yzrsPrepareAffiliateLinks(record.target);
+      }
       Array.prototype.forEach.call(record.addedNodes, function (node) {
         if (node && node.nodeType === 1) yzrsPrepareAffiliateLinks(node);
       });
     });
-  }).observe(document.body, { childList: true, subtree: true });
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["href"]
+  });
 }
 
 if (document.readyState === "loading") {
@@ -83,8 +91,86 @@ function yzrsTrackToolStart(e) {
 document.addEventListener("click", yzrsTrackToolStart, true);
 document.addEventListener("change", yzrsTrackToolStart, true);
 
+// 固定値として許可する結果種別。アプリから自由入力や表示文を渡さない。
+var YZRS_RESULT_CATEGORIES = Object.freeze({
+  electronics: Object.freeze([
+    "electronics_kit",
+    "ohm",
+    "led_resistor",
+    "color_code",
+    "voltage_divider",
+    "timer_555",
+    "battery_runtime",
+    "engineering_notation",
+    "solder_temperature",
+    "solder_troubleshooting",
+    "solder_tools",
+    "pinout_board",
+    "terminal_reference"
+  ]),
+  pc: Object.freeze([
+    "memory_recommendation",
+    "hdd_recommendation",
+    "hdd_model_check",
+    "pc_build_summary",
+    "usb_c_check",
+    "usb_c_recommendation"
+  ]),
+  diy: Object.freeze([
+    "adhesive_recommendation",
+    "material_identification",
+    "paint_weather_result",
+    "tap_hole",
+    "clearance_hole",
+    "wood_screw_hole"
+  ]),
+  troubleshooting: Object.freeze(["troubleshooting_step"])
+});
+
+var yzrsResultCompleted = Object.create(null);
+window.yzrsTrackResult = function (resultType, category) {
+  var allowed = YZRS_RESULT_CATEGORIES[category];
+  if (!allowed || allowed.indexOf(resultType) === -1 || !window.yzrsTrack) return;
+
+  var params = {
+    app_name: yzrsAppName(),
+    result_type: resultType,
+    category: category
+  };
+  window.yzrsTrack("result_view", params);
+
+  if (!yzrsResultCompleted[resultType]) {
+    yzrsResultCompleted[resultType] = true;
+    window.yzrsTrack("tool_complete", params);
+  }
+};
+
+function yzrsIsAmazonLink(a) {
+  try {
+    return /^(?:www\.)?amazon\.co\.jp$/i.test(new URL(a.href, location.href).hostname);
+  } catch (_) {
+    return false;
+  }
+}
+
+function yzrsLinkDomain(a) {
+  try {
+    var hostname = new URL(a.href, location.href).hostname.toLowerCase();
+    return hostname.replace(/^www\./, "").slice(0, 80) || "other";
+  } catch (_) {
+    return "other";
+  }
+}
+
+function yzrsDestinationType(a, domain, relatedSlug) {
+  if (relatedSlug) return "related_tool";
+  if (domain === "amazon.co.jp") return "amazon";
+  if (domain === "note.com") return "note";
+  return "external";
+}
+
 // アフィリエイトリンクと関連ツール導線のクリック計測。
-// data-track-label を付けたリンクはその固定ラベルを使い、自由入力は送らない。
+// URL、検索語、表示ラベル、自由入力はイベントへ送らない。
 document.addEventListener("click", function (e) {
   var a = e.target && e.target.closest && e.target.closest("a");
   if (!a || !window.yzrsTrack) return;
@@ -97,18 +183,31 @@ document.addEventListener("click", function (e) {
     });
   }
 
-  if (a.href.indexOf("amazon.co.jp") === -1) return;
-  var label = a.getAttribute("data-track-label") || "amazon-link";
-  var linkType = /\/dp\//.test(a.href) ? "product" : "search";
-  window.yzrsTrack("affiliate_click", {
-    app_name: yzrsAppName(),
-    item_label: label.slice(0, 100),
-    link_type: linkType
-  });
+  var domain = yzrsLinkDomain(a);
+  var destinationType = yzrsDestinationType(a, domain, relatedSlug);
+  var isAmazon = yzrsIsAmazonLink(a);
+
+  if (isAmazon) {
+    var productKey = a.getAttribute("data-product-key");
+    var itemKey = productKey && /^[a-z0-9][a-z0-9._-]{0,80}$/i.test(productKey)
+      ? productKey
+      : "unclassified";
+    window.yzrsTrack("affiliate_click", {
+      app_name: yzrsAppName(),
+      item_key: itemKey,
+      link_type: /\/dp\//.test(a.href) ? "product" : "search"
+    });
+  }
+
+  // Related links are same-origin and are measured by related_tool_click only.
+  try {
+    if (new URL(a.href, location.href).origin === location.origin) return;
+  } catch (_) {
+    return;
+  }
   window.yzrsTrack("outbound_click", {
-    link_url: a.href,
-    link_domain: "amazon.co.jp",
-    item_label: label.slice(0, 100),
-    app_name: yzrsAppName()
+    app_name: yzrsAppName(),
+    link_domain: domain,
+    destination_type: destinationType
   });
 }, true);

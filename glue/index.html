@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -618,6 +619,7 @@ function conditionNotes(conds, ruleKey) {
 
 /* ---------- 状態 ---------- */
 let tab = 'diag';
+let identifyVisited = false;
 let matA = null;
 let matB = null;
 const conds = new Set();
@@ -625,7 +627,7 @@ const conds = new Set();
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 
 /* ---------- レンダリング: タブ ---------- */
@@ -634,6 +636,7 @@ document.getElementById('tab-diag').addEventListener('click', () => setTab('diag
 document.getElementById('tab-id').addEventListener('click', () => setTab('id'));
 function setTab(t) {
   tab = t;
+  if (t === 'id') identifyVisited = true;
   document.getElementById('tab-diag').classList.toggle('active', t === 'diag');
   document.getElementById('tab-id').classList.toggle('active', t === 'id');
   render();
@@ -743,6 +746,7 @@ function renderResult() {
 
   html += '</div>';
   resultEl.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('adhesive_recommendation', 'diy');
 }
 
 /* ---------- 素材の見分けモード ---------- */
@@ -787,6 +791,7 @@ function renderIdentify() {
     </div>`;
 
   document.getElementById('goDiag').addEventListener('click', () => setTab('diag'));
+  if (identifyVisited && window.yzrsTrackResult) window.yzrsTrackResult('material_identification', 'diy');
 }
 
 

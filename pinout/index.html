@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -381,7 +382,7 @@
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 function badgeHtml(list) {
   if (!list || !list.length) return '';
@@ -689,6 +690,7 @@ function setBoard(b) {
   document.getElementById('tab-uno').classList.toggle('active', b === 'uno');
   document.getElementById('tab-esp32').classList.toggle('active', b === 'esp32');
   render();
+  if (window.yzrsTrackResult) window.yzrsTrackResult('pinout_board', 'electronics');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

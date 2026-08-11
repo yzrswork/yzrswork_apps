@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -257,7 +258,7 @@ const sel = { socket: null, use: null, storage: null, gpu: null };
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(kw) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(kw);
 }
 
 function renderOpts(containerId, list, key, metaFn) {
@@ -307,6 +308,9 @@ function renderSummary() {
     html += '<div class="sum-note">上の1〜4を選ぶと、ここに構成と買い物リンクが集まります。</div>';
   }
   document.getElementById('summary').innerHTML = html;
+  if (s && u && st && g) {
+    if (window.yzrsTrackResult) window.yzrsTrackResult('pc_build_summary', 'pc');
+  }
 }
 
 function renderAll() {
