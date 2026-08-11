@@ -304,6 +304,12 @@ const EXAMPLES = ['WD40EFPX', 'WD40EFZZ', 'WD60EFZX', 'WD20EARZ', 'WD40EZAX', 'W
 
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function approvedAffiliateUrl(key, options) {
+  const api = window.yzrsAffiliate;
+  if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
+  if (!api.getProduct(key)) return null;
+  try { return api.urlFor(key, options); } catch (_) { return null; }
+}
 const VTAG = {
   cmr: '<span class="sr-tag rec-cmr">CMR</span>',
   smr: '<span class="sr-tag rec-smr">SMR</span>',
@@ -323,13 +329,14 @@ function renderResult() {
   const el = document.getElementById('result');
   if (activeUse < 0) { el.innerHTML = '<div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div>'; return; }
   const c = COLORS[USES[activeUse].color];
+  const buyUrl = approvedAffiliateUrl(c.productKey);
   el.innerHTML = `
     <div class="color-card" style="border-left-color:${c.hex}">
       <div class="cc-top"><span class="cc-dot">${c.dot}</span><span class="cc-name">${esc(c.name)}</span></div>
       <div class="cc-use">${esc(c.use)}</div>
       <span class="cc-rec rec-${c.rec}">${esc(c.recLabel)}</span>
       ${c.warn ? `<div class="cc-warn">${esc(c.warn)}</div>` : ''}
-      <a class="cc-buy" href="${esc(window.yzrsAffiliate.urlFor(c.productKey))}" data-product-key="${esc(c.productKey)}" data-track-label="${esc(c.productKey)}" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(c.name)} を探す</a>
+      ${buyUrl ? `<a class="cc-buy" href="${esc(buyUrl)}" data-product-key="${esc(c.productKey)}" data-track-label="${esc(c.productKey)}" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(c.name)} を探す</a>` : ''}
     </div>`;
   if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
 }
@@ -347,8 +354,11 @@ function checkModel(raw) {
   const v = (raw || '').toUpperCase().replace(/\s/g, '');
   if (!v) { out.innerHTML = ''; return; }
   const hit = SUFFIX.find(s => v.endsWith(s.suf));
-  const buy = /^WD[A-Z0-9]{5,}$/.test(v)
-    ? `<a class="model-buy" href="${esc(window.yzrsAffiliate.urlFor('hdd-model-search', { query: v }))}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
+  const modelBuyUrl = /^WD[A-Z0-9]{5,}$/.test(v)
+    ? approvedAffiliateUrl('hdd-model-search', { query: v })
+    : null;
+  const buy = modelBuyUrl
+    ? `<a class="model-buy" href="${esc(modelBuyUrl)}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
     : '';
   if (hit) {
     const cls = hit.v === 'cmr' ? 'v-cmr' : 'v-smr';

@@ -242,6 +242,12 @@ const PICKS = [
 
 let selSocket = null, selUse = null;
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function approvedAffiliateUrl(key, options) {
+  const api = window.yzrsAffiliate;
+  if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
+  if (!api.getProduct(key)) return null;
+  try { return api.urlFor(key, options); } catch (_) { return null; }
+}
 
 function renderSockets() {
   document.getElementById('sockets').innerHTML = SOCKETS.map(s =>
@@ -280,12 +286,13 @@ function renderReco() {
   // 検索キーワード（規格が確定しない場合は両方を含める）
   const kwDdr = s.search || 'DDR4 DDR5';
   const kw = (kwDdr + ' ' + u.search + ' デスクトップ メモリ').trim();
+  const conditionUrl = approvedAffiliateUrl('mem-condition-search', { query: kw });
   el.innerHTML = `
     <div class="reco">
       <div class="rc-lab">あなたの構成の目安</div>
       <div class="rc-big">${esc(config)}</div>
       <div class="rc-sub">同じ容量なら2枚構成（デュアルチャネル）を。表示速度を出すならBIOSでXMP/EXPOを有効化。</div>
-      <a class="rc-buy" href="${esc(window.yzrsAffiliate.urlFor('mem-condition-search', { query: kw }))}" data-product-key="mem-condition-search" data-track-label="mem-condition-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 この条件で探す</a>
+      ${conditionUrl ? `<a class="rc-buy" href="${esc(conditionUrl)}" data-product-key="mem-condition-search" data-track-label="mem-condition-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 この条件で探す</a>` : ''}
     </div>`;
   if (window.yzrsTrackResult) window.yzrsTrackResult('memory_recommendation', 'pc');
 }
@@ -302,8 +309,9 @@ function renderPicks() {
   const picks = PICKS.filter(p => ddr.startsWith(p.ddr));
   document.getElementById('picks').innerHTML = picks.map(p => {
     const product = window.yzrsAffiliate.getProduct(p.key);
-    if (!product) return '';
-    return `<div class="pick"><div><div class="pk-name">${esc(product.label)}</div><div class="pk-sub">${esc(product.note || '')}</div></div><a href="${esc(window.yzrsAffiliate.urlFor(p.key))}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">探す</a></div>`;
+    const productUrl = product ? approvedAffiliateUrl(p.key) : null;
+    if (!product || !productUrl) return '';
+    return `<div class="pick"><div><div class="pk-name">${esc(product.label)}</div><div class="pk-sub">${esc(product.note || '')}</div></div><a href="${esc(productUrl)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">探す</a></div>`;
   }).join('');
 }
 

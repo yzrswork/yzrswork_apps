@@ -183,10 +183,24 @@ function renderAffiliate(catalog) {
   if (!affiliate?.associateTag || !affiliate.products) {
     throw new Error('site.affiliate の associateTag / products が必要');
   }
+  for (const [key, product] of Object.entries(affiliate.products)) {
+    if (!['pending', 'approved', 'rejected'].includes(product?.ownerReview)) {
+      throw new Error(`affiliate product ownerReviewが不正: ${key}`);
+    }
+  }
+  // catalogには審査待ち・却下候補も保持するが、公開bundleにはapprovedだけを出す。
+  // statusの判定はここに集約し、各HTMLへownerReviewの条件分岐を拡散させない。
+  const publicProducts = Object.fromEntries(
+    Object.entries(affiliate.products).filter(([, product]) => product?.ownerReview === 'approved')
+  );
   return `// このファイルは scripts/build.mjs が site/catalog.json から生成する。直接編集しない。
 (function (global) {
   const ASSOCIATE_TAG = ${jsonForScript(affiliate.associateTag)};
-  const PRODUCTS = ${jsonForScript(affiliate.products)};
+  const PRODUCTS = Object.freeze(${jsonForScript(publicProducts)});
+
+  function isApproved(item) {
+    return Boolean(item && item.ownerReview === 'approved');
+  }
 
   function searchUrl(query) {
     return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(String(query || '')) +
@@ -205,7 +219,8 @@ function renderAffiliate(catalog) {
   }
 
   function getProduct(key) {
-    return PRODUCTS[key] || null;
+    const item = PRODUCTS[key];
+    return isApproved(item) ? item : null;
   }
 
   function urlFor(key, options) {

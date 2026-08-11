@@ -6,6 +6,7 @@ import {
   readFileSync,
   readdirSync,
 } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -364,6 +365,89 @@ for (const entry of publicHtmlFiles) {
 const affiliateJs = existsSync(join(ROOT, 'affiliate.js')) ? read(join(ROOT, 'affiliate.js')) : '';
 if (!affiliateJs.includes(`const ASSOCIATE_TAG = ${JSON.stringify(affiliate.associateTag)};`)) {
   fail('affiliate.jsのAssociate Tagがcatalogと不一致');
+}
+
+// --- 公開affiliate APIのfail-closed回帰 ---
+// catalogは審査待ち候補を含むため、fixtureを差し替えたAPIでも検証する。
+// 実際の公開bundleはapproved候補だけを埋め込むため、pending/rejected/missing/invalidは
+// getProduct/urlForの両方から到達できないことを保証する。
+function loadAffiliateApi(source, productsOverride) {
+  let fixtureSource = source;
+  if (productsOverride !== undefined) {
+    const replacement = `const PRODUCTS = Object.freeze(${JSON.stringify(productsOverride)});`;
+    const replaced = fixtureSource.replace(/const PRODUCTS = Object\.freeze\([^\n]*\);/, replacement);
+    if (replaced === fixtureSource) {
+      fail('affiliate.jsのPRODUCTS定義をfixtureへ差し替えられない');
+      return null;
+    }
+    fixtureSource = replaced;
+  }
+  const sandbox = {};
+  try {
+    runInNewContext(fixtureSource, sandbox);
+    return sandbox.yzrsAffiliate || null;
+  } catch (error) {
+    fail(`affiliate.js実行エラー: ${error.message}`);
+    return null;
+  }
+}
+
+const publicAffiliateApi = loadAffiliateApi(affiliateJs);
+if (!publicAffiliateApi) {
+  fail('affiliate.jsの公開APIが生成されていない');
+} else {
+  for (const [key, product] of Object.entries(publicAffiliateApi.products || {})) {
+    if (product?.ownerReview !== 'approved') {
+      fail(`未承認affiliate productが公開bundleに含まれる: ${key}`);
+    }
+  }
+  for (const [key, product] of Object.entries(affiliateProducts || {})) {
+    if (product?.ownerReview === 'approved' && !publicAffiliateApi.getProduct(key)) {
+      fail(`approved affiliate productが公開APIから取得できない: ${key}`);
+    }
+    if (product?.ownerReview !== 'approved' && publicAffiliateApi.getProduct(key) !== null) {
+      fail(`未承認affiliate productが公開APIから取得できる: ${key}`);
+    }
+  }
+}
+
+const affiliateFixtureApi = loadAffiliateApi(affiliateJs, {
+  approvedSearch: { kind: 'search', query: 'DDR4', ownerReview: 'approved' },
+  approvedProduct: { kind: 'product', asin: 'B012345678', ownerReview: 'approved' },
+  pending: { kind: 'search', query: 'pending', ownerReview: 'pending' },
+  rejected: { kind: 'search', query: 'rejected', ownerReview: 'rejected' },
+  missing: { kind: 'search', query: 'missing' },
+  invalid: { kind: 'search', query: 'invalid', ownerReview: 'apprvoed' },
+});
+if (affiliateFixtureApi) {
+  const approvedUrl = affiliateFixtureApi.urlFor('approvedSearch');
+  if (!affiliateFixtureApi.getProduct('approvedSearch') || !approvedUrl.includes('tag=')) {
+    fail('Case A: approved候補を公開APIから取得またはURL生成できない');
+  }
+  for (const [label, key] of [['Case B', 'pending'], ['Case C', 'rejected'], ['Case D', 'missing'], ['Case E', 'invalid']]) {
+    if (affiliateFixtureApi.getProduct(key) !== null) {
+      fail(`${label}: 未承認候補が公開APIから取得できる`);
+    }
+    try {
+      affiliateFixtureApi.urlFor(key);
+      fail(`${label}: 未承認候補のURLを生成できる`);
+    } catch {
+      // fail closed: 未承認キーはURL生成を拒否する。
+    }
+  }
+  if (affiliateFixtureApi.urlFor('approvedProduct') !== 'https://www.amazon.co.jp/dp/B012345678?tag=yzrs_apps-22') {
+    fail('Case A: approved商品URLが期待値と一致しない');
+  }
+}
+
+for (const slug of ['hdd', 'mem']) {
+  const source = read(join(ROOT, slug, 'index.html'));
+  if (!source.includes('approvedAffiliateUrl')) {
+    fail(`${slug}: 共通affiliate承認ガードがない`);
+  }
+  if (/window\.yzrsAffiliate\.urlFor/.test(source)) {
+    fail(`${slug}: 未承認候補を直接urlForへ渡している`);
+  }
 }
 
 const analyticsSource = read(join(ROOT, 'analytics.js'));

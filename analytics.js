@@ -81,7 +81,7 @@ function yzrsTrackToolStart(e) {
   var target = e.target;
   if (!target || !target.closest) return;
   var control = target.closest("button, select, input[type=checkbox], input[type=radio], input[type=text], input[type=number]");
-  if (!control || !control.closest("main, .wrap")) return;
+  if (!control) return;
   yzrsToolStarted = true;
   window.yzrsTrack("tool_start", {
     app_name: yzrsAppName(),
