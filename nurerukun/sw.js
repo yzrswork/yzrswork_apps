@@ -1,7 +1,7 @@
 /* 塗れるくん Service Worker -- 最小構成 (アプリ殻のみキャッシュ) */
-const CACHE = 'nurerukun-v11';
+const CACHE = 'nurerukun-v12';
 const CACHE_PREFIX = 'nurerukun-';
-const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', '../affiliate.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

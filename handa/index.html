@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -531,7 +532,7 @@ let troubleSel = null;
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 
 /* ---------- タブ切替 ---------- */
@@ -624,6 +625,7 @@ function renderTempResult() {
 
   html += '</div>';
   resultEl.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('solder_temperature', 'electronics');
 }
 
 /* ---------- タブB: トラブル診断 ---------- */
@@ -677,6 +679,7 @@ function renderTroubleResult() {
 
   html += '</div>';
   resultEl.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('solder_troubleshooting', 'electronics');
 }
 
 /* ---------- タブC: 道具の選び方 ---------- */
@@ -701,6 +704,7 @@ function renderGear() {
     html += '</div></div>';
   });
   appEl.innerHTML = html;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('solder_tools', 'electronics');
 }
 
 

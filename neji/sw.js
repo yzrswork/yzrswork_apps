@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neji-v3';
+const CACHE_NAME = 'neji-v4';
 const CACHE_PREFIX = 'neji-';
 const ASSETS = [
   './',
@@ -7,7 +7,8 @@ const ASSETS = [
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
-  '../shared/tokens.css'
+  '../shared/tokens.css',
+  '../affiliate.js'
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）

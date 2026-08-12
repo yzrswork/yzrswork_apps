@@ -30,6 +30,28 @@
 | 運営者について | や印工務店、サイトの成り立ち、お問い合わせ | `about/` |
 <!-- BUILD:README-TOOLS:END -->
 
+## コンテンツ品質監査
+
+品質状態は `site/catalog.json` の監査記録です。`OWNER_CONTENT_REQUIRED` は、実体験・出典・事実確認などをオーナー確認なしに補完してはいけない項目を示します。`noindex` は自動適用せず、候補がある場合もオーナー判断で決定します。
+
+<!-- BUILD:README-QUALITY:START -->
+| ツール | 状態 | フラグ | 指摘コード |
+|---|---|---|---|
+| 装備ナビ | READY | — | — |
+| 工房の電卓 | IMPROVE | OWNER_CONTENT_REQUIRED | owner_source |
+| はんだ付けナビ | READY | — | — |
+| ピンアサインナビ | REVIEW_REQUIRED | OWNER_CONTENT_REQUIRED | primary_source, board_scope |
+| 配線ナビ(初級) | READY | — | — |
+| メモリ選びナビ | IMPROVE | — | spec_freshness |
+| HDD選びナビ | IMPROVE | — | spec_freshness |
+| 自作PC構成プランナー | REVIEW_REQUIRED | — | psu_basis, compatibility_scope |
+| USB-C見分けナビ | REVIEW_REQUIRED | OWNER_CONTENT_REQUIRED | primary_source, spec_freshness |
+| 直し方ナビ | IMPROVE | — | currentness_review |
+| 接着剤選びナビ | IMPROVE | — | primary_source, safety_review |
+| 塗れるくん | IMPROVE | — | threshold_source, external_dependency |
+| ねじ下穴ナビ | READY | — | — |
+<!-- BUILD:README-QUALITY:END -->
+
 ## 構成
 
 - 各ツールは1フォルダ = 単一HTML + manifest + sw.js(PWA最小構成)。外部ライブラリなし

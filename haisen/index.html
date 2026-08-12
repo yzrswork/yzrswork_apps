@@ -854,6 +854,7 @@ function selectGroup(g) {
   });
   renderPicker();
   renderDetail();
+  if (window.yzrsTrackResult) window.yzrsTrackResult('terminal_reference', 'electronics');
 }
 
 function selectId(id) {
@@ -861,6 +862,7 @@ function selectId(id) {
   if (history.replaceState) history.replaceState(null, '', '#' + id);
   renderPicker();
   renderDetail();
+  if (window.yzrsTrackResult) window.yzrsTrackResult('terminal_reference', 'electronics');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

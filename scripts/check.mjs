@@ -6,6 +6,7 @@ import {
   readFileSync,
   readdirSync,
 } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,6 +28,49 @@ function listRootDirsWith(fileName) {
     .filter((entry) => entry.isDirectory() && existsSync(join(ROOT, entry.name, fileName)))
     .map((entry) => entry.name)
     .sort();
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function staticHtml(html) {
+  return html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+}
+
+function tags(source, name) {
+  return [...source.matchAll(new RegExp(`<${name}\\b[^>]*>`, 'gi'))].map((match) => match[0]);
+}
+
+function attr(tag, name) {
+  const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*(["'])(.*?)\\1`, 'i'));
+  return match ? match[2] : null;
+}
+
+function count(source, pattern) {
+  return [...source.matchAll(pattern)].length;
+}
+
+function localTargetExists(fromFile, reference) {
+  if (
+    !reference ||
+    reference.startsWith('#') ||
+    /^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(reference) ||
+    reference.includes('${')
+  ) {
+    return true;
+  }
+  const withoutQuery = reference.split(/[?#]/, 1)[0];
+  if (!withoutQuery) return true;
+  const target = withoutQuery.startsWith('/')
+    ? resolve(ROOT, `.${withoutQuery}`)
+    : resolve(dirname(fromFile), withoutQuery);
+  const normalized = normalize(target);
+  if (normalized !== NORMALIZED_ROOT && !normalized.startsWith(`${NORMALIZED_ROOT}${sep}`)) return false;
+  return existsSync(normalized) || existsSync(join(normalized, 'index.html'));
 }
 
 function assertUnique(items, label) {
@@ -63,10 +107,60 @@ assertUnique(allSlugs, 'slug');
 
 if (
   affiliate?.program !== 'amazon-jp' ||
-  affiliate?.associateTag !== 'yzrs_apps-22' ||
+  !/^[a-z0-9][a-z0-9_-]{0,61}-\d{2}$/i.test(affiliate?.associateTag || '') ||
   affiliate?.disclosure !== expectedAffiliateDisclosure
 ) {
   fail('site.affiliate がAmazon Japanの開示設定と一致しない');
+}
+
+const affiliateProducts = affiliate?.products;
+if (!affiliateProducts || typeof affiliateProducts !== 'object' || Array.isArray(affiliateProducts)) {
+  fail('site.affiliate.products がない');
+} else {
+  for (const [key, product] of Object.entries(affiliateProducts)) {
+    if (!/^[a-z0-9][a-z0-9._-]{0,80}$/.test(key)) {
+      fail(`affiliate product keyが不正: ${key}`);
+    }
+    if (!['product', 'search'].includes(product.kind)) {
+      fail(`affiliate product kindが不正: ${key}`);
+    }
+    if (!['pending', 'approved', 'rejected'].includes(product.ownerReview)) {
+      fail(`affiliate product ownerReviewが不正: ${key}`);
+    }
+    if (product.kind === 'product') {
+      if (!/^[A-Z0-9]{10}$/.test(product.asin || '')) {
+        fail(`affiliate product ASINが不正: ${key}`);
+      }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(product.lastVerified || '')) {
+        fail(`affiliate product lastVerifiedが不正: ${key}`);
+      }
+      if (!/^https:\/\//.test(product.sourceUrl || '')) {
+        fail(`affiliate product sourceUrlはHTTPS必須: ${key}`);
+      }
+    } else if (typeof product.query !== 'string' || !product.query.trim()) {
+      fail(`affiliate search queryがない: ${key}`);
+    }
+  }
+}
+
+const validQualityStatuses = new Set(['READY', 'IMPROVE', 'OWNER_CONTENT_REQUIRED', 'REVIEW_REQUIRED', 'NOINDEX_CANDIDATE']);
+for (const app of catalog.apps) {
+  const quality = app.quality;
+  if (!quality || !validQualityStatuses.has(quality.primaryStatus)) {
+    fail(`quality.primaryStatusが不正: ${app.slug}`);
+    continue;
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(quality.reviewedAt || '')) {
+    fail(`quality.reviewedAtが不正: ${app.slug}`);
+  }
+  for (const flag of quality.flags || []) {
+    if (!validQualityStatuses.has(flag)) fail(`quality.flagsが不正: ${app.slug} -> ${flag}`);
+  }
+  if ((quality.flags || []).includes('NOINDEX_CANDIDATE') && app.managed) {
+    const configPath = join(ROOT, app.slug, 'app.json');
+    const config = existsSync(configPath) ? JSON.parse(read(configPath)) : null;
+    if (config?.robots) fail(`NOINDEX_CANDIDATEを自動適用している: ${app.slug}`);
+  }
 }
 
 if (
@@ -121,7 +215,7 @@ for (const app of catalog.apps) {
         fail(`生成済み関連リンクがない: ${app.slug} -> ${relatedSlug}`);
       }
     }
-    if (/amazon\.co\.jp|yzrs_apps-22/.test(html)) {
+    if (/amazon\.co\.jp|yzrsAffiliate/.test(html)) {
       if (!html.includes(expectedAffiliateDisclosure)) {
         fail(`Amazon開示文がcatalogと一致しない: ${app.slug}`);
       }
@@ -166,6 +260,211 @@ for (const app of catalog.apps) {
 for (const page of catalog.pages) {
   if (!existsSync(join(ROOT, page.slug, 'index.html'))) {
     fail(`公開ページのindex.htmlがない: ${page.slug}`);
+  }
+}
+
+// --- 公開HTML・metadata・構造化データ・基本アクセシビリティ ---
+const publicHtmlFiles = [
+  { slug: 'root', path: join(ROOT, 'index.html'), kind: 'root' },
+  ...catalog.apps.map((app) => ({ slug: app.slug, path: join(ROOT, app.slug, 'index.html'), kind: 'app', app })),
+  ...catalog.pages.map((page) => ({ slug: page.slug, path: join(ROOT, page.slug, 'index.html'), kind: 'page' })),
+];
+
+for (const entry of publicHtmlFiles) {
+  if (!existsSync(entry.path)) continue;
+  const html = read(entry.path);
+  const visible = staticHtml(html);
+  const label = entry.slug;
+
+  if (!/<html\b[^>]*\blang=["']ja["']/i.test(visible)) fail(`html lang=jaがない: ${label}`);
+  if (count(visible, /<title\b[^>]*>/gi) !== 1) fail(`titleは1件必要: ${label}`);
+  if (count(visible, /<meta\b[^>]*\bname=["']description["'][^>]*>/gi) !== 1) {
+    fail(`meta descriptionは1件必要: ${label}`);
+  }
+  if (count(visible, /<link\b[^>]*\brel=["']canonical["'][^>]*>/gi) !== 1) {
+    fail(`canonicalは1件必要: ${label}`);
+  }
+  if (count(visible, /<meta\b[^>]*\bname=["']viewport["'][^>]*>/gi) !== 1) {
+    fail(`viewportは1件必要: ${label}`);
+  }
+  if (count(visible, /<h1\b[^>]*>/gi) < 1) fail(`静的h1がない: ${label}`);
+
+  const ids = tags(visible, '[a-z][a-z0-9:-]*')
+    .map((tag) => attr(tag, 'id'))
+    .filter(Boolean);
+  assertUnique(ids, `${label} の静的id`);
+
+  for (const img of tags(visible, 'img')) {
+    if (attr(img, 'alt') === null) fail(`imgのaltがない: ${label}`);
+  }
+
+  for (const control of [...tags(visible, 'input'), ...tags(visible, 'select'), ...tags(visible, 'textarea')]) {
+    if ((attr(control, 'type') || '').toLowerCase() === 'hidden') continue;
+    const id = attr(control, 'id');
+    const accessible =
+      attr(control, 'aria-label') ||
+      attr(control, 'aria-labelledby') ||
+      (id && new RegExp(`<label\\b[^>]*\\bfor=["']${escapeRegExp(id)}["']`, 'i').test(visible)) ||
+      (id && new RegExp(`<label\\b[^>]*>[\\s\\S]*?<[^>]+\\bid=["']${escapeRegExp(id)}["'][^>]*>[\\s\\S]*?<\\/label>`, 'i').test(visible));
+    if (!accessible) fail(`入力コントロールのラベルがない: ${label} -> ${id || '(idなし)'}`);
+  }
+
+  for (const tag of [...tags(visible, 'a'), ...tags(visible, 'link'), ...tags(visible, 'script'), ...tags(visible, 'img')]) {
+    const reference = attr(tag, tag.startsWith('<a') || tag.startsWith('<link') ? 'href' : 'src');
+    if (!localTargetExists(entry.path, reference)) fail(`内部リンク/asset切れ: ${label} -> ${reference}`);
+  }
+
+  const analyticsCount = count(html, /<script\b[^>]*\bsrc=["'][^"']*analytics\.js["'][^>]*>/gi);
+  if (entry.kind === 'app' && analyticsCount !== 1) fail(`analytics.jsは1回だけ読み込む: ${label}`);
+
+  const jsonLdBlocks = [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  if (entry.kind !== 'page' && jsonLdBlocks.length === 0) fail(`JSON-LDがない: ${label}`);
+  for (const block of jsonLdBlocks) {
+    try {
+      const data = JSON.parse(block[1]);
+      if (entry.kind === 'app' && data['@type'] !== 'WebApplication') {
+        fail(`公開アプリのJSON-LDはWebApplicationにする: ${label}`);
+      }
+      if (entry.kind === 'root' && data['@type'] !== 'WebSite') {
+        fail('rootのJSON-LDはWebSiteにする');
+      }
+    } catch {
+      fail(`JSON-LD構文エラー: ${label}`);
+    }
+  }
+
+  if (entry.kind === 'app') {
+    const expectedCanonical = `${catalog.site.baseUrl}${entry.slug}/`;
+    if (!visible.includes(`rel="canonical" href="${expectedCanonical}"`) &&
+        !visible.includes(`href="${expectedCanonical}" rel="canonical"`)) {
+      fail(`HTML canonical不一致: ${label}`);
+    }
+    for (const property of ['og:title', 'og:description', 'og:url']) {
+      if (!new RegExp(`<meta\\b[^>]*property=["']${escapeRegExp(property)}["']`, 'i').test(visible)) {
+        fail(`OGP ${property}がない: ${label}`);
+      }
+    }
+    if (html.includes(affiliate.associateTag)) fail(`Associate TagのHTML直書き禁止: ${label}`);
+
+    const productRefs = [
+      ...[...html.matchAll(/data-product-key=["']([a-z0-9][a-z0-9._-]*)["']/gi)].map((match) => match[1]),
+      ...[...html.matchAll(/urlFor\(\s*["']([a-z0-9][a-z0-9._-]*)["']/gi)].map((match) => match[1]),
+    ];
+    for (const key of new Set(productRefs)) {
+      if (!affiliateProducts?.[key]) fail(`未登録affiliate product key参照: ${label} -> ${key}`);
+    }
+    for (const anchor of tags(html, 'a').filter((tag) => /data-product-key=/.test(tag))) {
+      const rel = new Set((attr(anchor, 'rel') || '').split(/\s+/).filter(Boolean));
+      for (const required of ['noopener', 'noreferrer', 'sponsored', 'nofollow']) {
+        if (!rel.has(required)) fail(`Amazonリンクのrel不足(${required}): ${label}`);
+      }
+    }
+  }
+}
+
+const affiliateJs = existsSync(join(ROOT, 'affiliate.js')) ? read(join(ROOT, 'affiliate.js')) : '';
+if (!affiliateJs.includes(`const ASSOCIATE_TAG = ${JSON.stringify(affiliate.associateTag)};`)) {
+  fail('affiliate.jsのAssociate Tagがcatalogと不一致');
+}
+
+// --- 公開affiliate APIのfail-closed回帰 ---
+// catalogは審査待ち候補を含むため、fixtureを差し替えたAPIでも検証する。
+// 実際の公開bundleはapproved候補だけを埋め込むため、pending/rejected/missing/invalidは
+// getProduct/urlForの両方から到達できないことを保証する。
+function loadAffiliateApi(source, productsOverride) {
+  let fixtureSource = source;
+  if (productsOverride !== undefined) {
+    const replacement = `const PRODUCTS = Object.freeze(${JSON.stringify(productsOverride)});`;
+    const replaced = fixtureSource.replace(/const PRODUCTS = Object\.freeze\([^\n]*\);/, replacement);
+    if (replaced === fixtureSource) {
+      fail('affiliate.jsのPRODUCTS定義をfixtureへ差し替えられない');
+      return null;
+    }
+    fixtureSource = replaced;
+  }
+  const sandbox = {};
+  try {
+    runInNewContext(fixtureSource, sandbox);
+    return sandbox.yzrsAffiliate || null;
+  } catch (error) {
+    fail(`affiliate.js実行エラー: ${error.message}`);
+    return null;
+  }
+}
+
+const publicAffiliateApi = loadAffiliateApi(affiliateJs);
+if (!publicAffiliateApi) {
+  fail('affiliate.jsの公開APIが生成されていない');
+} else {
+  for (const [key, product] of Object.entries(publicAffiliateApi.products || {})) {
+    if (product?.ownerReview !== 'approved') {
+      fail(`未承認affiliate productが公開bundleに含まれる: ${key}`);
+    }
+  }
+  for (const [key, product] of Object.entries(affiliateProducts || {})) {
+    if (product?.ownerReview === 'approved' && !publicAffiliateApi.getProduct(key)) {
+      fail(`approved affiliate productが公開APIから取得できない: ${key}`);
+    }
+    if (product?.ownerReview !== 'approved' && publicAffiliateApi.getProduct(key) !== null) {
+      fail(`未承認affiliate productが公開APIから取得できる: ${key}`);
+    }
+  }
+}
+
+const affiliateFixtureApi = loadAffiliateApi(affiliateJs, {
+  approvedSearch: { kind: 'search', query: 'DDR4', ownerReview: 'approved' },
+  approvedProduct: { kind: 'product', asin: 'B012345678', ownerReview: 'approved' },
+  pending: { kind: 'search', query: 'pending', ownerReview: 'pending' },
+  rejected: { kind: 'search', query: 'rejected', ownerReview: 'rejected' },
+  missing: { kind: 'search', query: 'missing' },
+  invalid: { kind: 'search', query: 'invalid', ownerReview: 'apprvoed' },
+});
+if (affiliateFixtureApi) {
+  const approvedUrl = affiliateFixtureApi.urlFor('approvedSearch');
+  if (!affiliateFixtureApi.getProduct('approvedSearch') || !approvedUrl.includes('tag=')) {
+    fail('Case A: approved候補を公開APIから取得またはURL生成できない');
+  }
+  for (const [label, key] of [['Case B', 'pending'], ['Case C', 'rejected'], ['Case D', 'missing'], ['Case E', 'invalid']]) {
+    if (affiliateFixtureApi.getProduct(key) !== null) {
+      fail(`${label}: 未承認候補が公開APIから取得できる`);
+    }
+    try {
+      affiliateFixtureApi.urlFor(key);
+      fail(`${label}: 未承認候補のURLを生成できる`);
+    } catch {
+      // fail closed: 未承認キーはURL生成を拒否する。
+    }
+  }
+  if (affiliateFixtureApi.urlFor('approvedProduct') !== 'https://www.amazon.co.jp/dp/B012345678?tag=yzrs_apps-22') {
+    fail('Case A: approved商品URLが期待値と一致しない');
+  }
+}
+
+for (const slug of ['hdd', 'mem']) {
+  const source = read(join(ROOT, slug, 'index.html'));
+  if (!source.includes('approvedAffiliateUrl')) {
+    fail(`${slug}: 共通affiliate承認ガードがない`);
+  }
+  if (/window\.yzrsAffiliate\.urlFor/.test(source)) {
+    fail(`${slug}: 未承認候補を直接urlForへ渡している`);
+  }
+}
+
+const analyticsSource = read(join(ROOT, 'analytics.js'));
+for (const eventName of ['tool_start', 'result_view', 'tool_complete', 'affiliate_click', 'outbound_click', 'related_tool_click']) {
+  if (!analyticsSource.includes(`"${eventName}"`)) fail(`Analyticsイベントがない: ${eventName}`);
+}
+for (const forbiddenParam of ['link_url', 'item_label']) {
+  if (new RegExp(`\\b${forbiddenParam}\\b`).test(analyticsSource)) {
+    fail(`Analytics禁止パラメータが残っている: ${forbiddenParam}`);
+  }
+}
+
+const robots = existsSync(join(ROOT, 'robots.txt')) ? read(join(ROOT, 'robots.txt')) : '';
+if (!robots.includes(`Sitemap: ${catalog.site.baseUrl}sitemap.xml`)) fail('robots.txtのSitemapが不正');
+for (const slug of appSlugs) {
+  if (new RegExp(`Disallow:\\s*/${escapeRegExp(slug)}/`).test(robots)) {
+    fail(`公開アプリがrobotsで拒否されている: ${slug}`);
   }
 }
 

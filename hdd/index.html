@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -262,11 +263,11 @@
 
 /* ---------- 色データ ---------- */
 const COLORS = {
-  blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '一般PC・万能型。OS／アプリ／普段使い向け。', rec: 'mixed', recLabel: '型番で確認必須', warn: '2TB以上はSMR混在に注意。', kw: 'WD Blue 内蔵HDD' },
-  redplus: { name: 'WD Red Plus / Pro', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', rec: 'cmr', recLabel: 'CMR確定', warn: '', kw: 'WD Red Plus NAS HDD' },
-  red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '低コストNAS向け。', rec: 'smr', recLabel: '基本SMR', warn: 'SMR注意。RAIDには非推奨。', kw: 'WD Red 内蔵HDD' },
-  purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', rec: 'cmr', recLabel: '用途特化', warn: '', kw: 'WD Purple 監視カメラ HDD' },
-  black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能・ゲーム・動画編集など高速作業向け。', rec: 'cmr', recLabel: '全容量CMR', warn: '', kw: 'WD Black 内蔵HDD' }
+  blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '一般PC・万能型。OS／アプリ／普段使い向け。', rec: 'mixed', recLabel: '型番で確認必須', warn: '2TB以上はSMR混在に注意。', productKey: 'hdd-blue-search' },
+  redplus: { name: 'WD Red Plus / Pro', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', rec: 'cmr', recLabel: 'CMR確定', warn: '', productKey: 'hdd-redplus-search' },
+  red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '低コストNAS向け。', rec: 'smr', recLabel: '基本SMR', warn: 'SMR注意。RAIDには非推奨。', productKey: 'hdd-red-search' },
+  purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', rec: 'cmr', recLabel: '用途特化', warn: '', productKey: 'hdd-purple-search' },
+  black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能・ゲーム・動画編集など高速作業向け。', rec: 'cmr', recLabel: '全容量CMR', warn: '', productKey: 'hdd-black-search' }
 };
 
 /* ---------- 用途セレクタ ---------- */
@@ -303,8 +304,11 @@ const EXAMPLES = ['WD40EFPX', 'WD40EFZZ', 'WD60EFZX', 'WD20EARZ', 'WD40EZAX', 'W
 
 /* ---------- ユーティリティ ---------- */
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function amazonUrl(kw) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw) + '&tag=yzrs_apps-22';
+function approvedAffiliateUrl(key, options) {
+  const api = window.yzrsAffiliate;
+  if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
+  if (!api.getProduct(key)) return null;
+  try { return api.urlFor(key, options); } catch (_) { return null; }
 }
 const VTAG = {
   cmr: '<span class="sr-tag rec-cmr">CMR</span>',
@@ -325,14 +329,16 @@ function renderResult() {
   const el = document.getElementById('result');
   if (activeUse < 0) { el.innerHTML = '<div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div>'; return; }
   const c = COLORS[USES[activeUse].color];
+  const buyUrl = approvedAffiliateUrl(c.productKey);
   el.innerHTML = `
     <div class="color-card" style="border-left-color:${c.hex}">
       <div class="cc-top"><span class="cc-dot">${c.dot}</span><span class="cc-name">${esc(c.name)}</span></div>
       <div class="cc-use">${esc(c.use)}</div>
       <span class="cc-rec rec-${c.rec}">${esc(c.recLabel)}</span>
       ${c.warn ? `<div class="cc-warn">${esc(c.warn)}</div>` : ''}
-      <a class="cc-buy" href="${esc(amazonUrl(c.kw))}" data-track-label="${esc(c.name)}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(c.name)} を探す</a>
+      ${buyUrl ? `<a class="cc-buy" href="${esc(buyUrl)}" data-product-key="${esc(c.productKey)}" data-track-label="${esc(c.productKey)}" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(c.name)} を探す</a>` : ''}
     </div>`;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
 }
 
 /* ---------- シリーズ早見 ---------- */
@@ -348,8 +354,11 @@ function checkModel(raw) {
   const v = (raw || '').toUpperCase().replace(/\s/g, '');
   if (!v) { out.innerHTML = ''; return; }
   const hit = SUFFIX.find(s => v.endsWith(s.suf));
-  const buy = /^WD[A-Z0-9]{5,}$/.test(v)
-    ? `<a class="model-buy" href="${esc(amazonUrl(v))}" data-track-label="${esc(v)}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
+  const modelBuyUrl = /^WD[A-Z0-9]{5,}$/.test(v)
+    ? approvedAffiliateUrl('hdd-model-search', { query: v })
+    : null;
+  const buy = modelBuyUrl
+    ? `<a class="model-buy" href="${esc(modelBuyUrl)}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
     : '';
   if (hit) {
     const cls = hit.v === 'cmr' ? 'v-cmr' : 'v-smr';
@@ -361,6 +370,9 @@ function checkModel(raw) {
     }
   } else {
     out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">この早見に登録済みの末尾（EFPX / EFZZ / EFZX / EFRX / EFAX / EARZ / EZAX / EAAZ / EAZZ / EZBX / EZAZ）に当てはまりません。末尾だけで断定せず、型番の「Recording Technology」を公式で確認してください。</div>${buy}`;
+  }
+  if (/^WD[A-Z0-9]{5,}$/.test(v) && window.yzrsTrackResult) {
+    window.yzrsTrackResult('hdd_model_check', 'pc');
   }
 }
 

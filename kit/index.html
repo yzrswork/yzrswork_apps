@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -411,10 +412,10 @@ function loadSet(key) {
 function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 function amazonProductUrl(asin) {
-  return 'https://www.amazon.co.jp/dp/' + encodeURIComponent(asin) + '?tag=yzrs_apps-22';
+  return window.yzrsAffiliate.productUrl(asin);
 }
 function itemAmazonUrl(item) {
   return item.asin ? amazonProductUrl(item.asin) : amazonUrl(item.kw);
@@ -507,7 +508,10 @@ function updateCartBar() {
 }
 function renderCart() {
   const wrap = document.getElementById('cart-items');
-  if (!cart.size) { wrap.innerHTML = '<p class="cart-empty">まだ何も入っていません。各アイテムの「＋ リスト」で追加できます。</p>'; return; }
+  if (!cart.size) {
+    wrap.innerHTML = '<p class="cart-empty">まだ何も入っていません。各アイテムの「＋ リスト」で追加できます。</p>';
+    return;
+  }
   wrap.innerHTML = [...cart].map(id => {
     const i = byId(id); if (!i) return '';
     return `
@@ -529,6 +533,7 @@ function renderCart() {
       const nextDelete = cartBg.querySelector('[data-del]');
       (nextDelete || closeCartButton).focus();
     }));
+  if (window.yzrsTrackResult) window.yzrsTrackResult('electronics_kit', 'electronics');
 }
 
 function cartAsText() {

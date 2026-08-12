@@ -1,4 +1,4 @@
-const CACHE_NAME = 'haisen-v5';
+const CACHE_NAME = 'haisen-v6';
 const CACHE_PREFIX = 'haisen-';
 const ASSETS = [
   './',

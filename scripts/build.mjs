@@ -169,6 +169,85 @@ function renderAdsTxt(catalog) {
   return `google.com, ${adsense.publisherId}, DIRECT, ${adsense.certificationAuthorityId}\n`;
 }
 
+function jsonForScript(value) {
+  return JSON.stringify(value)
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026')
+    .replaceAll(String.fromCharCode(0x2028), '\\u2028')
+    .replaceAll(String.fromCharCode(0x2029), '\\u2029');
+}
+
+function renderAffiliate(catalog) {
+  const affiliate = catalog.site.affiliate;
+  if (!affiliate?.associateTag || !affiliate.products) {
+    throw new Error('site.affiliate の associateTag / products が必要');
+  }
+  for (const [key, product] of Object.entries(affiliate.products)) {
+    if (!['pending', 'approved', 'rejected'].includes(product?.ownerReview)) {
+      throw new Error(`affiliate product ownerReviewが不正: ${key}`);
+    }
+  }
+  // catalogには審査待ち・却下候補も保持するが、公開bundleにはapprovedだけを出す。
+  // statusの判定はここに集約し、各HTMLへownerReviewの条件分岐を拡散させない。
+  const publicProducts = Object.fromEntries(
+    Object.entries(affiliate.products).filter(([, product]) => product?.ownerReview === 'approved')
+  );
+  return `// このファイルは scripts/build.mjs が site/catalog.json から生成する。直接編集しない。
+(function (global) {
+  const ASSOCIATE_TAG = ${jsonForScript(affiliate.associateTag)};
+  const PRODUCTS = Object.freeze(${jsonForScript(publicProducts)});
+
+  function isApproved(item) {
+    return Boolean(item && item.ownerReview === 'approved');
+  }
+
+  function searchUrl(query) {
+    return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(String(query || '')) +
+      '&tag=' + encodeURIComponent(ASSOCIATE_TAG);
+  }
+
+  function productUrl(asin, linkId) {
+    const value = String(asin || '').toUpperCase();
+    if (!/^[A-Z0-9]{10}$/.test(value)) {
+      throw new Error('Amazon ASINが不正です');
+    }
+    let url = 'https://www.amazon.co.jp/dp/' + encodeURIComponent(value) +
+      '?tag=' + encodeURIComponent(ASSOCIATE_TAG);
+    if (linkId) url += '&linkId=' + encodeURIComponent(String(linkId));
+    return url;
+  }
+
+  function getProduct(key) {
+    const item = PRODUCTS[key];
+    return isApproved(item) ? item : null;
+  }
+
+  function urlFor(key, options) {
+    const item = getProduct(key);
+    if (!item) throw new Error('未登録のaffiliate product key: ' + key);
+    if (item.kind === 'product') return productUrl(item.asin, options && options.linkId);
+    if (item.kind === 'search') {
+      const query = options && Object.prototype.hasOwnProperty.call(options, 'query')
+        ? options.query
+        : item.query;
+      return searchUrl(query);
+    }
+    throw new Error('affiliate product kindが不正です: ' + key);
+  }
+
+  global.yzrsAffiliate = Object.freeze({
+    tag: ASSOCIATE_TAG,
+    products: PRODUCTS,
+    getProduct,
+    searchUrl,
+    productUrl,
+    urlFor
+  });
+})(typeof window !== 'undefined' ? window : globalThis);
+`;
+}
+
 function renderHead(app, catalog) {
   const lines = [];
   lines.push(`<meta charset="utf-8" />`);
@@ -230,6 +309,9 @@ function renderHead(app, catalog) {
     )
   );
   lines.push(`</script>`);
+  if (app.affiliateSrc) {
+    lines.push(`<script src="${app.affiliateSrc}"></script>`);
+  }
   if (app.analyticsSrc) {
     lines.push(`<script async src="${app.analyticsSrc}"></script>`);
   }
@@ -283,6 +365,8 @@ const CATALOG_START = '<!-- BUILD:CATALOG:START -->';
 const CATALOG_END = '<!-- BUILD:CATALOG:END -->';
 const README_TOOLS_START = '<!-- BUILD:README-TOOLS:START -->';
 const README_TOOLS_END = '<!-- BUILD:README-TOOLS:END -->';
+const README_QUALITY_START = '<!-- BUILD:README-QUALITY:START -->';
+const README_QUALITY_END = '<!-- BUILD:README-QUALITY:END -->';
 const ADSENSE_START = '<!-- BUILD:ADSENSE:START -->';
 const ADSENSE_END = '<!-- BUILD:ADSENSE:END -->';
 
@@ -338,6 +422,27 @@ function renderReadmeTools(catalog) {
   for (const entry of entries) {
     lines.push(
       `| ${entry.name} | ${entry.readmeDescription} | \`${entry.slug}/\` |`
+    );
+  }
+  return lines.join('\n');
+}
+
+function renderReadmeQuality(catalog) {
+  const cell = (value) => String(value ?? '').replaceAll('|', '\\|');
+  const lines = [
+    '| ツール | 状態 | フラグ | 指摘コード |',
+    '|---|---|---|---|',
+  ];
+  for (const app of catalog.apps) {
+    const quality = app.quality || {};
+    const flags = Array.isArray(quality.flags) && quality.flags.length
+      ? quality.flags.join(', ')
+      : '—';
+    const issues = Array.isArray(quality.issues) && quality.issues.length
+      ? quality.issues.join(', ')
+      : '—';
+    lines.push(
+      `| ${cell(app.name)} | ${cell(quality.primaryStatus || '未監査')} | ${cell(flags)} | ${cell(issues)} |`
     );
   }
   return lines.join('\n');
@@ -748,6 +853,7 @@ function main() {
   const catalog = loadCatalog();
   const slugs = listAppDirs();
   const results = [];
+  writeIfChanged(join(ROOT, 'affiliate.js'), renderAffiliate(catalog), results);
   for (const slug of slugs) {
     const app = loadApp(slug);
     if (app.hasServiceWorker) {
@@ -782,7 +888,13 @@ function main() {
     README_TOOLS_END,
     renderReadmeTools(catalog)
   );
-  writeIfChanged(join(ROOT, 'README.md'), readme, results);
+  const readmeWithQuality = replaceMarked(
+    readme,
+    README_QUALITY_START,
+    README_QUALITY_END,
+    renderReadmeQuality(catalog)
+  );
+  writeIfChanged(join(ROOT, 'README.md'), readmeWithQuality, results);
   writeIfChanged(join(ROOT, 'sitemap.xml'), renderSitemap(catalog), results);
   writeIfChanged(join(ROOT, 'ads.txt'), renderAdsTxt(catalog), results);
 

@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -178,7 +179,7 @@
     </div>
 
     <!-- 定番モデル -->
-    <div class="sec-head"><span class="s-jp">定番モデル（DDR4）</span><span class="s-en">Picks</span></div>
+    <div class="sec-head"><span class="s-jp">規格に合う候補</span><span class="s-en">Picks</span></div>
     <div class="picks" id="picks"></div>
 
     <section class="about">
@@ -234,21 +235,18 @@ const USES = [
 
 /* ---------- 定番モデル（記事 + 公式情報、DDR別） ---------- */
 const PICKS = [
-  { ddr: 'DDR4', name: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2）', sub: '永久保証。3200動作はCPU・マザー・BIOS設定に依存するため、QVLと実動作速度を確認。', kw: 'TEAMGROUP ELITE PLUS DDR4-3200 32GB 16GBx2', asin: 'B093GNJS1T' },
-  { ddr: 'DDR4', name: 'Crucial Pro DDR4-3200 32GB（16GB×2・CP2K16G4DFRA32A）', sub: '現行の2枚組キット。XMP 2.0設定とマザーボードQVLを確認。', kw: 'Crucial CP2K16G4DFRA32A DDR4-3200 32GB', asin: 'B0C29R9LNL' },
-  { ddr: 'DDR5', name: 'Crucial Pro DDR5-6000 32GB（16GB×2・CP2K16G60C48U5）', sub: 'Intel XMP 3.0 / AMD EXPO対応。6000 MT/sはOC設定のため、CPU仕様とマザーボードQVLを確認。', kw: 'Crucial CP2K16G60C48U5 DDR5-6000 32GB', asin: 'B0CT9BMGLF' }
+  { ddr: 'DDR4', key: 'mem-team-ddr4-32' },
+  { ddr: 'DDR4', key: 'mem-crucial-ddr4-32' },
+  { ddr: 'DDR5', key: 'mem-crucial-ddr5-32' }
 ];
 
 let selSocket = null, selUse = null;
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function amazonUrl(kw) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(kw) + '&tag=yzrs_apps-22';
-}
-function amazonProductUrl(asin) {
-  return 'https://www.amazon.co.jp/dp/' + encodeURIComponent(asin) + '?tag=yzrs_apps-22';
-}
-function pickAmazonUrl(pick) {
-  return pick.asin ? amazonProductUrl(pick.asin) : amazonUrl(pick.kw);
+function approvedAffiliateUrl(key, options) {
+  const api = window.yzrsAffiliate;
+  if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
+  if (!api.getProduct(key)) return null;
+  try { return api.urlFor(key, options); } catch (_) { return null; }
 }
 
 function renderSockets() {
@@ -288,23 +286,33 @@ function renderReco() {
   // 検索キーワード（規格が確定しない場合は両方を含める）
   const kwDdr = s.search || 'DDR4 DDR5';
   const kw = (kwDdr + ' ' + u.search + ' デスクトップ メモリ').trim();
+  const conditionUrl = approvedAffiliateUrl('mem-condition-search', { query: kw });
   el.innerHTML = `
     <div class="reco">
       <div class="rc-lab">あなたの構成の目安</div>
       <div class="rc-big">${esc(config)}</div>
       <div class="rc-sub">同じ容量なら2枚構成（デュアルチャネル）を。表示速度を出すならBIOSでXMP/EXPOを有効化。</div>
-      <a class="rc-buy" href="${esc(amazonUrl(kw))}" data-track-label="${esc(kw)}" target="_blank" rel="noopener sponsored nofollow">🛒 この条件で探す</a>
+      ${conditionUrl ? `<a class="rc-buy" href="${esc(conditionUrl)}" data-product-key="mem-condition-search" data-track-label="mem-condition-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 この条件で探す</a>` : ''}
     </div>`;
+  if (window.yzrsTrackResult) window.yzrsTrackResult('memory_recommendation', 'pc');
 }
 
 function renderPicks() {
   const socket = SOCKETS.find(s => s.id === selSocket);
   const ddr = socket && socket.search;
-  const picks = ddr && /^DDR[45]/.test(ddr)
-    ? PICKS.filter(p => ddr.startsWith(p.ddr))
-    : PICKS;
-  document.getElementById('picks').innerHTML = picks.map(p =>
-    `<div class="pick"><div><div class="pk-name">${esc(p.name)}</div><div class="pk-sub">${esc(p.sub)}</div></div><a href="${esc(pickAmazonUrl(p))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">探す</a></div>`).join('');
+  if (!socket || !/^DDR[45]/.test(ddr || '')) {
+    document.getElementById('picks').innerHTML = socket
+      ? '<div class="info-empty">DDR規格を確認できた場合だけ、対応する候補を表示します。</div>'
+      : '';
+    return;
+  }
+  const picks = PICKS.filter(p => ddr.startsWith(p.ddr));
+  document.getElementById('picks').innerHTML = picks.map(p => {
+    const product = window.yzrsAffiliate.getProduct(p.key);
+    const productUrl = product ? approvedAffiliateUrl(p.key) : null;
+    if (!product || !productUrl) return '';
+    return `<div class="pick"><div><div class="pk-name">${esc(product.label)}</div><div class="pk-sub">${esc(product.note || '')}</div></div><a href="${esc(productUrl)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">探す</a></div>`;
+  }).join('');
 }
 
 

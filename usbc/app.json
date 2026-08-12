@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "USB-Cケーブルの能力の見分け方と用途からの選び方。W数・転送速度・映像出力をオフラインで確認。",
   "hasServiceWorker": true,
-  "swVersion": 4,
+  "swVersion": 5,
   "assets": [
     "./",
     "./index.html",
@@ -22,7 +22,8 @@
     "../icons/icon-192.png",
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
-    "../shared/tokens.css"
+    "../shared/tokens.css",
+    "../affiliate.js"
   ],
   "manifestIcons": [
     {
@@ -51,5 +52,6 @@
   "robots": null,
   "applicationCategory": "UtilitiesApplication",
   "analyticsSrc": "../analytics.js",
+  "affiliateSrc": "../affiliate.js",
   "tokensHref": "../shared/tokens.css"
 }

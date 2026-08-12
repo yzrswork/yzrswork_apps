@@ -116,6 +116,7 @@
   .hidden{display:none}
 </style>
 <script async src="../analytics.js"></script>
+<script src="../affiliate.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -127,7 +128,7 @@
   <!-- 入力 -->
   <div class="card">
     <div class="inputrow">
-      <input id="q" type="text" placeholder="住所や地名 (例: 名古屋市中区)" autocomplete="off">
+      <input id="q" type="text" placeholder="住所や地名 (例: 名古屋市中区)" aria-label="住所や地名" autocomplete="off">
       <button id="searchBtn">調べる</button>
     </div>
     <button id="geoBtn" class="ghost geobtn">現在地から調べる</button>
@@ -294,7 +295,6 @@ const PAINT_NOTE_OIL = '油性(溶剤系)も、露点が近い面には施工で
    - 商品追加は asin と linkId(SiteStripeのリンクから)を足すだけ。
    ============================================================ */
 const AFF = {
-  tag: "yzrs_apps-22",  // yzrswork_apps専用タグ。空にするとリンクを出さない
   dry: {  // スロット① 乾燥管理
     lead: "仕様から選んだ候補（実使用未確認）:",
     normal: [
@@ -317,8 +317,7 @@ const AFF = {
   }
 };
 function affHref(it){
-  return 'https://www.amazon.co.jp/dp/'+encodeURIComponent(it.asin)+'?tag='+encodeURIComponent(AFF.tag)
-    + (it.linkId ? '&linkId='+encodeURIComponent(it.linkId) : '');
+  return window.yzrsAffiliate.productUrl(it.asin, it.linkId);
 }
 function affFirst(arr){ return Array.isArray(arr) ? arr[0] : null; }
 function affFill(slot, lead, it){
@@ -333,7 +332,7 @@ function affFill(slot, lead, it){
 }
 /* dryRisk: 今日の作業時間帯に低温・露点近・高湿があれば true (乾燥管理が重要な日) */
 function renderAffiliate(dryRisk){
-  if(!AFF.tag) return;  // 未設定なら既定の説明文のまま
+  if(!window.yzrsAffiliate || typeof window.yzrsAffiliate.productUrl !== 'function') return;
   const slots = document.querySelectorAll('#affiCard .slot');
   affFill(slots[0], AFF.dry.lead, affFirst(dryRisk ? AFF.dry.risk : AFF.dry.normal));
   affFill(slots[1], AFF.tools.lead, affFirst(AFF.tools.items));
@@ -570,6 +569,7 @@ function render(data, placeName){
     h.humidity >= CONFIG.HUMIDITY_WARN);
   renderAffiliate(dryRisk);
   $('error').classList.add('hidden');
+  if (window.yzrsTrackResult) window.yzrsTrackResult('paint_weather_result', 'diy');
 }
 
 /* --- 実行フロー --- */

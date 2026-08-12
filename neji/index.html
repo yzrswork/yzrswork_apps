@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -428,7 +429,7 @@ function fmt(n) {
 /* 目安レンジ表示専用(常に小数1桁) */
 function fmt1(n) { return (Math.round(n * 10) / 10).toFixed(1); }
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 
 /* ---------- 状態 ---------- */
@@ -439,6 +440,7 @@ let clearSize = 'M6';
 let clearGrade = 2;
 let woodSize = 3.8;
 let woodMaterial = 'soft';
+let nejiUserInteracted = false;
 
 const appEl = document.getElementById('app');
 document.getElementById('tab-tap').addEventListener('click', () => setTab('tap'));
@@ -476,10 +478,10 @@ function renderTap() {
     <div id="tap-result"></div>`;
 
   appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
-    btn.addEventListener('click', () => { tapSize = btn.getAttribute('data-size'); renderTap(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; tapSize = btn.getAttribute('data-size'); renderTap(); });
   });
   appEl.querySelectorAll('#grid-pitch .condchip').forEach(btn => {
-    btn.addEventListener('click', () => { tapFine = btn.getAttribute('data-fine') === '1'; renderTap(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; tapFine = btn.getAttribute('data-fine') === '1'; renderTap(); });
   });
 
   renderTapResult();
@@ -548,6 +550,7 @@ function renderTapResult() {
   }
 
   el.innerHTML = html;
+  if (nejiUserInteracted && window.yzrsTrackResult) window.yzrsTrackResult('tap_hole', 'diy');
 }
 
 /* ==================== タブB: バカ穴(通し穴) ==================== */
@@ -565,10 +568,10 @@ function renderClear() {
     <div id="clear-result"></div>`;
 
   appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
-    btn.addEventListener('click', () => { clearSize = btn.getAttribute('data-size'); renderClear(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; clearSize = btn.getAttribute('data-size'); renderClear(); });
   });
   appEl.querySelectorAll('#grid-grade .condchip').forEach(btn => {
-    btn.addEventListener('click', () => { clearGrade = Number(btn.getAttribute('data-grade')); renderClear(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; clearGrade = Number(btn.getAttribute('data-grade')); renderClear(); });
   });
 
   renderClearResult();
@@ -607,6 +610,7 @@ function renderClearResult() {
     </table></div>`;
 
   el.innerHTML = html;
+  if (nejiUserInteracted && window.yzrsTrackResult) window.yzrsTrackResult('clearance_hole', 'diy');
 }
 
 /* ==================== タブC: 木ねじ下穴 ==================== */
@@ -626,10 +630,10 @@ function renderWood() {
     <div id="wood-result"></div>`;
 
   appEl.querySelectorAll('#grid-size .matchip').forEach(btn => {
-    btn.addEventListener('click', () => { woodSize = Number(btn.getAttribute('data-size')); renderWood(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; woodSize = Number(btn.getAttribute('data-size')); renderWood(); });
   });
   appEl.querySelectorAll('#grid-mat .condchip').forEach(btn => {
-    btn.addEventListener('click', () => { woodMaterial = btn.getAttribute('data-mat'); renderWood(); });
+    btn.addEventListener('click', () => { nejiUserInteracted = true; woodMaterial = btn.getAttribute('data-mat'); renderWood(); });
   });
 
   renderWoodResult();
@@ -665,6 +669,7 @@ function renderWoodResult() {
     </div>`;
 
   el.innerHTML = html;
+  if (nejiUserInteracted && window.yzrsTrackResult) window.yzrsTrackResult('wood_screw_hole', 'diy');
 }
 
 

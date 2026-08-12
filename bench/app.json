@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "電子工作の作業台に常駐する計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間をオフラインで。",
   "hasServiceWorker": true,
-  "swVersion": 11,
+  "swVersion": 12,
   "assets": [
     "./",
     "./index.html",
@@ -22,7 +22,8 @@
     "../icons/icon-192.png",
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
-    "../shared/tokens.css"
+    "../shared/tokens.css",
+    "../affiliate.js"
   ],
   "manifestIcons": [
     {
@@ -44,9 +45,13 @@
       "purpose": "maskable"
     }
   ],
-  "backLink": null,
+  "backLink": {
+    "href": "../",
+    "text": "← 道具箱（ほかの実用ツール）"
+  },
   "robots": null,
   "applicationCategory": "UtilitiesApplication",
   "analyticsSrc": "../analytics.js",
+  "affiliateSrc": "../affiliate.js",
   "tokensHref": "../shared/tokens.css"
 }

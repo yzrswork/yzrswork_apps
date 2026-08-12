@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -118,6 +119,25 @@
     letter-spacing: 0.01em;
     line-height: 1.15;
     margin: 0 0 12px;
+  }
+  .hero .screen-title {
+    font-family: var(--jp);
+    font-weight: 700;
+    font-size: clamp(30px, 8vw, 42px);
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin: 0 0 12px;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
   .hero .en {
     font-family: var(--serif);
@@ -444,6 +464,7 @@
 </head>
 <body>
   <main class="page">
+    <h1 class="sr-only">直し方ナビ</h1>
     <div class="topbar">
       <span class="brand" id="brand"><span class="dot">●</span> 直し方ナビ</span>
     </div>
@@ -1078,6 +1099,7 @@ const appEl = document.getElementById('app');
 let current = null;       // { treeId, nodeId }
 let stack = [];
 let lockedTree = null;
+let fixitUserInteracted = false;
 
 function goHome() {
   if (lockedTree) {
@@ -1098,7 +1120,7 @@ function esc(s) {
 }
 // stepsとhelpは<code>タグを意図的に含むので、エスケープせずそのまま使う（データは内製・固定）
 function amazonUrl(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 
 /* ---------- レンダリング ---------- */
@@ -1125,7 +1147,7 @@ function renderHome() {
 
   appEl.innerHTML = `
     <header class="hero">
-      <h1>直し方ナビ<span class="en">— Fix-it Navigator</span></h1>
+      <div class="screen-title" aria-hidden="true">直し方ナビ<span class="en">— Fix-it Navigator</span></div>
       <p>「何もしてないのに急に繋がらない」よくあるトラブルを、質問に答えるだけで切り分けます。オフラインでも動きます。</p>
     </header>
     <div class="section-label">— 診断メニュー</div>
@@ -1145,6 +1167,7 @@ function renderHome() {
 function startTree(treeId) {
   const tree = TREES[treeId];
   if (!tree) { renderHome(); return; }
+  fixitUserInteracted = true;
   stack = [];
   location.hash = treeId;          // 共有・ブックマーク用
   go(treeId, tree.start, false);
@@ -1225,9 +1248,13 @@ function renderNode(tree, node) {
   if (back) back.addEventListener('click', goBack);
   appEl.querySelectorAll('.opt').forEach((btn) => {
     btn.addEventListener('click', () => {
+      fixitUserInteracted = true;
       go(current.treeId, btn.getAttribute('data-next'), true);
     });
   });
+  if (isSolution && fixitUserInteracted && window.yzrsTrackResult) {
+    window.yzrsTrackResult('troubleshooting_step', 'troubleshooting');
+  }
 }
 
 function goBack() {

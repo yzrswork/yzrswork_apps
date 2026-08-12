@@ -49,6 +49,7 @@
   }
 }
 </script>
+<script src="../affiliate.js"></script>
 <script async src="../analytics.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -635,19 +636,19 @@
         <p class="note-small" style="margin-top:14px;">入力したいフィールドに値を入れてください。2つ以上入力すると自動計算します。クリアするには0またはフィールドを空に。</p>
         <div class="ohm-inputs">
           <div class="ohm-field">
-            <label>V <span class="hint">電圧 [V]</span></label>
+            <label for="ohm-V">V <span class="hint">電圧 [V]</span></label>
             <input type="number" id="ohm-V" placeholder="—" min="0" step="any" />
           </div>
           <div class="ohm-field">
-            <label>I <span class="hint">電流 [A]</span></label>
+            <label for="ohm-I">I <span class="hint">電流 [A]</span></label>
             <input type="number" id="ohm-I" placeholder="—" min="0" step="any" />
           </div>
           <div class="ohm-field">
-            <label>R <span class="hint">抵抗 [Ω]</span></label>
+            <label for="ohm-R">R <span class="hint">抵抗 [Ω]</span></label>
             <input type="number" id="ohm-R" placeholder="—" min="0" step="any" />
           </div>
           <div class="ohm-field">
-            <label>P <span class="hint">電力 [W]</span></label>
+            <label for="ohm-P">P <span class="hint">電力 [W]</span></label>
             <input type="number" id="ohm-P" placeholder="—" min="0" step="any" />
           </div>
         </div>
@@ -667,15 +668,15 @@
       <div class="tool-body">
         <div class="fields triple">
           <div class="field">
-            <label>Vs [V]</label>
+            <label for="led-Vs">Vs [V]</label>
             <input type="number" id="led-Vs" placeholder="5" step="any" />
           </div>
           <div class="field">
-            <label>Vf [V]</label>
+            <label for="led-Vf">Vf [V]</label>
             <input type="number" id="led-Vf" placeholder="2.0" step="any" />
           </div>
           <div class="field">
-            <label>If [mA]</label>
+            <label for="led-If">If [mA]</label>
             <input type="number" id="led-If" placeholder="20" step="any" />
           </div>
         </div>
@@ -705,11 +706,11 @@
         <div id="cc-v2c-panel">
           <div class="fields mt16">
             <div class="field">
-              <label>抵抗値 [Ω]</label>
+              <label for="cc-val">抵抗値 [Ω]</label>
               <input type="number" id="cc-val" placeholder="4700" min="0" step="any" />
             </div>
             <div class="field">
-              <label>誤差</label>
+              <label for="cc-tol">誤差</label>
               <select id="cc-tol">
                 <option value="1">茶 ±1%</option>
                 <option value="2">赤 ±2%</option>
@@ -746,15 +747,15 @@
       <div class="tool-body">
         <div class="fields triple">
           <div class="field">
-            <label>Vin [V]</label>
+            <label for="vd-Vin">Vin [V]</label>
             <input type="number" id="vd-Vin" placeholder="5" step="any" />
           </div>
           <div class="field">
-            <label>R1 [Ω]</label>
+            <label for="vd-R1">R1 [Ω]</label>
             <input type="number" id="vd-R1" placeholder="1000" step="any" />
           </div>
           <div class="field">
-            <label>R2 [Ω]</label>
+            <label for="vd-R2">R2 [Ω]</label>
             <input type="number" id="vd-R2" placeholder="1000" step="any" />
           </div>
         </div>
@@ -775,15 +776,15 @@
       <div class="tool-body">
         <div class="fields triple">
           <div class="field">
-            <label>R1 [Ω]</label>
+            <label for="t555-R1">R1 [Ω]</label>
             <input type="number" id="t555-R1" placeholder="1000" step="any" />
           </div>
           <div class="field">
-            <label>R2 [Ω]</label>
+            <label for="t555-R2">R2 [Ω]</label>
             <input type="number" id="t555-R2" placeholder="1000" step="any" />
           </div>
           <div class="field">
-            <label>C [µF]</label>
+            <label for="t555-C">C [µF]</label>
             <input type="number" id="t555-C" placeholder="1" step="any" />
           </div>
         </div>
@@ -804,11 +805,11 @@
       <div class="tool-body">
         <div class="fields">
           <div class="field">
-            <label>容量 [mAh]</label>
+            <label for="bat-cap">容量 [mAh]</label>
             <input type="number" id="bat-cap" placeholder="2000" step="any" min="0" />
           </div>
           <div class="field">
-            <label>消費電流 [mA]</label>
+            <label for="bat-cur">消費電流 [mA]</label>
             <input type="number" id="bat-cur" placeholder="50" step="any" min="0" />
           </div>
         </div>
@@ -829,7 +830,7 @@
       <div class="tool-body">
         <div class="fields single mt16">
           <div class="field">
-            <label>入力（例: 4k7, 100n, 2p2, 1M5）</label>
+            <label for="eng-input">入力（例: 4k7, 100n, 2p2, 1M5）</label>
             <input type="text" id="eng-input" placeholder="4k7" autocomplete="off" spellcheck="false" />
           </div>
         </div>
@@ -868,19 +869,21 @@
 
   <!-- ── Footer ────────────────────────────────── -->
   <footer>
-    <nav class="yapps-related" aria-label="関連情報">
-      <span class="yapps-related-label">次に使える道具</span>
-      <div class="yapps-related-links">
-        <a href="../kit/" data-related-slug="kit">装備ナビ</a>
-        <a href="../handa/" data-related-slug="handa">はんだ付けナビ</a>
-        <a href="../pinout/" data-related-slug="pinout">ピンアサインナビ</a>
-      </div>
-    </nav>
+    <!-- BUILD:BACKLINK:START -->
+<nav class="yapps-related" aria-label="関連情報">
+  <span class="yapps-related-label">次に使える道具</span>
+  <div class="yapps-related-links">
+    <a href="../kit/" data-related-slug="kit">装備ナビ</a>
+    <a href="../handa/" data-related-slug="handa">はんだ付けナビ</a>
+    <a href="../pinout/" data-related-slug="pinout">ピンアサインナビ</a>
+  </div>
+</nav>
+<a href="../">← 道具箱（ほかの実用ツール）</a>
+<!-- BUILD:BACKLINK:END -->
     <a class="support-link" href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">
       <span class="sj">や印工務店の note 記事一覧を見る</span>
       <span class="se">note @yzrswork ↗</span>
     </a>
-    <div><a class="support-link" href="../"><span class="sj">道具箱（ほかの実用ツール）</span><span class="se">The Toolbox →</span></a></div>
     <div class="footer-meta">
       <div class="footer-meta" style="margin-top:6px">Amazonのアソシエイトとして、や印工務店は適格販売により収入を得ています。</div>
       <div class="footer-meta"><a href="../privacy/">プライバシーポリシー</a></div>
@@ -960,7 +963,7 @@ function escHtml(s) {
 
 /* ── Affiliate link helper ───────────────────────────── */
 function amazonLink(keyword) {
-  return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(keyword) + '&tag=yzrs_apps-22';
+  return window.yzrsAffiliate.searchUrl(keyword);
 }
 function showAmzLink(elId, keyword) {
   const el = document.getElementById(elId);
@@ -1012,6 +1015,7 @@ function showAmzLink(elId, keyword) {
         ['R 抵抗', fmtOhm(cR)],
         ['P 電力', fmtWatt(cP), true],
       ]);
+      if (window.yzrsTrackResult) window.yzrsTrackResult('ohm', 'electronics');
     } catch(e) {
       el.innerHTML = resultBox([], '計算エラー');
     }
@@ -1067,6 +1071,7 @@ function showAmzLink(elId, keyword) {
       ['抵抗の消費電力', fmtWatt(Pr)],
       ['推奨ワット数', Prec ? Prec + ' W以上' : '2W以上'],
     ]);
+    if (window.yzrsTrackResult) window.yzrsTrackResult('led_resistor', 'electronics');
     showAmzLink('led-amz', 'LED 5mm 詰め合わせ');
     amz.style.display = 'inline-flex';
   }
@@ -1180,6 +1185,7 @@ function showAmzLink(elId, keyword) {
     </div>`;
     showAmzLink('color-amz', 'カーボン抵抗 1/4W セット');
     amz.style.display = 'inline-flex';
+    if (window.yzrsTrackResult) window.yzrsTrackResult('color_code', 'electronics');
   }
 
   document.getElementById('cc-val').addEventListener('input', calcV2C);
@@ -1239,6 +1245,7 @@ function showAmzLink(elId, keyword) {
     }
     showAmzLink('color-amz', 'カーボン抵抗 1/4W セット');
     amz.style.display = 'inline-flex';
+    if (window.yzrsTrackResult) window.yzrsTrackResult('color_code', 'electronics');
   };
   window.calcC2V = window.calcC2V; // expose
 })();
@@ -1269,6 +1276,7 @@ function showAmzLink(elId, keyword) {
       ['分圧比 R2/(R1+R2)', (ratio * 100).toFixed(2) + ' %'],
       ['R1 + R2', fmtOhm(R1 + R2)],
     ]);
+    if (window.yzrsTrackResult) window.yzrsTrackResult('voltage_divider', 'electronics');
     showAmzLink('vdiv-amz', 'カーボン抵抗 1/4W セット');
     amz.style.display = 'inline-flex';
   }
@@ -1304,6 +1312,7 @@ function showAmzLink(elId, keyword) {
       ['D デューティ比', (D * 100).toFixed(2) + ' %'],
       ['C 容量', fmtFarad(C)],
     ]);
+    if (window.yzrsTrackResult) window.yzrsTrackResult('timer_555', 'electronics');
     showAmzLink('t555-amz', 'NE555 タイマーIC');
     amz.style.display = 'inline-flex';
   }
@@ -1339,6 +1348,7 @@ function showAmzLink(elId, keyword) {
       ['理論駆動時間', fmtHM(h), true],
       ['実用目安（×0.7）', fmtHM(h_eff)],
     ]) + '<p class="note-small" style="margin-top:8px;">実用目安は温度・放電特性・変換効率の損失を含む概算（係数0.7）です。</p>';
+    if (window.yzrsTrackResult) window.yzrsTrackResult('battery_runtime', 'electronics');
     showAmzLink('bat-amz', '単3 充電池');
     amz.style.display = 'inline-flex';
   }
@@ -1378,6 +1388,7 @@ function showAmzLink(elId, keyword) {
     // Reverse: best prefix notation
     rows.push(['接頭辞表記', toEngNotation(val)]);
     el.innerHTML = resultBox(rows);
+    if (window.yzrsTrackResult) window.yzrsTrackResult('engineering_notation', 'electronics');
   }
 
   function parseEng(s) {

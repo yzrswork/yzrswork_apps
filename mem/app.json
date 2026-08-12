@@ -14,7 +14,7 @@
   "manifestHref": "./manifest.webmanifest",
   "manifestFile": "manifest.webmanifest",
   "hasServiceWorker": true,
-  "swVersion": 10,
+  "swVersion": 11,
   "assets": [
     "./",
     "./index.html",
@@ -22,7 +22,8 @@
     "../icons/icon-192.png",
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
-    "../shared/tokens.css"
+    "../shared/tokens.css",
+    "../affiliate.js"
   ],
   "manifestIcons": [
     {
@@ -51,5 +52,6 @@
   "robots": null,
   "applicationCategory": "UtilitiesApplication",
   "analyticsSrc": "../analytics.js",
+  "affiliateSrc": "../affiliate.js",
   "tokensHref": "../shared/tokens.css"
 }
