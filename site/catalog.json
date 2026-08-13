@@ -186,7 +186,7 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "flags": ["OWNER_CONTENT_REQUIRED"],
-        "reviewedAt": "2026-08-12",
+        "reviewedAt": "2026-08-13",
         "issues": ["owner_source"]
       }
     },
@@ -216,8 +216,8 @@
     {
       "slug": "pinout",
       "name": "ピンアサインナビ",
-      "description": "Raspberry Pi、Arduino Uno、ESP32のピン配置を色分けで表示。3.3V注意やストラッピングピンの落とし穴つき。",
-      "readmeDescription": "Raspberry Pi、Arduino Uno、ESP32のピン配置を色分け表示。落とし穴つき",
+      "description": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系に限定したピン早見表。公式資料リンクと対象外のS3明記つき。",
+      "readmeDescription": "Raspberry Pi 3 Model B、Uno R3互換、classic ESP32/WROOM-32系のピン早見表",
       "category": "electronics",
       "managed": true,
       "related": [
@@ -228,9 +228,8 @@
       "sitemapPriority": 0.8,
       "quality": {
         "primaryStatus": "REVIEW_REQUIRED",
-        "flags": ["OWNER_CONTENT_REQUIRED"],
-        "reviewedAt": "2026-08-12",
-        "issues": ["primary_source", "board_scope"]
+        "reviewedAt": "2026-08-13",
+        "issues": ["target_hardware_unverified"]
       }
     },
     {
@@ -316,8 +315,8 @@
     {
       "slug": "usbc",
       "name": "USB-C見分けナビ",
-      "description": "手持ちのUSB-Cケーブルで何ができるか、用途に必要なのはどれか。W数、転送速度、映像出力を切り分け。",
-      "readmeDescription": "手持ちのUSB-Cケーブルの能力の見分け方と用途からの選び方。W数、転送速度、映像出力",
+      "description": "USB-Cの型番・性能表記から、60W/100W/240W EPR、USB 5〜80Gbps、DP Alt Mode、Thunderboltを確認。",
+      "readmeDescription": "USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認",
       "category": "pc",
       "managed": true,
       "related": [
@@ -327,10 +326,9 @@
       ],
       "sitemapPriority": 0.8,
       "quality": {
-        "primaryStatus": "REVIEW_REQUIRED",
-        "flags": ["OWNER_CONTENT_REQUIRED"],
-        "reviewedAt": "2026-08-12",
-        "issues": ["primary_source", "spec_freshness"]
+        "primaryStatus": "READY",
+        "reviewedAt": "2026-08-13",
+        "issues": []
       }
     },
     {

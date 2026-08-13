@@ -1,7 +1,7 @@
 {
   "name": "ピンアサインナビ",
   "short_name": "ピンアサインナビ",
-  "description": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。オフライン早見リファレンス。",
+  "description": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系のピン早見表。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
