@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="ピンアサインナビ | や印工務店の道具箱" />
-<meta property="og:description" content="Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。I2C/SPI/UART/PWM/ADCと使用上の注意つきの早見リファレンス。" />
+<meta property="og:description" content="Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系に限定したピン早見表。" />
 <meta property="og:url" content="https://apps.yzrswork.com/pinout/" />
 <meta property="og:image" content="https://apps.yzrswork.com/icons/og-pinout.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="ピンアサインナビ | や印工務店の道具箱" />
-<meta name="twitter:description" content="Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示するオフライン早見リファレンス。" />
+<meta name="twitter:description" content="Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系のオフライン早見リファレンス。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-pinout.png" />
-<meta name="description" content="Raspberry Piの40ピンGPIO、Arduino Unoのピン配置、ESP32 DevKitのGPIOを色分けで表示。電源・GND・I2C・SPI・UART・PWM・ADCと、3.3V注意やストラッピングピンなどの落とし穴つき。オフライン早見リファレンス。" />
+<meta name="description" content="Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32 / ESP32-WROOM-32系のピン情報を色分け表示。公式一次資料リンクと対象外のESP32-S3明記つき。" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,7 +36,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "Raspberry Pi・Arduino Uno・ESP32のピン配置を色分けで表示。I2C/SPI/UART/PWM/ADCと使用上の注意つきの早見リファレンス。",
+  "description": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系に限定したピン早見表。",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -329,23 +329,32 @@
 
     <header class="hero">
       <h1>ピンアサインナビ<span class="en">— Pinout Reference</span></h1>
-      <p>Raspberry Pi・Arduino Uno・ESP32 のピン配置を色分けで表示。電源、GND、I2C/SPI/UART、PWM、ADCを一目で。</p>
+      <p>Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32 / ESP32-WROOM-32系のピン情報を色分けで表示。</p>
     </header>
 
     <div class="tabs">
-      <button class="tab active" id="tab-rpi">Raspberry Pi</button>
-      <button class="tab" id="tab-uno">Arduino Uno</button>
-      <button class="tab" id="tab-esp32">ESP32 DevKit</button>
+      <button class="tab active" id="tab-rpi">Raspberry Pi 3 Model B</button>
+      <button class="tab" id="tab-uno">Arduino Uno R3互換</button>
+      <button class="tab" id="tab-esp32">classic ESP32 / WROOM-32</button>
     </div>
 
     <div id="app"></div>
 
     <section class="about">
-      <h2>なぜピン配置を毎回確認するはめになるのか</h2>
-      <p>電子工作の作業机で一番よくある事故は、大それた失敗ではなく「ピンの取り違え」です。Raspberry Piの3.3Vロジックのピンに、Arduinoの感覚のまま5Vを繋いでしまう。I2Cのつもりで配線したら実はSPI専用のピンだった。オフラインの作業中にブラウザで検索する余裕がなく、うろ覚えのままジャンパーを挿して、後から基板の様子がおかしいことに気づく。ボードのシルク印刷は小さく、GPIO番号と物理ピン番号がずれていることも多いので、一度覚えたつもりでも次の作業では結局また調べ直す羽目になります。このツールは、その「毎回調べ直す」を減らすための早見表です。</p>
-      <p>Raspberry Piの40ピンヘッダは、GPIOがすべて3.3Vロジックで、5Vトレラント(5V入力への耐性)がありません。5Vのセンサーやモジュールをそのまま繋ぐと壊れる可能性があるため、レベル変換や分圧が必要です。もうひとつの混乱の元が、物理ピン番号(基板上の並び順)とBCM番号(プログラムで`GPIO2`のように指定する番号)が別物だという点です。物理ピンは1番から40番まで左右交互に並びますが、BCM番号はその並びと一致しません。I2C、SPI、UARTもそれぞれ決まった位置に割り当てられているので、初めて触るときは「どこが何か」を一覧できると迷いません。</p>
-      <p>Arduino UnoとESP32は、同じ「マイコンボード」でも性格が違います。Unoはロジックが5Vで、ピンの数も機能もシンプル。落とし穴があるとすれば、D13が内蔵LEDと直結していることや、D0/D1がUSBシリアル(スケッチの書き込み)と共有されていて、外部デバイスを繋いだままだと書き込みに失敗することがある、というくらいです。一方でESP32は3.3Vロジックで、機能が多い分だけ注意点も増えます。入力専用で出力に使えないピン、起動モードに影響するストラッピングピン、内蔵フラッシュメモリと直結していて実質使えないピン。これらを知らずに手近なGPIOへ適当に配線すると、書き込みができなくなったり、起動しなくなったりします。ESP32は基板の版によって物理的なピンの並びが変わるため、このツールでは物理配置ではなく「機能とGPIO番号」で整理しています。</p>
-      <p>結論はシンプルです。配線する前に、そのピンが何に使えて、何をしてはいけないかを先に確認する。3.3Vロジックのボードに5Vを入れない。UART書き込み用のピンを他の用途で塞がない。ここに載せた番号や割り当ては各ボードの標準的な仕様に基づく検証済みの情報ですが、購入したモジュールや拡張ボード側の対応電圧、ピン配置は必ず製品の説明書やデータシートでも確認してください。</p>
+      <h2>対象ボードを限定した早見表です</h2>
+      <p>このページは、Raspberry Pi 3 Model Bの40ピンGPIO、Arduino Uno R3互換、classic ESP32を搭載したESP32-WROOM-32系だけを対象にします。GPIOの電圧、物理ピン番号、BCM/GPIO番号、起動時の役割を混同しないための一次資料ベースの早見表です。</p>
+      <p>Raspberry Pi 3 Model BのGPIOは3.3Vロジックで、5V入力に耐えるものではありません。Uno R3互換は5Vロジックで、D0/D1はシリアル、D13は内蔵LEDと関係します。classic ESP32 / WROOM-32は3.0〜3.6V電源で、GPIO34〜39は入力専用、GPIO0/2/5/12/15はストラッピング、GPIO6〜11はモジュール内のSPIフラッシュ用途です。ESP32の周辺機能はGPIO Matrixで割り当てられるため、ここでは物理配置を断定しません。</p>
+      <p>所有するESP32-S3 Super Mini互換（HW-747 V0.0.2）はこのページの対象外です。ESP32-S3はclassic ESP32とは別のSoCであり、当該基板のピン配置・シルク・接続は未検証です。このページのclassic ESP32/WROOM-32情報からS3のピンや機能を推測しないでください。</p>
+    </section>
+
+    <section class="about" aria-labelledby="pinout-primary-sources">
+      <h2 id="pinout-primary-sources">一次資料</h2>
+      <ul>
+        <li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html" target="_blank" rel="noopener noreferrer">Raspberry Pi Documentation: Raspberry Pi computer hardware</a> — GPIO電圧とGPIO情報。</li>
+        <li><a href="https://docs.arduino.cc/hardware/uno-rev3/" target="_blank" rel="noopener noreferrer">Arduino: UNO R3</a> — Uno R3の公式ハードウェア仕様。</li>
+        <li><a href="https://documentation.espressif.com/esp32-wroom-32_datasheet_en.html" target="_blank" rel="noopener noreferrer">Espressif: ESP32-WROOM-32 Datasheet</a> — WROOM-32のピン定義、ストラッピング、フラッシュ接続。</li>
+        <li><a href="https://documentation.espressif.com/esp32_datasheet_en.html" target="_blank" rel="noopener noreferrer">Espressif: ESP32 Datasheet</a> — classic ESP32 SoCのGPIO・周辺機能。</li>
+      </ul>
     </section>
 
     <footer>
@@ -374,7 +383,7 @@
 /* =========================================================
    ピンアサインナビ — Pinout Reference
    依存ゼロの単一HTML。データ送信なし。
-   Raspberry Pi 40pin / Arduino Uno / ESP32 DevKit のピン配置を
+   Raspberry Pi 3 Model B / Arduino Uno R3互換 / classic ESP32-WROOM-32系のピン情報を
    色分け表示する早見リファレンス。
    ピン番号、機能はSPEC定義の検証済みデータに忠実（推測での追加、並べ替えはしない）。
    ========================================================= */
@@ -494,7 +503,7 @@ const UNO_POWER = [
   { n: 'AREF',  label: 'AREF',       type: 'gpio' }
 ];
 
-/* ---------- ESP32 DevKit(機能ベース、baked。物理並びは断定しない) ---------- */
+/* ---------- classic ESP32 / ESP32-WROOM-32系（機能ベース。物理並びは断定しない） ---------- */
 const ESP32_CATS = [
   {
     title: '入力専用（出力、内部プルアップ不可）',
@@ -552,12 +561,12 @@ const NOTICES = {
     ]
   },
   esp32: {
-    title: 'ESP32 DevKit の注意点',
+    title: 'classic ESP32 / ESP32-WROOM-32系の注意点',
     items: [
       'ロジックレベルは3.3Vです。5Vトレラントではないため、5Vを直接入力しないでください。',
       'ADC2はWiFi使用中は使えません（WiFiと排他）。WiFiを使うスケッチではADC1側（GPIO32〜39）を優先してください。',
       'ストラッピングピン、入力専用ピン、フラッシュ直結ピンの3種類は起動や動作に直結します。配線前に必ず確認してください。',
-      '物理ピンの並びはDevKitの基板バージョンによって異なるため、このツールでは機能とGPIO番号だけを示しています。'
+      '物理ピンの並びは開発ボードごとに異なるため、このツールではWROOM-32の機能とGPIO番号だけを示しています。ESP32-S3系には適用しません。'
     ]
   }
 };
@@ -666,7 +675,7 @@ function svgEsp32() {
     leftDots += `<circle cx="60" cy="${y}" r="3" fill="var(--paper)" stroke="var(--rule-soft)"/>`;
     rightDots += `<circle cx="240" cy="${y}" r="3" fill="var(--paper)" stroke="var(--rule-soft)"/>`;
   }
-  return `<svg class="board-svg" viewBox="0 0 300 175" role="img" aria-label="ESP32 DevKitの模式図と機能分類の色分け(実際の物理ピン配置は基板の版により異なる)">
+  return `<svg class="board-svg" viewBox="0 0 300 175" role="img" aria-label="classic ESP32 / ESP32-WROOM-32系の模式図と機能分類の色分け（開発ボードの物理ピン配置は異なる）">
     <text x="20" y="12" font-family="var(--mono)" font-size="8" fill="var(--muted)">模式図(実物の物理配置は基板により異なる)</text>
     <rect x="70" y="18" width="160" height="100" rx="10" fill="var(--card)" stroke="var(--rule-soft)" stroke-width="1.5"/>
     ${leftDots}${rightDots}
@@ -776,9 +785,9 @@ function renderEsp32() {
   return `
     <div class="section-label">— 基板図</div>
     <div class="board-diagram">${svgEsp32()}</div>
-    <div class="section-label">— ESP32 DevKit（機能ベース。物理並びは基板の版で異なるため断定しません）</div>
+    <div class="section-label">— classic ESP32 / ESP32-WROOM-32系（機能ベース。開発ボードの物理並びは断定しません）</div>
     ${cats}
-    <div class="section-label">— デフォルトのI2C / SPI / UART / ADC / DAC</div>
+    <div class="section-label">— 代表的なI2C / SPI / UART / ADC / DAC（実装・フレームワークで変更可）</div>
     <div class="deflist">${defs}</div>`;
 }
 

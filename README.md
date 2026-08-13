@@ -16,12 +16,12 @@
 | 装備ナビ | 電子工作の工具と部品ストックをステップ別にチェック | `kit/` |
 | 工房の電卓 | LED抵抗、カラーコード、555タイマー、電池駆動時間 | `bench/` |
 | はんだ付けナビ | はんだの種類と作業から適正なこて先温度。トラブル診断と道具選びつき | `handa/` |
-| ピンアサインナビ | Raspberry Pi、Arduino Uno、ESP32のピン配置を色分け表示。落とし穴つき | `pinout/` |
+| ピンアサインナビ | Raspberry Pi 3 Model B、Uno R3互換、classic ESP32/WROOM-32系のピン早見表 | `pinout/` |
 | 配線ナビ(初級) | 初心者がつまずく部品の端子と極性を色分け表示。ジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグル、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータ。テスターでの確かめ方つき | `haisen/` |
 | メモリ選びナビ | ソケットからDDR規格、用途から容量を選ぶ | `mem/` |
 | HDD選びナビ | WDの色とCMR/SMR判定 | `hdd/` |
 | 自作PC構成プランナー | 構成サマリーと電源容量の目安 | `build/` |
-| USB-C見分けナビ | 手持ちのUSB-Cケーブルの能力の見分け方と用途からの選び方。W数、転送速度、映像出力 | `usbc/` |
+| USB-C見分けナビ | USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認 | `usbc/` |
 | 直し方ナビ | トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期) | `fixit/` |
 | 接着剤選びナビ | くっつけたい素材2つから接着剤タイプと推奨製品を診断。見分け方つき | `glue/` |
 | 塗れるくん | 住所からDIY塗装ができるタイミングを気温、湿度、露点、降水、風で判定。PWA | `nurerukun/` |
@@ -40,12 +40,12 @@
 | 装備ナビ | READY | — | — |
 | 工房の電卓 | IMPROVE | OWNER_CONTENT_REQUIRED | owner_source |
 | はんだ付けナビ | READY | — | — |
-| ピンアサインナビ | REVIEW_REQUIRED | OWNER_CONTENT_REQUIRED | primary_source, board_scope |
+| ピンアサインナビ | REVIEW_REQUIRED | — | target_hardware_unverified |
 | 配線ナビ(初級) | READY | — | — |
 | メモリ選びナビ | IMPROVE | — | spec_freshness |
 | HDD選びナビ | IMPROVE | — | spec_freshness |
 | 自作PC構成プランナー | REVIEW_REQUIRED | — | psu_basis, compatibility_scope |
-| USB-C見分けナビ | REVIEW_REQUIRED | OWNER_CONTENT_REQUIRED | primary_source, spec_freshness |
+| USB-C見分けナビ | READY | — | — |
 | 直し方ナビ | IMPROVE | — | currentness_review |
 | 接着剤選びナビ | IMPROVE | — | primary_source, safety_review |
 | 塗れるくん | IMPROVE | — | threshold_source, external_dependency |

@@ -1,7 +1,7 @@
 {
   "name": "USB-C見分けナビ",
   "short_name": "USB-C見分けナビ",
-  "description": "USB-Cケーブルの能力の見分け方と用途からの選び方。W数・転送速度・映像出力をオフラインで確認。",
+  "description": "USB-Cケーブルの電力・転送速度・映像仕様を、型番・性能表記から確認するオフライン早見表。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

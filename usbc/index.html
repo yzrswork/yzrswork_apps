@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="USB-C見分けナビ | や印工務店の道具箱" />
-<meta property="og:description" content="手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれかを診断。W数・転送速度・映像出力・e-marker・EPR(240W)を整理したナビ。" />
+<meta property="og:description" content="USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認。60W/100W/240W EPR、e-marker、USB 5〜80Gbpsを整理。" />
 <meta property="og:url" content="https://apps.yzrswork.com/usbc/" />
 <meta property="og:image" content="https://apps.yzrswork.com/icons/og-usbc.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="USB-C見分けナビ | や印工務店の道具箱" />
-<meta name="twitter:description" content="USB-Cケーブルで何ができるか、用途に必要なのはどれか。W数・転送速度・映像出力を切り分ける診断ナビ。" />
+<meta name="twitter:description" content="USB-Cケーブルの電力・データ・映像仕様を、型番・性能表記・認証表示から確認するナビ。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-usbc.png" />
-<meta name="description" content="100W充電できる? 4Kモニターは映る? 外付けSSDの速度は出る? USB-Cケーブルの見分け方と、用途から選ぶ診断ナビ。W数・転送速度・映像出力・e-marker・EPRを整理。" />
+<meta name="description" content="USB-Cケーブルの型番・性能表記から、60W/100W/240W EPR、e-marker、USB 5/10/20/40/80Gbps、DP Alt Mode、Thunderboltを確認する公式資料ベースのナビ。" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,7 +36,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれかを診断。W数・転送速度・映像出力・e-marker・EPR(240W)を整理したナビ。",
+  "description": "USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認。60W/100W/240W EPR、e-marker、USB 5〜80Gbpsを整理。",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -289,22 +289,33 @@
 
     <header class="hero">
       <h1>USB-C見分けナビ<span class="en">— USB-C Cable Advisor</span></h1>
-      <p>手持ちのUSB-Cケーブルで何ができるか、用途に必要なケーブルはどれか。ワット数、転送速度、映像出力を切り分けます。</p>
+      <p>USB-Cケーブルの型番・性能表記から、電力、転送速度、映像経路の確認項目を整理します。</p>
     </header>
 
     <div class="tabs">
-      <button class="tab active" id="tab-check">手持ちを見分ける</button>
+      <button class="tab active" id="tab-check">表記を確認</button>
       <button class="tab" id="tab-choose">用途から選ぶ</button>
     </div>
 
     <div id="app"></div>
 
     <section class="about">
-      <h2>なぜ同じ形なのに中身がバラバラなのか</h2>
-      <p>USB-Cケーブルほど「見た目では判断できない」規格も珍しいと思います。端子の形はどれも同じUSB-C(角の丸い長方形)なのに、あるケーブルはノートPCを100Wで急速充電でき、あるケーブルは充電はできてもデータ転送が480Mbpsしか出ず、あるケーブルは外部モニターに映像を出せて、あるケーブルは充電専用で何もできない。実際に手持ちのケーブルをかき集めて1本ずつ試してみると、「これ何年も充電専用だと思ってなかったのに、実はデータ転送もできた」「逆にこれは太くて立派に見えるのに映像は出ない」といったことがざらにあります。中身(内部のプロトコルと配線)がまったく別物なのに、外側の形状規格だけが統一されている。これがUSB-Cの分かりにくさの正体です。</p>
-      <p>電力周りで特に重要なのが「e-marker(イーマーカー)」というチップの存在です。USB-Cケーブルは何も表示がなければ安全のため3A(60W相当)までしか電流を流せない決まりになっていて、それを超えて5A(100W)まで流すには、ケーブル自身が「私は5Aまで対応しています」と機器に伝えるe-markerチップを内蔵している必要があります。パッケージや端子に「100W」「5A」と書かれたケーブルは、このチップが入っている証拠です。逆に言えば、太くて頑丈そうに見えるケーブルでもe-markerが入っていなければ100Wは出ず、充電器やノートPC側が100W対応でも、ケーブルが原因で60Wに制限されてしまいます。さらに240W(48V×5A)まで対応する「EPR」はPD 3.1の新しい規格で、通常の100Wケーブルとは別物の専用e-markerが必要になります。</p>
-      <p>データ転送の速度にも、USB2.0(480Mbps)からUSB4の20Gbps／40Gbps／80Gbpsまで、体感でまったく違う階層があります。「USB4」という名称だけでは速度を確定できず、20・40・80の速度表示まで確認が必要です。外付けSSDを買ったのに思ったほど速度が出ない、と感じた時の原因は、SSD本体でもPC側のポートでもなく、間に挟まっているケーブルだった、ということが実務では少なくありません。特に付属のケーブルはコストの都合でUSB2.0止まりのことが多く、SSD側もPC側も高速対応なのにケーブルだけがボトルネックになっている、というのはありがちな落とし穴です。刻印(SSや10、20といった数字)や、稲妻(Thunderbolt)、DisplayPort(D字)のロゴは、こうした対応状況を推測する手がかりにはなりますが、あくまで手がかりであって、断定はできません。</p>
-      <p>結論としては、まず「何に使うか」を先に決めて、そこから必要なスペックを逆算してケーブルを選ぶのが一番失敗しません。手持ちのケーブルが何者か分からない時は、無表記の細いケーブルはUSB2.0 + 3A(最大60W)相当と割り切って充電専用にまわし、必要な性能がはっきりしている用途には、パッケージの仕様表示やUSB-IF認証(Certified USB)ロゴが入った製品を選ぶのが確実です。最終的に一番信頼できるのは、実際に使う機器の組み合わせで試してみることです。</p>
+      <h2>USB-Cの形だけでは能力を決められません</h2>
+      <p>USB-Cはコネクタ形状です。給電、データ、映像の可否と上限は、ケーブル、接続元、接続先それぞれの仕様で決まります。太さ、硬さ、色、付属品かどうかといった外観から、速度・電力・映像対応を判断することはできません。型番とメーカー仕様、性能表示、認証表示を照合してください。</p>
+      <p>電力では、3 Aケーブルで20 Vを契約する場合の上限が60 W（20 V × 3 A）です。USB PD 3.1でEPRが導入される前の上限は、20 V・5 Aによる100 Wでした。USB PD 3.1のEPRは、対応する充電器・ケーブル・受電機器がそろう場合に最大240 W（48 V・5 A）までを定義します。e-markerはケーブルがUSB PDのDiscover Identityに応答して返す識別情報であり、5 AやEPRのケーブル能力を伝えるために使われます。e-markerや電力表記だけで、接続した機器がその電力を使えることまでは示しません。</p>
+      <p>USB-IFの消費者向け性能表記は USB 5Gbps / 10Gbps / 20Gbps / 40Gbps / 80Gbps です。製品に記された値は信号速度の区分であり、実際の転送量や対応機能を単独では保証しません。DisplayPort Alt Modeは、対応するUSB-Cポート・接続先・必要な信号を備えるケーブルで成立します。USB 2.0 Type-CケーブルはSuperSpeed信号とAlt Mode用SBU信号を実装しないため、Alt Modeには使えません。</p>
+      <p>ThunderboltはUSB-C形状を使う別の認証・機能要件です。Thunderbolt 4は40 Gbpsを必須要件とし、Thunderbolt 5は最大80 Gbpsの双方向帯域を定義します。Thunderbolt 5の最大120 Gbpsは映像量が多い場合のBandwidth Boostであり、すべての通信や任意のUSB-Cケーブルに当てはまる速度ではありません。世代表記と製品仕様を確認してください。</p>
+    </section>
+
+    <section class="about" aria-labelledby="usbc-primary-sources">
+      <h2 id="usbc-primary-sources">一次資料（2026年8月13日確認）</h2>
+      <ul>
+        <li><a href="https://www.usb.org/usb-charger-pd" target="_blank" rel="noopener noreferrer">USB-IF: USB Charger (USB Power Delivery)</a> — PD 3.1/EPR、100 Wから最大240 Wへの拡張。</li>
+        <li><a href="https://www.usb.org/sites/default/files/usb_data_performance_language_usage_guidelines_jan_2024.pdf" target="_blank" rel="noopener noreferrer">USB-IF: USB Data Performance Language Usage Guidelines</a> — USB 5/10/20/40/80Gbpsの表記。</li>
+        <li><a href="https://www.usb.org/sites/default/files/usb_type-c_language_product_and_packaging_guidelines_20230320.pdf" target="_blank" rel="noopener noreferrer">USB-IF: USB Type-C Cable and Connector Language and Packaging Guidelines</a> — USB 2.0 Type-CとAlt Mode信号の範囲。</li>
+        <li><a href="https://vesa.org/featured-articles/vesa-releases-updated-displayport-alt-mode-spec-to-bring-displayport-2-0-performance-to-usb4-and-new-usb-type-c-devices/" target="_blank" rel="noopener noreferrer">VESA: DisplayPort Alt Mode</a> — USB-C上のDisplayPort Alt Mode。</li>
+        <li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/overview.html" target="_blank" rel="noopener noreferrer">Intel: Thunderbolt Technology</a> — Thunderbolt 4/5の帯域要件とBandwidth Boost。</li>
+      </ul>
     </section>
 
     <footer>
@@ -333,150 +344,121 @@
 /* =========================================================
    USB-C見分けナビ — USB-C Cable Advisor
    依存ゼロの単一HTML。データ送信なし。
-   タブA: 手持ちの手がかり(複数選択)からケーブルの能力を推定。
+   タブA: 表記・仕様の確認項目(複数選択)から、確認できる範囲だけを表示。
    タブB: 用途を1つ選ぶと必要スペックと推奨製品を出す。
    数値、規格、製品名は仕様定義に忠実（推測での追加はしない）。
    ========================================================= */
 
-/* ---------- タブA: 手がかり定義 ---------- */
+/* ---------- タブA: 表記・仕様の確認項目 ---------- */
 const CLUES = [
-  { id: 'thin',       label: '細くて軽い',                       sub: '100均、おまけ付属品' },
-  { id: 'thick',      label: '太くて硬い',                       sub: '端子が金属で立派' },
-  { id: 'ss',         label: '「SS」「10」「20」などの刻印',      sub: '端子やケーブルのロゴ' },
-  { id: 'logo_tb',    label: '稲妻(Thunderbolt)ロゴがある',       sub: '' },
-  { id: 'logo_usb4',  label: '「USB4」表記がある',                sub: '' },
-  { id: 'logo_dp',    label: 'DisplayPort(D字)ロゴがある',        sub: '' },
-  { id: 'label_100w', label: '「100W」「5A」「240W」「EPR」表記', sub: 'パッケージ、ケーブル本体' },
-  { id: 'only_charge',label: '「充電専用(Charge only)」表記',     sub: '' }
+  { id: 'thin',        label: '細い・軽い（外観のみ）',             sub: '能力は判断しない' },
+  { id: 'thick',       label: '太い・硬い（外観のみ）',             sub: '能力は判断しない' },
+  { id: 'usb_5',       label: 'USB 5Gbps と明記',                   sub: '製品仕様または性能表示' },
+  { id: 'usb_10',      label: 'USB 10Gbps と明記',                  sub: '製品仕様または性能表示' },
+  { id: 'usb_20',      label: 'USB 20Gbps と明記',                  sub: '製品仕様または性能表示' },
+  { id: 'usb_40',      label: 'USB 40Gbps と明記',                  sub: '製品仕様または性能表示' },
+  { id: 'usb_80',      label: 'USB 80Gbps と明記',                  sub: '製品仕様または性能表示' },
+  { id: 'tb4',         label: 'Thunderbolt 4 と明記',               sub: '40Gbpsが必須要件' },
+  { id: 'tb5',         label: 'Thunderbolt 5 と明記',               sub: '最大80Gbps双方向' },
+  { id: 'dp_alt',      label: 'DP Alt Mode対応と仕様に明記',        sub: '接続元・接続先も要確認' },
+  { id: 'power_60',    label: '60W または 3A と明記',               sub: '20V契約時は最大60W' },
+  { id: 'power_100',   label: '100W または 5A と明記',              sub: '20V・5Aの範囲' },
+  { id: 'power_240',   label: '240W / EPR と明記',                  sub: 'PD 3.1/EPRの範囲' },
+  { id: 'only_charge', label: '充電専用と製品仕様に明記',           sub: 'データ・映像を想定しない' }
 ];
 
-/* ---------- タブA: 優先順位付きの推定ロジック ----------
-   優先順位: only_charge > logo_tb/usb4(最上位) > label_100w >
-   logo_dp > ss/thick(USB3.x) > thin(USB2.0のみ) > 手がかりなし
-*/
+/* ---------- タブA: fail-closed確認ロジック ---------- */
 function checkResult(set) {
   const has = (id) => set.has(id);
+  const speedLabels = [5, 10, 20, 40, 80].filter((rate) => has(`usb_${rate}`)).map((rate) => `USB ${rate}Gbps`);
+  const powerLabels = [];
+  if (has('power_60')) powerLabels.push('60W / 3A表記: 20V契約時の上限は60W。接続機器がより低い契約を選ぶことがあります。');
+  if (has('power_100')) powerLabels.push('100W / 5A表記: 従来のUSB PD最大100Wは20V・5A。5A能力はe-markerで伝えられます。');
+  if (has('power_240')) powerLabels.push('240W / EPR表記: USB PD 3.1 EPRの範囲。EPR対応の充電器・ケーブル・受電機器がすべて必要です。');
+  const thunderboltLabels = [];
+  if (has('tb4')) thunderboltLabels.push('Thunderbolt 4: 40Gbpsが必須要件。');
+  if (has('tb5')) thunderboltLabels.push('Thunderbolt 5: 最大80Gbps双方向。120Gbpsは映像用Bandwidth Boostの条件付き機能。');
+  const hasSpecifiedCapability = speedLabels.length || powerLabels.length || thunderboltLabels.length || has('dp_alt') || has('only_charge');
 
-  if (has('only_charge')) {
+  if (!hasSpecifiedCapability) {
     return {
-      kicker: '手がかり: 充電専用表記',
-      title: '充電専用ケーブルです',
-      principle: '「充電専用(Charge only)」の表記があるケーブルは、データ線を省略、または速度を大きく絞った作りです。データ通信は期待できず、映像出力もできません。',
-      power: '表記のW数に従う（表記がなければ3A/60W程度が目安）',
-      data: '不可、またはごく低速（機器の認識のみなど）',
-      video: '不可',
-      cautions: ['充電以外の用途（データ転送、映像出力）には使わないでください。']
+      kicker: '外観のみ',
+      title: '能力は不明です',
+      principle: '細さ・太さ・硬さなどの外観だけでは、電力、データ、映像対応を確認できません。ケーブルの型番からメーカー仕様と性能・認証表示を確認してください。',
+      power: '不明', data: '不明', video: '不明', cautions: ['外観からUSB 2.0、60W、100W、映像対応などを推定しません。']
     };
   }
-  if (has('logo_tb') || has('logo_usb4')) {
-    return {
-      kicker: has('logo_tb') ? '手がかり: 稲妻(Thunderbolt)ロゴ' : '手がかり: 「USB4」表記',
-      title: '最上位クラスの可能性が高いケーブルです',
-      principle: 'Thunderbolt 4認証ケーブルは40Gbps対応です。稲妻ロゴだけではThunderboltの世代やケーブル仕様を確定できず、「USB4」だけでも20Gbps／40Gbps／80Gbpsのどれかは分かりません。数字入りの速度表示や製品仕様も確認してください。映像出力や給電能力は、接続する機器とケーブル双方の仕様で決まります。',
-      power: '多くは100W対応。240W(EPR)対応は「240W」または「EPR」の表記がある場合のみ',
-      data: 'Thunderbolt 4認証は40Gbps。USB4は20／40／80Gbpsの速度表示を確認',
-      video: '対応の可能性が高い（DP Alt Mode、Thunderbolt経由）',
-      cautions: ['ロゴや表記があっても、接続するPCやディスプレイ側がUSB4/Thunderbolt対応でなければ性能は発揮されません。']
-    };
-  }
-  if (has('label_100w')) {
-    return {
-      kicker: '手がかり: 100W/5A/EPR表記',
-      title: '高出力対応（e-markerチップ入り）の可能性が高いケーブルです',
-      principle: '「100W」「5A」のような表記があるケーブルには、5Aまでの電流を機器に伝えるe-marker（識別チップ）が内蔵されています。表記のないケーブルは安全のため3A(60W)までに制限されると考えてください。',
-      power: '100W(5A)まで対応の可能性が高い。「240W」または「EPR」の表記があれば240Wにも対応',
-      data: '表記だけでは不明。刻印(SS等)やロゴを別途確認',
-      video: '表記だけでは不明。DPロゴ等を別途確認',
-      cautions: []
-    };
-  }
-  if (has('logo_dp')) {
-    return {
-      kicker: '手がかり: DisplayPort(D字)ロゴ',
-      title: '映像出力(DP Alt Mode)対応の可能性があるケーブルです',
-      principle: 'DisplayPortロゴ(D字マーク)は、DP Alt Modeでの映像出力に対応していることを示す目印です。ただし映像が実際に出るかは、接続するPC側のポートがDP Alt Mode、USB4、Thunderboltのいずれかに対応しているかにもよります。',
-      power: '表記だけでは不明',
-      data: '表記だけでは不明',
-      video: '対応の可能性がある（PC側ポートの対応が別途必要）',
-      cautions: ['ケーブルが対応していても、PC側のポートが非対応なら映像は出ません。']
-    };
-  }
-  if (has('ss') || has('thick')) {
-    return {
-      kicker: has('ss') ? '手がかり: SS等の速度刻印' : '手がかり: 太くて硬いケーブル',
-      title: 'USB 3.x系のデータ転送に対応している可能性があるケーブルです',
-      principle: '「SS」「10」「20」などの刻印は、USB 3.x(5〜20Gbps)のデータ転送に対応していることを示すことが多くあります。ケーブルが太く、導体が太いほど電力伝送や放熱にも有利です。',
-      power: '目安3A(60W)程度。「100W」等の表記があれば別',
-      data: 'USB 3.x(5〜20Gbps)の可能性',
-      video: '表記次第（DPロゴ等を別途確認）',
-      cautions: []
-    };
-  }
-  if (has('thin')) {
-    return {
-      kicker: '手がかり: 細くて軽い/おまけ付属品',
-      title: 'USB2.0 + 充電専用相当と考えるのが安全です',
-      principle: '細くて軽い、100均やおまけで付属するケーブルは、USB2.0(480Mbps)止まりで、電流も3A(60W)までしか流せない作りであることが大半です。',
-      power: '3A(60W)までが目安',
-      data: 'USB2.0(480Mbps)相当',
-      video: '不可と考えるのが安全',
-      cautions: []
-    };
-  }
-  return null;
+
+  return {
+    kicker: '製品仕様・性能表示から確認できる範囲',
+    title: has('only_charge') ? '充電専用として扱う表記があります' : '選択した表記を確認しました',
+    principle: has('only_charge')
+      ? '「充電専用」の製品仕様がある場合、データ転送・映像用途には使わず、電力は併記された定格だけを確認してください。'
+      : '表記にない能力は不明です。実際に使える電力・データ・映像機能は、ケーブル、接続元、接続先の共通仕様で決まります。',
+    power: powerLabels.length ? powerLabels.join(' ') : '電力表記なし: 不明',
+    data: [
+      speedLabels.length ? `性能表記: ${speedLabels.join(' / ')}` : '速度表記なし: 不明',
+      ...thunderboltLabels
+    ].join(' '),
+    video: has('dp_alt')
+      ? 'DP Alt Mode対応の仕様あり。接続元ポート・接続先・必要なケーブル信号も同時に確認。'
+      : 'DP Alt Modeの仕様表記なし: 不明',
+    cautions: ['USB-IFの性能表記は信号速度区分です。実際の転送量や映像仕様は接続する製品全体の仕様を確認してください。']
+  };
 }
 
 /* ---------- タブB: 用途定義 ---------- */
 const P = {
-  p100w:   { name: '100W(5A)PD対応 USB-Cケーブル', kw: 'USB-C ケーブル 100W PD 5A eMarker', note: 'e-markerチップ内蔵、65〜100W充電に' },
-  p240w:   { name: '240W EPR対応 USB-Cケーブル', kw: 'USB-C ケーブル 240W EPR PD3.1', note: 'PD3.1のEPR規格に対応した専用e-marker入り' },
-  pTb4:    { name: 'USB 40Gbps / Thunderbolt 4認証ケーブル', kw: 'Thunderbolt4 ケーブル USB 40Gbps', note: '40Gbpsの速度表示と給電W数を確認' },
-  pGen2:   { name: 'USB 10Gbpsデータケーブル（旧USB 3.2 Gen2）', kw: 'USB-C ケーブル USB 10Gbps', note: '外付けSSD、大容量転送向け' },
-  pTester: { name: 'USB PDテスター（電圧、電流チェッカー）', kw: 'USB PDテスター 電圧電流チェッカー', note: '実際に流れているW数、規格を確認できる（任意）' }
+  p60w:    { name: 'USB-C 60W（3A）対応ケーブル', kw: 'USB-C ケーブル 60W 3A', note: '機器の必要電力と製品仕様を照合' },
+  p100w:   { name: 'USB-C 100W（5A）対応ケーブル', kw: 'USB-C ケーブル 100W PD 5A eMarker', note: '20V・5Aの仕様と型番を確認' },
+  p240w:   { name: 'USB-C 240W EPR対応ケーブル', kw: 'USB-C ケーブル 240W EPR PD3.1', note: 'PD 3.1/EPRの対応を型番で確認' },
+  pDpAlt:  { name: 'DP Alt Mode対応と明記されたUSB-Cケーブル', kw: 'USB-C ケーブル DP Alt Mode 対応', note: 'PC・表示機器側の仕様も確認' },
+  pTb4:    { name: 'Thunderbolt 4認証ケーブル', kw: 'Thunderbolt 4 認証 ケーブル 40Gbps', note: '40Gbpsと給電定格を型番で確認' },
+  pGen2:   { name: 'USB 10Gbpsデータケーブル', kw: 'USB-C ケーブル USB 10Gbps', note: '全接続経路の速度表記を照合' }
 };
 
 const USES = [
   {
     id: 'laptop_fast', label: 'ノートPCを急速充電', sub: '65W〜100W',
-    title: '100W(5A)対応ケーブルが必要です',
-    principle: '60W(20V/3A)までは無表記のケーブルでも出ますが、65Wを超えて100Wまで使うには「100W」または「5A」表記のあるe-marker入りケーブルが必須です。これ未満のケーブルを使うと最大60Wに制限されます。',
-    products: [P.p100w, P.pTester],
-    cautions: ['データ対応は用途上必須ではありませんが、迷ったらUSB3対応のものを選ぶと汎用性が上がります。']
+    title: '20Vで65〜100Wを使うなら、100W（5A）表記を確認します',
+    principle: '20V・3Aは最大60Wです。20Vで60Wを超える契約には5A能力を伝えるケーブルが必要です。充電器、ケーブル、PCの各仕様に同じ電力条件があることを確認してください。',
+    products: [P.p100w],
+    cautions: ['ケーブル単体の100W表記は、PCや充電器が100Wで動作する保証ではありません。']
   },
   {
     id: 'laptop_240', label: 'ハイエンドノート/ゲーミングを最速充電', sub: '240W',
     title: '240W(EPR)対応ケーブルが必須です',
     principle: '240W(48V/5A)はUSB PD 3.1のEPR（拡張電力レンジ）機能で実現します。通常の100Wケーブルでは240Wは出ません。EPR対応の専用e-marker入りケーブルと、充電器、PC本体の両方がPD3.1/EPRに対応していることが条件です。',
-    products: [P.p240w, P.pTester],
+    products: [P.p240w],
     cautions: ['充電器とPCの両方がEPR対応でなければ、ケーブルだけ対応していても240Wは出ません。']
   },
   {
     id: 'phone', label: 'スマホ、タブレットを普通に充電', sub: '18W〜30W級',
-    title: '3Aまでなら無表記ケーブルで足ります',
-    principle: 'スマホ、タブレットの急速充電は一般に18W〜30W級で、3Aまでの電流なら無表記の標準的なケーブルで問題ありません。ただしPD(Power Delivery)などの急速規格に対応した充電器とケーブルの組み合わせが必要で、安すぎる充電専用ケーブルだと速度が出ないこともあります。',
-    products: [P.p100w, P.pTester],
-    cautions: ['手持ちのケーブルで速度が出ているか不安な場合は、PDテスターで実測すると安心です。']
+    title: '機器が必要とする電力以上の表記を選びます',
+    principle: '必要な充電条件は機器メーカーの仕様で確認してください。60W（3A）など、必要電力以上が明記されたケーブルと、対応する充電器・機器を組み合わせます。',
+    products: [P.p60w],
+    cautions: ['USB PDなどの充電方式と実際の契約電力は、ケーブルだけでは決まりません。']
   },
   {
     id: 'monitor', label: 'USB-Cで外部モニターに映像出力', sub: '4K',
     title: 'DP Alt Mode対応ケーブルとPC側ポートの両対応が必要です',
-    principle: '映像出力には、ケーブルがDisplayPort Alt Mode（またはUSB4、Thunderbolt）に対応しているだけでなく、PC側のポートも同じ規格に対応している必要があります。充電専用やUSB2.0専用のケーブルでは映像は出ません。4K60Hzは帯域を多く使うため、確実を取るならUSB4/Thunderbolt 4認証のケーブルを選んでください。',
-    products: [P.pTb4, P.pGen2],
-    cautions: ['ケーブルとPCポートのどちらか一方でも非対応だと映像は出ません。PC側の仕様も確認してください。']
+    principle: '映像出力には、PC側ポート、表示機器またはアダプタ、ケーブルのすべてで必要なDisplayPort Alt Mode条件を満たす必要があります。USB 2.0 Type-CケーブルはAlt Mode信号を実装しません。必要な解像度・リフレッシュレートは製品仕様で照合してください。',
+    products: [P.pDpAlt, P.pTb4],
+    cautions: ['4Kなどの表示仕様は、ケーブル名やUSB-C形状だけからは確定できません。']
   },
   {
     id: 'ssd', label: '外付けSSD/HDDで速度を出したい', sub: '',
     title: 'USB 10Gbps以上のケーブルが必要です',
-    principle: 'USB2.0のケーブルを使うと480Mbps（実測で数十MB/s）に頭打ちになります。SSDの速度を活かすにはUSB 10Gbps（旧USB 3.2 Gen2）以上に対応したケーブルが必要です。20GbpsやUSB4対応のSSDなら、同等以上の速度表示があるケーブルを選んでください。',
+    principle: 'USB 2.0 Type-Cのデータ動作は最大480Mbpsです。SSD、ケーブル、PCポートの全経路で、必要なUSB 10/20/40/80Gbpsの性能表記を照合してください。',
     products: [P.pGen2, P.pTb4],
     cautions: ['SSD本体、ケーブル、接続するポートの3つとも同じ規格以上に対応していないと、最も遅い部分の速度に制限されます。']
   },
   {
     id: 'dock', label: 'ドック、ハブを1本で（映像+データ+給電）', sub: '',
-    title: 'USB4/Thunderbolt 4認証ケーブルが確実です',
-    principle: 'ドックやハブに映像、データ、給電(PD)をまとめて1本で通すには、必要な速度と給電W数が表示されたUSB-IF認証またはThunderbolt 4認証ケーブルが確実です。ケーブルだけでなく、PCとドック側の映像・データ・給電仕様もそろっている必要があります。',
-    products: [P.pTb4, P.pTester],
-    cautions: ['長さだけで良否は決まりません。必要な速度・給電W数で認証されたケーブルを選び、ドックとPC側の対応も確認してください。']
+    title: 'ドックの必要条件に合う速度・電力・映像仕様をそろえます',
+    principle: 'ドックの説明書に記載されたUSB/Thunderbolt世代、必要な給電定格、映像プロトコルを、PCとケーブルの仕様でそれぞれ照合してください。Thunderbolt 4が必要なドックにはThunderbolt 4の条件を満たすケーブルが必要です。',
+    products: [P.pTb4, P.p100w],
+    cautions: ['認証や性能表示は型番単位で確認し、外観やコネクタ形状で代替判断しません。']
   },
   {
     id: 'data_only', label: '写真やファイルを速くPCへ転送', sub: '',
@@ -515,7 +497,7 @@ function render() {
   if (tab === 'check') renderCheck(); else renderChoose();
 }
 
-/* ---------- タブA: 手持ちを見分ける ---------- */
+/* ---------- タブA: 表記を確認 ---------- */
 function renderCheck() {
   const chips = CLUES.map(c =>
     `<button class="matchip${clues.has(c.id) ? ' active' : ''}" data-clue="${c.id}">
@@ -523,7 +505,7 @@ function renderCheck() {
      </button>`).join('');
 
   appEl.innerHTML = `
-    <div class="section-label">— 分かる手がかりを選ぶ（複数選択可）</div>
+    <div class="section-label">— 型番・製品仕様で確認できた項目を選ぶ（複数選択可）</div>
     <div class="matgrid" id="grid-clue">${chips}</div>
     <div id="check-result"></div>`;
 
@@ -546,10 +528,10 @@ function renderCheckResult() {
   if (clues.size === 0) {
     el.innerHTML = `
       <div class="note-box" style="margin-top:16px;">
-        まずは以下の3つを確認しましょう。<br>
-        1. 端子やケーブル本体の刻印（SS、10、20、USB4など）<br>
-        2. ケーブルの太さと硬さ（太いほど電力、放熱に有利）<br>
-        3. パッケージの表記（100W、5A、EPR、充電専用など）
+        まず型番を特定し、以下をメーカー仕様・認証表示で確認しましょう。<br>
+        1. USB 5 / 10 / 20 / 40 / 80Gbps の性能表記<br>
+        2. 60W / 100W / 240W(EPR) の電力表記<br>
+        3. DP Alt Mode、Thunderbolt世代、USB-IF等の認証表示
       </div>`;
     return;
   }
@@ -575,8 +557,8 @@ function renderCheckResult() {
   }
 
   html += `
-      <div class="plabel">確実に知る方法</div>
-      <div class="note-box">見た目だけでは断定できません。確実なのは (1) パッケージ、製品仕様の記載 (2) USB-IF認証（Certified USB）ロゴ (3) 実機でのテスト、の3つです。無表記の付属品や細いケーブルは、USB2.0 + 3A(最大60W)相当とみなすのが安全です。</div>
+      <div class="plabel">確認方法</div>
+      <div class="note-box">外観だけでは断定しません。型番、メーカーの製品仕様、USB-IFの性能・電力表示、Thunderbolt世代表記を照合してください。表記のない能力は「不明」のまま扱います。</div>
     </div>`;
 
   el.innerHTML = html;

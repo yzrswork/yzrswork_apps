@@ -300,6 +300,11 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
+  /* Engineering notation is case-sensitive: keep M (mega) and m (milli) visible. */
+  #tool-eng .field label,
+  #eng-result .result-label {
+    text-transform: none;
+  }
   .field input,
   .field select {
     font-family: var(--mono);
@@ -799,7 +804,7 @@
         <span class="tool-num">06</span>
         <div class="tool-head">
           <span class="tool-title">電池駆動時間 <span class="en">Battery Life</span></span>
-          <span class="tool-desc">電池容量と平均消費電流から駆動時間を推定</span>
+          <span class="tool-desc">電池容量と平均消費電流から理論駆動時間を計算</span>
         </div>
       </summary>
       <div class="tool-body">
@@ -830,7 +835,7 @@
       <div class="tool-body">
         <div class="fields single mt16">
           <div class="field">
-            <label for="eng-input">入力（例: 4k7, 100n, 2p2, 1M5）</label>
+            <label for="eng-input">入力（例: 4k7, 1M5, 1m, 4u7, 100n, 2p2, 100R）</label>
             <input type="text" id="eng-input" placeholder="4k7" autocomplete="off" spellcheck="false" />
           </div>
         </div>
@@ -863,7 +868,7 @@
   </section>
 
   <section class="about">
-    <p>電子工作では「LEDに抵抗を入れ忘れて焼いた」「カラーコードが読めない」「この電池で何時間もつのか分からない」といった小さな計算が、作業のたびに何度もやってきます。そのたびに検索するのが面倒だったので、作業台の脇に置いておける電卓集としてまとめたのがこのツールです。オームの法則からLEDの抵抗値、555タイマー、電池駆動時間まで、値を入れればすぐ答えが出ます。結果はあくまで概算の目安なので、最終確認は部品のデータシートでどうぞ。</p>
+      <p>電子工作では、LEDの直列抵抗、カラーコード、電池駆動時間などの小さな計算を作業ごとに確認します。このツールは、オームの法則、LEDの抵抗値、555タイマー、電池駆動時間を一か所で計算するための早見表です。結果は概算なので、最終判断では部品のデータシート、定格、実際の回路条件を確認してください。</p>
     <p>工具の揃え方は、noteの電子工作vol.2で読めます： <a href="https://note.com/yzrswork/n/nd08cb43b6ca4" target="_blank" rel="noopener noreferrer">vol.2 工具編</a></p>
   </section>
 
@@ -1064,13 +1069,18 @@ function showAmzLink(elId, keyword) {
     const R12 = nearestE12(R);
     const Pr = (Vs - Vf) * If_A;
     const Prec = recWatt(Pr);
+    const wattRecommendation = Prec === null
+      ? '該当なし（必要定格は5 W超）'
+      : Prec + ' W以上';
 
     el.innerHTML = resultBox([
       ['R 必要抵抗', fmtOhm(R), true],
       ['最寄りE12値', fmtOhm(R12)],
       ['抵抗の消費電力', fmtWatt(Pr)],
-      ['推奨ワット数', Prec ? Prec + ' W以上' : '2W以上'],
-    ]);
+      ['候補定格（2倍以上）', wattRecommendation],
+    ]) + (Prec === null
+      ? '<p class="note-small" style="margin-top:8px;">必要定格の2倍が5 Wを超えます。候補にない低い定格へは丸めません。放熱条件とデータシートを確認し、5 W超の抵抗を個別に選定してください。</p>'
+      : '<p class="note-small" style="margin-top:8px;">候補は 0.125 / 0.25 / 0.5 / 1 / 2 / 5 W です。連続運転、周囲温度、実装時の放熱条件は別途確認してください。</p>');
     if (window.yzrsTrackResult) window.yzrsTrackResult('led_resistor', 'electronics');
     showAmzLink('led-amz', 'LED 5mm 詰め合わせ');
     amz.style.display = 'inline-flex';
@@ -1336,7 +1346,6 @@ function showAmzLink(elId, keyword) {
     if (cap <= 0 || cur <= 0) { el.innerHTML = resultBox([], '正の値を入力してください'); amz.style.display='none'; return; }
 
     const h = cap / cur;
-    const h_eff = h * 0.7;
 
     function fmtHM(hours) {
       const hh = Math.floor(hours);
@@ -1346,8 +1355,7 @@ function showAmzLink(elId, keyword) {
 
     el.innerHTML = resultBox([
       ['理論駆動時間', fmtHM(h), true],
-      ['実用目安（×0.7）', fmtHM(h_eff)],
-    ]) + '<p class="note-small" style="margin-top:8px;">実用目安は温度・放電特性・変換効率の損失を含む概算（係数0.7）です。</p>';
+    ]) + '<p class="note-small" style="margin-top:8px;">これは容量[mAh]÷平均消費電流[mA]の理論値です。実際の時間は負荷、放電特性、温度、劣化、変換回路の効率、終止電圧で変わるため、固定係数では補正しません。</p>';
     if (window.yzrsTrackResult) window.yzrsTrackResult('battery_runtime', 'electronics');
     showAmzLink('bat-amz', '単3 充電池');
     amz.style.display = 'inline-flex';
@@ -1367,15 +1375,15 @@ function showAmzLink(elId, keyword) {
 
     const val = parseEng(raw);
     if (val == null || isNaN(val)) {
-      el.innerHTML = resultBox([], '認識できない形式です（例: 4k7, 100n, 2p2）');
+      el.innerHTML = resultBox([], '認識できない形式です（例: 4k7, 1M5, 1m, 4u7, 100n, 2p2, 100R）');
       return;
     }
 
     // Determine category from suffix
-    const lower = raw.toLowerCase();
+    const normalized = raw.replace(/µ/g, 'u').replace(/\s+/g, '');
     let category = 'resistance'; // default
-    if (/[pnuf]/.test(lower) && !/[rk]/.test(lower)) category = 'capacitance';
-    if (/hz/.test(lower)) category = 'frequency';
+    if (/[pnu]/i.test(normalized) && !/[rk]/i.test(normalized)) category = 'capacitance';
+    if (/(?:hz|h|z)$/i.test(normalized)) category = 'frequency';
 
     let rows = [['数値', val.toPrecision(6).replace(/\.?0+$/, '')]];
     if (category === 'resistance') {
@@ -1386,57 +1394,39 @@ function showAmzLink(elId, keyword) {
       rows.push(['周波数', fmtFreq(val)]);
     }
     // Reverse: best prefix notation
-    rows.push(['接頭辞表記', toEngNotation(val)]);
+    rows.push(['接頭辞表記（M/mを区別）', toEngNotation(val)]);
     el.innerHTML = resultBox(rows);
     if (window.yzrsTrackResult) window.yzrsTrackResult('engineering_notation', 'electronics');
   }
 
   function parseEng(s) {
-    // Normalize: remove spaces
-    s = s.trim();
-    // Patterns: number + prefix + optional digit (e.g. 4k7, 1M5, 2p2)
-    // Also: 100R, 100n, 4u7
-    const re = /^(\d+(?:\.\d*)?)\s*([RkKmMunpfFhHzZ]*)(\d*)$/i;
-    const m = s.match(re);
-    if (!m) return null;
-    let num = parseFloat(m[1]);
-    const prefix = m[2].toLowerCase();
-    const frac = m[3]; // digit after prefix (e.g. '7' in '4k7')
+    // M（mega）とm（milli）は大文字・小文字を区別する。
+    const normalized = s.trim().replace(/µ/g, 'u').replace(/\s+/g, '');
+    // 部品表記の小数点置換: 4k7, 1M5, 4u7, 2p2, 100R。
+    // 従来どおり周波数の Hz / H / Z 接尾辞も受け付ける。
+    const match = normalized.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))((?:[Mm][Ee][Gg])|[RrKkMmUuNnPpFfGgTt]?)(\d*)(?:Hz|HZ|hz|h|H|z|Z)?$/);
+    if (!match) return null;
 
-    if (frac) {
-      // e.g. 4k7 → 4.7k
-      num = parseFloat(m[1] + '.' + frac);
-    }
+    const [, integerPart, prefix, fractionalPart] = match;
+    if (fractionalPart && (!prefix || integerPart.includes('.'))) return null;
 
-    const mult = {
-      '': 1, r: 1, f: 1e-15, p: 1e-12, n: 1e-9,
-      u: 1e-6, m: 1e-3, k: 1e3, meg: 1e6, 'M': 1e6, g: 1e9
+    const factors = {
+      '': 1,
+      R: 1, r: 1,
+      K: 1e3, k: 1e3,
+      M: 1e6,
+      meg: 1e6,
+      m: 1e-3,
+      U: 1e-6, u: 1e-6,
+      N: 1e-9, n: 1e-9,
+      P: 1e-12, p: 1e-12,
+      F: 1e-15, f: 1e-15,
+      G: 1e9, g: 1e9,
+      T: 1e12, t: 1e12,
     };
-    const prefixMap = {
-      '': 1, r: 1, f: 1e-15, p: 1e-12, n: 1e-9,
-      u: 1e-6, 'm': 1e-3, k: 1e3, 'm': 1e-3
-    };
-    // manual map
-    let factor = 1;
-    if (prefix === 'r') factor = 1;
-    else if (prefix === 'k') factor = 1e3;
-    else if (prefix === 'm') factor = 1e6; // mega or milli ambiguous; use 'u' for micro
-    else if (prefix === 'meg') factor = 1e6;
-    else if (prefix === 'u') factor = 1e-6;
-    else if (prefix === 'n') factor = 1e-9;
-    else if (prefix === 'p') factor = 1e-12;
-    else if (prefix === 'f') factor = 1e-15;
-    else if (prefix === 'g') factor = 1e9;
-    else if (prefix === '') factor = 1;
-    // M is ambiguous; treat as Mega for resistance/frequency context
-    else if (prefix === 'M' || prefix === 'm') {
-      // uppercase M = Mega
-      if (m[2] === 'M') factor = 1e6;
-      else factor = 1e-3; // lowercase m = milli
-    }
-    else if (prefix === 'h' || prefix === 'hz' || prefix === 'z') factor = 1;
-
-    return num * factor;
+    const significand = Number(fractionalPart ? `${integerPart}.${fractionalPart}` : integerPart);
+    const factor = factors[prefix.toLowerCase() === 'meg' ? 'meg' : prefix];
+    return Number.isFinite(significand) && factor !== undefined ? significand * factor : null;
   }
 
   function toEngNotation(v) {
