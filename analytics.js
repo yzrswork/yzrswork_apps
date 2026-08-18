@@ -24,7 +24,7 @@
 // femto(F/f)分類補正だけを小さなアプリ固有モジュールに隔離する。
 if (/\/bench\/?$/.test(location.pathname)) {
   var benchEngFix = document.createElement("script");
-  benchEngFix.src = "/bench/eng-notation-fix.js";
+  benchEngFix.src = "eng-notation-fix.js";
   benchEngFix.defer = true;
   document.head.appendChild(benchEngFix);
 }
