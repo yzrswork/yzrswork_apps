@@ -389,21 +389,28 @@ function checkResult(set) {
     };
   }
 
+  const chargeOnly = has('only_charge');
   return {
     kicker: '製品仕様・性能表示から確認できる範囲',
-    title: has('only_charge') ? '充電専用として扱う表記があります' : '選択した表記を確認しました',
-    principle: has('only_charge')
+    title: chargeOnly ? '充電専用として扱う表記があります' : '選択した表記を確認しました',
+    principle: chargeOnly
       ? '「充電専用」の製品仕様がある場合、データ転送・映像用途には使わず、電力は併記された定格だけを確認してください。'
       : '表記にない能力は不明です。実際に使える電力・データ・映像機能は、ケーブル、接続元、接続先の共通仕様で決まります。',
     power: powerLabels.length ? powerLabels.join(' ') : '電力表記なし: 不明',
-    data: [
-      speedLabels.length ? `性能表記: ${speedLabels.join(' / ')}` : '速度表記なし: 不明',
-      ...thunderboltLabels
-    ].join(' '),
-    video: has('dp_alt')
-      ? 'DP Alt Mode対応の仕様あり。接続元ポート・接続先・必要なケーブル信号も同時に確認。'
-      : 'DP Alt Modeの仕様表記なし: 不明',
-    cautions: ['USB-IFの性能表記は信号速度区分です。実際の転送量や映像仕様は接続する製品全体の仕様を確認してください。']
+    data: chargeOnly
+      ? '充電専用表記を優先: データ転送には使用しない'
+      : [
+          speedLabels.length ? `性能表記: ${speedLabels.join(' / ')}` : '速度表記なし: 不明',
+          ...thunderboltLabels
+        ].join(' '),
+    video: chargeOnly
+      ? '充電専用表記を優先: 映像出力には使用しない'
+      : has('dp_alt')
+        ? 'DP Alt Mode対応の仕様あり。接続元ポート・接続先・必要なケーブル信号も同時に確認。'
+        : 'DP Alt Modeの仕様表記なし: 不明',
+    cautions: chargeOnly
+      ? ['充電専用とデータ・映像能力の表記を同時に選んだ場合は、矛盾を安全側に倒し、充電専用として扱います。製品型番の仕様を再確認してください。']
+      : ['USB-IFの性能表記は信号速度区分です。実際の転送量や映像仕様は接続する製品全体の仕様を確認してください。']
   };
 }
 

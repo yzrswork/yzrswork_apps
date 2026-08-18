@@ -1,14 +1,15 @@
-const CACHE_NAME = 'bench-v13';
+const CACHE_NAME = 'bench-v14';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './eng-notation-fix.js',
+  '../analytics.js',
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
-  '../shared/tokens.css',
-  '../affiliate.js'
+  '../shared/tokens.css'
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）

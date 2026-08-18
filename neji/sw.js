@@ -7,8 +7,7 @@ const ASSETS = [
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
-  '../shared/tokens.css',
-  '../affiliate.js'
+  '../shared/tokens.css'
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）

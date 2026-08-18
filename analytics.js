@@ -20,6 +20,15 @@
   gtag("config", ID);
 })();
 
+// bench/index.html は巨大な単一HTMLのため、Engineering Notation の
+// femto(F/f)分類補正だけを小さなアプリ固有モジュールに隔離する。
+if (/\/bench\/?$/.test(location.pathname)) {
+  var benchEngFix = document.createElement("script");
+  benchEngFix.src = "eng-notation-fix.js";
+  benchEngFix.defer = true;
+  document.head.appendChild(benchEngFix);
+}
+
 function yzrsAppName() {
   return location.pathname.replace(/\/$/, "").split("/").pop() || "root";
 }
