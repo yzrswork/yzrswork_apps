@@ -1,9 +1,11 @@
-const CACHE_NAME = 'bench-v13';
+const CACHE_NAME = 'bench-v14';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './eng-notation-fix.js',
+  '../analytics.js',
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
