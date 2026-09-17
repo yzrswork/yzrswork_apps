@@ -298,21 +298,21 @@ const AFF = {
   dry: {  // スロット① 乾燥管理
     lead: "仕様から選んだ候補（実使用未確認）:",
     normal: [
-      { name: "シンワ 放射温度計 B(73010)", asin: "B003004HSI", linkId: "d6e9f8a8a98846e1eb38ea572062b428" }
+      { key: "nurerukun-temp-normal", name: "シンワ 放射温度計 B(73010)", asin: "B003004HSI", linkId: "d6e9f8a8a98846e1eb38ea572062b428" }
     ],
     risk: [  // 露点、低温、高湿の日に出す高機能機
-      { name: "シンワ 放射温度計 E(73036) 防塵防水", asin: "B007MUO8UO", linkId: "dc707b01d09beabdd6f4c80b66033403" },
-      { name: "testo 605i 温湿度計(露点を自動演算)", asin: "B098NGNFP9", linkId: "354398ebdb4b0d5962ada7a95e831945" }
+      { key: "nurerukun-temp-risk", name: "シンワ 放射温度計 E(73036) 防塵防水", asin: "B007MUO8UO", linkId: "dc707b01d09beabdd6f4c80b66033403" },
+      { key: "nurerukun-dewpoint", name: "testo 605i 温湿度計(露点を自動演算)", asin: "B098NGNFP9", linkId: "354398ebdb4b0d5962ada7a95e831945" }
     ]
   },
   tools: {  // スロット② 段取り
     lead: "段取り用に仕様から選んだ候補（実使用未確認）:",
     items: [
-      { name: "大塚刷毛 PEACH ローラー", asin: "B009A30O4A", linkId: "7f5b7ac67df188f2a09754e391bcd429" },
-      { name: "大塚刷毛 オールワン ローラー", asin: "B09Z2B3KYQ", linkId: "b1308c058843ad9cc87ec18b943dc8e0" },
-      { name: "カモ井 ルパンクーペ マスキングテープ", asin: "B083XC4PRJ", linkId: "ea502df7fe66edbca440509ca478c816" },
-      { name: "3M スコッチ 塗装用マスキングテープ", asin: "B005JWNJZM", linkId: "a70040146e246620d329aab9f8429544" },
-      { name: "アイリスオーヤマ 布テープマスカー(養生)", asin: "B00RKTXMN6", linkId: "bbd1f9f208a58c31ab255280978443d5" }
+      { key: "nurerukun-roller-peach", name: "大塚刷毛 PEACH ローラー", asin: "B009A30O4A", linkId: "7f5b7ac67df188f2a09754e391bcd429" },
+      { key: "nurerukun-roller-all-one", name: "大塚刷毛 オールワン ローラー", asin: "B09Z2B3KYQ", linkId: "b1308c058843ad9cc87ec18b943dc8e0" },
+      { key: "nurerukun-masking-lupin", name: "カモ井 ルパンクーペ マスキングテープ", asin: "B083XC4PRJ", linkId: "ea502df7fe66edbca440509ca478c816" },
+      { key: "nurerukun-masking-3m", name: "3M スコッチ 塗装用マスキングテープ", asin: "B005JWNJZM", linkId: "a70040146e246620d329aab9f8429544" },
+      { key: "nurerukun-masker-iris", name: "アイリスオーヤマ 布テープマスカー(養生)", asin: "B00RKTXMN6", linkId: "bbd1f9f208a58c31ab255280978443d5" }
     ]
   }
 };
@@ -328,6 +328,7 @@ function affFill(slot, lead, it){
   a.href = affHref(it); a.target = '_blank'; a.rel = 'noopener sponsored nofollow';
   a.className = 'affi-link'; a.textContent = it.name;
   a.setAttribute('data-track-label', it.name);
+  a.setAttribute('data-item-key', it.key);
   slot.appendChild(t); slot.appendChild(a);
 }
 /* dryRisk: 今日の作業時間帯に低温・露点近・高湿があれば true (乾燥管理が重要な日) */

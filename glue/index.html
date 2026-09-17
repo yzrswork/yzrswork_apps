@@ -404,21 +404,21 @@ const CONDITIONS = [
 
 /* ---------- 製品カタログ（5ブランドのみ。型番の細部は発明しない） ---------- */
 const P = {
-  tamiyaCement:      { name: 'タミヤセメント（プラモデル用）', kw: 'タミヤセメント プラモデル用接着剤' },
-  tamiyaFlow:         { name: 'タミヤセメント（流し込みタイプ）', kw: 'タミヤセメント 流し込みタイプ', note: '合わせ目や隙間に少量ずつ流し込む用' },
-  mrCementS:          { name: 'Mr.セメントS／SP（クレオス）', kw: 'Mr.セメントS クレオス 流し込み接着剤', note: '流し込みタイプ、乾燥が早い' },
-  tamiyaLimonene:      { name: 'タミヤ リモネンセメント（低臭タイプ）', kw: 'タミヤ リモネンセメント 低臭', note: '臭いが気になる作業環境向け' },
-  tamiyaAbs:           { name: 'タミヤセメント（ABS用）', kw: 'タミヤセメント ABS用' },
-  aronAlphaExtra:      { name: 'アロンアルフア EXTRA系（瞬間接着剤）', kw: 'アロンアルフア EXTRA 瞬間接着剤' },
-  loctitePower:        { name: 'ロックタイト 強力瞬間接着剤', kw: 'ロックタイト 強力瞬間接着剤' },
-  aronAlphaPrimer:      { name: 'アロンアルフア プラスチック用（プライマー付き）', kw: 'アロンアルフア プラスチック用 プライマー付き' },
-  cemedinePPX:          { name: 'セメダイン PPX', kw: 'セメダイン PPX', note: 'プライマーを先に塗ってから接着する専用品' },
-  cemedineWood:         { name: 'セメダイン 木工用', kw: 'セメダイン 木工用接着剤' },
-  cemedineSuperX:       { name: 'セメダイン スーパーX', kw: 'セメダイン スーパーX 多用途接着剤' },
-  epoxy:                { name: 'エポキシ系接着剤（2液性）', kw: 'エポキシ接着剤 2液性', note: '主剤と硬化剤を混ぜて使う。硬化後の強度が高い' },
-  jellyInstant:         { name: 'ゼリー状瞬間接着剤', kw: 'ゼリー状 瞬間接着剤', note: '垂れにくく隙間にも盛りやすい' },
-  aronAlphaWood:         { name: 'アロンアルフア木工用', kw: 'アロンアルフア木工用', note: '瞬間接着剤タイプで速さ重視' },
-  cemedineHighGrade:    { name: 'セメダイン ハイグレード模型用', kw: 'セメダイン ハイグレード模型用接着剤', note: '白化しない水性、クリアパーツの定番' }
+  tamiyaCement:      { key: 'glue-tamiya-cement', name: 'タミヤセメント（プラモデル用）', kw: 'タミヤセメント プラモデル用接着剤' },
+  tamiyaFlow:         { key: 'glue-tamiya-flow', name: 'タミヤセメント（流し込みタイプ）', kw: 'タミヤセメント 流し込みタイプ', note: '合わせ目や隙間に少量ずつ流し込む用' },
+  mrCementS:          { key: 'glue-mr-cement-s', name: 'Mr.セメントS／SP（クレオス）', kw: 'Mr.セメントS クレオス 流し込み接着剤', note: '流し込みタイプ、乾燥が早い' },
+  tamiyaLimonene:      { key: 'glue-tamiya-limonene', name: 'タミヤ リモネンセメント（低臭タイプ）', kw: 'タミヤ リモネンセメント 低臭', note: '臭いが気になる作業環境向け' },
+  tamiyaAbs:           { key: 'glue-tamiya-abs', name: 'タミヤセメント（ABS用）', kw: 'タミヤセメント ABS用' },
+  aronAlphaExtra:      { key: 'glue-aron-alpha-extra', name: 'アロンアルフア EXTRA系（瞬間接着剤）', kw: 'アロンアルフア EXTRA 瞬間接着剤' },
+  loctitePower:        { key: 'glue-loctite-power', name: 'ロックタイト 強力瞬間接着剤', kw: 'ロックタイト 強力瞬間接着剤' },
+  aronAlphaPrimer:      { key: 'glue-aron-alpha-primer', name: 'アロンアルフア プラスチック用（プライマー付き）', kw: 'アロンアルフア プラスチック用 プライマー付き' },
+  cemedinePPX:          { key: 'glue-cemedine-ppx', name: 'セメダイン PPX', kw: 'セメダイン PPX', note: 'プライマーを先に塗ってから接着する専用品' },
+  cemedineWood:         { key: 'glue-cemedine-wood', name: 'セメダイン 木工用', kw: 'セメダイン 木工用接着剤' },
+  cemedineSuperX:       { key: 'glue-cemedine-superx', name: 'セメダイン スーパーX', kw: 'セメダイン スーパーX 多用途接着剤' },
+  epoxy:                { key: 'glue-epoxy', name: 'エポキシ系接着剤（2液性）', kw: 'エポキシ接着剤 2液性', note: '主剤と硬化剤を混ぜて使う。硬化後の強度が高い' },
+  jellyInstant:         { key: 'glue-jelly-instant', name: 'ゼリー状瞬間接着剤', kw: 'ゼリー状 瞬間接着剤', note: '垂れにくく隙間にも盛りやすい' },
+  aronAlphaWood:         { key: 'glue-aron-alpha-wood', name: 'アロンアルフア木工用', kw: 'アロンアルフア木工用', note: '瞬間接着剤タイプで速さ重視' },
+  cemedineHighGrade:    { key: 'glue-cemedine-high-grade', name: 'セメダイン ハイグレード模型用', kw: 'セメダイン ハイグレード模型用接着剤', note: '白化しない水性、クリアパーツの定番' }
 };
 
 /* ---------- 素材ペアからベースルールを決める ----------
@@ -728,7 +728,7 @@ function renderResult() {
           <div class="p-name">${esc(p.name)}</div>
           ${p.note ? `<div class="p-note">${esc(p.note)}</div>` : ''}
         </div>
-        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-item-key="${esc(p.key)}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
       </div>`;
   });
   html += '</div>';

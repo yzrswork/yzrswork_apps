@@ -198,8 +198,10 @@ document.addEventListener("click", function (e) {
 
   if (isAmazon) {
     var productKey = a.getAttribute("data-product-key");
-    var itemKey = productKey && /^[a-z0-9][a-z0-9._-]{0,80}$/i.test(productKey)
-      ? productKey
+    var legacyItemKey = a.getAttribute("data-item-key");
+    var itemKeyCandidate = productKey || legacyItemKey;
+    var itemKey = itemKeyCandidate && /^[a-z0-9][a-z0-9._-]{0,80}$/i.test(itemKeyCandidate)
+      ? itemKeyCandidate
       : "unclassified";
     window.yzrsTrack("affiliate_click", {
       app_name: yzrsAppName(),
