@@ -289,13 +289,17 @@ function renderSummary() {
   const buys = [];
   if (s && u) {
     const ddrKw = s.ddrSearch || 'DDR4 DDR5';
-    buys.push(['メモリ', (ddrKw + ' ' + u.search + ' デスクトップ メモリ').trim()]);
+    buys.push({
+      key: `build-memory-${s.id}-${u.id}`,
+      label: 'メモリ',
+      query: (ddrKw + ' ' + u.search + ' デスクトップ メモリ').trim()
+    });
   }
-  if (st) buys.push(['ストレージ', st.search]);
-  if (g) buys.push(['電源', g.search]);
+  if (st) buys.push({ key: `build-storage-${st.id}`, label: 'ストレージ', query: st.search });
+  if (g) buys.push({ key: `build-power-${g.id}`, label: '電源', query: g.search });
   if (buys.length) {
     html += '<div class="sum-buys">' + buys.map(b =>
-      `<a href="${esc(amazonUrl(b[1]))}" data-track-label="${esc(b[0])}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(b[0])}</a>`).join('') + '</div>';
+      `<a href="${esc(amazonUrl(b.query))}" data-item-key="${esc(b.key)}" data-track-label="${esc(b.label)}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(b.label)}</a>`).join('') + '</div>';
   }
 
   if (s && s.id === 'lga1700') {

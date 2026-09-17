@@ -518,7 +518,7 @@ function renderCart() {
       <div class="cart-item">
         <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
-          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">Amazonで確認</a>
+          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-item-key="kit-${esc(i.id)}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">Amazonで確認</a>
           <button class="mini del" data-del="${i.id}">削除</button>
         </div>
       </div>`;

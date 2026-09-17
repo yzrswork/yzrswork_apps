@@ -101,6 +101,20 @@ const expectedAffiliateDisclosure =
 const expectedAdsenseMeta = `<meta name="google-adsense-account" content="${adsense?.client}"`;
 const expectedAdsenseScript =
   `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense?.client}`;
+const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
+  'hdd-blue-search',
+  'hdd-redplus-search',
+  'hdd-red-search',
+  'hdd-purple-search',
+  'hdd-black-search',
+  'hdd-model-search',
+  'mem-condition-search',
+]);
+const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([
+  'mem-team-ddr4-32',
+  'mem-crucial-ddr4-32',
+  'mem-crucial-ddr5-32',
+]);
 
 assertUnique(categoryIds, 'category.id');
 assertUnique(allSlugs, 'slug');
@@ -139,6 +153,31 @@ if (!affiliateProducts || typeof affiliateProducts !== 'object' || Array.isArray
       }
     } else if (typeof product.query !== 'string' || !product.query.trim()) {
       fail(`affiliate search queryがない: ${key}`);
+    }
+  }
+}
+
+if (affiliateProducts) {
+  for (const key of EXPECTED_APPROVED_SEARCH_KEYS) {
+    const product = affiliateProducts[key];
+    if (!product) {
+      fail(`affiliate search keyがcatalogにない: ${key}`);
+      continue;
+    }
+    if (product.kind !== 'search') fail(`affiliate search keyのkindが不正: ${key}`);
+    if (product.ownerReview !== 'approved') fail(`affiliate search keyが未承認: ${key}`);
+  }
+  for (const key of PROTECTED_PENDING_AFFILIATE_KEYS) {
+    const product = affiliateProducts[key];
+    if (!product) {
+      fail(`固定ASIN候補のcatalog keyがない: ${key}`);
+    } else if (product.ownerReview !== 'pending') {
+      fail(`固定ASIN候補をpending以外に変更している: ${key}`);
+    }
+  }
+  for (const [key, product] of Object.entries(affiliateProducts)) {
+    if (product?.ownerReview === 'approved' && !EXPECTED_APPROVED_SEARCH_KEYS.includes(key)) {
+      fail(`想定外のaffiliate productを承認している: ${key}`);
     }
   }
 }
@@ -396,6 +435,26 @@ const publicAffiliateApi = loadAffiliateApi(affiliateJs);
 if (!publicAffiliateApi) {
   fail('affiliate.jsの公開APIが生成されていない');
 } else {
+  const publicKeys = Object.keys(publicAffiliateApi.products || {}).sort();
+  const expectedPublicKeys = [...EXPECTED_APPROVED_SEARCH_KEYS].sort();
+  if (JSON.stringify(publicKeys) !== JSON.stringify(expectedPublicKeys)) {
+    fail('generated affiliate bundleの公開key集合が想定と不一致');
+  }
+  for (const key of EXPECTED_APPROVED_SEARCH_KEYS) {
+    const product = publicAffiliateApi.getProduct(key);
+    if (!product) {
+      fail(`approved search productがgenerated bundleにない: ${key}`);
+      continue;
+    }
+    if (product.kind !== 'search') fail(`generated bundleのsearch kindが不正: ${key}`);
+    try {
+      const url = publicAffiliateApi.urlFor(key);
+      const expectedTag = `tag=${encodeURIComponent(affiliate.associateTag)}`;
+      if (!url.includes(expectedTag)) fail(`generated affiliate URLのtagが不正: ${key}`);
+    } catch {
+      fail(`approved search productのURLを生成できない: ${key}`);
+    }
+  }
   for (const [key, product] of Object.entries(publicAffiliateApi.products || {})) {
     if (product?.ownerReview !== 'approved') {
       fail(`未承認affiliate productが公開bundleに含まれる: ${key}`);
@@ -440,13 +499,30 @@ if (affiliateFixtureApi) {
   }
 }
 
-for (const slug of ['hdd', 'mem']) {
+const GATED_AFFILIATE_KEYS = {
+  hdd: [
+    'hdd-blue-search',
+    'hdd-redplus-search',
+    'hdd-red-search',
+    'hdd-purple-search',
+    'hdd-black-search',
+    'hdd-model-search',
+  ],
+  mem: ['mem-condition-search'],
+};
+for (const [slug, requiredKeys] of Object.entries(GATED_AFFILIATE_KEYS)) {
   const source = read(join(ROOT, slug, 'index.html'));
   if (!source.includes('approvedAffiliateUrl')) {
     fail(`${slug}: 共通affiliate承認ガードがない`);
   }
-  if (/window\.yzrsAffiliate\.urlFor/.test(source)) {
-    fail(`${slug}: 未承認候補を直接urlForへ渡している`);
+  if (!source.includes('data-product-key')) {
+    fail(`${slug}: 購入CTAのdata-product-keyがない`);
+  }
+  for (const key of requiredKeys) {
+    if (!source.includes(key)) fail(`${slug}: intended affiliate keyがCTAソースにない: ${key}`);
+  }
+  if (/(?:searchUrl|productUrl)\s*\(/.test(source) || /window\.yzrsAffiliate\.(?:searchUrl|productUrl|urlFor)/.test(source)) {
+    fail(`${slug}: catalog承認ガードを経由しないaffiliate helper呼び出しがある`);
   }
 }
 
@@ -457,6 +533,33 @@ for (const eventName of ['tool_start', 'result_view', 'tool_complete', 'affiliat
 for (const forbiddenParam of ['link_url', 'item_label']) {
   if (new RegExp(`\\b${forbiddenParam}\\b`).test(analyticsSource)) {
     fail(`Analytics禁止パラメータが残っている: ${forbiddenParam}`);
+  }
+}
+if (!analyticsSource.includes('data-product-key') || !analyticsSource.includes('data-item-key')) {
+  fail('Analyticsのaffiliate item key読取がない');
+}
+
+const LEGACY_AFFILIATE_REQUIREMENTS = {
+  kit: { helper: 'itemAmazonUrl(', metadata: 'data-item-key' },
+  bench: { helper: 'AMAZON_ITEM_KEYS', metadata: 'data-item-key' },
+  handa: { helper: 'function amazonUrl', metadata: 'data-item-key' },
+  glue: { helper: 'function amazonUrl', metadata: 'data-item-key' },
+  build: { helper: 'buys.map', metadata: 'data-item-key' },
+  neji: { helper: 'function amazonUrl', metadata: 'data-item-key' },
+  pinout: { helper: 'GEAR_PRODUCTS', metadata: 'data-item-key' },
+  usbc: { helper: 'const P =', metadata: 'data-item-key' },
+  nurerukun: { helper: 'function affHref', metadata: 'data-item-key' },
+};
+for (const [slug, requirement] of Object.entries(LEGACY_AFFILIATE_REQUIREMENTS)) {
+  const source = read(join(ROOT, slug, 'index.html'));
+  if (!source.includes(requirement.helper)) {
+    fail(`${slug}: legacy affiliate helper/rendererがない`);
+  }
+  if (!source.includes(requirement.metadata)) {
+    fail(`${slug}: legacy Amazon CTAのstable item metadataがない`);
+  }
+  if (!/(?:searchUrl|productUrl)\s*\(/.test(source)) {
+    fail(`${slug}: legacy Amazon URL生成経路がない`);
   }
 }
 

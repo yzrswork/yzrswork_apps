@@ -967,6 +967,13 @@ function escHtml(s) {
 }
 
 /* ── Affiliate link helper ───────────────────────────── */
+const AMAZON_ITEM_KEYS = Object.freeze({
+  'led-amz': 'bench-led-parts',
+  'color-amz': 'bench-color-code-resistor',
+  'vdiv-amz': 'bench-voltage-divider',
+  't555-amz': 'bench-ne555',
+  'bat-amz': 'bench-aa-rechargeable'
+});
 function amazonLink(keyword) {
   return window.yzrsAffiliate.searchUrl(keyword);
 }
@@ -975,6 +982,8 @@ function showAmzLink(elId, keyword) {
   if (!el) return;
   el.href = amazonLink(keyword);
   el.setAttribute('data-track-label', keyword);
+  const itemKey = AMAZON_ITEM_KEYS[elId];
+  if (itemKey) el.setAttribute('data-item-key', itemKey);
   el.style.display = 'inline-flex';
 }
 

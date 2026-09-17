@@ -573,9 +573,9 @@ const NOTICES = {
 
 /* ---------- 配線でそろえる物(共通、軽めのAmazon) ---------- */
 const GEAR_PRODUCTS = [
-  { name: 'ブレッドボード', kw: 'ブレッドボード 電子工作' },
-  { name: 'ジャンパーワイヤ（オスメス）', kw: 'ジャンパーワイヤ オスメス' },
-  { name: 'Raspberry Pi用 T型GPIO拡張ボード', kw: 'Raspberry Pi GPIO 拡張ボード T型' }
+  { key: 'pinout-breadboard', name: 'ブレッドボード', kw: 'ブレッドボード 電子工作' },
+  { key: 'pinout-jumper-wire', name: 'ジャンパーワイヤ（オスメス）', kw: 'ジャンパーワイヤ オスメス' },
+  { key: 'pinout-raspi-gpio-expander', name: 'Raspberry Pi用 T型GPIO拡張ボード', kw: 'Raspberry Pi GPIO 拡張ボード T型' }
 ];
 
 /* ---------- SVG基板図 ----------
@@ -805,7 +805,7 @@ function gearHtml() {
   const products = GEAR_PRODUCTS.map(p => `
     <div class="product">
       <div class="p-main"><div class="p-name">${esc(p.name)}</div></div>
-      <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+      <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-item-key="${esc(p.key)}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
     </div>`).join('');
   return `
     <div class="plabel">配線でそろえる物</div>

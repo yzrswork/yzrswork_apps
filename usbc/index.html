@@ -416,12 +416,12 @@ function checkResult(set) {
 
 /* ---------- タブB: 用途定義 ---------- */
 const P = {
-  p60w:    { name: 'USB-C 60W（3A）対応ケーブル', kw: 'USB-C ケーブル 60W 3A', note: '機器の必要電力と製品仕様を照合' },
-  p100w:   { name: 'USB-C 100W（5A）対応ケーブル', kw: 'USB-C ケーブル 100W PD 5A eMarker', note: '20V・5Aの仕様と型番を確認' },
-  p240w:   { name: 'USB-C 240W EPR対応ケーブル', kw: 'USB-C ケーブル 240W EPR PD3.1', note: 'PD 3.1/EPRの対応を型番で確認' },
-  pDpAlt:  { name: 'DP Alt Mode対応と明記されたUSB-Cケーブル', kw: 'USB-C ケーブル DP Alt Mode 対応', note: 'PC・表示機器側の仕様も確認' },
-  pTb4:    { name: 'Thunderbolt 4認証ケーブル', kw: 'Thunderbolt 4 認証 ケーブル 40Gbps', note: '40Gbpsと給電定格を型番で確認' },
-  pGen2:   { name: 'USB 10Gbpsデータケーブル', kw: 'USB-C ケーブル USB 10Gbps', note: '全接続経路の速度表記を照合' }
+  p60w:    { key: 'usbc-60w', name: 'USB-C 60W（3A）対応ケーブル', kw: 'USB-C ケーブル 60W 3A', note: '機器の必要電力と製品仕様を照合' },
+  p100w:   { key: 'usbc-100w', name: 'USB-C 100W（5A）対応ケーブル', kw: 'USB-C ケーブル 100W PD 5A eMarker', note: '20V・5Aの仕様と型番を確認' },
+  p240w:   { key: 'usbc-240w', name: 'USB-C 240W EPR対応ケーブル', kw: 'USB-C ケーブル 240W EPR PD3.1', note: 'PD 3.1/EPRの対応を型番で確認' },
+  pDpAlt:  { key: 'usbc-dp-alt', name: 'DP Alt Mode対応と明記されたUSB-Cケーブル', kw: 'USB-C ケーブル DP Alt Mode 対応', note: 'PC・表示機器側の仕様も確認' },
+  pTb4:    { key: 'usbc-thunderbolt-4', name: 'Thunderbolt 4認証ケーブル', kw: 'Thunderbolt 4 認証 ケーブル 40Gbps', note: '40Gbpsと給電定格を型番で確認' },
+  pGen2:   { key: 'usbc-usb-10gbps', name: 'USB 10Gbpsデータケーブル', kw: 'USB-C ケーブル USB 10Gbps', note: '全接続経路の速度表記を照合' }
 };
 
 const USES = [
@@ -619,7 +619,7 @@ function renderChooseResult() {
           <div class="p-name">${esc(p.name)}</div>
           ${p.note ? `<div class="p-note">${esc(p.note)}</div>` : ''}
         </div>
-        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
+        <a class="p-buy" href="${esc(amazonUrl(p.kw))}" data-item-key="${esc(p.key)}" data-track-label="${esc(p.name)}" target="_blank" rel="noopener sponsored nofollow">Amazonで探す</a>
       </div>`;
   });
   html += '</div>';

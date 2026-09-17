@@ -28,49 +28,49 @@
           "label": "WD Blue 内蔵HDD",
           "query": "WD Blue 内蔵HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "hdd-redplus-search": {
           "kind": "search",
           "label": "WD Red Plus NAS HDD",
           "query": "WD Red Plus NAS HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "hdd-red-search": {
           "kind": "search",
           "label": "WD Red 内蔵HDD",
           "query": "WD Red 内蔵HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "hdd-purple-search": {
           "kind": "search",
           "label": "WD Purple 監視カメラ HDD",
           "query": "WD Purple 監視カメラ HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "hdd-black-search": {
           "kind": "search",
           "label": "WD Black 内蔵HDD",
           "query": "WD Black 内蔵HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "hdd-model-search": {
           "kind": "search",
           "label": "HDD型番検索",
           "query": "HDD",
           "category": "hdd",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "mem-condition-search": {
           "kind": "search",
           "label": "メモリ条件検索",
           "query": "デスクトップ メモリ",
           "category": "memory",
-          "ownerReview": "pending"
+          "ownerReview": "approved"
         },
         "mem-team-ddr4-32": {
           "kind": "product",
