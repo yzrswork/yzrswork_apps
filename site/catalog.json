@@ -72,6 +72,20 @@
           "category": "memory",
           "ownerReview": "approved"
         },
+        "build-storage-search": {
+          "kind": "search",
+          "label": "ストレージ条件検索",
+          "query": "SSD HDD",
+          "category": "storage",
+          "ownerReview": "approved"
+        },
+        "build-power-search": {
+          "kind": "search",
+          "label": "電源条件検索",
+          "query": "PC 電源",
+          "category": "power",
+          "ownerReview": "approved"
+        },
         "mem-team-ddr4-32": {
           "kind": "product",
           "label": "TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2）",

@@ -109,6 +109,8 @@ const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
   'hdd-black-search',
   'hdd-model-search',
   'mem-condition-search',
+  'build-storage-search',
+  'build-power-search',
 ]);
 const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([
   'mem-team-ddr4-32',
@@ -509,6 +511,7 @@ const GATED_AFFILIATE_KEYS = {
     'hdd-model-search',
   ],
   mem: ['mem-condition-search'],
+  build: ['mem-condition-search', 'build-storage-search', 'build-power-search'],
 };
 for (const [slug, requiredKeys] of Object.entries(GATED_AFFILIATE_KEYS)) {
   const source = read(join(ROOT, slug, 'index.html'));
@@ -544,7 +547,6 @@ const LEGACY_AFFILIATE_REQUIREMENTS = {
   bench: { helper: 'AMAZON_ITEM_KEYS', metadata: 'data-item-key' },
   handa: { helper: 'function amazonUrl', metadata: 'data-item-key' },
   glue: { helper: 'function amazonUrl', metadata: 'data-item-key' },
-  build: { helper: 'buys.map', metadata: 'data-item-key' },
   neji: { helper: 'function amazonUrl', metadata: 'data-item-key' },
   pinout: { helper: 'GEAR_PRODUCTS', metadata: 'data-item-key' },
   usbc: { helper: 'const P =', metadata: 'data-item-key' },

@@ -86,33 +86,53 @@
   .sec-head .s-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
 
   .opts { display: flex; flex-direction: column; gap: 8px; }
-  .opt-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 15px; cursor: pointer; font-family: var(--jp); font-size: 14px; font-weight: 500; color: var(--ink); }
+  .opt-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 44px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 15px; cursor: pointer; font-family: var(--jp); font-size: 14px; font-weight: 500; color: var(--ink); }
   .opt-btn:hover, .opt-btn.active { border-color: var(--terracotta); }
   .opt-btn.active { background: var(--terracotta); color: #fff; }
   .opt-btn .o-meta { font-family: var(--mono); font-size: 11px; opacity: 0.8; }
   .opt-btn.active .o-meta { opacity: 0.95; }
 
+  .socket-info { margin-top: 8px; }
+  .info-empty, .info-card { border-radius: 10px; border: 1px solid var(--rule-soft); background: rgba(255,250,242,0.72); padding: 11px 13px; }
+  .info-empty { font-size: 12px; color: var(--muted); }
+  .info-card .ic-big { font-size: 14px; font-weight: 700; color: var(--terracotta-deep); }
+  .info-card .ic-line, .info-card .ic-note { font-size: 12px; color: var(--ink-soft); }
+  .info-card .ic-line { margin-top: 3px; }
+  .info-card .ic-note { margin-top: 7px; }
+  .info-card a { color: var(--terracotta-deep); }
+  .ddr-choices { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .ddr-choice { min-height: 44px; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 11px; background: var(--card); color: var(--ink); cursor: pointer; font: 500 12.5px var(--jp); }
+  .ddr-choice:hover, .ddr-choice[aria-pressed="true"] { border-color: var(--terracotta); background: var(--terracotta); color: #fff; }
+
   /* Summary */
-  .summary { margin-top: 22px; background: var(--ink); color: var(--paper); border-radius: 13px; padding: 18px 18px; }
+  .summary { margin-top: 22px; background: var(--ink); color: var(--paper); border-radius: 13px; padding: 18px 18px; overflow: hidden; }
   .summary h2 { font-size: 15px; margin: 0 0 12px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; color: #f0c9b8; }
   .sum-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed rgba(240,237,232,0.18); font-size: 13.5px; }
   .sum-row:last-of-type { border-bottom: none; }
-  .sum-row .k { color: #c9c2b6; }
-  .sum-row .v { font-weight: 700; text-align: right; }
+  .sum-row .k { color: #c9c2b6; min-width: 0; }
+  .sum-row .v { min-width: 0; overflow-wrap: anywhere; font-weight: 700; text-align: right; }
   .sum-row .v.pending { color: #8d857a; font-weight: 400; }
   .sum-buys { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .sum-buys a { background: var(--terracotta); color: #fff; text-decoration: none; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
+  .sum-buys a { display: inline-flex; align-items: center; min-height: 44px; background: var(--terracotta); color: #fff; text-decoration: none; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; }
   .sum-buys a:hover { background: var(--terracotta-deep); }
+  .sum-action { margin-top: 14px; }
+  .sum-accept { width: 100%; min-height: 44px; border: 1px solid #f0c9b8; border-radius: 8px; padding: 9px 12px; background: transparent; color: #f0c9b8; cursor: pointer; font: 600 13px var(--jp); }
+  .sum-accept:hover { background: #f0c9b8; color: var(--ink); }
   .sum-note { font-size: 11.5px; color: #b7b0a4; margin-top: 12px; line-height: 1.6; }
+  .summary-details { margin-top: 14px; border-top: 1px solid rgba(240,235,227,0.2); }
+  .summary-details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: #f0c9b8; font-size: 12px; }
+  .summary-details p, .summary-details li { color: rgba(240,235,227,0.84); font-size: 12px; }
+  .summary-details p { margin: 0 0 6px; }
+  .summary-details ul { margin: 0; padding-left: 18px; }
 
   .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .links a { font-size: 12.5px; color: var(--ink); text-decoration: none; border: 1px solid var(--rule-soft); border-radius: 14px; padding: 6px 12px; background: var(--card); }
+  .links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 12.5px; color: var(--ink); text-decoration: none; border: 1px solid var(--rule-soft); border-radius: 14px; padding: 6px 12px; background: var(--card); }
   .links a:hover { border-color: var(--terracotta); color: var(--terracotta); }
 
   .check { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 11px; padding: 6px 16px; }
   .check details { border-bottom: 1px solid var(--rule-soft); }
   .check details:last-child { border-bottom: none; }
-  .check summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 12px 0; list-style: none; }
+  .check summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 600; font-size: 14px; padding: 8px 0; list-style: none; }
   .check summary::-webkit-details-marker { display: none; }
   .check summary::before { content: "＋ "; color: var(--terracotta); font-family: var(--mono); }
   .check details[open] summary::before { content: "− "; }
@@ -128,6 +148,10 @@
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
   .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+  @media (max-width: 460px) {
+    .sum-row { display: block; }
+    .sum-row .v { margin-top: 3px; text-align: left; }
+  }
 
 </style>
 </head>
@@ -139,11 +163,12 @@
 
     <header class="hero">
       <h1>自作PC 構成プランナー<span class="en">— PC Build Planner</span></h1>
-      <p>CPUソケットから規格、用途から容量、GPUから電源の目安までを順に選ぶと、構成サマリーと買い物リンクが出ます。最後に組み立てチェックも。</p>
+      <p>CPU・マザーボードの規格、用途、ストレージ、GPUクラスから構成の目安を絞ります。最終互換性は各パーツの仕様で確認します。</p>
     </header>
 
-    <div class="sec-head"><span class="s-jp">1. CPU ソケット</span><span class="s-en">Socket → DDR</span></div>
+    <div class="sec-head"><span class="s-jp">1. CPU / プラットフォーム</span><span class="s-en">Socket → DDR</span></div>
     <div class="opts" id="sockets"></div>
+    <div class="socket-info" id="socket-info" aria-live="polite"></div>
 
     <div class="sec-head"><span class="s-jp">2. 用途（RAM容量）</span><span class="s-en">Use → RAM</span></div>
     <div class="opts" id="uses"></div>
@@ -171,7 +196,7 @@
           <li>静電気対策（金属に触れて放電。可能なら静電気手袋）</li>
           <li>マザーボードのマニュアルを手元に（コネクタ位置とビープの意味）</li>
           <li>CPUの向き（三角マークを合わせる）。ピン曲げ厳禁</li>
-          <li>メモリは<b>奥までカチッと</b>。2枚なら指定スロット（A2/B2が多い）</li>
+          <li>メモリは<b>奥までカチッと</b>。2枚ならマザーボード指定スロット（A2/B2が多い）</li>
         </ul>
       </details>
       <details>
@@ -180,14 +205,14 @@
           <li>24ピン主電源＋<b>CPU補助電源（8ピン）</b>の挿し忘れに注意</li>
           <li>GPUの補助電源（必要なら）。50系はカードごとに12V-2x6／16ピンまたは8ピン構成を確認</li>
           <li>フロントパネル配線（電源スイッチ/LED）はマニュアル通りに</li>
-          <li>SSD/HDDのSATA電源＋データ、M.2はネジ留め</li>
+          <li>SSD/HDDのSATA電源＋データ、M.2 SSDは<b>マザーボード指定の固定具で固定</b></li>
         </ul>
       </details>
       <details>
         <summary>初回起動</summary>
         <ul>
           <li>最初にBIOS（UEFI）に入って、CPU・メモリ・ストレージが認識されているか確認</li>
-          <li>メモリの表示速度を出すなら <b>XMP（Intel）/ EXPO（AMD）</b> を有効化</li>
+          <li>必要なら <b>XMP / EXPOなどの性能プロファイル</b>を設定。まず定格動作を確認</li>
           <li><b>ビープ音が鳴って起動しない</b>時は「直し方ナビ」の自作PC診断へ</li>
         </ul>
       </details>
@@ -198,7 +223,7 @@
       <p>計画から完成までの全記録はnoteで: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（ハブ記事）</a></p>
     </section>
 
-    <p class="disclaimer">※ 電源容量は、経年・増設・高負荷時の余裕を見込んだ当サイトの安全側ガイドです。NVIDIA公式の最小システム電力はRTX 5070が650W、RTX 5080が850Wですが、CPU/GPUの世代・OC・周辺機器・カードメーカー仕様で変わります。最終的には使用するGPUと電源メーカーの仕様、マザーの対応リスト（QVL）を確認してください。情報は2026年7月時点。</p>
+    <p class="disclaimer">※ このツールはDDR世代、RAM容量の開始点、ストレージの種類・用途、GPUクラスから見た電源ベースライン、基本チェックを整理するものです。最終判断は使用するCPU・GPU・マザーボード・電源の公式仕様とQVL、カード個別の端子・寸法で確認してください。情報は2026年7月時点。</p>
 
     <footer>
       <div>関連: <a href="https://note.com/yzrswork/n/nae5cdc6a50f1" target="_blank" rel="noopener noreferrer">はじめての自作PCまとめ（note）↗</a></div>
@@ -229,99 +254,181 @@
    ========================================================= */
 
 const SOCKETS = [
-  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', ddrSearch: 'DDR5' },
-  { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4', ddrSearch: 'DDR4-3200' },
-  { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: 'DDR4 または DDR5', ddrSearch: '' },
-  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', ddrSearch: 'DDR5' }
+  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5' },
+  { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4' },
+  { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: null },
+  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5' }
 ];
 const USES = [
-  { id: 'web', label: 'ブラウジング・文書', cap: '8〜16GB', search: '16GB' },
-  { id: 'game', label: 'ゲーム全般', cap: '16GB（16GB×1〜2）', search: '16GB' },
-  { id: 'creative', label: '軽量3D・動画編集', cap: '32GB（16GB×2）', search: '32GB 16GBx2' },
-  { id: 'ai', label: '生成AI・機械学習', cap: '32GB以上', search: '32GB 16GBx2' }
+  { id: 'web', label: 'ブラウジング・文書', cap: '8〜16GB', search: '8GB 16GB', detail: 'タブ数、通話、文書作成などの同時利用で必要量が増えます。' },
+  { id: 'game', label: 'ゲーム全般', cap: '16〜32GB', search: '16GB 32GB', detail: 'ゲームごとの差が大きいため、対象タイトルの推奨メモリ容量を確認します。' },
+  { id: 'creative', label: '軽量3D・動画編集', cap: '32GBから検討', search: '32GB 16GBx2', detail: '素材の解像度、タイムライン、シーンの複雑さ、同時使用ソフトで必要量が変わります。' },
+  { id: 'ai', label: 'ローカルAI・機械学習', cap: '32GBから検討（幅あり）', search: '32GB 16GBx2', detail: 'モデル・ソフト・GPU VRAM・オフロード方法で大きく変わります。システムRAMとVRAMは別物です。' }
 ];
 const STORAGES = [
   { id: 'os', label: 'OS・アプリ（起動用）', reco: 'NVMe SSD（M.2・1TB目安）', search: 'NVMe SSD 1TB M.2' },
   { id: 'game', label: 'ゲーム・録画', reco: '大容量SSD or HDD', search: 'SSD 2TB' },
-  { id: 'nas', label: 'NAS・RAID・24時間', reco: 'HDD Red Plus（RAID再構築・高負荷用途はCMRを強く推奨）', search: 'WD Red Plus NAS HDD' },
-  { id: 'archive', label: '写真・動画の長期保存', reco: '大容量HDD（CMR推奨）', search: 'WD HDD 4TB CMR' }
+  { id: 'nas', label: 'NAS・RAID・24時間', reco: 'NAS向けHDD（CMRを確認）', search: 'NAS HDD CMR' },
+  { id: 'archive', label: '写真・動画の長期保存', reco: '大容量HDD（CMRを確認）', search: 'HDD 4TB CMR' }
 ];
 const GPUS = [
-  { id: 'igpu', label: '内蔵GPU / ローエンド', psu: '450〜550W', search: '電源 550W 80PLUS' },
-  { id: 't3060', label: 'RTX 3060 / 4060 級', psu: '550W 目安', search: '電源 550W 80PLUS Bronze' },
-  { id: 't4070', label: 'RTX 4070 級', psu: '650W 目安', search: '電源 650W 80PLUS Gold' },
-  { id: 't5070', label: 'RTX 5070 級', psu: '安全側750〜850W（NVIDIA公式最小650W。補助電源端子はカード仕様を確認）', search: '電源 850W ATX3.1' },
-  { id: 't5080', label: 'RTX 5080 / ハイエンド', psu: '安全側1000W以上（NVIDIA公式最小850W。補助電源端子はカード仕様を確認）', search: '電源 1000W ATX3.1' }
+  { id: 'igpu', label: '内蔵GPU / ローエンド', psu: '450〜550W', search: '電源 550W 80PLUS', basis: '軽量な構成の開始点です。CPU、増設、周辺機器と実際の電源仕様を確認します。' },
+  { id: 't3060', label: 'RTX 3060 / 4060 級', psu: '550W〜', search: '電源 550W 80PLUS Bronze', basis: 'GPUメーカーの推奨値や最小システム電力を開始点に、CPU・周辺機器・増設を確認します。' },
+  { id: 't4070', label: 'RTX 4070 級', psu: '650W〜', search: '電源 650W 80PLUS Gold', basis: 'GPUメーカーの推奨値や最小システム電力を開始点に、CPU・周辺機器・増設を確認します。' },
+  { id: 't5070', label: 'RTX 5070 級', psu: '650W〜', search: '電源 650W ATX3.1', basis: 'NVIDIA公式の最小システム電力650Wを開始点にします。これは最終的な必要容量ではなく、実カード仕様とCPU・システム構成を確認するための基準です。' },
+  { id: 't5080', label: 'RTX 5080 / ハイエンド', psu: '850W〜', search: '電源 850W ATX3.1', basis: 'NVIDIA公式の最小システム電力850Wを開始点にします。これは最終的な必要容量ではなく、実カード仕様とCPU・システム構成を確認するための基準です。' }
 ];
 
-const sel = { socket: null, use: null, storage: null, gpu: null };
+const AFFILIATE_KEYS = Object.freeze({
+  memory: 'mem-condition-search',
+  storage: 'build-storage-search',
+  power: 'build-power-search'
+});
+const sel = { socket: null, ddrChoice: null, use: null, storage: null, gpu: null };
+let candidateAccepted = false;
+let lastResultKey = '';
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function amazonUrl(kw) {
-  return window.yzrsAffiliate.searchUrl(kw);
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function approvedAffiliateUrl(key, options) {
+  const api = window.yzrsAffiliate;
+  if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
+  if (!api.getProduct(key)) return null;
+  try { return api.urlFor(key, options); } catch (_) { return null; }
+}
+function selectedSocket() { return SOCKETS.find(x => x.id === sel.socket) || null; }
+function resolvedDdr() {
+  const socket = selectedSocket();
+  if (!socket) return null;
+  if (socket.id === 'lga1700') return /^DDR[45]$/.test(sel.ddrChoice || '') ? sel.ddrChoice : null;
+  return socket.ddr;
 }
 
 function renderOpts(containerId, list, key, metaFn) {
-  document.getElementById(containerId).innerHTML = list.map(o =>
-    `<button class="opt-btn${sel[key] === o.id ? ' active' : ''}" data-id="${o.id}"><span>${esc(o.label)}</span><span class="o-meta">${esc(metaFn(o))}</span></button>`).join('');
+  document.getElementById(containerId).innerHTML = list.map(o => {
+    const selected = sel[key] === o.id;
+    return `<button type="button" class="opt-btn${selected ? ' active' : ''}" data-id="${esc(o.id)}" aria-pressed="${selected ? 'true' : 'false'}"><span>${esc(o.label)}</span><span class="o-meta">${esc(metaFn(o))}</span></button>`;
+  }).join('');
   document.querySelectorAll('#' + containerId + ' .opt-btn').forEach(b =>
-    b.addEventListener('click', () => { sel[key] = b.getAttribute('data-id'); renderAll(); }));
+    b.addEventListener('click', () => {
+      const next = b.getAttribute('data-id');
+      if (sel[key] !== next) {
+        sel[key] = next;
+        candidateAccepted = false;
+        if (key === 'socket') sel.ddrChoice = null;
+      }
+      renderAll();
+    }));
 }
 
-function row(k, obj, valFn) {
-  if (!obj) return `<div class="sum-row"><span class="k">${k}</span><span class="v pending">未選択</span></div>`;
-  return `<div class="sum-row"><span class="k">${k}</span><span class="v">${esc(valFn(obj))}</span></div>`;
+function renderSocketInfo() {
+  const el = document.getElementById('socket-info');
+  if (!sel.socket) {
+    el.innerHTML = '<div class="info-empty">CPU / マザーボードを選ぶと、対応するDDR規格を確認できます。</div>';
+    return;
+  }
+  const socket = selectedSocket();
+  const ddr = resolvedDdr();
+  if (socket.id !== 'lga1700') {
+    el.innerHTML = `<div class="info-card"><div class="ic-big">対応DDR: ${esc(socket.ddr)}</div><div class="ic-line">CPU型番とマザーボードのメモリ仕様・QVLで、速度と容量を確認します。</div></div>`;
+    return;
+  }
+  const choice = sel.ddrChoice;
+  const line = choice === 'unknown'
+    ? 'マザーボードの製品ページ「メモリ」欄、またはスロット脇の刻印を確認してください。'
+    : choice
+      ? `${choice}マザーとして構成を整理します。実際のマザーボード仕様とQVLを優先してください。`
+      : 'DDR4マザー、DDR5マザー、わからない、のいずれかを選んでください。';
+  el.innerHTML = `<div class="info-card"><div class="ic-big">対応DDR: ${esc(ddr || '未確定')}</div><div class="ic-line">${esc(line)}</div><div class="ddr-choices" role="group" aria-label="LGA1700マザーのDDR規格"><button type="button" class="ddr-choice" data-ddr-choice="DDR4" aria-pressed="${choice === 'DDR4' ? 'true' : 'false'}">DDR4マザー</button><button type="button" class="ddr-choice" data-ddr-choice="DDR5" aria-pressed="${choice === 'DDR5' ? 'true' : 'false'}">DDR5マザー</button><button type="button" class="ddr-choice" data-ddr-choice="unknown" aria-pressed="${choice === 'unknown' ? 'true' : 'false'}">わからない</button></div><div class="ic-note">規格が未確定の間は、完成したメモリ候補と購入リンクを表示しません。<a href="../mem/" data-related-slug="mem">メモリ選びナビで詳しく確認</a></div></div>`;
+  el.querySelectorAll('[data-ddr-choice]').forEach(b => b.addEventListener('click', () => {
+    const next = b.getAttribute('data-ddr-choice');
+    if (sel.ddrChoice !== next) candidateAccepted = false;
+    sel.ddrChoice = next;
+    renderAll();
+  }));
+}
+
+function row(label, value, pending = false) {
+  const missing = value === null || value === undefined;
+  const state = missing || pending ? ' pending' : '';
+  return `<div class="sum-row"><span class="k">${esc(label)}</span><span class="v${state}">${missing ? '未選択' : esc(value)}</span></div>`;
 }
 
 function renderSummary() {
-  const s = SOCKETS.find(x => x.id === sel.socket);
-  const u = USES.find(x => x.id === sel.use);
-  const st = STORAGES.find(x => x.id === sel.storage);
-  const g = GPUS.find(x => x.id === sel.gpu);
+  const socket = selectedSocket();
+  const use = USES.find(x => x.id === sel.use);
+  const storage = STORAGES.find(x => x.id === sel.storage);
+  const gpu = GPUS.find(x => x.id === sel.gpu);
+  const ddr = resolvedDdr();
+  const complete = Boolean(socket && ddr && use && storage && gpu);
+  const ddrValue = socket && socket.id === 'lga1700' && !ddr ? '未確定（マザー仕様を確認）' : ddr;
 
   let html = '<h2>構成サマリー</h2>';
-  html += row('規格（DDR）', s, o => o.ddr);
-  html += row('メモリ容量', u, o => o.cap);
-  html += row('ストレージ', st, o => o.reco);
-  html += row('電源の目安', g, o => o.psu);
+  html += row('CPU / プラットフォーム', socket && socket.label);
+  html += row('規格（DDR）', ddrValue, Boolean(socket && !ddr));
+  html += row('RAM容量', use && use.cap);
+  html += row('ストレージ', storage && storage.reco);
+  html += row('GPUクラス', gpu && gpu.label);
+  html += row('電源ベースライン', gpu && gpu.psu);
 
-  // 買い物リンク
-  const buys = [];
-  if (s && u) {
-    const ddrKw = s.ddrSearch || 'DDR4 DDR5';
-    buys.push({
-      key: `build-memory-${s.id}-${u.id}`,
-      label: 'メモリ',
-      query: (ddrKw + ' ' + u.search + ' デスクトップ メモリ').trim()
-    });
-  }
-  if (st) buys.push({ key: `build-storage-${st.id}`, label: 'ストレージ', query: st.search });
-  if (g) buys.push({ key: `build-power-${g.id}`, label: '電源', query: g.search });
-  if (buys.length) {
-    html += '<div class="sum-buys">' + buys.map(b =>
-      `<a href="${esc(amazonUrl(b.query))}" data-item-key="${esc(b.key)}" data-track-label="${esc(b.label)}" target="_blank" rel="noopener sponsored nofollow">🛒 ${esc(b.label)}</a>`).join('') + '</div>';
+  if (!complete) {
+    html += '<div class="sum-note">4項目と、必要な場合はDDR規格を選ぶと、この構成を候補にできます。</div>';
+  } else if (!candidateAccepted) {
+    html += '<div class="sum-action"><button type="button" class="sum-accept" data-accept-config aria-pressed="false">この構成を候補にする</button><div class="sum-note">候補を確定すると、条件検索のリンクを表示します。選択を変更すると確定は解除されます。</div></div>';
+  } else {
+    const buys = [
+      { key: AFFILIATE_KEYS.memory, label: 'メモリ', query: `${ddr} ${use.search} デスクトップ メモリ` },
+      { key: AFFILIATE_KEYS.storage, label: 'ストレージ', query: storage.search },
+      { key: AFFILIATE_KEYS.power, label: '電源', query: gpu.search }
+    ].map(item => ({ ...item, url: approvedAffiliateUrl(item.key, { query: item.query }) })).filter(item => item.url);
+    if (buys.length) {
+      html += '<div class="sum-buys">' + buys.map(item =>
+        `<a href="${esc(item.url)}" data-product-key="${esc(item.key)}" data-track-label="${esc(item.label)}" target="_blank" rel="noopener noreferrer sponsored nofollow">${esc(item.label)}を探す ↗</a>`).join('') + '</div>';
+      html += '<div class="sum-note">表示しているのは承認済みの一般条件検索です。購入前に実際の型番・容量・端子・寸法を確認してください。</div>';
+    } else {
+      html += '<div class="sum-note">承認済みの検索候補を表示できませんでした。候補の内容だけ確認し、公式仕様から選んでください。</div>';
+    }
   }
 
-  if (s && s.id === 'lga1700') {
-    html += '<div class="sum-note">LGA1700はマザーボードによりDDR4専用／DDR5専用が分かれます。スロット表記を必ず確認してください。</div>';
+  const detailItems = [
+    'このツールはDDR世代、RAM容量の開始点、ストレージの種類・用途、GPUクラスから見た電源ベースライン、基本チェックを整理します。',
+    'BIOSでのCPU対応、クーラー・GPU・ケースの寸法干渉、M.2のレーン共有やPCIe分岐（bifurcation）、正確なコネクタ数・GPUパートナー/カード個別仕様・冷却条件は自動判定しません。'
+  ];
+  if (socket) detailItems.push(`${socket.label}: ${ddr ? `${ddr}を前提に整理しています。` : 'マザーボードのメモリ仕様が未確認です。'} CPU公式仕様とQVLを優先してください。`);
+  if (use) detailItems.push(`RAM容量の考え方: ${use.detail}`);
+  if (gpu) detailItems.push(`電源ベースライン: ${gpu.basis}`);
+  if (gpu && (gpu.id === 't5070' || gpu.id === 't5080')) {
+    detailItems.push('ATX 3.1 / native 12V-2x6は、新しい電源と高消費電力GPUでは候補になりますが、すべてのRTX 50系・構成に必須ではありません。ATX 3.1だけで互換性は確定せず、PCIe CEM仕様とATX電源仕様も別物です。実カードの補助電源端子を優先してください。');
   }
-  if (g && (g.id === 't5070' || g.id === 't5080')) {
-    html += '<div class="sum-note">RTX 50系はPCIe CEM 5.1準拠のATX 3.x電源が安全側です。12V-2x6／16ピンや8ピンなど、実際の補助電源端子はカードメーカーの仕様を確認してください。</div>';
-  }
-  if (!s && !u && !st && !g) {
-    html += '<div class="sum-note">上の1〜4を選ぶと、ここに構成と買い物リンクが集まります。</div>';
-  }
+  html += `<details class="summary-details"><summary>詳しく見る</summary><ul>${detailItems.map(item => `<li>${esc(item)}</li>`).join('')}</ul></details>`;
+
   document.getElementById('summary').innerHTML = html;
-  if (s && u && st && g) {
-    if (window.yzrsTrackResult) window.yzrsTrackResult('pc_build_summary', 'pc');
+  const accept = document.querySelector('[data-accept-config]');
+  if (accept) accept.addEventListener('click', () => { candidateAccepted = true; renderAll(); });
+
+  if (!complete) {
+    lastResultKey = '';
+  } else {
+    const resultKey = [socket.id, ddr, use.id, storage.id, gpu.id].join(':');
+    if (resultKey !== lastResultKey) {
+      lastResultKey = resultKey;
+      if (window.yzrsTrackResult) window.yzrsTrackResult('pc_build_summary', 'pc');
+    }
   }
 }
 
 function renderAll() {
-  renderOpts('sockets', SOCKETS, 'socket', o => o.ddr);
+  renderOpts('sockets', SOCKETS, 'socket', o => o.ddr || 'DDR4 / DDR5');
   renderOpts('uses', USES, 'use', o => o.cap);
   renderOpts('storages', STORAGES, 'storage', o => o.reco);
   renderOpts('gpus', GPUS, 'gpu', o => o.psu);
+  renderSocketInfo();
   renderSummary();
 }
 
