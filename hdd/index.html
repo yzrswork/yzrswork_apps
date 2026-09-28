@@ -148,7 +148,8 @@
   .check-out .verdict { font-weight: 700; font-family: var(--mono); }
   .check-out .v-cmr { color: var(--ok); }
   .check-out .v-smr { color: var(--warn); }
-  .check-out .v-exact { color: var(--ok); }
+  .check-out .v-exact-cmr { color: var(--ok); }
+  .check-out .v-exact-smr { color: var(--warn); }
   .check-out .v-hint { color: var(--terracotta-deep); }
   .check-out .v-unknown { color: var(--muted); }
   .check-out .v-invalid { color: var(--muted); }
@@ -292,7 +293,7 @@
 /* ---------- 色データ ---------- */
 const COLORS = {
   blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '普段使いのHDD・大容量保存向け。', recLabel: '候補ファミリー', warn: 'Blueは型番によってCMR / SMRが異なるため、完全な型番を確認。', productKey: 'hdd-blue-search' },
-  redplus: { name: 'WD Red Plus / Pro', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', recLabel: '候補ファミリー', warn: 'Red Plus / Proでも、購入前に完全な型番と公式仕様を確認。', productKey: 'hdd-redplus-search' },
+  redplus: { name: 'WD Red Plus', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', recLabel: '候補ファミリー', warn: 'Red Plusでも、購入前に完全な型番と公式仕様を確認。', productKey: 'hdd-redplus-search' },
   red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '歴史的なモデル情報の確認用。', recLabel: '上級者向け情報', warn: '安価なNASの初心者候補にはせず、現行候補はRed Plus / Proを確認。', productKey: 'hdd-red-search' },
   purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', recLabel: '候補ファミリー', warn: '用途特化のシリーズ。完全な型番と公式仕様を確認。', productKey: 'hdd-purple-search' },
   black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能HDD・大容量ゲームライブラリ向け。', recLabel: '候補ファミリー', warn: '速度重視の作業領域はSSDも比較。完全な型番を確認。', productKey: 'hdd-black-search' }
@@ -383,6 +384,7 @@ function renderResult() {
   const choice = USES[activeUse];
   if (choice.kind === 'ssd') {
     el.innerHTML = `<div class="ssd-card"><div class="ssd-title">速度重視ならSSDを先に検討</div><p>${esc(choice.note)}</p></div>`;
+    if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
     return;
   }
   const c = COLORS[choice.color];
@@ -461,7 +463,8 @@ function checkModel(raw) {
           return url ? `<a class="model-buy" href="${esc(url)}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 承認済みの型番検索</a>` : '<div class="v-note">承認済みの検索導線を利用できません。</div>';
         })()
       : '<button type="button" class="model-accept" id="accept-model">この型番を候補にする</button>';
-    out.innerHTML = `<span class="verdict v-exact">${label}</span>（登録済み型番）<div class="v-note">${esc(result.hit.note)}。購入前にWD公式の仕様も再確認してください。</div>${action}`;
+    const exactClass = result.hit.v === 'cmr' ? 'v-exact-cmr' : 'v-exact-smr';
+    out.innerHTML = `<span class="verdict ${exactClass}">${label}</span>（登録済み型番）<div class="v-note">${esc(result.hit.note)}。購入前にWD公式の仕様も再確認してください。</div>${action}`;
     const accept = document.getElementById('accept-model');
     if (accept) accept.addEventListener('click', () => {
       modelCandidateAccepted = true;
