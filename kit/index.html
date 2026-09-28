@@ -117,6 +117,37 @@
     color: var(--ink-soft); font-size: 12.5px;
   }
 
+  /* ── First project decision ── */
+  .first-decision {
+    margin: 22px 0 20px; padding: 15px;
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 12px;
+  }
+  .first-decision .decision-kicker {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    color: var(--terracotta); text-transform: uppercase;
+  }
+  .first-decision h2 { margin: 4px 0 6px; font-size: 18px; line-height: 1.4; }
+  .first-decision > p { margin: 0; color: var(--ink-soft); font-size: 12.5px; }
+  .decision-options {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px; margin-top: 12px;
+  }
+  .decision-option {
+    min-height: 76px; padding: 10px 12px; border: 1px solid var(--rule);
+    border-radius: 9px; background: var(--paper); color: var(--ink);
+    font-family: var(--jp); text-align: left; cursor: pointer;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  }
+  .decision-option strong { font-size: 13.5px; line-height: 1.4; }
+  .decision-option span { color: var(--muted); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
+  .decision-option:hover { border-color: var(--terracotta); }
+  .decision-option[aria-pressed="true"] {
+    border-color: var(--terracotta); background: rgba(181, 69, 27, 0.08);
+    box-shadow: inset 0 0 0 1px var(--terracotta);
+  }
+  .decision-note { margin-top: 10px !important; min-height: 1.65em; color: var(--ink-soft) !important; }
+
   /* ── Group heading ── */
   .group-head {
     display: flex; align-items: baseline; gap: 10px;
@@ -132,8 +163,9 @@
     transition: opacity 160ms ease;
   }
   .item.owned { opacity: 0.5; }
+  .item.deferred { border-style: dashed; }
   .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
-  .item .it-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
+  .item .it-title { flex: 1 1 12rem; min-width: 0; font-weight: 700; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
   .item .it-basis {
     display: inline-flex; align-items: center; min-height: 22px; padding: 2px 8px;
     border: 1px solid var(--rule-soft); border-radius: 999px;
@@ -143,13 +175,39 @@
   .item .it-basis.basis-used { color: var(--ok); border-color: var(--ok); background: rgba(79, 111, 62, 0.07); }
   .item .it-basis.basis-article { color: var(--terracotta-deep); border-color: var(--terracotta); background: rgba(181, 69, 27, 0.06); }
   .item .it-basis.basis-spec { color: var(--muted); }
-  .item .it-why { font-size: 13px; color: var(--muted); margin: 4px 0 8px; }
-  .item .it-reco {
-    font-size: 13px; color: var(--ink-soft);
-    background: rgba(181, 69, 27, 0.05); border-left: 3px solid var(--terracotta);
-    padding: 7px 11px; border-radius: 0 6px 6px 0; margin: 0 0 10px;
+  .item .it-why { font-size: 13px; color: var(--muted); margin: 5px 0 8px; }
+  .item .it-label {
+    display: block; margin-bottom: 2px; font-family: var(--mono); font-size: 10px;
+    font-weight: 600; letter-spacing: 0.06em; color: var(--terracotta);
   }
-  .item .it-reco .pick { font-weight: 700; color: var(--ink); }
+  .item .it-criteria, .item .it-specs {
+    margin: 0 0 8px; padding: 7px 10px; border-left: 3px solid var(--rule);
+    color: var(--ink-soft); font-size: 12.5px; overflow-wrap: anywhere;
+  }
+  .item .it-criteria { border-color: var(--terracotta); background: rgba(181, 69, 27, 0.04); }
+  .item .it-specs { border-color: var(--rule); background: rgba(70, 50, 30, 0.025); }
+  .item .it-reco {
+    font-size: 12.5px; color: var(--ink-soft);
+    background: rgba(70, 50, 30, 0.025); border-left: 2px solid var(--rule);
+    padding: 7px 10px; border-radius: 0 6px 6px 0; margin: 0 0 8px;
+  }
+  .item .it-reco .it-label { color: var(--muted); }
+  .item .it-reco .pick { font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+  .item .it-decision-note {
+    margin: 0 0 8px; padding: 7px 10px; border-radius: 7px;
+    background: rgba(79, 111, 62, 0.08); color: var(--ok); font-size: 12.5px;
+  }
+  .item .it-related { margin: -2px 0 8px; color: var(--muted); font-size: 11.5px; overflow-wrap: anywhere; }
+  .item .it-related a {
+    display: inline-flex; align-items: center; min-height: 44px; color: var(--terracotta);
+    font-weight: 500; text-decoration: underline; text-underline-offset: 2px;
+  }
+  .item .it-details { margin: -2px 0 8px; border-top: 1px dashed var(--rule-soft); }
+  .item .it-details summary {
+    min-height: 44px; display: flex; align-items: center; cursor: pointer;
+    color: var(--muted); font-size: 11.5px;
+  }
+  .item .it-details p { margin: 0 0 8px; color: var(--ink-soft); font-size: 12px; overflow-wrap: anywhere; }
   .item .it-tip { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; margin: 0 0 10px; }
   .item .it-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -236,11 +294,20 @@
   .mini.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .mini.del { color: var(--terracotta); }
   .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
-  .modal .m-row button { flex: 1; min-height: 44px; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal .m-row { flex-wrap: wrap; }
+  .modal .m-row button { flex: 1 1 110px; min-width: 0; min-height: 44px; padding: 11px; border-radius: 8px; font-family: var(--jp); font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
   .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin: 14px 0 6px; letter-spacing: 0.05em; }
   .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
   .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+  @media (max-width: 460px) {
+    .decision-options { grid-template-columns: 1fr; }
+    .cart-item { flex-direction: column; align-items: stretch; gap: 6px; }
+    .cart-item .ci-actions { flex-wrap: wrap; }
+    .cart-item .ci-actions .mini { flex: 1 1 120px; justify-content: center; min-width: 0; }
+    .modal .m-row { flex-direction: column; }
+    .modal .m-row button { flex-basis: auto; width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -254,12 +321,29 @@
       <p>電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、買い物リストに集約。持っているものは「持ってる」で消し込めます。</p>
     </header>
 
+    <section class="first-decision" aria-labelledby="first-decision-title">
+      <div class="decision-kicker">First project decision</div>
+      <h2 id="first-decision-title">今回の工作にはんだ付けが必要？</h2>
+      <p>作るものと工程を先に決めます。はんだ付け不要なら、はんだごては今は買わなくて大丈夫。必要なら、Step 1の温調式を基本候補にします。</p>
+      <div class="decision-options" role="group" aria-label="今回の工作ではんだ付けが必要か">
+        <button type="button" class="decision-option" data-project-decision="no-solder" aria-pressed="false">
+          <strong>不要：まずは仮組み</strong>
+          <span>ブレッドボードやモジュールで試すなら、温調式はんだごてを今は買わない。</span>
+        </button>
+        <button type="button" class="decision-option" data-project-decision="solder" aria-pressed="false">
+          <strong>必要：温調式を基本候補に</strong>
+          <span>配線や部品を固定する工作なら、Step 1の温調式はんだごてから検討する。</span>
+        </button>
+      </div>
+      <p class="decision-note" id="project-decision-note" role="status">選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。</p>
+    </section>
+
     <div class="chips" id="chips"></div>
     <div class="toolbar-row">
       <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
       <span class="count-note" id="ownCount"></span>
     </div>
-    <p class="list-hint">まず「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
+    <p class="list-hint">上の判断と作るものを決めたら、「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
 
     <div id="list"></div>
 
@@ -269,8 +353,8 @@
         <article class="guide-card wide">
           <h2 id="buying-guide-title">買う前に決める3段階</h2>
           <ol>
-            <li><strong>作るものを決める：</strong>まず試したい回路や工作を一つ決め、必要な作業を洗い出します。</li>
-            <li><strong>手持ちを確認する：</strong>代用できる工具や残っている部品を「持ってる」で消し込みます。</li>
+            <li><strong>はんだ付けの有無を決める：</strong>まず試したい回路や工作の工程を見て、必要なら温調式を候補にします。</li>
+            <li><strong>作るものと手持ちを確認する：</strong>代用できる工具や残っている部品を「持ってる」で消し込みます。</li>
             <li><strong>今いる物だけ選ぶ：</strong>必須品から始め、補助工具や大量ストックは困りごとが出てから足します。</li>
           </ol>
         </article>
@@ -288,7 +372,7 @@
         </article>
         <article class="guide-card">
           <h3>買い直しを減らす判断</h3>
-          <p>最安値だけで一式を揃えず、最初はStep 1に絞ります。温度調整のように後から必要になりやすい機能は先に確保し、直流安定化電源のような発展工具は用途が生まれてから。消耗品は、使い切る量と保管場所も含めて選びます。</p>
+          <p>最安値だけで一式を揃えず、まずは今回の工作に必要な判断から。はんだ付け不要なら、はんだごては今は買わなくて大丈夫です。必要なら温調式を選び、直流安定化電源のような道具は条件が生まれてから。消耗品は、使い切る量と保管場所も含めて選びます。</p>
         </article>
         <article class="guide-card">
           <h3>このナビの限界</h3>
@@ -359,9 +443,9 @@
 
 /* ---------- カテゴリ定義（表示順） ---------- */
 const GROUPS = [
-  { cat: 'tool-1', jp: 'Step 1・まず絶対いる', en: 'Essential tools', kind: 'tool' },
+  { cat: 'tool-1', jp: 'Step 1・今回の工作に必要', en: 'Start with the project', kind: 'tool' },
   { cat: 'tool-2', jp: 'Step 2・あると作業が変わる', en: 'Soon', kind: 'tool' },
-  { cat: 'tool-3', jp: 'Step 3・慣れてきたら', en: 'Later', kind: 'tool' },
+  { cat: 'tool-3', jp: 'Step 3・必要になったら', en: 'When needed', kind: 'tool' },
   { cat: 'stock',  jp: '部品ストック', en: 'Parts to stock', kind: 'stock' }
 ];
 
@@ -369,26 +453,27 @@ const GROUPS = [
 const BASIS_LABELS = { used: '実使用', article: '記事で紹介', spec: '仕様候補' };
 const ITEMS = [
   // Step 1
-  { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: '電子工作の基本工具。最初から温度調整付きを選ぶと、作業の幅を広げやすく買い直しも減らせます。', pick: 'HAKKO FX600A（原文で紹介したAmazon限定クリアタイプ。FX-600系・温調200〜500℃）＋こて台', kw: 'HAKKO FX600A はんだこて 温調 こて台', basis: 'used' },
-  { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作', basis: 'article' },
-  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'ハンダ付けせず回路を仮組みして「動くか試す」。', pick: 'ブレッドボード＋ジャンパー線セット', kw: 'ブレッドボード ジャンパー線 セット', basis: 'spec' },
+  { id: 'iron', cat: 'tool-1', title: 'ハンダごて（温調式）', why: 'はんだ付けで配線や部品を固定するための工具。不要な工作なら、今は買わなくて大丈夫。', criteria: '今回の工作にはんだ付けが必要か。必要なら、安価な固定温度品より温調式を基本候補にする。', specs: '温度調整範囲、こて先の交換性、こて台。初心者は温度を合わせられることを優先。', pick: 'HAKKO FX600A（原文で紹介したAmazon限定クリアタイプ。FX-600系・温調200〜500℃）＋こて台', kw: 'HAKKO FX600A はんだこて 温調 こて台', basis: 'used' },
+  { id: 'nipper', cat: 'tool-1', title: 'ニッパー', why: 'リード線や部品の足を切る。切れ味で差が出る工具。', criteria: '切る線材・部品足の太さに刃先が合い、握りやすく安全に切れるか。', specs: '切断能力、刃先形状、グリップ、交換や買い直しのしやすさ。', pick: 'ENGINEER ニッパー', kw: 'ENGINEER ニッパー 電子工作', basis: 'article' },
+  { id: 'breadboard', cat: 'tool-1', title: 'ブレッドボード＋ジャンパー線セット', why: 'はんだ付けせず回路を仮組みして「動くか試す」。', criteria: 'まず試作・動作確認をしたい回路か。はんだ付け不要の工作では、温調式はんだごてより先に検討する。', specs: '2.54mmピッチ、接点数、電源レール、ジャンパー線との適合。', pick: 'ブレッドボード＋ジャンパー線セット', kw: 'ブレッドボード ジャンパー線 セット', basis: 'spec' },
   // Step 2
-  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '導通や電圧を測り、「つながっていない」「電圧が想定と違う」といった原因候補を切り分けやすくします。', pick: 'AstroAI 4000カウントモデル（原文の実使用品。型番と現行仕様は購入時に照合）', kw: 'AstroAI テスター 4000カウント オートレンジ', basis: 'used' },
-  { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に刺しやすくなる。標準プローブの不満を解消。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03', basis: 'article' },
-  { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300', basis: 'used' },
-  { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '被覆を銅線を傷つけず剥がす。細いシリコン線もサクッと。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01', basis: 'used' },
+  { id: 'tester', cat: 'tool-2', title: 'テスター（マルチメーター）', why: '導通確認・電圧確認・トラブル診断に使い、「つながっていない」「電圧が想定と違う」といった原因候補を切り分けやすくします。', criteria: '初心者の主用途は導通確認と電圧確認。電流測定を最初から気軽に勧める道具ではない。', specs: '直流電圧レンジ、導通ブザー、リード端子表示、ヒューズ定格。', detail: '電流測定は回路の電流経路へDMMを入れる測り方です。リードを電流測定用ソケットへ差し替え、レンジを設定します。誤接続や電圧源への並列接続はショートやヒューズ切れの原因になるため、最初の確認は導通・電圧から始めます。', pick: 'AstroAI 4000カウントモデル（原文の実使用品。型番と現行仕様は購入時に照合）', kw: 'AstroAI テスター 4000カウント オートレンジ', basis: 'used' },
+  { id: 'probe', cat: 'tool-2', title: 'テスタープローブ（極細ニードル）', why: '狭い箇所に当てやすくなる。標準プローブの不満を解消。', criteria: '測りたいテストポイントへ無理なく当てられ、手元が安定するか。', specs: '先端形状、絶縁、リード長、使用するテスター端子との適合。', pick: '金メッキ 極細ニードルタイプ T-03', kw: 'テスターリード 極細 ニードル T-03', basis: 'article' },
+  { id: 'stand', cat: 'tool-2', title: 'サポートスタンド', why: '基板や部品をクリップで固定。「押さえる手がない」を解決。', criteria: '両手を使う作業や、基板を安定させたい場面があるか。', specs: 'クリップの開き、台座の安定性、換装部品の入手性。', pick: '新富士バーナー RZ-300（ネジはステン蝶ボルト換装推奨）', kw: '新富士バーナー サポートスタンド RZ-300', basis: 'used' },
+  { id: 'stripper', cat: 'tool-2', title: 'ワイヤーストリッパー', why: '銅線を傷つけず被覆を剥がす。細いシリコン線もサクッと。', criteria: '扱う線材の太さ・被覆に合い、芯線を傷つけず剥けるか。', specs: '対応電線径、自動調節の有無、刃の交換性、握りやすさ。', pick: 'ENGINEER PAW-01（電線径 自動調節）', kw: 'ENGINEER ワイヤーストリッパー PAW-01', basis: 'used' },
+  { id: 'usb-meter', cat: 'tool-2', title: 'USBインライン電圧・電流計', why: 'USB電源とUSB負荷の給電経路へ入れて、電圧・電流を確認する。', criteria: 'USB給電の状態を確認したいが、DMMを電流測定用に組み替えたくないときの中間候補。', specs: 'connector compatibility、voltage rating、current rating、PD対応 / pass-through対応の要否、使用するUSB電源との適合を候補ごとに確認。', pick: '必要なUSB端子・電圧/電流定格・PD/パススルー条件を満たす汎用の仕様候補', kw: 'USB インライン 電圧 電流計', amazonLabel: 'Amazonで仕様候補を検索', relatedSlug: 'usbc', basis: 'spec' },
   // Step 3
-  { id: 'psu', cat: 'tool-3', title: '直流安定化電源', why: '電圧・電流を自分で設定。ラズパイ/Arduinoで「電源を安定させたい」と思ってからで十分。', pick: 'Jesverty SPS-3010M（30V/10A・USB Type-A/Type-C端子・エンコーダ。最新仕様は購入時に確認）', kw: 'Jesverty 直流安定化電源 SPS-3010M 30V 10A', basis: 'article' },
+  { id: 'psu', cat: 'tool-3', title: '直流安定化電源', why: '可変電圧や電流制限を使い、USB給電では足りない・より制御された電源条件が必要なときに使う。', criteria: '対象回路が必要とする電圧・電流、電流制限の要否、USB給電で足りるかを確認してから。', specs: '出力電圧範囲、最大電流、電流制限、表示分解能、保護機能。USB supply voltage、board logic/GPIO voltage、attached load voltageは別々に確認。', pick: 'Jesverty SPS-3010M（30V/10A・USB Type-A/Type-C端子・エンコーダ。最新仕様は購入時に確認）', kw: 'Jesverty 直流安定化電源 SPS-3010M 30V 10A', basis: 'article' },
   // 部品ストック
-  { id: 'jumper', cat: 'stock', title: 'ジャンパー線', why: 'オス-オス/オス-メス/メス-メスの3種セットでほぼ対応。', pick: 'ELEGOO 120pcs 多色デュポンワイヤー', kw: 'ELEGOO ジャンパーワイヤー 120本 セット', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
-  { id: 'resistor', cat: 'stock', title: '抵抗セット', why: 'LEDを焼かないための必須部品。収納ケース付きが整理に効く。', pick: 'GOODCHI 600個（10Ω〜1MΩ・30種・各20）', kw: 'GOODCHI 金属皮膜抵抗 600個 セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
-  { id: 'elcap', cat: 'stock', title: '電解コンデンサ', why: '電源の平滑化・低周波ノイズ除去。容量幅の広いセットが便利。', pick: 'YFFSDC 200個（0.1μF〜1000μF・15種）', kw: '電解コンデンサ セット 200個 0.1uF 1000uF', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
-  { id: 'ceracap', cat: 'stock', title: 'セラミックコンデンサ', why: 'パスコン用。0.1μF（104）を大量に使うので多めに。', pick: 'オーディオファン 300個（2pF〜100nF・30種）', kw: 'セラミックコンデンサ セット 300個 30種類', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
-  { id: 'led', cat: 'stock', title: 'LED（各色）', why: '動作確認でとにかく使う。赤緑青黄白を100本単位で。', pick: 'LED 5色アソートセット', kw: 'LED 5色 セット 電子工作 アソート', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
-  { id: 'shrink', cat: 'stock', title: '熱収縮チューブ', why: '配線の絶縁。見た目もきれいに、ショートも防ぐ。', pick: '複数サイズ＋収納ケース付きセット', kw: '熱収縮チューブ セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
-  { id: 'solder', cat: 'stock', title: 'ハンダ（消耗品）', why: '品質が作業に直結。チャイナ便は溶け方が微妙なことがある。', pick: 'goot SD-83（スズ60/鉛40・φ1.0mm・日本製）', kw: 'goot はんだ SD-83 1.0mm 日本製', tip: '消耗品は国産推奨', basis: 'used' },
-  { id: 'wick', cat: 'stock', title: 'ハンダ吸い取り線', why: '失敗を吸い取る。こての出番より多いかも。国産はフラックスが素直。', pick: 'goot CP-3015（幅3.0mm・1.5m・日本製）', kw: 'goot はんだ吸取線 CP-3015 3.0mm', tip: '消耗品は国産推奨', basis: 'used' },
-  { id: 'protoboard', cat: 'stock', title: 'ユニバーサル基板', why: '仮組みした回路をハンダ付けで固定。消耗が遅いのでまとめ買い向き。', pick: '必要な穴数・外形に合うサイズ', kw: 'ユニバーサル基板 セット', tip: '価格・数量・配送予定を購入時に比較', basis: 'spec' }
+  { id: 'jumper', cat: 'stock', title: 'ジャンパー線', why: 'ブレッドボードやモジュールをつなぐ配線。', criteria: '作る回路に必要なオス/メス、長さ、本数を先に確認。', specs: 'コネクタ形状、線長、ピン間隔、必要数量。少量のセットから始めてもよい。', pick: 'ELEGOO 120pcs 多色デュポンワイヤー', kw: 'ELEGOO ジャンパーワイヤー 120本 セット', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'resistor', cat: 'stock', title: '抵抗セット', why: '回路図で指定された抵抗値を使い、LEDや入力を保護する。', criteria: '最初の回路で必要な抵抗値と数量を先に確認。大容量セットを必須にしない。', specs: '抵抗値、許容差、電力定格、必要数量＋少量の予備。よく使う値が分かってからアソートを選んでもよい。', pick: '記事で紹介した例：GOODCHI 600個（10Ω〜1MΩ・30種・各20）。初回は必要な値だけの少量購入でもよい。', kw: 'GOODCHI 金属皮膜抵抗 600個 セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'elcap', cat: 'stock', title: '電解コンデンサ', why: '電源の平滑化・低周波ノイズ除去に使う。', criteria: '回路図で必要な容量と数量を確認し、容量幅の広いセットを最初から買う必要があるか判断。', specs: '静電容量、定格電圧、極性、必要数量＋少量の予備。', pick: '記事で紹介した例：YFFSDC 200個（0.1μF〜1000μF・15種）。必要な容量だけを少量で始めてもよい。', kw: '電解コンデンサ セット 200個 0.1uF 1000uF', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'ceracap', cat: 'stock', title: 'セラミックコンデンサ', why: 'パスコンや高周波ノイズ対策に使う。', criteria: '最初の回路で指定された容量と数量を確認。0.1μF（104）が必要でも、大量セットは必須ではない。', specs: '静電容量、定格電圧、温度特性、必要数量＋少量の予備。', pick: '記事で紹介した例：オーディオファン 300個（2pF〜100nF・30種）。必要な容量が分かってからアソートを足してもよい。', kw: 'セラミックコンデンサ セット 300個 30種類', tip: 'Amazonでお届け予定日を確認', basis: 'article' },
+  { id: 'led', cat: 'stock', title: 'LED（各色）', why: '動作確認や表示に使う。', criteria: '回路で必要な色・数量・順方向電圧を確認。色数や100本単位の購入を最初から前提にしない。', specs: '色、サイズ、順方向電圧・電流、必要数量＋少量の予備。', pick: 'LED 5色アソートセット', kw: 'LED 5色 セット 電子工作 アソート', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
+  { id: 'shrink', cat: 'stock', title: '熱収縮チューブ', why: '配線の絶縁。見た目もきれいに、ショートも防ぐ。', criteria: '使う線材や端子に合うサイズ・収縮率があるか。', specs: '収縮前後の内径、収縮率、耐熱温度、必要な長さ。', pick: '複数サイズ＋収納ケース付きセット', kw: '熱収縮チューブ セット 収納ケース', tip: 'Amazonでお届け予定日を確認', basis: 'spec' },
+  { id: 'solder', cat: 'stock', title: 'ハンダ（消耗品）', why: 'はんだ付けをする工作で使う消耗品。品質が作業に直結する。', criteria: 'こて先と作業に合う線径・組成・必要量を確認。', specs: '線径、組成、フラックス、必要量、保管状態。', pick: 'goot SD-83（スズ60/鉛40・φ1.0mm・日本製）', kw: 'goot はんだ SD-83 1.0mm 日本製', tip: '消耗品は国産推奨', basis: 'used' },
+  { id: 'wick', cat: 'stock', title: 'ハンダ吸い取り線', why: 'はんだ付けの失敗や余分なはんだを吸い取る。', criteria: '対象のランドや配線に幅が合い、必要な長さがあるか。', specs: '幅、長さ、フラックス、必要数量。', pick: 'goot CP-3015（幅3.0mm・1.5m・日本製）', kw: 'goot はんだ吸取線 CP-3015 3.0mm', tip: '消耗品は国産推奨', basis: 'used' },
+  { id: 'protoboard', cat: 'stock', title: 'ユニバーサル基板', why: '仮組みした回路をはんだ付けで固定する。', criteria: '作る回路の部品数と配線に合う外形・穴数か。', specs: '穴数、ピッチ、外形、材質、必要枚数。まとめ買いは使用量が見えてから。', pick: '必要な穴数・外形に合うサイズ', kw: 'ユニバーサル基板 セット', tip: '価格・数量・配送予定を購入時に比較', basis: 'spec' }
 ];
 
 /* ---------- 調達先（vol.1） ---------- */
@@ -404,6 +489,7 @@ let filter = 'all';                                  // 'all' | 'tool' | 'stock'
 let hideOwned = localStorage.getItem('kit:hideOwned') === '1';
 let owned = loadSet('kit:owned');
 let cart = loadSet('kit:cart');
+let projectDecision = '';                             // ephemeral: 'no-solder' | 'solder'
 
 function loadSet(key) {
   try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
@@ -422,6 +508,28 @@ function itemAmazonUrl(item) {
 }
 function basisLabel(item) { return BASIS_LABELS[item.basis] || BASIS_LABELS.spec; }
 function byId(id) { return ITEMS.find(i => i.id === id); }
+
+/* ---------- 最初の工作判断（永続化しない） ---------- */
+const decisionButtons = [...document.querySelectorAll('[data-project-decision]')];
+const decisionNote = document.getElementById('project-decision-note');
+function renderProjectDecision() {
+  decisionButtons.forEach(button => {
+    const selected = button.getAttribute('data-project-decision') === projectDecision;
+    button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+  });
+  if (!projectDecision) {
+    decisionNote.textContent = '選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。';
+  } else if (projectDecision === 'no-solder') {
+    decisionNote.textContent = 'はんだ付け不要を選択中：はんだごては今は買わず、必要になった時点で検討できます。';
+  } else {
+    decisionNote.textContent = 'はんだ付けが必要を選択中：Step 1の温調式はんだごてを基本候補として確認します。';
+  }
+}
+decisionButtons.forEach(button => button.addEventListener('click', () => {
+  projectDecision = button.getAttribute('data-project-decision');
+  renderProjectDecision();
+  renderList();
+}));
 
 /* ---------- フィルタチップ ---------- */
 const FILTERS = [ { id: 'all', label: 'すべて' }, { id: 'tool', label: '工具' }, { id: 'stock', label: '部品ストック' } ];
@@ -449,14 +557,20 @@ function renderList() {
     items.forEach(i => {
       const isOwned = owned.has(i.id);
       const inCart = cart.has(i.id);
+      const ironDeferred = i.id === 'iron' && projectDecision === 'no-solder';
       html += `
-        <div class="item${isOwned ? ' owned' : ''}">
+        <div class="item${isOwned ? ' owned' : ''}${ironDeferred ? ' deferred' : ''}">
           <div class="it-top">
             <div class="it-title">${esc(i.title)}</div>
             <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
           </div>
-          <div class="it-why">${esc(i.why)}</div>
-          <div class="it-reco"><span class="pick">${esc(i.pick)}</span></div>
+          <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
+          ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
+          ${ironDeferred ? '<div class="it-decision-note">今回の工作では、はんだ付けが必要になるまで今は買わないでOK。</div>' : ''}
+          ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
+          ${i.pick && !ironDeferred ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
+          ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
+          ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
           ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
           <div class="it-actions">
             <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
@@ -518,7 +632,7 @@ function renderCart() {
       <div class="cart-item">
         <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(i.pick)}</div></div>
         <div class="ci-actions">
-          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-item-key="kit-${esc(i.id)}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">Amazonで確認</a>
+          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-item-key="kit-${esc(i.id)}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">${esc(i.amazonLabel || 'Amazonで確認')}</a>
           <button class="mini del" data-del="${i.id}">削除</button>
         </div>
       </div>`;
@@ -614,6 +728,7 @@ hideOwnedEl.addEventListener('change', () => {
 });
 
 /* ---------- 起動 ---------- */
+renderProjectDecision();
 renderChips();
 renderList();
 renderChannels();
