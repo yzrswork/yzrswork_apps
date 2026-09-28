@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="HDD選びナビ — WD Color & CMR/SMR" />
-<meta property="og:description" content="WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見。" />
+<meta property="og:description" content="WDのHDDを用途から色で絞り、型番がわかる場合はCMR/SMRを確認。速度重視ならSSD、RAIDなら型番確認へ。" />
 <meta property="og:url" content="https://apps.yzrswork.com/hdd/" />
 <meta property="og:image" content="https://apps.yzrswork.com/icons/og-hdd.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="HDD選びナビ — WD Color & CMR/SMR" />
-<meta name="twitter:description" content="WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや高負荷NASでCMRを選ぶ早見。" />
+<meta name="twitter:description" content="WDのHDDを用途・型番から確認。速度重視ならSSD、RAIDなら記録方式を確認。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-hdd.png" />
-<meta name="description" content="Western DigitalのHDDを用途から色で選び、CMR/SMRを型番から確認する選び方ナビ。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見つき。オフライン対応。" />
+<meta name="description" content="Western DigitalのHDDを用途から色で絞り、型番がわかる場合はCMR/SMRを確認する選び方ナビ。速度重視ならSSDを先に検討する出口と、RAID向けの確認ポイントつき。オフライン対応。" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,7 +36,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "WDのHDDを用途から色で選び、型番からCMR/SMRを確認。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見。",
+  "description": "WDのHDDを用途から色で絞り、型番がわかる場合はCMR/SMRを確認。速度重視ならSSD、RAIDなら型番確認へ。",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -87,13 +87,18 @@
   .rule3 li { font-size: 13.5px; margin-bottom: 4px; }
   .rule3 li b { color: var(--terracotta-deep); }
 
+  .entry-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 18px 0 8px; }
+  .entry-tab { min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 9px; background: var(--card); color: var(--ink); text-decoration: none; font-size: 13.5px; font-weight: 700; }
+  .entry-tab:hover, .entry-tab.active { border-color: var(--terracotta); background: var(--terracotta); color: #fff; }
+  .path-note { margin: 0 0 16px; color: var(--muted); font-size: 12.5px; }
+
   .sec-head { display: flex; align-items: baseline; gap: 10px; margin: 26px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--rule-soft); }
   .sec-head .s-jp { font-weight: 700; font-size: 15px; }
   .sec-head .s-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
 
   /* Use selector */
   .uses { display: flex; flex-direction: column; gap: 9px; }
-  .use-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 13px 15px; cursor: pointer; font-family: var(--jp); font-size: 14.5px; font-weight: 500; color: var(--ink); }
+  .use-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; min-height: 44px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 15px; cursor: pointer; font-family: var(--jp); font-size: 14.5px; font-weight: 500; color: var(--ink); }
   .use-btn:hover, .use-btn.active { border-color: var(--terracotta); }
   .use-btn.active { background: var(--terracotta); color: #fff; }
   .use-btn .u-arrow { font-family: var(--mono); opacity: 0.6; }
@@ -106,13 +111,28 @@
   .color-card .cc-name { font-weight: 700; font-size: 18px; }
   .color-card .cc-use { font-size: 13px; color: var(--ink-soft); margin: 8px 0 10px; }
   .color-card .cc-rec { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 14px; letter-spacing: 0.04em; }
+  .rec-family { background: var(--paper-2); color: var(--ink-soft); }
   .rec-cmr { background: rgba(79,111,62,0.16); color: var(--ok); }
   .rec-smr { background: rgba(181,69,27,0.14); color: var(--warn); }
   .rec-mixed { background: var(--paper-2); color: var(--ink-soft); }
   .color-card .cc-warn { font-size: 12.5px; color: var(--terracotta-deep); background: rgba(181,69,27,0.08); border-radius: 7px; padding: 8px 11px; margin: 10px 0 0; }
-  .color-card .cc-buy { display: inline-block; margin-top: 12px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 13.5px; }
+  .color-card .cc-accept, .color-card .cc-buy { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; background: var(--ink); color: var(--paper); text-decoration: none; border: 0; border-radius: 8px; padding: 9px 16px; cursor: pointer; font-family: var(--jp); font-weight: 700; font-size: 13.5px; }
   .color-card .cc-buy:hover { background: var(--terracotta); }
+  .color-card .cc-accept:hover { background: var(--terracotta); }
+  .ssd-card { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; }
+  .ssd-card .ssd-title { font-weight: 700; font-size: 16px; }
+  .ssd-card p { margin: 7px 0 0; font-size: 13.5px; color: var(--ink-soft); }
   .result-empty { font-size: 13px; color: var(--muted); padding: 4px 2px; }
+
+  .advanced-details { margin-top: 24px; border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); }
+  .advanced-details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; font-size: 14px; }
+  .advanced-details[open] summary { margin-bottom: 10px; }
+  .advanced-details .detail-intro { margin: 0 0 12px; font-size: 13px; color: var(--ink-soft); }
+  .advanced-details .detail-block { margin: 18px 0; }
+  .advanced-details h3 { margin: 0 0 7px; font-size: 14px; line-height: 1.5; }
+  .advanced-details p, .advanced-details li { font-size: 13px; color: var(--ink-soft); }
+  .advanced-details p { margin: 0 0 9px; }
+  .advanced-details ul { margin: 0; padding-left: 19px; }
 
   /* Series table */
   .series { display: flex; flex-direction: column; gap: 8px; }
@@ -123,18 +143,24 @@
   /* 型番 checker */
   .checker { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 11px; padding: 15px 16px; }
   .checker label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); display: block; margin-bottom: 7px; }
-  .checker input { width: 100%; padding: 12px 13px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 16px; background: var(--paper); color: var(--ink); text-transform: uppercase; }
+  .checker input { width: 100%; min-height: 44px; padding: 10px 13px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 16px; background: var(--paper); color: var(--ink); text-transform: uppercase; }
   .check-out { margin-top: 12px; font-size: 14px; min-height: 22px; }
   .check-out .verdict { font-weight: 700; font-family: var(--mono); }
   .check-out .v-cmr { color: var(--ok); }
   .check-out .v-smr { color: var(--warn); }
+  .check-out .v-exact-cmr { color: var(--ok); }
+  .check-out .v-exact-smr { color: var(--warn); }
+  .check-out .v-hint { color: var(--terracotta-deep); }
   .check-out .v-unknown { color: var(--muted); }
+  .check-out .v-invalid { color: var(--muted); }
   .check-out .v-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
-  .check-out .model-buy { display: inline-block; margin-top: 10px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 8px; padding: 9px 13px; font-weight: 700; font-size: 12.5px; }
+  .check-out .model-accept, .check-out .model-buy { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; background: var(--ink); color: var(--paper); text-decoration: none; border: 0; border-radius: 8px; padding: 9px 13px; cursor: pointer; font-family: var(--jp); font-weight: 700; font-size: 12.5px; }
   .check-out .model-buy:hover { background: var(--terracotta); }
+  .check-out .model-accept:hover { background: var(--terracotta); }
   .examples { margin-top: 12px; font-size: 12px; color: var(--muted); }
   .examples b { color: var(--ink-soft); font-weight: 500; }
-  .examples code { font-family: var(--mono); background: var(--paper-2); padding: 1px 5px; border-radius: 4px; cursor: pointer; }
+  .examples button { min-height: 44px; margin: 3px 3px 0 0; border: 1px solid var(--rule-soft); border-radius: 6px; background: var(--paper-2); color: var(--ink-soft); padding: 5px 7px; cursor: pointer; font-family: var(--mono); font-size: 11px; }
+  .examples button:hover { border-color: var(--terracotta); color: var(--terracotta-deep); }
 
   /* Avoid */
   .avoid { background: rgba(181,69,27,0.07); border: 1px solid rgba(181,69,27,0.3); border-radius: 11px; padding: 14px 16px; }
@@ -152,6 +178,13 @@
   .about ul { margin: 0 0 12px; padding-left: 20px; }
   .about li { margin-bottom: 6px; }
   .about a { color: var(--terracotta); }
+  @media (max-width: 420px) {
+    .page { padding-left: 14px; padding-right: 14px; }
+    .entry-tab { padding-left: 7px; padding-right: 7px; font-size: 12.5px; }
+    .color-card .cc-top { align-items: flex-start; }
+    .color-card .cc-name { font-size: 17px; }
+    .srow { align-items: flex-start; flex-direction: column; }
+  }
   footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
@@ -167,71 +200,67 @@
 
     <header class="hero">
       <h1>HDD選びナビ<span class="en">— WD Color & CMR/SMR</span></h1>
-      <p>Western DigitalのHDDを「用途から色」で選び、「CMR/SMR」を型番で確認する選び方ナビ。RAIDや書き込み負荷の高いNASでCMRを選ぶための早見つき。</p>
+      <p>Western DigitalのHDDを、用途から候補ファミリーで絞るか、完全な型番から直接確認する選び方ナビ。速度重視ならSSDも先に検討できます。</p>
     </header>
 
-    <div class="rule3">
-      <div class="r-title">迷ったらこの3手順</div>
-      <ol>
-        <li>用途から<b>色</b>を大まかに選ぶ</li>
-        <li>用途で<b>CMR/SMR</b>を選ぶ（RAID再構築や高負荷NASはCMRを強く推奨）</li>
-        <li>最終判断は必ず<b>型番</b>の記録方式を確認</li>
-      </ol>
-    </div>
+    <nav class="entry-nav" aria-label="始め方">
+      <a href="#use-path" class="entry-tab active" data-entry-path="use" aria-current="page">用途から選ぶ</a>
+      <a href="#model-checker" class="entry-tab" data-entry-path="model">型番がわかる</a>
+    </nav>
+    <p class="path-note">色は候補ファミリーを絞る入口です。完全な型番がわかる場合は、右の入口から直接確認できます。</p>
 
-    <!-- 1. 用途から色 -->
-    <div class="sec-head"><span class="s-jp">1. 用途から色を選ぶ</span><span class="s-en">Pick by use</span></div>
+    <!-- A. 用途から色 -->
+    <div class="sec-head" id="use-path"><span class="s-jp">用途から候補を絞る</span><span class="s-en">Pick by use</span></div>
     <div class="uses" id="uses"></div>
-    <div class="result" id="result"><div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div></div>
+    <div class="result" id="result" aria-live="polite"><div class="result-empty">用途を選ぶと、候補ファミリーが出ます。</div></div>
 
-    <!-- 2. シリーズ別 CMR/SMR -->
-    <div class="sec-head"><span class="s-jp">2. シリーズ別 CMR/SMR 早見</span><span class="s-en">By series</span></div>
-    <div class="series" id="series"></div>
-
-    <!-- 3. 型番チェッカー -->
-    <div class="sec-head"><span class="s-jp">3. 登録型番と末尾例を確認</span><span class="s-en">Model checker</span></div>
+    <!-- B. 型番チェッカー -->
+    <div class="sec-head" id="model-checker"><span class="s-jp">型番から直接確認</span><span class="s-en">Model checker</span></div>
+    <p class="path-note">登録済みの完全な型番だけ断定します。末尾の登録例だけ一致する場合や未登録の場合は、WD公式で確認してください。</p>
     <div class="checker">
       <label for="model">型番を入力（例: WD20EFRX）</label>
       <input type="text" id="model" placeholder="WD20EFRX" autocomplete="off" spellcheck="false" />
-      <div class="check-out" id="check-out"></div>
+      <div class="check-out" id="check-out" role="status" aria-live="polite"></div>
       <div class="examples" id="examples"></div>
     </div>
 
-    <!-- 4. 記録方式が効く場面 -->
-    <div class="sec-head"><span class="s-jp">4. 記録方式が効く場面</span><span class="s-en">Workload</span></div>
-    <div class="avoid">
-      <div class="a-title">書き込みが繰り返し続く用途はCMRを優先</div>
-      <ul>
-        <li><b>RAID再構築 / ZFS resilver</b> ー 長時間にわたって読み書きが集中するため、安定した書き込みを重視します。</li>
-        <li><b>高負荷NAS / 頻繁な追加・削除</b> ー 小さなランダム書き込みや上書きを繰り返す使い方では、CMRのほうが挙動を見通しやすくなります。</li>
-        <li><b>動画編集やゲームの大きな更新</b> ー 大容量の書き換えが続くなら、CMRだけでなくSSDも候補にします。</li>
-      </ul>
-    </div>
+    <details class="advanced-details">
+      <summary>技術情報・シリーズ一覧（詳しく知りたい人向け）</summary>
+      <p class="detail-intro">候補を絞った後の確認用です。色やシリーズ名だけで、個々のドライブの記録方式を確定しません。</p>
+
+      <div class="detail-block">
+        <h3>シリーズ別の見方</h3>
+        <div class="series" id="series"></div>
+      </div>
+
+      <div class="detail-block">
+        <h3>CMR / SMR と用途</h3>
+        <p>CMRはトラックを重ねずに記録し、SMRは一部のトラックを重ねて記録します。読み出し中心では差が目立たない場合もありますが、キャッシュを超える書き込み、細かな更新、RAID再構築やZFS resilverではCMRを優先しやすくなります。</p>
+        <ul>
+          <li><b>CMRを優先:</b> RAID / ZFS、高負荷NAS、頻繁に更新する作業データ</li>
+          <li><b>SMRも候補:</b> 一度保存して読み出し中心にする個人用アーカイブ</li>
+        </ul>
+      </div>
+
+      <div class="detail-block">
+        <h3>Blue・Red無印の注意</h3>
+        <p>Blueは型番によってCMR / SMRが異なります。Red（無印）は歴史的なモデル情報を確認するために残していますが、安価なNASの初心者候補からは外し、現行候補はRed Plus / Proの完全な型番を確認します。</p>
+      </div>
+
+      <div class="detail-block">
+        <h3>公式確認とバックアップ</h3>
+        <p>末尾例だけ一致する型番や未登録型番は断定せず、<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式のRecording Technology一覧</a>または製品データシートで照合してください。RAIDは故障時の運用継続を助けますが、誤削除・上書き・災害から守る独立したバックアップではありません。</p>
+      </div>
+    </details>
 
     <section class="about">
-      <h2>色は入口、型番とWD公式仕様が結論</h2>
-      <p>WDのBlue、Red Plus、Purple、Blackといった色は、想定用途を絞るための製品ファミリーです。色だけで個々のドライブの記録方式、容量、回転数、キャッシュ、保証を確定することはできません。同じ色でも容量や世代によって仕様が変わる可能性があるため、「用途から色を絞る → 完全な型番を控える → 型番ごとのRecording TechnologyをWD公式で確認する」の順で選びます。このページの早見と末尾例は候補を探す入口で、購入判断の結論ではありません。</p>
-
-      <h3>CMRとSMRの差は、書き込み方に表れやすい</h3>
-      <p>CMRは各トラックを重ねずに記録します。SMRはトラックの一部を重ねて記録するため、既存データの近くを書き換えると周辺をまとめて整理し直す場合があります。そのため、読み出し中心では違いが目立たなくても、キャッシュを超える連続書き込み、細かなランダム書き込み、頻繁な追加・削除、RAID再構築のように書き込みが続く場面では差が出やすくなります。</p>
-      <ul>
-        <li><b>CMRを優先しやすい:</b> RAID / ZFS、高負荷NAS、作業データ、頻繁に更新する保存先</li>
-        <li><b>SMRも候補になりうる:</b> 一度まとめて保存し、その後は読み出し中心にする個人用アーカイブ</li>
-      </ul>
-      <p>実際の速度や回復時間は、製品、空き容量、キャッシュ、ファームウェア、接続方式、処理内容で変わります。「SMRなら必ず遅い」「CMRならどの用途でも速い」とは判断できません。</p>
-
-      <h3>判定できない型番は「不明」のまま公式へ</h3>
-      <p>チェッカーに型番がない、末尾例だけ一致する、販売ページの表記が省略されている場合は、CMRともSMRとも断定しません。箱やドライブ本体にある完全な型番を確認し、<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式のRecording Technology一覧</a>または製品データシートで照合します。早見に登録済みの型番でも、購入時には現行の公式仕様を再確認してください。</p>
-
-      <h3>RAIDとバックアップは別に考える</h3>
-      <p>冗長性のあるRAIDは一部のドライブ故障時にも運用を続けやすくする構成ですが、それだけで独立したバックアップにはなりません。誤削除、上書き、マルウェア、機器全体の故障、盗難や災害では複数台のデータを同時に失う可能性があります。残したいデータは、RAIDとは別の媒体や場所にも世代を分けて保存します。</p>
-
-      <h3>や印工務店の実例：2TBから4TBへ入れ替え</h3>
-      <p>元記事では、仕事用に約5年間使った2TBのストレージが一杯になったことをきっかけに、用途と記録方式を調べ直しました。そのうえで、型番がWD40EFZZのRed Plus 4TBをCMRと確認し、2台購入しています。これはその時の用途に合わせた一例であり、すべての人に同じ色・容量・台数を勧めるものではありません。必要容量、書き込み方、搭載ベイ数、接続方式、保証を確認して選んでください。</p>
-      <p>調査の経緯と当時の判断はnoteで: <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">Western Digitalの色の選び方ガイド</a></p>
+      <h2>この早見の使い方</h2>
+      <p>用途から色を絞る入口と、完全な型番を直接確認する入口を分けました。購入前は、ドライブ本体や箱の型番とWD公式仕様を照合してください。</p>
+      <p><b>公式資料確認済みモデル例:</b> WD40EFZZは登録済みのCMR型番例です。これは一つの確認例で、容量や世代が違う製品へ自動的に適用するものではありません。</p>
+      <p>調査の経緯は<a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「Western Digitalの色の選び方ガイド」</a>、最終仕様は<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認できます。</p>
     </section>
 
-    <p class="disclaimer">※ WD Red（無印）のSMRモデルも小規模NAS向け製品ですが、RAID再構築・ZFS・頻繁な書き込みではCMRのRed Plus / Proが安全側です。色や末尾だけでは記録方式を常に確定できないため、最終判断は型番ごとの「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください（型番例は2026年7月時点）。</p>
+    <p class="disclaimer">※ 色や末尾例だけでは記録方式を確定できません。最終判断は完全な型番ごとの「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください。</p>
 
     <footer>
       <div>この早見は <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「WDの色の選び方ガイド」 ↗</a> と最新の公式情報をもとにしています。役に立ったら記事にスキをもらえると励みになります。</div>
@@ -255,50 +284,51 @@
 <script>
 /* =========================================================
    HDD選びナビ — WD Color & CMR/SMR
-   依存ゼロの単一HTML。データ送信なし、オフライン動作。
+   依存ゼロの単一HTML。共通の承認済み検索導線・匿名カテゴリ分析を利用し、オフライン動作。
    note「Western Digitalの色の選び方ガイド」をもとに、用途→色→
    記録方式（CMR/SMR）→型番確認の手順を対話化したもの。
-   型番例は2026年7月時点。最終判断は公式仕様を確認する前提。
+   登録型番は候補の入口であり、最終判断は公式仕様を確認する前提。
    ========================================================= */
 
 /* ---------- 色データ ---------- */
 const COLORS = {
-  blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '一般PC・万能型。OS／アプリ／普段使い向け。', rec: 'mixed', recLabel: '型番で確認必須', warn: '2TB以上はSMR混在に注意。', productKey: 'hdd-blue-search' },
-  redplus: { name: 'WD Red Plus / Pro', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', rec: 'cmr', recLabel: 'CMR確定', warn: '', productKey: 'hdd-redplus-search' },
-  red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '低コストNAS向け。', rec: 'smr', recLabel: '基本SMR', warn: 'SMR注意。RAIDには非推奨。', productKey: 'hdd-red-search' },
-  purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', rec: 'cmr', recLabel: '用途特化', warn: '', productKey: 'hdd-purple-search' },
-  black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能・ゲーム・動画編集など高速作業向け。', rec: 'cmr', recLabel: '全容量CMR', warn: '', productKey: 'hdd-black-search' }
+  blue:    { name: 'WD Blue', dot: '🔵', hex: '#3b6fb5', use: '普段使いのHDD・大容量保存向け。', recLabel: '候補ファミリー', warn: 'Blueは型番によってCMR / SMRが異なるため、完全な型番を確認。', productKey: 'hdd-blue-search' },
+  redplus: { name: 'WD Red Plus', dot: '🔴', hex: '#b5451b', use: 'NAS・RAID・24時間稼働向け。', recLabel: '候補ファミリー', warn: 'Red Plusでも、購入前に完全な型番と公式仕様を確認。', productKey: 'hdd-redplus-search' },
+  red:     { name: 'WD Red（無印）', dot: '🟥', hex: '#8e3514', use: '歴史的なモデル情報の確認用。', recLabel: '上級者向け情報', warn: '安価なNASの初心者候補にはせず、現行候補はRed Plus / Proを確認。', productKey: 'hdd-red-search' },
+  purple:  { name: 'WD Purple', dot: '🟣', hex: '#6b4a8e', use: '監視カメラ録画向け。連続書き込みに特化。', recLabel: '候補ファミリー', warn: '用途特化のシリーズ。完全な型番と公式仕様を確認。', productKey: 'hdd-purple-search' },
+  black:   { name: 'WD Black', dot: '⚫', hex: '#1c1a16', use: '高性能HDD・大容量ゲームライブラリ向け。', recLabel: '候補ファミリー', warn: '速度重視の作業領域はSSDも比較。完全な型番を確認。', productKey: 'hdd-black-search' }
 };
 
 /* ---------- 用途セレクタ ---------- */
 const USES = [
-  { label: 'OS・アプリ・普段使い', color: 'blue' },
-  { label: 'NAS・RAID・24時間稼働', color: 'redplus' },
-  { label: '監視カメラの録画', color: 'purple' },
-  { label: 'ゲーム・動画編集・高速作業', color: 'black' },
-  { label: 'とにかく安くNAS（非推奨に注意）', color: 'red' }
+  { id: 'general', label: '普段使い・大容量保存', color: 'blue' },
+  { id: 'ssd-os', label: 'OS・アプリ・現行ゲーム', kind: 'ssd', note: '速度重視ならSSDを先に検討。HDDを買わない選択で完了できます。' },
+  { id: 'nas', label: 'NAS・RAID・24時間稼働', color: 'redplus' },
+  { id: 'surveillance', label: '監視カメラの録画', color: 'purple' },
+  { id: 'black', label: 'ゲームライブラリ・高性能HDD', color: 'black' },
+  { id: 'ssd-edit', label: '動画編集の作業領域', kind: 'ssd', note: 'アクティブな編集作業はSSDを先に検討。HDDは保管用として分けます。' }
 ];
 
 /* ---------- シリーズ別 CMR/SMR 早見 ---------- */
 const SERIES = [
   { name: 'Black / Gold / Red Plus / Red Pro', verdict: 'cmr', text: '全容量CMR' },
   { name: 'Blue', verdict: 'mixed', text: '型番で確認' },
-  { name: 'Red（無印）', verdict: 'smr', text: '基本SMR' }
+  { name: 'Red（無印）', verdict: 'mixed', text: '歴史的モデルを確認' }
 ];
 
-/* ---------- 登録型番・末尾例（2026年7月時点・WD公式で要確認） ---------- */
+/* ---------- 登録型番・末尾例（WD公式で要確認） ---------- */
 const SUFFIX = [
-  { suf: 'EFPX', v: 'cmr', models: ['WD40EFPX'], note: '例: WD40EFPX（現行 Red Plus 4TB・CMR・256MB）' },
-  { suf: 'EFZZ', v: 'cmr', models: ['WD40EFZZ'], note: '例: WD40EFZZ（現行 Red Plus 4TB・CMR・128MB）' },
-  { suf: 'EFZX', v: 'cmr', models: ['WD60EFZX'], note: '例: WD60EFZX（現行 Red Plus 6TB・CMR・128MB）' },
-  { suf: 'EFRX', v: 'cmr', models: ['WD20EFRX'], note: '例: WD20EFRX（旧 Red Plus・CMR。現行はEFZX/EFPXへ置換）' },
-  { suf: 'EFAX', v: 'smr', models: ['WD20EFAX'], note: '例: WD20EFAX（Red 無印 2TB・SMR）' },
-  { suf: 'EARZ', v: 'cmr', models: ['WD20EARZ'], note: '例: WD20EARZ（Blue 2TB 新型・CMR）' },
-  { suf: 'EZAX', v: 'cmr', models: ['WD40EZAX'], note: '例: WD40EZAX（Blue 4TB・CMR）' },
-  { suf: 'EAAZ', v: 'cmr', models: ['WD80EAAZ'], note: '例: WD80EAAZ（Blue 8TB・CMR）' },
-  { suf: 'EAZZ', v: 'cmr', models: ['WD80EAZZ'], note: '例: WD80EAZZ（Blue 8TB・CMR）' },
-  { suf: 'EZBX', v: 'smr', models: ['WD20EZBX'], note: '例: WD20EZBX（Blue 2TB 7200rpm・SMR）' },
-  { suf: 'EZAZ', v: 'smr', models: ['WD20EZAZ'], note: '例: WD20EZAZ（Blue 2TB 5400rpm・SMR）' }
+  { suf: 'EFPX', v: 'cmr', models: ['WD40EFPX'], note: '登録済み型番例: WD40EFPX（CMR・256MB）' },
+  { suf: 'EFZZ', v: 'cmr', models: ['WD40EFZZ'], note: '登録済み型番例: WD40EFZZ（CMR・128MB）' },
+  { suf: 'EFZX', v: 'cmr', models: ['WD60EFZX'], note: '登録済み型番例: WD60EFZX（CMR・128MB）' },
+  { suf: 'EFRX', v: 'cmr', models: ['WD20EFRX'], note: '登録済み型番例: WD20EFRX（旧 Red Plus・CMR）' },
+  { suf: 'EFAX', v: 'smr', models: ['WD20EFAX'], note: '登録済み型番例: WD20EFAX（Red 無印・SMR）' },
+  { suf: 'EARZ', v: 'cmr', models: ['WD20EARZ'], note: '登録済み型番例: WD20EARZ（Blue・CMR）' },
+  { suf: 'EZAX', v: 'cmr', models: ['WD40EZAX'], note: '登録済み型番例: WD40EZAX（Blue・CMR）' },
+  { suf: 'EAAZ', v: 'cmr', models: ['WD80EAAZ'], note: '登録済み型番例: WD80EAAZ（Blue・CMR）' },
+  { suf: 'EAZZ', v: 'cmr', models: ['WD80EAZZ'], note: '登録済み型番例: WD80EAZZ（Blue・CMR）' },
+  { suf: 'EZBX', v: 'smr', models: ['WD20EZBX'], note: '登録済み型番例: WD20EZBX（Blue・SMR）' },
+  { suf: 'EZAZ', v: 'smr', models: ['WD20EZAZ'], note: '登録済み型番例: WD20EZAZ（Blue・SMR）' }
 ];
 const EXAMPLES = ['WD40EFPX', 'WD40EFZZ', 'WD60EFZX', 'WD20EARZ', 'WD40EZAX', 'WD20EZAZ', 'WD20EFAX'];
 
@@ -310,80 +340,162 @@ function approvedAffiliateUrl(key, options) {
   if (!api.getProduct(key)) return null;
   try { return api.urlFor(key, options); } catch (_) { return null; }
 }
-const VTAG = {
-  cmr: '<span class="sr-tag rec-cmr">CMR</span>',
-  smr: '<span class="sr-tag rec-smr">SMR</span>',
-  mixed: '<span class="sr-tag rec-mixed">要確認</span>'
-};
+const WD_OFFICIAL_URL = 'https://support-en.wd.com/app/answers/detailweb/a_id/50697/';
+const ENDING_LABEL = 'EFPX / EFZZ / EFZX / EFRX / EFAX / EARZ / EZAX / EAAZ / EAZZ / EZBX / EZAZ';
+
+function trackHddEvent(eventName, params) {
+  if (typeof window.yzrsTrack === 'function') window.yzrsTrack(eventName, Object.assign({ app_name: 'hdd' }, params));
+}
+const entryTracked = { use: false, model: false };
+function trackEntryPath(path) {
+  if (entryTracked[path]) return;
+  entryTracked[path] = true;
+  trackHddEvent('hdd_entry_path', { path: path });
+}
+function setEntryActive(path) {
+  document.querySelectorAll('.entry-tab').forEach(tab => {
+    const active = tab.getAttribute('data-entry-path') === path;
+    tab.classList.toggle('active', active);
+    if (active) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
+}
 
 /* ---------- 用途セレクタ描画 ---------- */
-let activeUse = -1;
+let activeUse = null;
+let colorCandidateAccepted = false;
 function renderUses() {
   document.getElementById('uses').innerHTML = USES.map((u, i) =>
-    `<button class="use-btn${i === activeUse ? ' active' : ''}" data-u="${i}"><span>${esc(u.label)}</span><span class="u-arrow">→</span></button>`
+    `<button type="button" class="use-btn${i === activeUse ? ' active' : ''}" data-u="${i}" aria-pressed="${i === activeUse}"><span>${esc(u.label)}</span><span class="u-arrow" aria-hidden="true">→</span></button>`
   ).join('');
-  document.querySelectorAll('.use-btn').forEach(b =>
-    b.addEventListener('click', () => { activeUse = +b.getAttribute('data-u'); renderUses(); renderResult(); }));
+  document.querySelectorAll('.use-btn').forEach(b => b.addEventListener('click', () => {
+    const next = Number(b.getAttribute('data-u'));
+    if (activeUse !== next) colorCandidateAccepted = false;
+    activeUse = next;
+    setEntryActive('use');
+    trackEntryPath('use');
+    renderUses();
+    renderResult();
+  }));
 }
 function renderResult() {
   const el = document.getElementById('result');
-  if (activeUse < 0) { el.innerHTML = '<div class="result-empty">用途を選ぶと、おすすめの色が出ます。</div>'; return; }
-  const c = COLORS[USES[activeUse].color];
-  const buyUrl = approvedAffiliateUrl(c.productKey);
+  if (activeUse === null) { el.innerHTML = '<div class="result-empty">用途を選ぶと、候補ファミリーが出ます。</div>'; return; }
+  const choice = USES[activeUse];
+  if (choice.kind === 'ssd') {
+    el.innerHTML = `<div class="ssd-card"><div class="ssd-title">速度重視ならSSDを先に検討</div><p>${esc(choice.note)}</p></div>`;
+    if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
+    return;
+  }
+  const c = COLORS[choice.color];
+  const buyUrl = colorCandidateAccepted ? approvedAffiliateUrl(c.productKey) : null;
+  const action = colorCandidateAccepted
+    ? (buyUrl ? `<a class="cc-buy" href="${esc(buyUrl)}" data-product-key="${esc(c.productKey)}" data-track-label="${esc(c.productKey)}" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(c.name)}の承認済み検索</a>` : '<div class="v-note">承認済みの検索導線を利用できません。</div>')
+    : '<button type="button" class="cc-accept" id="accept-color">この条件を候補にする</button>';
   el.innerHTML = `
     <div class="color-card" style="border-left-color:${c.hex}">
-      <div class="cc-top"><span class="cc-dot">${c.dot}</span><span class="cc-name">${esc(c.name)}</span></div>
+      <div class="cc-top"><span class="cc-dot" aria-hidden="true">${c.dot}</span><span class="cc-name">${esc(c.name)}</span></div>
       <div class="cc-use">${esc(c.use)}</div>
-      <span class="cc-rec rec-${c.rec}">${esc(c.recLabel)}</span>
+      <span class="cc-rec rec-family">${esc(c.recLabel)}</span>
+      <div class="cc-warn">色は候補を絞る目印です。CMR / SMRは完全な型番で確認してください。</div>
       ${c.warn ? `<div class="cc-warn">${esc(c.warn)}</div>` : ''}
-      ${buyUrl ? `<a class="cc-buy" href="${esc(buyUrl)}" data-product-key="${esc(c.productKey)}" data-track-label="${esc(c.productKey)}" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(c.name)} を探す</a>` : ''}
+      ${action}
     </div>`;
-  if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
+  const accept = document.getElementById('accept-color');
+  if (accept) accept.addEventListener('click', () => {
+    colorCandidateAccepted = true;
+    trackHddEvent('hdd_candidate_accept', { source: 'color' });
+    if (window.yzrsTrackResult) window.yzrsTrackResult('hdd_recommendation', 'pc');
+    renderResult();
+  });
 }
 
-/* ---------- シリーズ早見 ---------- */
+/* ---------- シリーズ早見（詳細内） ---------- */
 function renderSeries() {
-  document.getElementById('series').innerHTML = SERIES.map(s =>
-    `<div class="srow"><span class="sr-name">${esc(s.name)}</span>${VTAG[s.verdict]}</div>`
-  ).join('');
+  document.getElementById('series').innerHTML = SERIES.map(s => {
+    const cls = s.verdict === 'cmr' ? 'rec-cmr' : 'rec-mixed';
+    return `<div class="srow"><span class="sr-name">${esc(s.name)}</span><span class="sr-tag ${cls}">${esc(s.text)}</span></div>`;
+  }).join('');
 }
 
 /* ---------- 型番チェッカー ---------- */
+let modelCandidateAccepted = false;
+let currentModelValue = '';
+let lastModelResultState = '';
+function classifyModel(value) {
+  if (!value) return { state: 'empty' };
+  if (!/^WD[A-Z0-9]{5,}$/.test(value)) return { state: 'invalid' };
+  const hit = SUFFIX.find(s => value.endsWith(s.suf));
+  if (!hit) return { state: 'unknown' };
+  if (hit.models.includes(value)) return { state: 'exact', hit: hit };
+  return { state: 'suffix_hint', hit: hit };
+}
+function trackModelResult(state) {
+  if (!['exact', 'suffix_hint', 'unknown'].includes(state) || state === lastModelResultState) return;
+  lastModelResultState = state;
+  trackHddEvent('hdd_model_result', { result: state });
+  if (state === 'exact' && window.yzrsTrackResult) window.yzrsTrackResult('hdd_model_check', 'pc');
+}
 function checkModel(raw) {
   const out = document.getElementById('check-out');
   const v = (raw || '').toUpperCase().replace(/\s/g, '');
-  if (!v) { out.innerHTML = ''; return; }
-  const hit = SUFFIX.find(s => v.endsWith(s.suf));
-  const modelBuyUrl = /^WD[A-Z0-9]{5,}$/.test(v)
-    ? approvedAffiliateUrl('hdd-model-search', { query: v })
-    : null;
-  const buy = modelBuyUrl
-    ? `<a class="model-buy" href="${esc(modelBuyUrl)}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 ${esc(v)} をAmazonで探す</a>`
-    : '';
-  if (hit) {
-    const cls = hit.v === 'cmr' ? 'v-cmr' : 'v-smr';
-    const label = hit.v === 'cmr' ? 'CMR' : 'SMR';
-    if (hit.models.includes(v)) {
-      out.innerHTML = `<span class="verdict ${cls}">${label}</span>（登録済み型番）<div class="v-note">${esc(hit.note)}</div>${buy}`;
-    } else {
-      out.innerHTML = `<span class="verdict ${cls}">この末尾の登録例は${label}。正式仕様を確認</span><div class="v-note">${esc(hit.note)}。入力した型番は未登録のため、WD公式の「Recording Technology」を確認してください。</div>${buy}`;
-    }
-  } else {
-    out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">この早見に登録済みの末尾（EFPX / EFZZ / EFZX / EFRX / EFAX / EARZ / EZAX / EAAZ / EAZZ / EZBX / EZAZ）に当てはまりません。末尾だけで断定せず、型番の「Recording Technology」を公式で確認してください。</div>${buy}`;
+  if (v !== currentModelValue) {
+    currentModelValue = v;
+    modelCandidateAccepted = false;
+    lastModelResultState = '';
   }
-  if (/^WD[A-Z0-9]{5,}$/.test(v) && window.yzrsTrackResult) {
-    window.yzrsTrackResult('hdd_model_check', 'pc');
+  if (v) {
+    setEntryActive('model');
+    trackEntryPath('model');
   }
+  const result = classifyModel(v);
+  if (result.state === 'empty') { out.innerHTML = ''; return; }
+  trackModelResult(result.state);
+  if (result.state === 'invalid') {
+    out.innerHTML = '<span class="verdict v-invalid">型番を確認してください</span><div class="v-note">例のような完全な型番（WD20EFRX）を入力してください。入力途中では購入先を表示しません。</div>';
+    return;
+  }
+  if (result.state === 'exact') {
+    const label = result.hit.v === 'cmr' ? 'CMR' : 'SMR';
+    const action = modelCandidateAccepted
+      ? (() => {
+          const url = approvedAffiliateUrl('hdd-model-search', { query: v });
+          return url ? `<a class="model-buy" href="${esc(url)}" data-product-key="hdd-model-search" data-track-label="hdd-model-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 承認済みの型番検索</a>` : '<div class="v-note">承認済みの検索導線を利用できません。</div>';
+        })()
+      : '<button type="button" class="model-accept" id="accept-model">この型番を候補にする</button>';
+    const exactClass = result.hit.v === 'cmr' ? 'v-exact-cmr' : 'v-exact-smr';
+    out.innerHTML = `<span class="verdict ${exactClass}">${label}</span>（登録済み型番）<div class="v-note">${esc(result.hit.note)}。購入前にWD公式の仕様も再確認してください。</div>${action}`;
+    const accept = document.getElementById('accept-model');
+    if (accept) accept.addEventListener('click', () => {
+      modelCandidateAccepted = true;
+      trackHddEvent('hdd_candidate_accept', { source: 'exact_model' });
+      checkModel(v);
+    });
+    return;
+  }
+  if (result.state === 'suffix_hint') {
+    out.innerHTML = `<span class="verdict v-hint">同じ末尾の登録例があります</span><div class="v-note">${esc(result.hit.note)}。入力型番そのものは未登録です。CMR / SMRを断定せず、<a href="${WD_OFFICIAL_URL}" target="_blank" rel="noopener noreferrer">WD公式で完全な型番を確認</a>してください。</div>`;
+    return;
+  }
+  out.innerHTML = `<span class="verdict v-unknown">判定できません</span><div class="v-note">登録済みの末尾（${ENDING_LABEL}）に該当しません。CMR / SMRを断定せず、<a href="${WD_OFFICIAL_URL}" target="_blank" rel="noopener noreferrer">WD公式のRecording Technology</a>またはデータシートを確認してください。</div>`;
 }
 
 function renderExamples() {
   document.getElementById('examples').innerHTML =
-    '<b>例（タップで判定）:</b> ' + EXAMPLES.map(e => `<code data-ex="${e}">${e}</code>`).join(' ');
-  document.querySelectorAll('#examples code').forEach(c =>
-    c.addEventListener('click', () => { const m = document.getElementById('model'); m.value = c.getAttribute('data-ex'); checkModel(m.value); }));
+    '<b>例（タップで判定）:</b> ' + EXAMPLES.map(e => `<button type="button" data-ex="${e}">${e}</button>`).join('');
+  document.querySelectorAll('#examples button').forEach(b => b.addEventListener('click', () => {
+    const m = document.getElementById('model');
+    m.value = b.getAttribute('data-ex');
+    checkModel(m.value);
+    m.focus();
+  }));
 }
 
-
+document.querySelectorAll('.entry-tab').forEach(tab => tab.addEventListener('click', () => {
+  const path = tab.getAttribute('data-entry-path');
+  setEntryActive(path);
+  trackEntryPath(path);
+}));
 document.getElementById('model').addEventListener('input', e => checkModel(e.target.value));
 
 /* ---------- 起動 ---------- */
