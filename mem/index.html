@@ -92,10 +92,14 @@
   .sec-head .s-en { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--terracotta); }
 
   .opts { display: flex; flex-direction: column; gap: 9px; }
-  .opt-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 13px 15px; cursor: pointer; font-family: var(--jp); font-size: 14.5px; font-weight: 500; color: var(--ink); }
+  .opt-btn { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 44px; text-align: left; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 13px 15px; cursor: pointer; font-family: var(--jp); font-size: 14.5px; font-weight: 500; color: var(--ink); }
   .opt-btn:hover, .opt-btn.active { border-color: var(--terracotta); }
   .opt-btn.active { background: var(--terracotta); color: #fff; }
   .opt-btn .o-arrow { font-family: var(--mono); opacity: 0.6; }
+  .ddr-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .ddr-choice { min-height: 44px; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); cursor: pointer; font-family: var(--jp); font-size: 12.5px; font-weight: 500; }
+  .ddr-choice:hover, .ddr-choice[aria-pressed="true"] { border-color: var(--terracotta); }
+  .ddr-choice[aria-pressed="true"] { background: var(--terracotta); color: #fff; }
 
   .info-card { margin-top: 12px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 15px 16px; border-left: 6px solid var(--terracotta); }
   .info-card .ic-big { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--terracotta-deep); }
@@ -104,12 +108,23 @@
   .info-empty { font-size: 13px; color: var(--muted); padding: 4px 2px; }
 
   /* Combined recommendation */
-  .reco { margin-top: 16px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 16px 16px; }
+  .reco { margin-top: 16px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 16px; }
   .reco .rc-lab { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #f0c9b8; }
-  .reco .rc-big { font-size: 19px; font-weight: 700; margin: 6px 0 4px; }
+  .reco .rc-core { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0 8px; }
+  .reco .rc-value { min-width: 0; padding: 9px 10px; border: 1px solid rgba(240, 235, 227, 0.2); border-radius: 8px; }
+  .reco .rc-value span { display: block; font-family: var(--mono); font-size: 10px; color: #f0c9b8; letter-spacing: 0.06em; }
+  .reco .rc-value strong { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
   .reco .rc-sub { font-size: 12.5px; opacity: 0.85; }
-  .reco .rc-buy { display: inline-block; margin-top: 12px; background: var(--terracotta); color: #fff; text-decoration: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 13.5px; }
+  .reco .rc-accept, .reco .rc-buy { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 12px; border-radius: 8px; padding: 10px 16px; font-family: var(--jp); font-weight: 700; font-size: 13.5px; }
+  .reco .rc-accept { border: 1px solid rgba(240, 235, 227, 0.55); background: transparent; color: var(--paper); cursor: pointer; }
+  .reco .rc-accept:hover { border-color: #fff; background: rgba(240, 235, 227, 0.1); }
+  .reco .rc-buy { background: var(--terracotta); color: #fff; text-decoration: none; }
   .reco .rc-buy:hover { background: var(--terracotta-deep); }
+  .reco .rc-details { margin-top: 14px; border-top: 1px solid rgba(240, 235, 227, 0.2); }
+  .reco .rc-details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: #f0c9b8; font-size: 12px; }
+  .reco .rc-details p, .reco .rc-details li { color: rgba(240, 235, 227, 0.84); font-size: 12px; }
+  .reco .rc-details p { margin: 0 0 6px; }
+  .reco .rc-details ul { margin: 0; padding-left: 18px; }
 
   .rules { display: flex; flex-direction: column; gap: 9px; }
   .ru { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 9px; padding: 12px 14px; }
@@ -119,9 +134,10 @@
 
   .picks { display: flex; flex-direction: column; gap: 9px; }
   .pick { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--rule-soft); border-radius: 9px; padding: 11px 14px; }
-  .pick .pk-name { font-size: 13.5px; font-weight: 500; }
+  .pick > div { min-width: 0; }
+  .pick .pk-name { font-size: 13.5px; font-weight: 500; overflow-wrap: anywhere; }
   .pick .pk-sub { font-size: 11.5px; color: var(--muted); }
-  .pick a { background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .pick a { display: inline-flex; align-items: center; min-height: 44px; background: var(--ink); color: var(--paper); text-decoration: none; border-radius: 7px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
   .pick a:hover { background: var(--terracotta); }
 
   .disclaimer { font-size: 11.5px; color: var(--muted); margin-top: 16px; line-height: 1.6; }
@@ -133,6 +149,12 @@
   footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
   .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+  @media (max-width: 460px) {
+    .reco .rc-core { grid-template-columns: 1fr; }
+    .ddr-choice { flex: 1 1 120px; }
+    .pick { align-items: stretch; flex-wrap: wrap; }
+    .pick a { justify-content: center; }
+  }
 
 </style>
 </head>
@@ -144,22 +166,22 @@
 
     <header class="hero">
       <h1>メモリ選びナビ<span class="en">— DDR Spec & Capacity</span></h1>
-      <p>自作PCのメモリ選び。まず規格（DDR世代）を確認し、用途から容量を選び、同じ容量なら2枚構成（デュアルチャネル）で。</p>
+      <p>自作PCのメモリ選び。マザーボードに合うDDRを確認し、用途から容量を選び、対応環境では2枚構成を基本候補にします。</p>
     </header>
 
     <div class="rule3">
       <div class="r-title">迷ったらこの3手順</div>
       <ol>
-        <li>規格（DDR世代）は<b>マザーボード（ソケット）で決まる</b></li>
-        <li>容量は<b>用途で選ぶ</b>（迷ったら32GBが現代の正解）</li>
-        <li>同じ容量なら<b>2枚構成（デュアルチャネル）</b>を選ぶ</li>
+        <li><b>マザーボードに合うDDR</b>を確認する</li>
+        <li><b>用途に合う容量</b>を選ぶ</li>
+        <li>デュアルチャネル対応環境では<b>2枚構成を基本候補</b>にする</li>
       </ol>
     </div>
 
     <!-- 1. 規格 -->
     <div class="sec-head"><span class="s-jp">1. 規格（DDR世代）を確認</span><span class="s-en">By socket</span></div>
     <div class="opts" id="sockets"></div>
-    <div id="socket-info"><div class="info-empty">ソケット／プラットフォームを選ぶと、対応DDRが出ます。</div></div>
+    <div id="socket-info"><div class="info-empty">ソケットを選び、マザーボードに合うDDRを確認します。</div></div>
 
     <!-- 2. 容量 -->
     <div class="sec-head"><span class="s-jp">2. 容量を用途で選ぶ</span><span class="s-en">By use</span></div>
@@ -172,15 +194,16 @@
     <!-- 3. 鉄則 -->
     <div class="sec-head"><span class="s-jp">3. 構成の鉄則</span><span class="s-en">Rules</span></div>
     <div class="rules">
-      <div class="ru"><div class="ru-t">同じ容量なら2枚構成が速い</div><div class="ru-d">同じ規格のモジュール2枚で<b>デュアルチャネル</b>が有効。32GBなら<b>16GB×2</b>が黄金比。32GB×1（1枚）は通り道が1本でもったいない。</div></div>
-      <div class="ru"><div class="ru-t">買い足しは相性に注意</div><div class="ru-d">後から1枚足して2枚構成にする手もあるが、<b>同じ型番・ロット</b>が入手できるとは限らず相性問題が出ることも。可能なら最初から2枚セット品を。</div></div>
-      <div class="ru"><div class="ru-t">定格（JEDEC）と XMP / EXPO</div><div class="ru-d">刺すだけで安定の<b>JEDEC定格</b>か、BIOSで<b>XMP（Intel）/ EXPO（AMD）</b>を有効化して表示速度を出すか。初めてなら定格運用が無難。</div></div>
-      <div class="ru"><div class="ru-t">ノッチ位置で物理的に非互換</div><div class="ru-d">DDR世代ごとに切り欠きの位置が違い、規格違いは<b>そもそも刺さりません</b>（壊れはしないが使えない）。</div></div>
+      <div class="ru"><div class="ru-t">デュアルチャネル対応環境では2枚構成を基本候補に</div><div class="ru-d">必要容量を2枚で構成するのが基本候補です。まずはマザーボードの推奨スロットを確認します。</div></div>
+      <div class="ru"><div class="ru-t">将来の増設余地も確認</div><div class="ru-d">あとで容量を増やす予定があるなら、空きスロットと最大容量を確認します。4枚構成や買い足し時の注意は結果の「詳しく見る」で確認できます。</div></div>
+      <div class="ru"><div class="ru-t">DDR規格は混ぜない</div><div class="ru-d">DDR4とDDR5は互換性がなく、ノッチ位置も異なります。正しい向き・規格で装着できない場合は、<b>無理に押し込まないでください</b>。</div></div>
     </div>
 
-    <!-- 定番モデル -->
-    <div class="sec-head"><span class="s-jp">規格に合う候補</span><span class="s-en">Picks</span></div>
-    <div class="picks" id="picks"></div>
+    <!-- 定番モデル: 承認済み候補がある場合だけ表示 -->
+    <div id="picks-section" hidden>
+      <div class="sec-head"><span class="s-jp">規格に合う候補</span><span class="s-en">Picks</span></div>
+      <div class="picks" id="picks"></div>
+    </div>
 
     <section class="about">
       <p>自作PCを組んだとき、地味に悩んだのがメモリでした。DDR3、DDR4、DDR5と数字が増えるたびに何が違うのか分からなくなりますが、実は迷う余地は意外と少なくて、規格はマザーボードを買った時点で決まっています。世代ごとにノッチ（切り欠き）の位置が違うので、合わない規格はそもそも刺さりません。だから順番は「まずマザーボードで規格を確認、次に用途で容量を決める」。容量が足りないとOSはSSDをメモリ代わりに使い始めて（スワップ）、体感がいっきに重くなります。「なんか遅い」の原因はCPUよりメモリ不足のことが多い、というのが組んでみての実感です。自分はRyzen 7 5700XのAM4構成だったのでDDR4一択、用途から32GB（16GBを2枚のデュアルチャネル）を選びました。このナビは、その時の検討をそのまま「ソケットから規格、用途から容量」の順にたどれる形にしたものです。</p>
@@ -218,19 +241,19 @@
 
 /* ---------- ソケット → DDR規格（2026年7月時点） ---------- */
 const SOCKETS = [
-  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', search: 'DDR5', sweet: '公式定格はRyzen 7000がDDR5-5200、Ryzen 9000がDDR5-5600。DDR5-6000 EXPOは性能重視の定番目安（OC扱い）', note: 'DDR4は使えません。CPU型番とマザーQVLを確認してください' },
-  { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4', search: 'DDR4-3200', sweet: 'DDR4-3200が定番（記事のRyzen 7 5700XもこれでOK）', note: 'DDR5は使えません' },
-  { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: 'DDR4 または DDR5', search: '', sweet: 'マザーボードがどちらか一方に対応。スロット表記を必ず確認', note: 'DDR4専用マザーとDDR5専用マザーが別物です' },
-  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', search: 'DDR5', sweet: 'DDR5専用。公式上限はCPU型番によりDDR5-6400〜7200 MT/s', note: 'CPU型番とマザーボードQVLで対応速度を確認してください' },
-  { id: 'unknown', label: 'わからない', ddr: 'マザーボードで確認', search: '', sweet: 'マザーボードの製品ページ「メモリ」欄か、スロット脇の刻印（DDR4/DDR5）を確認', note: '規格はマザーボードで決まります' }
+  { id: 'am5', label: 'AMD AM5（Ryzen 7000/9000）', ddr: 'DDR5', search: 'DDR5', sweet: 'Ryzen 7000/9000はDDR5。DDR5-6000 EXPOは性能重視の目安ですが、CPU・マザーの組み合わせを確認します。', note: 'DDR4は使えません。CPU型番とマザーボードQVLを確認してください。' },
+  { id: 'am4', label: 'AMD AM4（Ryzen 5000 等）', ddr: 'DDR4', search: 'DDR4', sweet: 'Ryzen 5000世代はDDR4。速度はCPU公式仕様とマザーボードQVLを確認します。', note: 'DDR5は使えません。' },
+  { id: 'lga1700', label: 'Intel LGA1700（第12〜14世代）', ddr: null, search: '', sweet: 'LGA1700はDDR4マザーとDDR5マザーが分かれます。下でマザー側の規格を選んでください。', note: '製品ページの「メモリ」欄やスロット表記で、DDR4専用／DDR5専用を確認します。' },
+  { id: 'lga1851', label: 'Intel LGA1851（Core Ultra）', ddr: 'DDR5', search: 'DDR5', sweet: 'LGA1851はDDR5。公式上限はCPU型番により異なるため、CPU仕様とQVLを確認します。', note: 'CPU型番とマザーボードQVLで対応速度を確認してください。' },
+  { id: 'unknown', label: 'わからない', ddr: null, search: '', sweet: 'まずマザーボードの製品ページ「メモリ」欄か、スロット脇の刻印（DDR4/DDR5）を確認します。', note: 'DDRが分かるまで、購入候補やAmazon検索は出しません。' }
 ];
 
 /* ---------- 用途 → 容量の目安（記事より） ---------- */
 const USES = [
-  { id: 'web', label: 'ブラウジング・文書作業', cap: '8GB〜', search: '8GB', hint: '最低ライン。タブの多用は要注意。' },
-  { id: 'game', label: 'ゲーム全般', cap: '16GB', search: '16GB', hint: '現在のゲームの標準推奨。' },
-  { id: 'creative', label: '軽量3D・動画編集', cap: '32GB（16GB×2）', search: '32GB 16GBx2', hint: '快適にやるならここから。もたつきが激減。' },
-  { id: 'ai', label: '生成AI・機械学習', cap: '32GB以上', search: '32GB 16GBx2', hint: '余裕は正義（VRAM補助も考慮）。' }
+  { id: 'web', label: 'ブラウジング・文書作業', cap: '8〜16GB', config: '必要容量を2枚で構成', search: '8GB 16GB', hint: '軽い作業は低めから検討できますが、タブ数と並行作業で必要量が増えます。', detail: 'ブラウザのタブ、通話、文書作成などを同時に使うほど余裕が必要です。' },
+  { id: 'game', label: 'ゲーム全般', cap: '16〜32GB', config: '8GB×2〜16GB×2を候補', search: '16GB 32GB', hint: '実用的な範囲。対象ゲームの推奨仕様を確認します。', detail: 'ゲームごとの差が大きいため、遊ぶタイトルの推奨メモリ容量を先に確認します。' },
+  { id: 'creative', label: '軽量3D・動画編集', cap: '32GBから検討', config: '16GB×2をまず候補', search: '32GB 16GBx2', hint: '開始候補は32GB。素材・解像度・同時作業で増やします。', detail: 'タイムライン、素材解像度、ソフトの同時使用、シーンの複雑さで必要量は変わります。' },
+  { id: 'ai', label: 'ローカルAI・機械学習', cap: '32GBから検討（幅あり）', config: '16GB×2を起点にモデルで調整', search: '32GB 16GBx2', hint: 'モデル・ソフト・GPU VRAM・オフロード方法で大きく変わります。', detail: 'システムRAMとGPUのVRAMは別物です。モデルのサイズ、量子化、ソフトウェア、CPU・GPU間のオフロード方法を確認します。' }
 ];
 
 /* ---------- 定番モデル（記事 + 公式情報、DDR別） ---------- */
@@ -240,7 +263,7 @@ const PICKS = [
   { ddr: 'DDR5', key: 'mem-crucial-ddr5-32' }
 ];
 
-let selSocket = null, selUse = null;
+let selSocket = null, selDdrChoice = null, selUse = null, candidateAccepted = false;
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function approvedAffiliateUrl(key, options) {
   const api = window.yzrsAffiliate;
@@ -248,25 +271,44 @@ function approvedAffiliateUrl(key, options) {
   if (!api.getProduct(key)) return null;
   try { return api.urlFor(key, options); } catch (_) { return null; }
 }
+function selectedSocket() { return SOCKETS.find(s => s.id === selSocket) || null; }
+function resolvedDdr() {
+  const socket = selectedSocket();
+  if (!socket) return null;
+  if (socket.id === 'lga1700') return /^DDR[45]$/.test(selDdrChoice || '') ? selDdrChoice : null;
+  return socket.ddr || null;
+}
 
 function renderSockets() {
   document.getElementById('sockets').innerHTML = SOCKETS.map(s =>
-    `<button class="opt-btn${selSocket === s.id ? ' active' : ''}" data-s="${s.id}"><span>${esc(s.label)}</span><span class="o-arrow">→</span></button>`).join('');
+    `<button type="button" class="opt-btn${selSocket === s.id ? ' active' : ''}" data-s="${s.id}" aria-pressed="${selSocket === s.id ? 'true' : 'false'}"><span>${esc(s.label)}</span><span class="o-arrow">→</span></button>`).join('');
   document.querySelectorAll('#sockets .opt-btn').forEach(b =>
-    b.addEventListener('click', () => { selSocket = b.getAttribute('data-s'); renderSockets(); renderSocketInfo(); renderReco(); renderPicks(); }));
+    b.addEventListener('click', () => {
+      const nextSocket = b.getAttribute('data-s');
+      if (selSocket !== nextSocket) { selSocket = nextSocket; selDdrChoice = null; candidateAccepted = false; }
+      renderSockets(); renderSocketInfo(); renderReco(); renderPicks();
+    }));
 }
 function renderSocketInfo() {
   const el = document.getElementById('socket-info');
-  if (!selSocket) { el.innerHTML = '<div class="info-empty">ソケット／プラットフォームを選ぶと、対応DDRが出ます。</div>'; return; }
-  const s = SOCKETS.find(x => x.id === selSocket);
-  el.innerHTML = `<div class="info-card"><div class="ic-big">対応: ${esc(s.ddr)}</div><div class="ic-line">${esc(s.sweet)}</div><div class="ic-note">${esc(s.note)}</div></div>`;
+  if (!selSocket) { el.innerHTML = '<div class="info-empty">ソケットを選び、マザーボードに合うDDRを確認します。</div>'; return; }
+  const s = selectedSocket();
+  const ddr = resolvedDdr();
+  const ddrLabel = ddr || 'マザーボードで確認';
+  const choices = s.id === 'lga1700' ? `<div class="ddr-choices" role="group" aria-label="LGA1700マザーのDDR規格"><button type="button" class="ddr-choice" data-ddr-choice="DDR4" aria-pressed="${selDdrChoice === 'DDR4' ? 'true' : 'false'}">DDR4マザー</button><button type="button" class="ddr-choice" data-ddr-choice="DDR5" aria-pressed="${selDdrChoice === 'DDR5' ? 'true' : 'false'}">DDR5マザー</button><button type="button" class="ddr-choice" data-ddr-choice="unknown" aria-pressed="${selDdrChoice === 'unknown' ? 'true' : 'false'}">わからない</button></div>` : '';
+  el.innerHTML = `<div class="info-card"><div class="ic-big">対応: ${esc(ddrLabel)}</div><div class="ic-line">${esc(s.sweet)}</div>${choices}<div class="ic-note">${esc(s.note)}</div></div>`;
+  el.querySelectorAll('[data-ddr-choice]').forEach(b => b.addEventListener('click', () => {
+    selDdrChoice = b.getAttribute('data-ddr-choice');
+    candidateAccepted = false;
+    renderSocketInfo(); renderReco(); renderPicks();
+  }));
 }
 
 function renderUses() {
   document.getElementById('uses').innerHTML = USES.map(u =>
-    `<button class="opt-btn${selUse === u.id ? ' active' : ''}" data-u="${u.id}"><span>${esc(u.label)}</span><span class="o-arrow">→</span></button>`).join('');
+    `<button type="button" class="opt-btn${selUse === u.id ? ' active' : ''}" data-u="${u.id}" aria-pressed="${selUse === u.id ? 'true' : 'false'}"><span>${esc(u.label)}</span><span class="o-arrow">→</span></button>`).join('');
   document.querySelectorAll('#uses .opt-btn').forEach(b =>
-    b.addEventListener('click', () => { selUse = b.getAttribute('data-u'); renderUses(); renderUseInfo(); renderReco(); }));
+    b.addEventListener('click', () => { selUse = b.getAttribute('data-u'); candidateAccepted = false; renderUses(); renderUseInfo(); renderReco(); renderPicks(); }));
 }
 function renderUseInfo() {
   const el = document.getElementById('use-info');
@@ -278,41 +320,48 @@ function renderUseInfo() {
 function renderReco() {
   const el = document.getElementById('reco');
   if (!selSocket || !selUse) { el.innerHTML = ''; return; }
-  const s = SOCKETS.find(x => x.id === selSocket);
+  const s = selectedSocket();
   const u = USES.find(x => x.id === selUse);
-  const ddrText = s.search || s.ddr;
-  // 表示用の構成文字列
-  const config = (s.search ? s.search : 'DDR4 / DDR5（マザーで確認）') + ' ・ ' + u.cap;
-  // 検索キーワード（規格が確定しない場合は両方を含める）
-  const kwDdr = s.search || 'DDR4 DDR5';
-  const kw = (kwDdr + ' ' + u.search + ' デスクトップ メモリ').trim();
-  const conditionUrl = approvedAffiliateUrl('mem-condition-search', { query: kw });
+  const ddr = resolvedDdr();
+  if (!ddr) {
+    el.innerHTML = `<div class="info-card"><div class="ic-big">DDR規格を先に確定</div><div class="ic-line">${s.id === 'lga1700' ? 'LGA1700は、DDR4マザーかDDR5マザーかを選んでください。' : 'マザーボードの製品ページ「メモリ」欄やスロット脇の刻印を確認してください。'}</div><div class="ic-note">規格が分かるまで、完成した購入候補とAmazon検索は出しません。</div></div>`;
+    return;
+  }
+  const kw = (ddr + ' ' + u.search + ' デスクトップ メモリ').trim();
+  const conditionUrl = candidateAccepted ? approvedAffiliateUrl('mem-condition-search', { query: kw }) : null;
+  const action = candidateAccepted
+    ? (conditionUrl ? `<a class="rc-buy" href="${esc(conditionUrl)}" data-product-key="mem-condition-search" data-track-label="mem-condition-search" target="_blank" rel="noopener noreferrer sponsored nofollow">この条件で探す</a>` : '<span class="rc-sub">候補を確定しました。</span>')
+    : '<button type="button" class="rc-accept" data-accept-condition aria-pressed="false">この条件を候補にする</button>';
   el.innerHTML = `
     <div class="reco">
       <div class="rc-lab">あなたの構成の目安</div>
-      <div class="rc-big">${esc(config)}</div>
-      <div class="rc-sub">同じ容量なら2枚構成（デュアルチャネル）を。表示速度を出すならBIOSでXMP/EXPOを有効化。</div>
-      ${conditionUrl ? `<a class="rc-buy" href="${esc(conditionUrl)}" data-product-key="mem-condition-search" data-track-label="mem-condition-search" target="_blank" rel="noopener noreferrer sponsored nofollow">🛒 この条件で探す</a>` : ''}
+      <div class="rc-core" aria-label="構成結果"><div class="rc-value"><span>DDR世代</span><strong>${esc(ddr)}</strong></div><div class="rc-value"><span>容量</span><strong>${esc(u.cap)}</strong></div><div class="rc-value"><span>構成</span><strong>${esc(u.config)}</strong></div></div>
+      <div class="rc-sub">デュアルチャネル対応環境では、必要容量を2枚構成から検討します。</div>
+      ${action}
+      <details class="rc-details"><summary>詳しく見る</summary><p>${esc(u.detail)}</p><ul><li>CPUの公式対応速度とマザーボードのQVLを購入前に確認します。</li><li>XMPはIntel定義、EXPOはAMD定義のプロファイルですが、動作はCPU・マザーボード・メモリの組み合わせに依存します。</li><li>プロファイル適用時の速度がCPU標準仕様を超える場合があります。DIMMの推奨スロットと、4枚構成で速度が下がる可能性も確認します。</li><li>将来増設するなら、空きスロットと最大容量を先に確認します。後から買い足す場合は、同じ型番・ロットを揃えにくいことや相性差も考慮します。</li></ul></details>
     </div>`;
+  const accept = el.querySelector('[data-accept-condition]');
+  if (accept) accept.addEventListener('click', () => { candidateAccepted = true; renderReco(); renderPicks(); });
   if (window.yzrsTrackResult) window.yzrsTrackResult('memory_recommendation', 'pc');
 }
 
 function renderPicks() {
-  const socket = SOCKETS.find(s => s.id === selSocket);
-  const ddr = socket && socket.search;
-  if (!socket || !/^DDR[45]/.test(ddr || '')) {
-    document.getElementById('picks').innerHTML = socket
-      ? '<div class="info-empty">DDR規格を確認できた場合だけ、対応する候補を表示します。</div>'
-      : '';
+  const section = document.getElementById('picks-section');
+  const picksEl = document.getElementById('picks');
+  const ddr = resolvedDdr();
+  if (!candidateAccepted || !ddr) {
+    section.hidden = true;
+    picksEl.innerHTML = '';
     return;
   }
-  const picks = PICKS.filter(p => ddr.startsWith(p.ddr));
-  document.getElementById('picks').innerHTML = picks.map(p => {
-    const product = window.yzrsAffiliate.getProduct(p.key);
+  const picks = PICKS.filter(p => p.ddr === ddr).map(p => {
+    const product = window.yzrsAffiliate && window.yzrsAffiliate.getProduct(p.key);
     const productUrl = product ? approvedAffiliateUrl(p.key) : null;
-    if (!product || !productUrl) return '';
+    if (!product || !productUrl) return null;
     return `<div class="pick"><div><div class="pk-name">${esc(product.label)}</div><div class="pk-sub">${esc(product.note || '')}</div></div><a href="${esc(productUrl)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">探す</a></div>`;
-  }).join('');
+  }).filter(Boolean);
+  section.hidden = picks.length === 0;
+  picksEl.innerHTML = picks.join('');
 }
 
 
