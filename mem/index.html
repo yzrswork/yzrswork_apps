@@ -194,10 +194,9 @@
     <!-- 3. 鉄則 -->
     <div class="sec-head"><span class="s-jp">3. 構成の鉄則</span><span class="s-en">Rules</span></div>
     <div class="rules">
-      <div class="ru"><div class="ru-t">デュアルチャネル対応環境では2枚構成を基本候補に</div><div class="ru-d">必要容量を2枚で構成するのが基本候補です。マザーボードの推奨スロットを確認し、2枚・4枚が常に同じ結果になるとは限りません。</div></div>
-      <div class="ru"><div class="ru-t">買い足しと4枚構成は相性に注意</div><div class="ru-d">後から足す場合は<b>同じ型番・ロット</b>が揃わないことがあります。4枚構成では、CPU・マザーボード・構成によって対応メモリ速度が下がる場合があります。</div></div>
-      <div class="ru"><div class="ru-t">XMP / EXPOは任意の性能プロファイル</div><div class="ru-d">必要ならBIOS/UEFIで有効化します。すべての環境で有効化する必要はなく、まずは安定する定格動作を確認します。</div></div>
-      <div class="ru"><div class="ru-t">ノッチ位置で物理的に非互換</div><div class="ru-d">DDR世代ごとに切り欠きの位置が違い、規格違いは<b>そもそも刺さりません</b>（壊れはしないが使えない）。</div></div>
+      <div class="ru"><div class="ru-t">デュアルチャネル対応環境では2枚構成を基本候補に</div><div class="ru-d">必要容量を2枚で構成するのが基本候補です。まずはマザーボードの推奨スロットを確認します。</div></div>
+      <div class="ru"><div class="ru-t">将来の増設余地も確認</div><div class="ru-d">あとで容量を増やす予定があるなら、空きスロットと最大容量を確認します。4枚構成や買い足し時の注意は結果の「詳しく見る」で確認できます。</div></div>
+      <div class="ru"><div class="ru-t">DDR規格は混ぜない</div><div class="ru-d">DDR4とDDR5は互換性がなく、ノッチ位置も異なります。正しい向き・規格で装着できない場合は、<b>無理に押し込まないでください</b>。</div></div>
     </div>
 
     <!-- 定番モデル: 承認済み候補がある場合だけ表示 -->
@@ -337,9 +336,9 @@ function renderReco() {
     <div class="reco">
       <div class="rc-lab">あなたの構成の目安</div>
       <div class="rc-core" aria-label="構成結果"><div class="rc-value"><span>DDR世代</span><strong>${esc(ddr)}</strong></div><div class="rc-value"><span>容量</span><strong>${esc(u.cap)}</strong></div><div class="rc-value"><span>構成</span><strong>${esc(u.config)}</strong></div></div>
-      <div class="rc-sub">デュアルチャネル対応環境では、必要容量を2枚構成から検討します。XMP / EXPOは任意の性能プロファイルです。</div>
+      <div class="rc-sub">デュアルチャネル対応環境では、必要容量を2枚構成から検討します。</div>
       ${action}
-      <details class="rc-details"><summary>詳しく見る</summary><p>${esc(u.detail)}</p><ul><li>CPUの公式対応速度とマザーボードのQVLを購入前に確認します。</li><li>XMPはIntel定義、EXPOはAMD定義のプロファイルですが、動作はCPU・マザーボード・メモリの組み合わせに依存します。</li><li>プロファイル適用時の速度がCPU標準仕様を超える場合があります。DIMMの推奨スロットと、4枚構成で速度が下がる可能性も確認します。</li><li>将来増設するなら、空きスロットと最大容量を先に確認します。</li></ul></details>
+      <details class="rc-details"><summary>詳しく見る</summary><p>${esc(u.detail)}</p><ul><li>CPUの公式対応速度とマザーボードのQVLを購入前に確認します。</li><li>XMPはIntel定義、EXPOはAMD定義のプロファイルですが、動作はCPU・マザーボード・メモリの組み合わせに依存します。</li><li>プロファイル適用時の速度がCPU標準仕様を超える場合があります。DIMMの推奨スロットと、4枚構成で速度が下がる可能性も確認します。</li><li>将来増設するなら、空きスロットと最大容量を先に確認します。後から買い足す場合は、同じ型番・ロットを揃えにくいことや相性差も考慮します。</li></ul></details>
     </div>`;
   const accept = el.querySelector('[data-accept-condition]');
   if (accept) accept.addEventListener('click', () => { candidateAccepted = true; renderReco(); renderPicks(); });
