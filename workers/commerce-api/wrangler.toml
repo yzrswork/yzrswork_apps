@@ -1,0 +1,19 @@
+name = "yzrs-commerce-api"
+main = "worker.js"
+compatibility_date = "2026-10-02"
+workers_dev = false
+preview_urls = false
+
+# Phase 0: no route, Cron or real KV IDs. Do not deploy this skeleton.
+# Future approved activation: cron = "0 * * * *" and dedicated KV bindings
+# COMMERCE_SNAPSHOTS / COMMERCE_AUTH. Ordinary KV only; no KV Instant.
+[triggers]
+crons = []
+
+[vars]
+LIVE_API_ENABLED = "false"
+COMMERCE_PUBLIC_ENABLED = "false"
+CREDENTIAL_VERSION = "3.3"
+TOKEN_ROTATION_EPOCH = "phase0-disabled"
+
+# AMAZON_CLIENT_ID and AMAZON_CLIENT_SECRET belong in Worker Secrets only.

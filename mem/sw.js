@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mem-v12';
+const CACHE_NAME = 'mem-v13';
 const CACHE_PREFIX = 'mem-';
 const ASSETS = [
   './',
@@ -7,7 +7,12 @@ const ASSETS = [
   '../icons/icon-192.png',
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
-  '../shared/tokens.css'
+  '../shared/tokens.css',
+  '../affiliate.js',
+  '../shared/commerce-policy.js',
+  '../shared/commerce.js',
+  '../shared/commerce-config.js',
+  '../shared/commerce.css'
 ];
 
 // ASSETSを絶対URLに正規化したSet（fetch判定で使用）
