@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "build:check": "node scripts/build.mjs --check",
-    "check": "node scripts/build.mjs --check && node scripts/check.mjs"
+    "check": "node scripts/build.mjs --check && node scripts/check.mjs",
+    "test": "node --test tests/commerce/*.test.mjs"
   }
 }

@@ -9,11 +9,13 @@ import {
 import { runInNewContext } from 'node:vm';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateCommerceCatalog } from './commerce-catalog.mjs';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const NORMALIZED_ROOT = normalize(ROOT);
 const catalog = JSON.parse(readFileSync(join(ROOT, 'site', 'catalog.json'), 'utf8'));
 const errors = [];
+errors.push(...validateCommerceCatalog(catalog));
 
 function fail(message) {
   errors.push(message);
@@ -301,6 +303,12 @@ for (const app of catalog.apps) {
 for (const page of catalog.pages) {
   if (!existsSync(join(ROOT, page.slug, 'index.html'))) {
     fail(`公開ページのindex.htmlがない: ${page.slug}`);
+  }
+  if (page.slug === 'deals') {
+    const html = read(join(ROOT, page.slug, 'index.html'));
+    if (page.sitemap !== false || !html.includes('noindex, follow') ||
+        !html.includes('https://apps.yzrswork.com/deals/') || html.includes('"@type": "WebApplication"') ||
+        html.includes('"@type": "Offer"')) fail('Phase 0 Deals must be noindex, Apps canonical, and have no Offer markup');
   }
 }
 
@@ -758,6 +766,9 @@ for (const dir of listRootDirsWith('index.html')) {
 const rootIndex = read(join(ROOT, 'index.html'));
 const readme = read(join(ROOT, 'README.md'));
 const sitemap = read(join(ROOT, 'sitemap.xml'));
+for (const page of catalog.pages.filter(page => page.sitemap === false)) {
+  if (sitemap.includes(`<loc>${catalog.site.baseUrl}${page.slug}/</loc>`)) fail(`noindex page in sitemap: ${page.slug}`);
+}
 const adsTxt = read(join(ROOT, 'ads.txt'));
 if (!rootIndex.includes(expectedAdsenseMeta) || !rootIndex.includes(expectedAdsenseScript)) {
   fail('root indexにAdSense確認コードがない');

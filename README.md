@@ -28,6 +28,7 @@
 | ねじ下穴ナビ | タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見 | `neji/` |
 | プライバシーポリシー | GA4、広告、Amazonアソシエイトについて | `privacy/` |
 | 運営者について | や印工務店、サイトの成り立ち、お問い合わせ | `about/` |
+| YZRS DEALS（準備中） | 承認済み推薦品のCommerce基盤。Phase 0は表示停止・noindex。 | `deals/` |
 <!-- BUILD:README-TOOLS:END -->
 
 ## コンテンツ品質監査

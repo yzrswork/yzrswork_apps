@@ -20,6 +20,8 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { commerceProjection } from './commerce-catalog.mjs';
+import { matchesMemory, isCommerceProduct } from '../shared/commerce-policy.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CHECK = process.argv.includes('--check');
@@ -191,7 +193,7 @@ function renderAffiliate(catalog) {
   // catalogには審査待ち・却下候補も保持するが、公開bundleにはapprovedだけを出す。
   // statusの判定はここに集約し、各HTMLへownerReviewの条件分岐を拡散させない。
   const publicProducts = Object.fromEntries(
-    Object.entries(affiliate.products).filter(([, product]) => product?.ownerReview === 'approved')
+    Object.entries(affiliate.products).filter(([, product]) => product?.ownerReview === 'approved' && product.enabled !== false)
   );
   return `// このファイルは scripts/build.mjs が site/catalog.json から生成する。直接編集しない。
 (function (global) {
@@ -199,7 +201,14 @@ function renderAffiliate(catalog) {
   const PRODUCTS = Object.freeze(${jsonForScript(publicProducts)});
 
   function isApproved(item) {
-    return Boolean(item && item.ownerReview === 'approved');
+    return Boolean(item && item.ownerReview === 'approved' && item.enabled !== false);
+  }
+
+  ${isCommerceProduct.toString()}
+  ${matchesMemory.toString()}
+  function memoryProducts(context) {
+    return Object.entries(PRODUCTS).filter(([, product]) => matchesMemory(product, context))
+      .map(([key, product]) => ({ key, product }));
   }
 
   function searchUrl(query) {
@@ -239,6 +248,7 @@ function renderAffiliate(catalog) {
   global.yzrsAffiliate = Object.freeze({
     tag: ASSOCIATE_TAG,
     products: PRODUCTS,
+    memoryProducts,
     getProduct,
     searchUrl,
     productUrl,
@@ -294,14 +304,13 @@ function renderHead(app, catalog) {
     JSON.stringify(
       {
         '@context': 'https://schema.org',
-        '@type': 'WebApplication',
+        '@type': app.schemaType || 'WebApplication',
         name: app.name,
         url: app.canonical,
-        applicationCategory: app.applicationCategory || 'UtilitiesApplication',
-        operatingSystem: 'Web',
+        ...(app.schemaType ? {} : { applicationCategory: app.applicationCategory || 'UtilitiesApplication', operatingSystem: 'Web' }),
         inLanguage: 'ja',
         description: app.ogDescription,
-        offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+        ...(app.schemaType ? {} : { offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' } }),
         author: { '@type': 'Organization', name: 'や印工務店 (yzrswork)', url: 'https://note.com/yzrswork' },
       },
       null,
@@ -461,6 +470,7 @@ function renderSitemap(catalog) {
     );
   }
   for (const page of catalog.pages) {
+    if (page.sitemap === false) continue;
     lines.push(
       `  <url><loc>${baseUrl}${page.slug}/</loc><priority>${page.sitemapPriority}</priority></url>`
     );
@@ -851,8 +861,22 @@ function writeIfChanged(path, content, results) {
 
 function main() {
   const catalog = loadCatalog();
+  const commerce = commerceProjection(catalog);
   const slugs = listAppDirs();
   const results = [];
+  const generated = '// Generated from site/catalog.json by scripts/build.mjs. Do not edit.\n';
+  writeIfChanged(join(ROOT, 'shared/commerce-config.js'), `${generated}export const commerceConfig = Object.freeze(${jsonForScript(commerce)});\n`, results);
+  writeIfChanged(join(ROOT, 'workers/commerce-api/generated-products.js'), `${generated}export const commerceConfig = Object.freeze(${jsonForScript(commerce)});\n`, results);
+  for (const page of catalog.pages.filter(page => page.managedHead)) {
+    const path = join(ROOT, page.slug, 'index.html');
+    let html = replaceMarked(readFileSync(path, 'utf8'), HEAD_START, HEAD_END, renderHead(page, catalog));
+    const cards = Object.entries(commerce.products).filter(([, p]) => p.displayOn.includes('deals')).map(([key, p]) => {
+      const url = `https://www.amazon.co.jp/dp/${p.asin}?tag=${encodeURIComponent(commerce.config.associateTag)}`;
+      return `<article class="commerce-card" data-deals-card="${escapeHtml(key)}"><p>${escapeHtml(p.evidence.description)}</p><h2>${escapeHtml(p.label)}</h2><p>${escapeHtml(p.recommendationReason)}</p><p>${escapeHtml(p.useCases.join(' / '))}</p><div data-commerce-slot="${escapeHtml(key)}" hidden></div><a href="${escapeHtml(url)}" data-commerce-cta="${escapeHtml(key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></article>`;
+    }).join('\n');
+    html = replaceMarked(html, '<!-- BUILD:RECOMMENDATIONS:START -->', '<!-- BUILD:RECOMMENDATIONS:END -->', cards);
+    writeIfChanged(path, html, results);
+  }
   writeIfChanged(join(ROOT, 'affiliate.js'), renderAffiliate(catalog), results);
   for (const slug of slugs) {
     const app = loadApp(slug);

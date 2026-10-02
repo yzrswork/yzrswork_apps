@@ -1,0 +1,2 @@
+// Generated from site/catalog.json by scripts/build.mjs. Do not edit.
+export const commerceConfig = Object.freeze({"revision":"93848b5d797d5a5e84bff2be95cc53a69f2108ca63f33deae4defa17bf26bc94","config":{"schemaVersion":1,"canonical":"https://apps.yzrswork.com/deals/","marketplace":"www.amazon.co.jp","credentialVersion":"3.3","enabled":false,"liveApiApproved":false,"amazonSupportApproved":false,"endpoint":null,"saleGate":{"minPercent":10,"minJPY":500},"associateTag":"yzrs_apps-22"},"products":{}});

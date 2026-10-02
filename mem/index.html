@@ -56,6 +56,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../shared/tokens.css" />
 <!-- BUILD:HEAD:END -->
+<link rel="stylesheet" href="../shared/commerce.css" />
+<script type="module" src="../shared/commerce.js"></script>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -257,14 +259,10 @@ const USES = [
 ];
 
 /* ---------- 定番モデル（記事 + 公式情報、DDR別） ---------- */
-const PICKS = [
-  { ddr: 'DDR4', key: 'mem-team-ddr4-32' },
-  { ddr: 'DDR4', key: 'mem-crucial-ddr4-32' },
-  { ddr: 'DDR5', key: 'mem-crucial-ddr5-32' }
-];
+// Product selection and conditions come from the approved catalog projection.
 
 let selSocket = null, selDdrChoice = null, selUse = null, candidateAccepted = false;
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function approvedAffiliateUrl(key, options) {
   const api = window.yzrsAffiliate;
   if (!api || typeof api.getProduct !== 'function' || typeof api.urlFor !== 'function') return null;
@@ -352,16 +350,23 @@ function renderPicks() {
   if (!candidateAccepted || !ddr) {
     section.hidden = true;
     picksEl.innerHTML = '';
+    window.dispatchEvent(new CustomEvent('yzrs:recommendations-rendered'));
     return;
   }
-  const picks = PICKS.filter(p => p.ddr === ddr).map(p => {
-    const product = window.yzrsAffiliate && window.yzrsAffiliate.getProduct(p.key);
+  const api = window.yzrsAffiliate;
+  const bounds = selUse === 'web' ? [8, 16] : selUse === 'game' ? [16, 32] : [32, Infinity];
+  const candidates = api && typeof api.memoryProducts === 'function' ? api.memoryProducts({
+    accepted: candidateAccepted, ddr, useCase: selUse, minGB: bounds[0], maxGB: bounds[1]
+  }) : [];
+  const picks = candidates.map(p => {
+    const product = p.product;
     const productUrl = product ? approvedAffiliateUrl(p.key) : null;
     if (!product || !productUrl) return null;
-    return `<div class="pick"><div><div class="pk-name">${esc(product.label)}</div><div class="pk-sub">${esc(product.note || '')}</div></div><a href="${esc(productUrl)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">探す</a></div>`;
+    return `<div class="pick"><div><div class="pk-sub">${esc(product.evidence.description)}</div><div class="pk-name">${esc(product.label)}</div><div>${esc(product.recommendationReason)}</div><div class="pk-sub">${esc(product.conditions.ddr)} / ${esc(product.conditions.capacity)} / ${esc(product.conditions.kit)} — ${esc(product.note || '')}</div><div data-commerce-slot="${esc(p.key)}" hidden></div></div><a href="${esc(productUrl)}" data-commerce-cta="${esc(p.key)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></div>`;
   }).filter(Boolean);
   section.hidden = picks.length === 0;
   picksEl.innerHTML = picks.join('');
+  window.dispatchEvent(new CustomEvent('yzrs:recommendations-rendered'));
 }
 
 

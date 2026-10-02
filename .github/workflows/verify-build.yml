@@ -19,3 +19,5 @@ jobs:
         run: git diff --exit-code
       - name: Run repository quality checks
         run: npm run check
+      - name: Run mock Commerce tests (no credentials or network)
+        run: npm test

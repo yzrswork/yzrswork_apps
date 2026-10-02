@@ -4,7 +4,22 @@
   const PRODUCTS = Object.freeze({"hdd-blue-search":{"kind":"search","label":"WD Blue 内蔵HDD","query":"WD Blue 内蔵HDD","category":"hdd","ownerReview":"approved"},"hdd-redplus-search":{"kind":"search","label":"WD Red Plus NAS HDD","query":"WD Red Plus NAS HDD","category":"hdd","ownerReview":"approved"},"hdd-red-search":{"kind":"search","label":"WD Red 内蔵HDD","query":"WD Red 内蔵HDD","category":"hdd","ownerReview":"approved"},"hdd-purple-search":{"kind":"search","label":"WD Purple 監視カメラ HDD","query":"WD Purple 監視カメラ HDD","category":"hdd","ownerReview":"approved"},"hdd-black-search":{"kind":"search","label":"WD Black 内蔵HDD","query":"WD Black 内蔵HDD","category":"hdd","ownerReview":"approved"},"hdd-model-search":{"kind":"search","label":"HDD型番検索","query":"HDD","category":"hdd","ownerReview":"approved"},"mem-condition-search":{"kind":"search","label":"メモリ条件検索","query":"デスクトップ メモリ","category":"memory","ownerReview":"approved"},"build-storage-search":{"kind":"search","label":"ストレージ条件検索","query":"SSD HDD","category":"storage","ownerReview":"approved"},"build-power-search":{"kind":"search","label":"電源条件検索","query":"PC 電源","category":"power","ownerReview":"approved"}});
 
   function isApproved(item) {
-    return Boolean(item && item.ownerReview === 'approved');
+    return Boolean(item && item.ownerReview === 'approved' && item.enabled !== false);
+  }
+
+  function isCommerceProduct(product) {
+  return Boolean(product?.kind === 'product' && product.ownerReview === 'approved' && product.enabled === true);
+}
+  function matchesMemory(product, { accepted, ddr, useCase, minGB, maxGB }) {
+  const capacity = /^(\d+)GB$/.exec(product?.conditions?.capacity || '');
+  return isCommerceProduct(product) && accepted === true && /^DDR[45]$/.test(ddr || '') &&
+    product.displayOn?.includes('mem') && product.useCases?.includes(useCase) &&
+    product.conditions?.ddr === ddr && capacity !== null &&
+    Number(capacity[1]) >= minGB && Number(capacity[1]) <= maxGB;
+}
+  function memoryProducts(context) {
+    return Object.entries(PRODUCTS).filter(([, product]) => matchesMemory(product, context))
+      .map(([key, product]) => ({ key, product }));
   }
 
   function searchUrl(query) {
@@ -44,6 +59,7 @@
   global.yzrsAffiliate = Object.freeze({
     tag: ASSOCIATE_TAG,
     products: PRODUCTS,
+    memoryProducts,
     getProduct,
     searchUrl,
     productUrl,

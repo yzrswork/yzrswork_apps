@@ -1,0 +1,8 @@
+/* Existing paper tokens remain authoritative. */
+[data-commerce-slot] { margin: 10px 0; color: var(--ink); font: 12px/1.7 var(--jp); overflow-wrap: anywhere; }
+[data-commerce-slot] p { margin: 4px 0; }
+.commerce-price { font-weight: 700; }
+.commerce-time { color: var(--muted); font-size: 11px; }
+.commerce-card { padding: 20px; border: 1px solid var(--rule-soft); background: var(--card); margin: 16px 0; }
+.commerce-card h2 { font-size: 18px; }
+.commerce-card a { display: inline-flex; min-height: 44px; align-items: center; color: var(--terracotta-deep); }
