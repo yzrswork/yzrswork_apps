@@ -126,15 +126,26 @@
           "note": "現行の2枚組キット。XMP 2.0設定とマザーボードQVLを確認。",
           "sourceUrl": "https://www.crucial.com/memory/ddr4/cp2k16g4dfra32a",
           "lastVerified": "2026-08-12",
-          "ownerReview": "pending",
+          "ownerReview": "approved",
           "tags": [],
-          "useCases": [],
-          "recommendationReason": null,
-          "displayOn": [],
+          "useCases": [
+            "game",
+            "creative",
+            "ai"
+          ],
+          "recommendationReason": "DDR4対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
+          "displayOn": [
+            "mem",
+            "deals"
+          ],
           "relatedArticles": [],
-          "evidence": null,
-          "enabled": false,
-          "ownerReviewedAt": null
+          "evidence": {
+            "level": "specification",
+            "description": "メーカー仕様に基づく候補：DDR4、32GB（16GB×2）。実使用・実測は未確認です。",
+            "sourceUrl": "https://www.crucial.com/memory/ddr4/cp2k16g4dfra32a"
+          },
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-02"
         },
         "mem-crucial-ddr5-32": {
           "kind": "product",
@@ -151,15 +162,26 @@
           "note": "Intel XMP 3.0 / AMD EXPO対応。6000 MT/sはOC設定のため、CPU仕様とマザーボードQVLを確認。",
           "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k16g60c48u5",
           "lastVerified": "2026-08-12",
-          "ownerReview": "pending",
+          "ownerReview": "approved",
           "tags": [],
-          "useCases": [],
-          "recommendationReason": null,
-          "displayOn": [],
+          "useCases": [
+            "game",
+            "creative",
+            "ai"
+          ],
+          "recommendationReason": "DDR5対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
+          "displayOn": [
+            "mem",
+            "deals"
+          ],
           "relatedArticles": [],
-          "evidence": null,
-          "enabled": false,
-          "ownerReviewedAt": null
+          "evidence": {
+            "level": "specification",
+            "description": "メーカー仕様に基づく候補：DDR5、32GB（16GB×2）。実使用・実測は未確認です。",
+            "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k16g60c48u5"
+          },
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-02"
         }
       }
     },

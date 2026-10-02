@@ -3,6 +3,14 @@
 [data-commerce-slot] p { margin: 4px 0; }
 .commerce-price { font-weight: 700; }
 .commerce-time { color: var(--muted); font-size: 11px; }
-.commerce-card { padding: 20px; border: 1px solid var(--rule-soft); background: var(--card); margin: 16px 0; }
+.commerce-card { padding: 20px; border: 1px solid var(--rule-soft); background: var(--card); margin: 16px 0; min-width: 0; overflow-wrap: anywhere; }
 .commerce-card h2 { font-size: 18px; }
 .commerce-card a { display: inline-flex; min-height: 44px; align-items: center; color: var(--terracotta-deep); }
+.commerce-trust, .pk-trust { color: var(--ink); font-weight: 700; }
+.commerce-evidence { color: var(--muted); font-size: 12px; }
+.commerce-card a:focus-visible { outline: 3px solid var(--terracotta-deep); outline-offset: 4px; }
+@media (max-width: 600px) {
+  .picks .pick { flex-direction: column; align-items: stretch; }
+  .picks .pick > div { width: 100%; overflow-wrap: anywhere; }
+  .picks .pick a { justify-content: center; box-sizing: border-box; }
+}

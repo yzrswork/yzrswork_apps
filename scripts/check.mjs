@@ -116,9 +116,12 @@ const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
 ]);
 const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([
   'mem-team-ddr4-32',
-  'mem-crucial-ddr4-32',
-  'mem-crucial-ddr5-32',
 ]);
+// Owner's 2026-10-02 approval is an explicit guard, not another Product Master.
+const EXPECTED_APPROVED_PRODUCTS = Object.freeze({
+  'mem-crucial-ddr4-32': { model: 'CP2K16G4DFRA32A', asin: 'B0C29R9LNL', ddr: 'DDR4' },
+  'mem-crucial-ddr5-32': { model: 'CP2K16G60C48U5', asin: 'B0CT9BMGLF', ddr: 'DDR5' },
+});
 
 assertUnique(categoryIds, 'category.id');
 assertUnique(allSlugs, 'slug');
@@ -175,12 +178,24 @@ if (affiliateProducts) {
     const product = affiliateProducts[key];
     if (!product) {
       fail(`固定ASIN候補のcatalog keyがない: ${key}`);
-    } else if (product.ownerReview !== 'pending') {
+    } else if (product.ownerReview !== 'pending' || product.enabled !== false) {
       fail(`固定ASIN候補をpending以外に変更している: ${key}`);
     }
   }
+  for (const [key, expected] of Object.entries(EXPECTED_APPROVED_PRODUCTS)) {
+    const p = affiliateProducts[key];
+    if (p?.kind !== 'product' || p.maker !== 'Crucial' || p.model !== expected.model || p.asin !== expected.asin ||
+        p.ownerReview !== 'approved' || p.enabled !== true || p.ownerReviewedAt !== '2026-10-02' ||
+        p.evidence?.level !== 'specification' || p.conditions?.ddr !== expected.ddr ||
+        p.conditions?.capacity !== '32GB' || p.conditions?.kit !== '16GBx2' ||
+        JSON.stringify(p.useCases) !== JSON.stringify(['game', 'creative', 'ai']) ||
+        JSON.stringify(p.displayOn) !== JSON.stringify(['mem', 'deals'])) {
+      fail(`Owner個別承認と商品構成が一致しない: ${key}`);
+    }
+  }
   for (const [key, product] of Object.entries(affiliateProducts)) {
-    if (product?.ownerReview === 'approved' && !EXPECTED_APPROVED_SEARCH_KEYS.includes(key)) {
+    if (product?.ownerReview === 'approved' && !EXPECTED_APPROVED_SEARCH_KEYS.includes(key) &&
+        !Object.hasOwn(EXPECTED_APPROVED_PRODUCTS, key)) {
       fail(`想定外のaffiliate productを承認している: ${key}`);
     }
   }
@@ -446,7 +461,7 @@ if (!publicAffiliateApi) {
   fail('affiliate.jsの公開APIが生成されていない');
 } else {
   const publicKeys = Object.keys(publicAffiliateApi.products || {}).sort();
-  const expectedPublicKeys = [...EXPECTED_APPROVED_SEARCH_KEYS].sort();
+  const expectedPublicKeys = [...EXPECTED_APPROVED_SEARCH_KEYS, ...Object.keys(EXPECTED_APPROVED_PRODUCTS)].sort();
   if (JSON.stringify(publicKeys) !== JSON.stringify(expectedPublicKeys)) {
     fail('generated affiliate bundleの公開key集合が想定と不一致');
   }

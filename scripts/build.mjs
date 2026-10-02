@@ -21,7 +21,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { commerceProjection } from './commerce-catalog.mjs';
-import { matchesMemory, isCommerceProduct } from '../shared/commerce-policy.js';
+import { matchesMemory, isCommerceProduct, EVIDENCE_LABELS } from '../shared/commerce-policy.js';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CHECK = process.argv.includes('--check');
@@ -248,6 +248,7 @@ function renderAffiliate(catalog) {
   global.yzrsAffiliate = Object.freeze({
     tag: ASSOCIATE_TAG,
     products: PRODUCTS,
+    evidenceLabels: Object.freeze(${jsonForScript(EVIDENCE_LABELS)}),
     memoryProducts,
     getProduct,
     searchUrl,
@@ -872,7 +873,8 @@ function main() {
     let html = replaceMarked(readFileSync(path, 'utf8'), HEAD_START, HEAD_END, renderHead(page, catalog));
     const cards = Object.entries(commerce.products).filter(([, p]) => p.displayOn.includes('deals')).map(([key, p]) => {
       const url = `https://www.amazon.co.jp/dp/${p.asin}?tag=${encodeURIComponent(commerce.config.associateTag)}`;
-      return `<article class="commerce-card" data-deals-card="${escapeHtml(key)}"><p>${escapeHtml(p.evidence.description)}</p><h2>${escapeHtml(p.label)}</h2><p>${escapeHtml(p.recommendationReason)}</p><p>${escapeHtml(p.useCases.join(' / '))}</p><div data-commerce-slot="${escapeHtml(key)}" hidden></div><a href="${escapeHtml(url)}" data-commerce-cta="${escapeHtml(key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></article>`;
+      const uses = p.useCases.map(use => ({ game: 'ゲーム', creative: '制作・動画編集', ai: 'ローカルAI', web: 'ブラウジング・文書作業' })[use] || use).join(' / ');
+      return `<article class="commerce-card" data-deals-card="${escapeHtml(key)}"><p class="commerce-trust">${escapeHtml(EVIDENCE_LABELS[p.evidence.level])}</p><h2>${escapeHtml(p.label)}</h2><p class="commerce-reason">${escapeHtml(p.recommendationReason)}</p><p>用途：${escapeHtml(uses)}</p><p>${escapeHtml(p.conditions.ddr)} / ${escapeHtml(p.conditions.capacity)} / ${escapeHtml(p.conditions.kit)} — ${escapeHtml(p.note || '')}</p><p class="commerce-evidence">${escapeHtml(p.evidence.description)} <a href="${escapeHtml(p.evidence.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(p.model)}のメーカー仕様（新しいタブ）">メーカー仕様</a></p><div data-commerce-slot="${escapeHtml(key)}" hidden></div><a href="${escapeHtml(url)}" data-commerce-cta="${escapeHtml(key)}" aria-label="${escapeHtml(p.label)}をAmazonで確認（新しいタブ）" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></article>`;
     }).join('\n');
     html = replaceMarked(html, '<!-- BUILD:RECOMMENDATIONS:START -->', '<!-- BUILD:RECOMMENDATIONS:END -->', cards);
     writeIfChanged(path, html, results);

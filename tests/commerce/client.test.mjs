@@ -4,6 +4,7 @@ import { createCommerceController, validatePayload } from '../../shared/commerce
 import { normalizeItem } from '../../workers/commerce-api/normalize.js';
 import { offerState, saleEligible } from '../../shared/commerce-policy.js';
 import { contract, product, rawItem, START, json } from './fixtures.mjs';
+import { commerceConfig } from '../../shared/commerce-config.js';
 
 function payload(item = rawItem(), now = START) {
   const normalized = normalizeItem(item, product(), contract().config, START, now);
@@ -30,6 +31,15 @@ function ui(fetcher, options = {}) {
   };
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
+
+test('approved Pre-Live allowlist stays static: disabled client makes zero network calls, including resume/offline', async () => {
+  let calls = 0;
+  const h = ui(() => { calls++; assert.fail('Pre-Live must not fetch'); }, { contract: commerceConfig, deals: true });
+  await h.controller.refresh(); h.window.dispatchEvent(new Event('pageshow'));
+  h.window.dispatchEvent(new Event('offline')); h.window.dispatchEvent(new Event('online'));
+  await tick(); assert.equal(calls, 0); assert.equal(h.slot.hidden, true);
+  assert.ok(!h.text().includes('¥')); h.controller.dispose();
+});
 
 test('pending without previous state has no economics; concurrent refresh shares one request', async () => {
   let resolve, calls = 0;

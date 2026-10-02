@@ -362,7 +362,8 @@ function renderPicks() {
     const product = p.product;
     const productUrl = product ? approvedAffiliateUrl(p.key) : null;
     if (!product || !productUrl) return null;
-    return `<div class="pick"><div><div class="pk-sub">${esc(product.evidence.description)}</div><div class="pk-name">${esc(product.label)}</div><div>${esc(product.recommendationReason)}</div><div class="pk-sub">${esc(product.conditions.ddr)} / ${esc(product.conditions.capacity)} / ${esc(product.conditions.kit)} — ${esc(product.note || '')}</div><div data-commerce-slot="${esc(p.key)}" hidden></div></div><a href="${esc(productUrl)}" data-commerce-cta="${esc(p.key)}" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></div>`;
+    const trust = api.evidenceLabels?.[product.evidence.level] || '推薦根拠';
+    return `<div class="pick"><div><div class="pk-trust">${esc(trust)}</div><div class="pk-sub">${esc(product.evidence.description)}</div><div class="pk-name">${esc(product.label)}</div><div>${esc(product.recommendationReason)}</div><div class="pk-sub">${esc(product.conditions.ddr)} / ${esc(product.conditions.capacity)} / ${esc(product.conditions.kit)} — ${esc(product.note || '')}</div><div data-commerce-slot="${esc(p.key)}" hidden></div></div><a href="${esc(productUrl)}" data-commerce-cta="${esc(p.key)}" aria-label="${esc(product.label)}をAmazonで確認（新しいタブ）" data-product-key="${esc(p.key)}" data-track-label="${esc(p.key)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></div>`;
   }).filter(Boolean);
   section.hidden = picks.length === 0;
   picksEl.innerHTML = picks.join('');

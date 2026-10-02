@@ -35,7 +35,23 @@ test('mem base remains functional when optional Commerce JS fails; matching pres
   runInNewContext("selSocket = 'am4'; selUse = 'game'; candidateAccepted = true; renderReco(); renderPicks();", sandbox);
   assert.match(elements.get('reco').innerHTML, /この条件で探す/);
   assert.match(elements.get('reco').innerHTML, /DDR4/);
-  assert.equal(elements.get('picks-section').hidden, true); // All real products remain pending.
+  assert.equal(elements.get('picks-section').hidden, false);
+  assert.match(elements.get('picks').innerHTML, /mem-crucial-ddr4-32/);
+  assert.ok(!elements.get('picks').innerHTML.includes('mem-crucial-ddr5-32'));
+  for (const [socket, expected, excluded] of [['am4', 'mem-crucial-ddr4-32', 'mem-crucial-ddr5-32'], ['am5', 'mem-crucial-ddr5-32', 'mem-crucial-ddr4-32']]) {
+    for (const use of ['game', 'creative', 'ai']) {
+      runInNewContext(`selSocket = '${socket}'; selUse = '${use}'; candidateAccepted = true; renderReco(); renderPicks();`, sandbox);
+      assert.equal(elements.get('picks-section').hidden, false);
+      assert.ok(elements.get('picks').innerHTML.includes(expected));
+      assert.ok(!elements.get('picks').innerHTML.includes(excluded));
+      assert.ok(!elements.get('picks').innerHTML.includes('mem-team-ddr4-32'));
+    }
+    runInNewContext("selUse = 'web'; renderPicks();", sandbox); assert.equal(elements.get('picks-section').hidden, true);
+    runInNewContext("selUse = 'game'; candidateAccepted = false; renderPicks();", sandbox); assert.equal(elements.get('picks-section').hidden, true);
+  }
+  runInNewContext("selSocket = 'lga1700'; selDdrChoice = null; candidateAccepted = true; renderPicks();", sandbox);
+  assert.equal(elements.get('picks-section').hidden, true);
+  runInNewContext("selSocket = 'am4'; selUse = 'game'; candidateAccepted = true;", sandbox);
   sandbox.window.yzrsAffiliate = undefined;
   assert.doesNotThrow(() => runInNewContext('renderReco(); renderPicks();', sandbox));
   assert.match(elements.get('reco').innerHTML, /あなたの構成の目安/);
