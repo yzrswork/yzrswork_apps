@@ -15,7 +15,8 @@ export async function jsonRequest(fetcher, url, init, timeoutMS = 12_000) {
   try {
     return await Promise.race([
       (async () => {
-        const response = await fetcher(url, { ...init, signal: controller.signal, redirect: 'error' });
+        const response = await fetcher(url, { ...init, signal: controller.signal, redirect: 'manual' });
+        if (response.status >= 300 && response.status < 400) throw new CommerceError('unexpected-redirect');
         let body;
         try { body = await response.json(); } catch {
           // Throttling/cooldown must still honor HTTP status and Retry-After

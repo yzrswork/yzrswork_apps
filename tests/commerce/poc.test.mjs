@@ -85,6 +85,26 @@ test('PoC unrecognized errors/unapproved response ASIN/duplicate joins fail clos
     assert.equal(h.env.COMMERCE_SNAPSHOTS.puts.length, 0); assert.doesNotMatch(JSON.stringify(result), /mock-only-secret/);
   }
 });
+
+for (const target of ['token', 'GetItems']) test(`PoC ${target} redirect fails closed without retry or snapshot write`, async () => {
+  const h = setup(), calls = [];
+  const worker = createPoCWorker({ ...h.options, fetcher: async (url, init) => {
+    calls.push(url); assert.equal(init.redirect, 'manual');
+    if (target === 'token' || !url.includes('/auth/')) {
+      return new Response('mock-only-redirect-body', { status: 302, headers: { Location: 'https://unapproved.invalid/' } });
+    }
+    return tokenResponse();
+  } });
+  const first = await (await worker.fetch(request(), h.env)).json();
+  assert.equal(first.failure, 'unexpected-redirect'); assert.equal(first.status, 'unavailable');
+  assert.equal(first.tokenCalls, 1); assert.equal(first.itemCalls, target === 'token' ? 0 : 1);
+  assert.equal(first.stopped, true); assert.equal(h.env.COMMERCE_SNAPSHOTS.puts.length, 0);
+  assert.equal(h.env.COMMERCE_AUTH.puts.length, target === 'token' ? 0 : 1);
+  assert.equal((await worker.fetch(request(), h.env)).status, 403);
+  assert.equal(calls.length, target === 'token' ? 1 : 2);
+  assert.ok(calls.every(url => !url.includes('unapproved.invalid')));
+  assert.doesNotMatch(JSON.stringify(first), /mock-only-redirect-body|unapproved.invalid/);
+});
 test('PoC manual gateway denies browser, public host, wrong key and arbitrary query before binding access', async () => {
   let calls = 0;
   const env = { POC_MANUAL_KEY: 'mock-only-key', POC: { fetch: async () => { calls++; return json({ status: 'ok' }); } } };
