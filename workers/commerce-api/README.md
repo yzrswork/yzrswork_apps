@@ -2,6 +2,14 @@
 
 Authority: Owner-approved **YZRS DEALS / Amazon Creators API Architecture / Implementation Brief — Final Candidate** and the current `site/catalog.json`. This directory is a generated-allowlist consumer, not another Product Master.
 
+## Owner decision update — 2026-10-04
+
+OG-5 is now a **production publication blocker**, not a development/controlled live PoC blocker. Owner authorized controlled live JP Creators API use for **B0C29R9LNL + B0CT9BMGLF only**, Secrets configuration on a development Worker, development/preview KV bindings, manual invocation, live response/token-reuse/freshness checks and Preview Commerce display. TEAMGROUP remains pending. Amazon support answers are still outstanding; this decision is not an Amazon permission or terms determination.
+
+Production Worker routes, continuously running production Cron, a production public Commerce endpoint, Amazon price/Deal display on `apps.yzrswork.com`, monitor Phase 1 production and PR #37 merge remain prohibited. Keep the committed production/default config disabled. Do not set `amazonSupportApproved: true` merely to unlock a PoC. Preview display needs explicit isolation from the production publication guard, restricted access and a bounded test session; CORS/noindex alone do not make a preview private.
+
+The 2026-10-02 Pre-Live acceptance is historical. Its Amazon-answer prerequisite for the private PoC is superseded by this decision; production prerequisites remain. Read [CONTROLLED-LIVE-POC.md](CONTROLLED-LIVE-POC.md) for the approved scope, prerequisites and evidence checklist. Authorization does not imply that any live request has already run.
+
 ## Current release gates
 
 No route, active Cron, real KV namespace IDs or Secrets are configured. `LIVE_API_ENABLED` and `COMMERCE_PUBLIC_ENABLED` are false. Catalog `liveApiApproved`, `amazonSupportApproved` and `enabled` are false; endpoint is null. Owner approved exactly two products on 2026-10-02: Crucial CP2K16G4DFRA32A / B0C29R9LNL and CP2K16G60C48U5 / B0CT9BMGLF, enabled for mem/deals and game/creative/ai, with specification evidence only. TEAMGROUP mem-team-ddr4-32 remains pending/disabled. Both generated allowlists contain the two approved products, but approval never enables Amazon access or price publication. Fixtures are fabricated and used only with injected HTTP/KV/clock implementations.
@@ -63,14 +71,14 @@ For a later explicitly approved activation:
 
 ## Controlled live PoC runbook — NOT EXECUTED
 
-Everything below is a future procedure, gated by Amazon's applicable written answers, JP API eligibility, exact credential/version confirmation and a separate Owner instruction to execute the controlled PoC. Phase 0.5 does not authorize resource creation, credential configuration, live requests, public activation or merge. Preview QA uses static Pages only. No credentials, tokens, full upstream responses or PAC fixtures may be copied into Git/PR/chat/logs.
+The 2026-10-04 Owner decision authorizes the controlled development PoC below before the Amazon support reply, subject to JP API eligibility and exact credential/version confirmation. Production publication remains gated by Amazon's applicable written answers and separate public-release approval. No credentials, tokens, full upstream responses or PAC fixtures may be copied into Git/PR/chat/logs. Production routes/Cron/public endpoint and merge remain prohibited. The original local-dev invocation is an option; a deployed development Worker must store credentials as Worker Secrets and remain isolated from production.
 
 ### 1. Freeze the approved candidate and gates
 
 - Record the then-current main/PR SHA and generated `catalogRevision`; rerun build/check/tests. The initial controlled set is **B0C29R9LNL + B0CT9BMGLF**, one GetItems batch. No TEAMGROUP, SearchItems, monitor or arbitrary query ASINs.
 - Owner checks the actual Amazon listing model/kit against the approved 16GB×2 tuple before the first query; approval in the catalog is not proof of Amazon's current variation mapping.
-- Retain the Amazon response for site purpose, responsive/mobile/PWA, first-party display JSON/caching/redistribution, registered URLs and exact required disclaimers. Apply any required presentation changes through review first. Do not replace these answers with a CORS assumption.
-- In a separately approved PoC branch, set only catalog `liveApiApproved: true` after the private-use gate is satisfied; regenerate both projections. Keep catalog `enabled: false`, `endpoint: null`, and public Worker flag false throughout private PoC. Set `amazonSupportApproved` only when the actual answers warrant it. This runbook does not change any current values.
+- Retain the Amazon response for site purpose, responsive/mobile/PWA, first-party display JSON/caching/redistribution, registered URLs and exact required disclaimers when it becomes available. These answers block production publication, not the Owner-authorized development PoC. Apply any required presentation changes through review first; CORS is not a permission determination.
+- Activate live access only in the explicitly isolated PoC environment using the approved two-product projection. Keep the committed default/catalog Commerce `enabled: false`, `endpoint: null`, and production/public Worker flags false. Set `amazonSupportApproved` only when the actual answers warrant it. Do not flip the production support gate to make Preview rendering work. This runbook edit changes no current runtime values.
 
 ### 2. Isolated resources and secrets (future only)
 
