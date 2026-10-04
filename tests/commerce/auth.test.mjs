@@ -51,6 +51,13 @@ test('Retry-After integer/HTTP date parsing and bounded maximum', () => {
   assert.equal(retryAfter('junk', START), null);
   assert.equal(retryAfter('999999999', START), START + 86400000);
 });
+test('non-JSON token 429 still persists shared cooldown across fresh cache instances', async () => {
+  const h = harness(); let calls = 0;
+  const fetcher = async () => { calls++; return new Response('rate limited', { status: 429, headers: { 'Retry-After': '300' } }); };
+  await assert.rejects(createTokenCache({ fetcher, clock: h.clock })(h.env), { code: 'token-throttled' });
+  await assert.rejects(createTokenCache({ fetcher, clock: h.clock })(h.env), { code: 'token-cooldown' });
+  assert.equal(calls, 1);
+});
 test('rotation changes key; TokenExpired ignores observed generation without deleting shared slot', async () => {
   const h = harness(); let calls = 0;
   const token = createTokenCache({ fetcher: async () => { calls++; return tokenResponse(); }, clock: h.clock });

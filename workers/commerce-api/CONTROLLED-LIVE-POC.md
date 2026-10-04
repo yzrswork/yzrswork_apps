@@ -39,11 +39,17 @@ Disable development live/display flags, keep Cron empty, stop manual invocation 
 
 Report observed live request counts, response shape and normalized outcomes, token reuse, snapshot bounds, Preview behavior, required presentation changes and all remaining unobserved/mocked states. Keep site-purpose/mobile/PWA/display JSON/redistribution/cache/disclosure questions explicitly unresolved for production. Use [README.md](README.md) for bounded retry and future rollback/cutover details; the production checklist is not execution authorization.
 
-## Start-of-attempt status — 2026-10-04
+## Windows引き継ぎ実行記録 — 2026-10-04
 
-- Local/remote PR head: d6a840e5535c2876e5c3706d6cbe5ee0bcbc855b; main: 5642f7bb1ca9cecee0f1cd1c9ac4fe9d26695888. Draft open/unmerged; starting tree clean.
-- Execution environment has no configured Cloudflare API authentication, Wrangler OAuth file or Amazon client credentials. No Cloudflare connector is available. Cloudflare dashboard currently shows the login page with a verification error.
-- A requested login-page reload was rejected by automatic approval review because authentication guidance forbids reload retries after a verification error. No workaround or credential entry was attempted.
-- **Live PoC not executed**: zero live Amazon calls, no resource creation, Secrets/binding change, deployment or public/display flag activation. Authentication and safe Secrets input are prerequisites, not another request to approve the already authorized PoC.
-
-Replace this attempt status with measured results only after the actual controlled PoC; do not mark an authorization or mock result as live success.
+- 開始時の実装HEAD／remote branch／PR headは `427105dac98b9ff2f25f50d966ac199b1c8c5320`、mainは `5642f7bb1ca9cecee0f1cd1c9ac4fe9d26695888`。Draft OPEN／未マージ、CI成功。既存ローカルcheckoutは変更なしのmain `b8d9d01` だったため、同じ既存実装ブランチへ安全に切り替えた。
+- Wrangler 4.119.0で指定account／yzrswork@gmail.com／承認済み5 scopeを再確認。以前のクラウド環境の認証失敗は今回の状態と区別する。scope追加／再login／認証ファイル秘密値の閲覧は行っていない。
+- namespace一覧にPoCの同名資源はなかった。今回、専用Auth／Snapshots KV 2件と `yzrs-deals-poc-20261004` を新規作成。対象外の既存Worker／KVは変更していない。実IDと資源記録はローカル引き継ぎ成果物に保存し、committed production configには入れない。
+- PoC Workerはworkers.dev／Preview URL／routeなし、Cron空、observability無効、live／display／public／prerequisites=false。localhost gatewayからremote Service Bindingでhealth／disabled readを確認できた。別Originとブラウザー由来のmanual invokeは403。health／readはAmazonを呼ばない。
+- 現在はAmazon Secret名一覧が空で、healthのcredentialsPresent=false。Ownerへ専用WorkerのSecret UI入力と、version 3.3／JP・partnerTagの利用資格／実商品型番・16GB×2構成確認を依頼済み。秘密値の入力や前提確認を推測で代替しない。
+- **Live PoCは未実行**。実Amazon token requests=0、GetItems requests=0。Offer／Deal／Savingsの実応答、live token reuse／KV伝播／freshnessは未検証。
+- 既存snapshot正規化／readを共通化し、公開Guardとは分離した専用PoC entryを追加。固定2件のtuple Guard、Service Binding専用アクセス、localhostのmanual key、query／body拒否、PoC 1 attempt、件数／field型／token期限の機密を含まない観測を実装。公開本番Gateは維持する。
+- HTTP 429／403の非JSON error bodyでも、shared cooldown／snapshot失効処理に到達するよう修正。token値やupstream messageを公開しない。
+- ローカルtests **90/90 PASS**、build更新0件、check／regression／diff check PASS。Product Masterと両projectionのrevisionは `a0f296a53a66a9e07fa771c11279c4cd79ce487bae30c403dd5aa36f6d7751b3` のまま。approved 2／pending 1、本番無効。MEM SWは共有client変更を受けてapp.jsonからv14を再生成。
+- localhostの架空応答で、Chromium／Playwright WebKitの1348・375・320pxを確認。DEALSの仕様・理由優先／Savings basis／JST時刻／開示、MEMのDDR4・DDR5×3用途、web除外、offlineで価格消去・通常CTA維持・online再取得、PACをbrowser storage／SWへ保存しないことを確認。実Amazonデータを使った画面確認とは区別する。WebKitでSW制御後にroute interceptionが通らなかったため、mock serverへ切り替えて再検証した。
+- 実iPhone SE3／Safari／インストール済みPWA／VoiceOver／旧SWからの更新／実端末BFCache・背景復帰はOwner manual checkとして残る。
+- 再開手順と終了時無効化は [README.md](README.md) の現行Windows手順を使う。Secrets／利用資格／実商品照合が整うまでAmazonを呼ばない。production公開／monitor Phase 1／Draft解除／mergeには進まない。

@@ -115,6 +115,13 @@ test('failed update retains original deadline; 403 clears snapshot immediately',
     h.advance(3600000); assert.deepEqual((await (await failed.fetch(offersRequest(), h.env)).json()).items, {});
   }
 });
+test('non-JSON GetItems 403 still clears the previous snapshot and exposes no upstream body', async () => {
+  const h = setup(); await h.worker.scheduled({}, h.env);
+  const failed = createWorker({ contract: contract(), clock: h.clock, fetcher: async () => new Response('private upstream message', { status: 403 }) });
+  assert.deepEqual(await failed.scheduled({}, h.env), { status: 'unavailable' });
+  assert.ok(h.env.COMMERCE_SNAPSHOTS.deletes.length);
+  assert.deepEqual((await (await failed.fetch(offersRequest(), h.env)).json()).items, {});
+});
 test('KV missing/stale/read failure/wrong revision and publication flag always fail closed', async () => {
   const h = setup();
   assert.equal((await (await h.worker.fetch(offersRequest(), h.env)).json()).status, 'unavailable');

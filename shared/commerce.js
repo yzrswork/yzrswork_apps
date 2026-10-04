@@ -32,11 +32,18 @@ export function validatePayload(payload, contract) {
 }
 
 export function createCommerceController({ contract = commerceConfig, document, window, navigator,
-  fetcher = globalThis.fetch, monotonic = () => performance.now(), setTimer = setTimeout, clearTimer = clearTimeout }) {
+  fetcher = globalThis.fetch, monotonic = () => performance.now(), setTimer = setTimeout, clearTimer = clearTimeout,
+  developmentRead = null }) {
   let state = {}, timer, generation = 0, pending, pendingGeneration, refreshAgain = false, disposed = false;
   const originals = new Map();
-  const enabled = contract.config.enabled === true && contract.config.amazonSupportApproved === true &&
-    typeof contract.config.endpoint === 'string' && contract.config.endpoint.startsWith('https://');
+  // A development adapter is only usable on the exact loopback page. Its entry
+  // separately validates the unchanged disabled contract; public pages pass none.
+  const development = developmentRead && /^http:\/\/127\.0\.0\.1:\d+$/.test(developmentRead.origin) &&
+    window.location?.origin === developmentRead.origin && contract.config.enabled === false &&
+    contract.config.amazonSupportApproved === false && contract.config.liveApiApproved === false &&
+    contract.config.endpoint === null && typeof developmentRead.fetch === 'function';
+  const enabled = development || (contract.config.enabled === true && contract.config.amazonSupportApproved === true &&
+    typeof contract.config.endpoint === 'string' && contract.config.endpoint.startsWith('https://'));
   const slots = () => document.querySelectorAll('[data-commerce-slot]');
 
   function clear() {
@@ -108,7 +115,8 @@ export function createCommerceController({ contract = commerceConfig, document, 
     pendingGeneration = current;
     pending = Promise.resolve().then(async () => {
       try {
-        const response = await fetcher(contract.config.endpoint, { method: 'GET', mode: 'cors', credentials: 'omit', cache: 'no-store', signal: AbortSignal.timeout(8000) });
+        const init = { method: 'GET', mode: 'cors', credentials: 'omit', cache: 'no-store', signal: AbortSignal.timeout(8000) };
+        const response = development ? await developmentRead.fetch(init) : await fetcher(contract.config.endpoint, init);
         if (!response.ok) throw new Error('unavailable');
         const payload = await response.json();
         if (current !== generation || disposed || navigator.onLine === false || document.visibilityState === 'hidden') return;

@@ -55,7 +55,7 @@ test('pending cannot be enabled; approved cannot bypass product review; dynamic 
 test('repository explicit approval guard rejects ASIN substitution and otherwise complete TEAMGROUP approval', () => {
   const temp = mkdtempSync(join(tmpdir(), 'yzrs-approval-guard-'));
   try {
-    cpSync(new URL('../../', import.meta.url), temp, { recursive: true, filter: path => basename(path) !== '.git' });
+    cpSync(new URL('../../', import.meta.url), temp, { recursive: true, filter: path => !['.git', '.wrangler', 'node_modules'].includes(basename(path)) });
     const run = () => spawnSync(process.execPath, ['scripts/check.mjs'], { cwd: temp, encoding: 'utf8' });
     assert.equal(run().status, 0);
     const altered = structuredClone(catalog);

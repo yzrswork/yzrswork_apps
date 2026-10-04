@@ -12,14 +12,14 @@ The 2026-10-02 Pre-Live acceptance is historical. Its Amazon-answer prerequisite
 
 ## Current release gates
 
-No route, active Cron, real KV namespace IDs or Secrets are configured. `LIVE_API_ENABLED` and `COMMERCE_PUBLIC_ENABLED` are false. Catalog `liveApiApproved`, `amazonSupportApproved` and `enabled` are false; endpoint is null. Owner approved exactly two products on 2026-10-02: Crucial CP2K16G4DFRA32A / B0C29R9LNL and CP2K16G60C48U5 / B0CT9BMGLF, enabled for mem/deals and game/creative/ai, with specification evidence only. TEAMGROUP mem-team-ddr4-32 remains pending/disabled. Both generated allowlists contain the two approved products, but approval never enables Amazon access or price publication. Fixtures are fabricated and used only with injected HTTP/KV/clock implementations.
+Production/default: no route, active Cron, real KV namespace IDs or Secrets are configured. Dedicated PoC resources are tracked separately below. `LIVE_API_ENABLED` and `COMMERCE_PUBLIC_ENABLED` are false. Catalog `liveApiApproved`, `amazonSupportApproved` and `enabled` are false; endpoint is null. Owner approved exactly two products on 2026-10-02: Crucial CP2K16G4DFRA32A / B0C29R9LNL and CP2K16G60C48U5 / B0CT9BMGLF, enabled for mem/deals and game/creative/ai, with specification evidence only. TEAMGROUP mem-team-ddr4-32 remains pending/disabled. Both generated allowlists contain the two approved products, but approval never enables Amazon access or price publication. Fixtures are fabricated and used only with injected HTTP/KV/clock implementations.
 
 Do not deploy this skeleton, populate production bindings, call Amazon with pending ASINs or enable monitor Phase 1. Any further product or changed model/configuration/ASIN/reason/evidence needs an individual Owner approval. Amazon must answer the applicable site-purpose, mobile/PWA, display-JSON and content/disclaimer questions before production Commerce publication. The original Brief contains the support inquiry; this implementation has not sent it.
 
 ## Boundaries
 
 - `site/catalog.json` → `scripts/commerce-catalog.mjs` validation → build-generated browser/Worker projections with the same revision. Edit the catalog, not generated files.
-- `scheduled` is the only Amazon path. Read-only `GET /v1/offers` reads `COMMERCE_SNAPSHOTS`; no arbitrary ASIN/filter/refresh query or visitor-triggered OAuth/GetItems.
+- Production `scheduled` is the only production Amazon path; the isolated PoC uses its private service-bound manual entry. Read-only `GET /v1/offers` reads `COMMERCE_SNAPSHOTS`; no arbitrary ASIN/filter/refresh query or visitor-triggered OAuth/GetItems.
 - Future approved schedule: `0 * * * *`; two separate ordinary KV namespaces: `COMMERCE_SNAPSHOTS` and private `COMMERCE_AUTH`. The disabled config intentionally contains no placeholder IDs to mistake for working bindings.
 - Future credentials: Worker Secrets `AMAZON_CLIENT_ID` / `AMAZON_CLIENT_SECRET`; credential version 3.3 and a rotation epoch. Never put credential/token values into catalog, Git, static bundles, health, responses, analytics or logs.
 - JP LWA token requests use JSON and `creatorsapi::default`. Shared Auth KV + isolate single-flight reuse valid tokens. KV is eventually consistent, not a distributed lock. Token 429 writes a separate short-lived cooldown; GetItems 429 does not remint tokens. TokenExpired can refresh once per run without blind cache deletion.
@@ -69,92 +69,24 @@ For a later explicitly approved activation:
 4. Keep Auth cooldown/short token expiry for a normal UI shutdown. For credential compromise/rotation or Amazon suspension, rotate the epoch, remove affected private Auth entries and revoke credentials as appropriate; do not clear a 429 cooldown to force reminting.
 5. Re-run build/check/tests and confirm mem/kit/build/HDD and site entry points continue to work without Commerce. No new DB/Authority or history recovery is needed.
 
-## Controlled live PoC runbook — NOT EXECUTED
+## Controlled live PoC — Windows 実行経路（2026-10-04）
 
-The 2026-10-04 Owner decision authorizes the controlled development PoC below before the Amazon support reply, subject to JP API eligibility and exact credential/version confirmation. Production publication remains gated by Amazon's applicable written answers and separate public-release approval. No credentials, tokens, full upstream responses or PAC fixtures may be copied into Git/PR/chat/logs. Production routes/Cron/public endpoint and merge remain prohibited. The original local-dev invocation is an option; a deployed development Worker must store credentials as Worker Secrets and remain isolated from production.
+現行の手順は以下です。以前のローカルAmazon credentials／一時counter wrapper案を置き換えます。productionの既定設定、公開Gate、Product Masterは変更しません。実行状況は [CONTROLLED-LIVE-POC.md](CONTROLLED-LIVE-POC.md) を参照してください。
 
-### 1. Freeze the approved candidate and gates
+1. 指定accountで `whoami` と現在の資源・PR HEADを確認します。同名の由来不明Worker／KVを再利用しません。専用Worker名は `yzrs-deals-poc-20261004`、KVは専用のAuth／Snapshotsだけです。
+2. `poc-wrangler.example.toml` をGit外へコピーし、mainを `poc-worker.js` の絶対パスにします。今回作成したKVだけを `COMMERCE_AUTH`／`COMMERCE_SNAPSHOTS` にbindingします。workers.dev／Preview URL／routeを設けず、Cron空、observability無効、live／display／public／prerequisites無効でdeployします。通常の `wrangler.toml`／`worker.js` はdeployしません。
+3. OwnerがCloudflareの専用Worker設定画面でSecret型の `AMAZON_CLIENT_ID`／`AMAZON_CLIENT_SECRET` を直接設定します。秘密値はチャット、CLI引数、履歴、Git、ログ、ローカルファイルへコピーしません。3.3、JP、partnerTag、利用資格、現在の商品型番／16GB×2との一致を、秘密値を含めず確認します。
+4. `poc-gateway.example.toml` をGit外へコピーします。これは**deploy禁止のlocalhost専用gateway**です。remote Service Bindingが、公開URLのない専用Workerへ接続します。Amazon Secretは開発Worker内に留まります。固定Wrangler 4.119.0のローカルworkerdは2026-08-08までに対応するため、gatewayだけこの互換日付を使います。CloudflareへdeployしたPoC Workerは2026-10-04です。
+5. gateway用のランダムな `POC_MANUAL_KEY` だけを、Git外・Owner限定アクセスの `.dev.vars` に置きます。これはAmazon／Cloudflare credentialではありません。gatewayは `wrangler dev --ip 127.0.0.1 --port 8787` で起動します。`--remote`、Tunnel、公開scheduledテスト経路を使いません。
+6. remote Workerのhealthと `secret list`（名前だけ）で入力完了を確認します。前提確認後に専用configだけlive／prerequisitesを有効化します。Catalogやsupport/public Gateを偽装しません。
+7. 手動制御用のローカルprocessが、secret keyをメモリー内で読み、空bodyの `POST /poc/invoke` に付けます。keyをコマンド引数・履歴・出力に入れません。ブラウザーOrigin／Sec-Fetch、任意query／bodyを拒否します。Previewサーバーにはinvoke経路がありません。
+8. cold成功はtoken 1＋GetItems 1、warm成功はtoken 0＋GetItems 1を実測します。PoCのGetItemsは**1 attemptのみ**です。予想外の応答・失敗・403・429で止め、意図的な再試行や実429生成をしません。既存clientの通常retry／shared cooldownはmockで別途確認します。
+9. sequential実行だけです。通常KVはeventual consistencyで、isolateのsingle-flight／停止latchはglobal lockではありません。warm確認と新しい専用Worker versionでの再確認は、通常KVの伝播とtoken deadlineを考慮します。新versionは新しいfactoryを作りますが、特定edge isolateのcold起動は保証できません。厳密な実測が成立しなければ未検証と記録します。
+10. 観測結果にはHTTP status、件数、tokenの取得／期限時刻、承認済みkey別のfield型だけを含めます。upstream body、token値、credentials、実PACをGit／PR／ログへ入れません。Auth KVをdumpしません。Offer／Deal／Savingsは短寿命の正規化snapshotを私的に読み、必要な状態だけ記録します。
+11. 表示確認は `node scripts/commerce-poc-preview.mjs --display` の `http://127.0.0.1:8790` です。remote側の `POC_DISPLAY_ENABLED` が必要です。Host／Origin／Sec-Fetchを検証し、readをlocalhost gateway経由でproxyします。ブラウザーにAmazon credentialもrefresh権限も渡しません。公開Pagesにはこのentryを挿入しません。通常起動はdisplay無効です。
+12. 終了時は専用remote configのlive／display／prerequisitesをfalseでdeployし、healthで確認します。gateway／Previewを停止します。publicは常にfalse、Cron空、公開URL／routeなし。通常停止ではAuth token／cooldownを消しません。短寿命snapshotは期限で失効し、必要な場合だけ専用namespaceの該当keyを削除します。削除対象は今回作成したことを確認できる資源だけです。OAuth権限の縮小／失効はOwnerの別作業への影響を確認する提案に留めます。
 
-- Record the then-current main/PR SHA and generated `catalogRevision`; rerun build/check/tests. The initial controlled set is **B0C29R9LNL + B0CT9BMGLF**, one GetItems batch. No TEAMGROUP, SearchItems, monitor or arbitrary query ASINs.
-- Owner checks the actual Amazon listing model/kit against the approved 16GB×2 tuple before the first query; approval in the catalog is not proof of Amazon's current variation mapping.
-- Retain the Amazon response for site purpose, responsive/mobile/PWA, first-party display JSON/caching/redistribution, registered URLs and exact required disclaimers when it becomes available. These answers block production publication, not the Owner-authorized development PoC. Apply any required presentation changes through review first; CORS is not a permission determination.
-- Activate live access only in the explicitly isolated PoC environment using the approved two-product projection. Keep the committed default/catalog Commerce `enabled: false`, `endpoint: null`, and production/public Worker flags false. Set `amazonSupportApproved` only when the actual answers warrant it. Do not flip the production support gate to make Preview rendering work. This runbook edit changes no current runtime values.
-
-### 2. Isolated resources and secrets (future only)
-
-Use two dedicated **PoC** ordinary KV namespaces, never production namespaces. Private `COMMERCE_AUTH` stores tokens and cooldown; `COMMERCE_SNAPSHOTS` stores the short-lived normalized projection. No D1/R2/DO/Instant/history. Record IDs privately and double-check the target Cloudflare account/environment before each command.
-
-```sh
-# AFTER the PoC gates. Placeholder names are environment labels, not real IDs.
-npx wrangler kv namespace create COMMERCE_AUTH_POC
-npx wrangler kv namespace create COMMERCE_SNAPSHOTS_POC
-```
-
-Create a local PoC directory outside Git with restrictive permissions. Its `wrangler.toml` uses the reviewed Worker or the temporary counter wrapper below as `main`, absolute repo import paths, `workers_dev = false`, `preview_urls = false`, no routes, `crons = []`, and two `[[kv_namespaces]]` entries with `binding = "COMMERCE_AUTH"` / `"COMMERCE_SNAPSHOTS"`, their **PoC** IDs and `remote = true`. Set `CREDENTIAL_VERSION = "3.3"`, a fresh non-secret `TOKEN_ROTATION_EPOCH = "poc-<review-date>-1"`, `LIVE_API_ENABLED = "true"` only when authorized to start, and `COMMERCE_PUBLIC_ENABLED = "false"`. Run local dev with remote **bindings**, not `--local` (which disables remote bindings), and not `--remote`/Tunnel. Do not deploy this private config.
-
-Owner enters `AMAZON_CLIENT_ID` / `AMAZON_CLIENT_SECRET` into a permission-restricted `.dev.vars` alongside that private config, outside Git; do not place values in a command argument, history, PR or chat. Future deployed Worker credentials must use Worker Secrets with those exact names. `wrangler secret put` deploys a version immediately: use it only for a separately authorized, disabled target, never against this current skeleton as a preparation step. Prefer version-secret staging if immediate activation is not approved. JP token host is `api.amazon.co.jp`, JSON LWA scope `creatorsapi::default`; do not reuse a US/v2 credential.
-
-### 3. Controlled invocation and non-sensitive call counts
-
-Use a temporary local-only entry outside Git to wrap the existing factory for accounting. Replace `<ABSOLUTE_REPO>` with the reviewed checkout path. This wrapper delegates all behavior and does not log request bodies, headers, token values, prices or upstream responses:
-
-```js
-import { createWorker } from '<ABSOLUTE_REPO>/workers/commerce-api/worker.js';
-const counts = { token: 0, items: 0 };
-const worker = createWorker({ fetcher: async (url, init) => {
-  if (url === 'https://api.amazon.co.jp/auth/o2/token') counts.token++;
-  else if (url === 'https://creatorsapi.amazon/catalog/v1/getItems') counts.items++;
-  else throw new Error('unexpected outbound host');
-  return fetch(url, init);
-}});
-export default {
-  fetch: (request, env) => worker.fetch(request, env),
-  async scheduled(event, env) {
-    const before = { ...counts };
-    const result = await worker.scheduled(event, env);
-    console.info(JSON.stringify({ status: result.status,
-      tokenCalls: counts.token - before.token, itemCalls: counts.items - before.items }));
-    return result;
-  },
-};
-```
-
-```sh
-# AFTER authorization; PRIVATE_POC_CONFIG points outside Git. No real Cron.
-npx wrangler dev --config "$PRIVATE_POC_CONFIG" --test-scheduled --ip 127.0.0.1 --port 8787
-# Run in a second terminal, once per controlled observation.
-curl --fail http://127.0.0.1:8787/health
-curl --fail -H 'Origin: https://apps.yzrswork.com' http://127.0.0.1:8787/v1/offers
-curl --fail http://127.0.0.1:8787/cdn-cgi/local/scheduled
-```
-
-Use the scheduled test route printed/documented by the pinned Wrangler version (current docs use `/cdn-cgi/local/scheduled`; older versions used `/__scheduled`). Freeze that version and verify the local route before secrets/live enabling. Do not create a public HTTP route to invoke `scheduled`.
-
-Expected cold successful update: **1 token + 1 GetItems** for the two-ASIN batch. A second controlled invocation before the token deadline: **0 token + 1 GetItems**. Restart the local isolate, retain the same private KV/epoch, allow ordinary-KV propagation, and repeat: same warm count. `/health` and `/v1/offers` each cause **0 Amazon calls**. Token reuse is conditional on token expiry/cooldown/KV propagation; KV is not a distributed lock. Stop on unexpected counts; do not induce real 429s to test retry. The existing injected tests verify races and throttling.
-
-### 4. Smoke observations / stop conditions
-
-| Observation | Expected / action |
-|---|---|
-| `/health` | 200 `{ "status": "ok" }`; liveness only, no claim of Amazon access, bindings or freshness |
-| Private `/v1/offers` with Apps Origin | 200 `status: disabled`, empty `items`; public catalog/flag gate stays closed even after a private update |
-| Wrong/no Origin, query ASIN, wrong method | 403 / 400 / 405 respectively; never an Amazon request |
-| Successful private update | `status: updated`; only approved ASINs, ASIN join independent of response order; inspect sanitized snapshot privately, not Auth token output |
-| Auth hit / miss | Cache reuse above; `expiresAt` starts at request start with the 60-second token buffer; rotate epoch only for authorized rotation, not to evade cooldown |
-| Token 429 | Separate shared cooldown, honor Retry-After seconds/date or conservative fallback; no GetItems, no remint loop, no new snapshot deadline |
-| GetItems 429 / 5xx | Same token, bounded retries within 60-second run budget; long Retry-After defers; no freshness extension on failure |
-| OAuth / 403 / repeated TokenExpired | Stop; confirm eligibility/credentials/tag/marketplace privately. 403 attempts snapshot removal; do not fabricate fallback prices |
-| ItemNotAccessible / omitted ASIN | Only Commerce becomes not-accessible; owned recommendation/ordinary approved link remains |
-| Offer/price null, unavailable/MAP unknown | No safe offer; no SALE/old economics. Do not broaden safety rules merely to populate a card |
-| Deal end / disappearance | End reached within observed freshness = expired; erase price/Savings/API URL. New response without Deal uses only its new economics |
-| Freshness | Each item <60 minutes from request start, shorter at known Deal end; old/missing/corrupt KV = unavailable, never a refreshed timestamp |
-| Later PUBLIC-gated endpoint | 200 `ok` with schema/revision/serverNow/minimal safe projection; 503 unavailable for missing/stale/corrupt KV; `no-store`, noindex, fixed Apps CORS. Verify only after the public gate, not during private PoC |
-
-For private snapshot inspection use only `offers:v1:<catalogRevision>` in COMMERCE_SNAPSHOTS. Do not dump COMMERCE_AUTH into terminal recordings. Token accounting needs only count/expiry metadata, never accessToken. A no-offer result is a valid safe technical observation, not evidence that a product is on sale. Real OffersV2/JP error shapes and MAP/Prime conditions remain acceptance checks; fail closed if they differ.
-
-### 5. End private PoC
-
-Stop Wrangler; set local live flag false; restore the catalog live flag to the reviewed Pre-Live state if PoC activation is not retained by explicit approval. Keep no routes/Cron/public flag. Remove only the PoC snapshot keys as needed, retaining bounded auth expiry/cooldown for normal shutdown; revoke credentials/rotate epoch for compromise or suspension. Remove local secret files securely under Owner control. Record sanitized PASS/FAIL, counts, revision and timestamps; no token/raw PAC logs. Any failed safety/eligibility/terms check blocks cutover.
+公式一次資料（2026-10-04再確認）: [Amazon 3.3/LWA/GetItems](https://affiliate.amazon.co.jp/creatorsapi/docs/en-us/get-started/using-curl)、[OffersV2](https://affiliate.amazon.co.jp/creatorsapi/docs/en-us/api-reference/resources/offersV2)、[Cloudflare Service Binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/)、[remote bindings](https://developers.cloudflare.com/workers/local-development/)、[Worker Secrets](https://developers.cloudflare.com/workers/configuration/secrets/)。これらはアカウントの利用資格や未解決のAmazon用途許可を証明するものではありません。
 
 ## Production cutover checklist — NOT AUTHORIZED / NOT EXECUTED
 
@@ -175,6 +107,6 @@ Stop Wrangler; set local live flag false; restore the catalog live flag to the r
 - Revert UI to the known reviewed checkpoint if needed; keep two product approvals only if Owner still intends them. TEAMGROUP remains pending. No reset/clean of uncommitted work.
 - Rerun build/check/tests, disabled-state smoke, mem base/approved ordinary links, root/kit/build/HDD/site and real-device SW update. Log sanitized outcome and stop before any reactivation.
 
-Official operational references (recheck at execution and pin Wrangler): [KV setup](https://developers.cloudflare.com/kv/get-started/), [KV CLI](https://developers.cloudflare.com/workers/wrangler/commands/kv/), [Workers CLI / scheduled dev / secrets](https://developers.cloudflare.com/workers/wrangler/commands/workers/), [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/). These document Cloudflare operations, not Amazon permission. No command in this runbook was executed during Phase 0.5.
+Official operational references (recheck at execution and pin Wrangler): [KV setup](https://developers.cloudflare.com/kv/get-started/), [KV CLI](https://developers.cloudflare.com/workers/wrangler/commands/kv/), [Workers CLI / scheduled dev / secrets](https://developers.cloudflare.com/workers/wrangler/commands/workers/), [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/). These document Cloudflare operations, not Amazon permission. The Phase 0.5 history predates the Windows dedicated-resource setup; current measured status is in CONTROLLED-LIVE-POC.md.
 
 Stop after Pre-Live review. Monitor Phase 1 and any live/public activation require their remaining Owner/Amazon gates.

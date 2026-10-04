@@ -48,3 +48,7 @@ Use the Preview links above on an actual iPhone (including iPhone SE-sized 375px
 - TEAMGROUP needs individual approval; monitor Phase 1, public price display, production resources/routes/Cron and merge remain outside this authorization. Draft stays open.
 - Future operations, activation order, smoke expectations and rollback are in [README.md](README.md). No listed live command has been executed.
 - Current static rollback: revert the Phase 0.5 implementation/documentation commits after review, regenerate, rerun tests/build/check, retain disabled production flags and the Phase 0 checkpoint. If static assets are later released, bump MEM's SW version during rollback. No new DB, Product Authority or price history exists to recover.
+
+## 2026-10-04 Windowsでの追加検証（mock）
+
+上の2026-10-02記録は履歴です。今回のlocalhost PoC経路をChromiumとPlaywright WebKitの1348／375／320pxで検証しました。日本語型番の折り返し、横overflowなし、仕様・理由が価格より先、時刻／Savings basis／Associate開示、MEMの6条件一致・web除外、offline消去・再接続・通常CTA維持、storage／SWの動的JSON非保存を確認しました。データは架空応答で、Amazon実応答・実Safari／iPhone／installed PWAの検証ではありません。現在の90 testsとbuild／check／regressionは成功しています。実機チェック項目は継続します。
