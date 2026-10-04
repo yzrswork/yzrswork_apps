@@ -1,0 +1,23 @@
+# TEMPLATE ONLY. Copy outside Git, set main to the absolute poc-worker.js path,
+# and append two newly created, provenance-verified KV IDs before deployment.
+# Never deploy worker.js/wrangler.toml or an existing Worker/KV for this PoC.
+name = "yzrs-deals-poc-20261004"
+main = "poc-worker.js"
+account_id = "6f5ab4de678487058a637479d3e7fb76"
+compatibility_date = "2026-10-04"
+workers_dev = false
+preview_urls = false
+[triggers]
+crons = []
+[observability]
+enabled = false
+[vars]
+POC_MODE = "controlled-live-20261004"
+LIVE_API_ENABLED = "false"
+POC_DISPLAY_ENABLED = "false"
+POC_PREREQUISITES_CONFIRMED = "false"
+COMMERCE_PUBLIC_ENABLED = "false"
+CREDENTIAL_VERSION = "3.3"
+TOKEN_ROTATION_EPOCH = "poc-20261004-local-1"
+# Secrets: AMAZON_CLIENT_ID / AMAZON_CLIENT_SECRET, on this development Worker.
+# Bindings: COMMERCE_AUTH / COMMERCE_SNAPSHOTS (dedicated ordinary KV only).

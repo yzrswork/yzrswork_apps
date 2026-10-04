@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Fetch latest main for regression baseline
+        run: git fetch --no-tags --depth=1 origin +refs/heads/main:refs/remotes/origin/main
       - uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -19,3 +21,5 @@ jobs:
         run: git diff --exit-code
       - name: Run repository quality checks
         run: npm run check
+      - name: Run mock Commerce tests (no credentials or network)
+        run: npm test

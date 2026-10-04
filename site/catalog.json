@@ -101,7 +101,15 @@
           "note": "永久保証。3200動作はCPU・マザー・BIOS設定に依存するため、QVLと実動作速度を確認。",
           "sourceUrl": "https://www.teamgroupinc.com/jp/product-detail/memory/TEAMGROUP/elite-plus-u-dimm-ddr4-red/elite-plus-u-dimm-ddr4-red-TPRD432G3200HC22DC01/",
           "lastVerified": "2026-08-12",
-          "ownerReview": "pending"
+          "ownerReview": "pending",
+          "tags": [],
+          "useCases": [],
+          "recommendationReason": null,
+          "displayOn": [],
+          "relatedArticles": [],
+          "evidence": null,
+          "enabled": false,
+          "ownerReviewedAt": null
         },
         "mem-crucial-ddr4-32": {
           "kind": "product",
@@ -118,7 +126,26 @@
           "note": "現行の2枚組キット。XMP 2.0設定とマザーボードQVLを確認。",
           "sourceUrl": "https://www.crucial.com/memory/ddr4/cp2k16g4dfra32a",
           "lastVerified": "2026-08-12",
-          "ownerReview": "pending"
+          "ownerReview": "approved",
+          "tags": [],
+          "useCases": [
+            "game",
+            "creative",
+            "ai"
+          ],
+          "recommendationReason": "DDR4対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
+          "displayOn": [
+            "mem",
+            "deals"
+          ],
+          "relatedArticles": [],
+          "evidence": {
+            "level": "specification",
+            "description": "メーカー仕様に基づく候補：DDR4、32GB（16GB×2）。実使用・実測は未確認です。",
+            "sourceUrl": "https://www.crucial.com/memory/ddr4/cp2k16g4dfra32a"
+          },
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-02"
         },
         "mem-crucial-ddr5-32": {
           "kind": "product",
@@ -135,7 +162,26 @@
           "note": "Intel XMP 3.0 / AMD EXPO対応。6000 MT/sはOC設定のため、CPU仕様とマザーボードQVLを確認。",
           "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k16g60c48u5",
           "lastVerified": "2026-08-12",
-          "ownerReview": "pending"
+          "ownerReview": "approved",
+          "tags": [],
+          "useCases": [
+            "game",
+            "creative",
+            "ai"
+          ],
+          "recommendationReason": "DDR5対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
+          "displayOn": [
+            "mem",
+            "deals"
+          ],
+          "relatedArticles": [],
+          "evidence": {
+            "level": "specification",
+            "description": "メーカー仕様に基づく候補：DDR5、32GB（16GB×2）。実使用・実測は未確認です。",
+            "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k16g60c48u5"
+          },
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-02"
         }
       }
     },
@@ -143,6 +189,20 @@
       "client": "ca-pub-8467165715973366",
       "publisherId": "pub-8467165715973366",
       "certificationAuthorityId": "f08c47fec0942fa0"
+    },
+    "commerce": {
+      "schemaVersion": 1,
+      "canonical": "https://apps.yzrswork.com/deals/",
+      "marketplace": "www.amazon.co.jp",
+      "credentialVersion": "3.3",
+      "enabled": false,
+      "liveApiApproved": false,
+      "amazonSupportApproved": false,
+      "endpoint": null,
+      "saleGate": {
+        "minPercent": 10,
+        "minJPY": 500
+      }
     }
   },
   "featured": {
@@ -199,9 +259,13 @@
       "sitemapPriority": 0.8,
       "quality": {
         "primaryStatus": "IMPROVE",
-        "flags": ["OWNER_CONTENT_REQUIRED"],
+        "flags": [
+          "OWNER_CONTENT_REQUIRED"
+        ],
         "reviewedAt": "2026-08-13",
-        "issues": ["owner_source"]
+        "issues": [
+          "owner_source"
+        ]
       }
     },
     {
@@ -243,7 +307,9 @@
       "quality": {
         "primaryStatus": "REVIEW_REQUIRED",
         "reviewedAt": "2026-08-13",
-        "issues": ["target_hardware_unverified"]
+        "issues": [
+          "target_hardware_unverified"
+        ]
       }
     },
     {
@@ -285,7 +351,9 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "reviewedAt": "2026-08-12",
-        "issues": ["spec_freshness"]
+        "issues": [
+          "spec_freshness"
+        ]
       }
     },
     {
@@ -304,7 +372,9 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "reviewedAt": "2026-08-12",
-        "issues": ["spec_freshness"]
+        "issues": [
+          "spec_freshness"
+        ]
       }
     },
     {
@@ -323,7 +393,10 @@
       "quality": {
         "primaryStatus": "REVIEW_REQUIRED",
         "reviewedAt": "2026-08-12",
-        "issues": ["psu_basis", "compatibility_scope"]
+        "issues": [
+          "psu_basis",
+          "compatibility_scope"
+        ]
       }
     },
     {
@@ -361,7 +434,9 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "reviewedAt": "2026-08-12",
-        "issues": ["currentness_review"]
+        "issues": [
+          "currentness_review"
+        ]
       }
     },
     {
@@ -384,7 +459,10 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "reviewedAt": "2026-08-12",
-        "issues": ["primary_source", "safety_review"]
+        "issues": [
+          "primary_source",
+          "safety_review"
+        ]
       }
     },
     {
@@ -403,7 +481,10 @@
       "quality": {
         "primaryStatus": "IMPROVE",
         "reviewedAt": "2026-08-12",
-        "issues": ["threshold_source", "external_dependency"]
+        "issues": [
+          "threshold_source",
+          "external_dependency"
+        ]
       }
     },
     {
@@ -444,6 +525,23 @@
       "readmeDescription": "GA4、広告、Amazonアソシエイトについて",
       "readmeOrder": 1,
       "sitemapPriority": 0.3
+    },
+    {
+      "slug": "deals",
+      "name": "YZRS DEALS（準備中）",
+      "readmeDescription": "承認済み推薦品のCommerce基盤。Phase 0は表示停止・noindex。",
+      "readmeOrder": 30,
+      "sitemap": false,
+      "managedHead": true,
+      "title": "YZRS DEALS — おすすめしている物が、今は安い",
+      "metaDescription": "YZRSの推薦理由と用途を起点に、承認済み商品の価格を確認するための常設ハブ。現在は公開準備中。",
+      "ogDescription": "おすすめしている物が、今は安い。現在は公開準備中。",
+      "twitterDescription": "YZRS DEALSは公開準備中です。",
+      "canonical": "https://apps.yzrswork.com/deals/",
+      "themeColor": "#f0ebe3",
+      "robots": "noindex, follow",
+      "schemaType": "CollectionPage",
+      "tokensHref": "../shared/tokens.css"
     }
   ],
   "retiredApps": [

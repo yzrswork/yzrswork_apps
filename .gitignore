@@ -1,0 +1,7 @@
+# Local Wrangler runtime/auth material must never enter Git or the static site.
+.wrangler/
+node_modules/
+.dev.vars
+.dev.vars.*
+.env
+.env.*
