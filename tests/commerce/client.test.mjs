@@ -17,9 +17,9 @@ function element() {
 }
 function ui(fetcher, options = {}) {
   let mono = 0, sequence = 0; const timers = new Map();
-  const window = new EventTarget(), document = new EventTarget(), navigator = { onLine: true };
+  const window = new EventTarget(); window.location = options.location; const document = new EventTarget(), navigator = { onLine: true };
   const slot = { ...element(), dataset: { commerceSlot: 'mock' }, closest: () => options.deals ? card : null };
-  const card = { ...element() }, cta = { ...element(), href: 'https://www.amazon.co.jp/dp/B000000001?tag=fixture-22' };
+  const card = { ...element(), hidden: false }, cta = { ...element(), href: 'https://www.amazon.co.jp/dp/B000000001?tag=fixture-22' };
   document.visibilityState = 'visible'; document.createElement = () => element();
   document.querySelectorAll = () => [slot]; document.querySelector = () => cta;
   const controller = createCommerceController({ contract: options.contract || contract(), document, window, navigator, fetcher,
@@ -34,7 +34,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 
 test('approved Pre-Live allowlist stays static: disabled client makes zero network calls, including resume/offline', async () => {
   let calls = 0;
-  const h = ui(() => { calls++; assert.fail('Pre-Live must not fetch'); }, { contract: commerceConfig, deals: true });
+  const h = ui(() => { calls++; assert.fail('Pre-Live must not fetch'); }, { contract: {...commerceConfig,config:{...commerceConfig.config,enabled:false}}, deals: true });
   await h.controller.refresh(); h.window.dispatchEvent(new Event('pageshow'));
   h.window.dispatchEvent(new Event('offline')); h.window.dispatchEvent(new Event('online'));
   await tick(); assert.equal(calls, 0); assert.equal(h.slot.hidden, true);
@@ -72,19 +72,19 @@ test('Deal without endTime does not expire by null coercion; it becomes stale af
   assert.equal(h.card.hidden, false); assert.match(h.text(), /Deal対象/);
   h.advance(3600000); assert.ok(!h.text().includes('¥')); assert.ok(!h.text().includes('終了')); h.controller.dispose();
 });
-test('new response with Deal gone uses only new normal price; Hub gate removes it', async () => {
+test('new response with Deal gone uses only new normal price; regular fresh offer remains visible without SALE', async () => {
   const first = rawItem(); first.offersV2.listings[0].dealDetails = { accessType: 'ALL' };
   const next = rawItem(); next.offersV2.listings[0].price = { money: { amount: 9500, currency: 'JPY' } };
   let calls = 0; const h = ui(async () => json(payload(++calls === 1 ? first : next)), { deals: true });
   await h.controller.refresh(); assert.equal(h.card.hidden, false);
-  await h.controller.refresh(); assert.equal(h.card.hidden, true); assert.ok(!h.text().includes('¥9,000')); assert.ok(!h.text().includes('Deal対象'));
+  await h.controller.refresh(); assert.equal(h.card.hidden, false); assert.match(h.text(), /¥9,500/); assert.ok(!h.text().includes('SALE'));  assert.ok(!h.text().includes('¥9,000')); assert.ok(!h.text().includes('Deal対象'));
   h.controller.dispose();
   const guide = ui(async () => json(payload(next))); await guide.controller.refresh(); assert.match(guide.text(), /¥9,500/); guide.controller.dispose();
 });
 test('no-offer/not-accessible/expired/stale preserve recommendation and ordinary CTA', async () => {
   for (const status of ['no-offer', 'not-accessible', 'expired', 'stale']) {
     const body = payload(); body.items.mock = { status, fetchedAt: START, expiresAt: START + 3600000, remainingMS: 0, offer: null };
-    const h = ui(async () => json(body)); await h.controller.refresh();
+    const h = ui(async () => json(body), {deals:true}); await h.controller.refresh(); assert.equal(h.card.hidden,false);
     assert.ok(!h.text().includes('¥')); assert.ok(h.cta.isConnected);
     assert.equal(h.cta.href, 'https://www.amazon.co.jp/dp/B000000001?tag=fixture-22');
     assert.equal(h.text().includes('終了'), status === 'expired'); h.controller.dispose();
@@ -123,6 +123,27 @@ test('publication disabled: zero fetches', async () => {
   const c = contract(); c.config.enabled = false;
   const h = ui(async () => assert.fail('fetch disabled'), { contract: c }); await h.controller.refresh();
   assert.equal(h.slot.hidden, true); h.controller.dispose();
+});
+
+test('production web scope: only canonical Deals reads; existing PWA and preview perform zero reads', async () => {
+  for (const location of [{origin:'https://apps.yzrswork.com',pathname:'/mem/'},
+    {origin:'https://apps.yzrswork.com',pathname:'/kit/'}, {origin:'https://preview.invalid',pathname:'/deals/'}]) {
+    const h = ui(async () => assert.fail('outside normal web scope'), {contract:commerceConfig,location,deals:true});
+    await h.controller.refresh(); h.window.dispatchEvent(new Event('pageshow')); await tick();
+    assert.equal(h.card.hidden,false); assert.equal(h.slot.hidden,true); h.controller.dispose();
+  }
+  const c = contract(); c.config.webDisplayOn = ['deals']; let reads = 0;
+  const h = ui(async () => {reads++;return json(payload());}, {contract:c,deals:true,
+    location:{origin:'https://apps.yzrswork.com',pathname:'/deals/'}});
+  await h.controller.refresh(); assert.equal(reads,1); assert.match(h.text(),/¥9,000/);
+  assert.match(h.text(),/購入時にAmazon.co.jp/); assert.equal(h.card.hidden,false); h.controller.dispose();
+});
+
+test('SALE label requires policy thresholds; freshness expiry hides commerce and preserves recommendation', async () => {
+  const h = ui(async () => json(payload()), {deals:true}); await h.controller.refresh();
+  assert.match(h.text(),/SALE条件/); h.advance(3600000);
+  assert.ok(!h.text().includes('SALE')); assert.ok(!h.text().includes('¥')); assert.equal(h.card.hidden,false);
+  assert.equal(h.cta.href,'https://www.amazon.co.jp/dp/B000000001?tag=fixture-22'); h.controller.dispose();
 });
 test('payload revision, partial response, price/offer null, unsafe expiry and unknown fields', () => {
   const c = contract(); assert.ok(validatePayload(payload(), c).mock);

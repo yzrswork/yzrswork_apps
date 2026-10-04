@@ -12,7 +12,7 @@ import { commerceConfig as browser } from '../../shared/commerce-config.js';
 import { commerceConfig as worker } from '../../workers/commerce-api/generated-products.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../../site/catalog.json', import.meta.url)));
-test('real catalog: exactly two Owner-approved Crucial products; TEAMGROUP remains pending; live disabled', () => {
+test('real catalog: exactly two Owner-approved Crucial products; TEAMGROUP remains pending; production normal web only', () => {
   assert.deepEqual(validateCommerceCatalog(catalog), []);
   const projection = commerceProjection(catalog);
   assert.deepEqual(browser, projection); assert.deepEqual(worker, projection);
@@ -27,9 +27,10 @@ test('real catalog: exactly two Owner-approved Crucial products; TEAMGROUP remai
   }
   const pending = catalog.site.affiliate.products['mem-team-ddr4-32'];
   assert.equal(pending.ownerReview, 'pending'); assert.equal(pending.enabled, false); assert.equal(pending.evidence, null);
-  assert.equal(catalog.site.commerce.enabled, false);
-  assert.equal(catalog.site.commerce.liveApiApproved, false);
-  assert.equal(catalog.site.commerce.amazonSupportApproved, false);
+  assert.equal(catalog.site.commerce.enabled, true);
+  assert.deepEqual(catalog.site.commerce.webDisplayOn, ['deals']);
+  assert.equal(catalog.site.commerce.liveApiApproved, true);
+  assert.equal(catalog.site.commerce.amazonSupportApproved, true);
 });
 test('static Deals: exactly approved cards, Trust/reason before price slot, no price/schema/index publication', () => {
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
@@ -42,6 +43,7 @@ test('static Deals: exactly approved cards, Trust/reason before price slot, no p
     assert.ok(card.includes(`https://www.amazon.co.jp/dp/${p.asin}?tag=yzrs_apps-22`));
     assert.match(card, /data-commerce-slot="[^"]+" hidden/);
   }
+  assert.ok(!html.includes('manifest.webmanifest')); assert.ok(!html.includes('serviceWorker'));
   assert.match(html, /noindex, follow/); assert.ok(!html.includes('commerce-price'));
   assert.doesNotMatch(html, /"@type":\s*"(?:Product|Offer|WebApplication)"/);
   assert.ok(!readFileSync(new URL('../../sitemap.xml', import.meta.url), 'utf8').includes('/deals/'));
@@ -78,7 +80,7 @@ test('one Product Authority/revision: fabricated approval changes generated revi
   fixture.site.affiliate.products.mock = product();
   assert.deepEqual(validateCommerceCatalog(fixture), []);
   assert.notEqual(commerceProjection(fixture).revision, before);
-  fixture.site.commerce.enabled = true;
+  fixture.site.commerce.enabled = true; fixture.site.commerce.liveApiApproved = false;
   assert.ok(validateCommerceCatalog(fixture).some(e => e.includes('gates')));
 });
 test('mem: confirmed DDR, accepted candidate, capacity and intended use are all required', () => {

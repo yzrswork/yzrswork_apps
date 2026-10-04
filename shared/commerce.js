@@ -42,8 +42,10 @@ export function createCommerceController({ contract = commerceConfig, document, 
     window.location?.origin === developmentRead.origin && contract.config.enabled === false &&
     contract.config.amazonSupportApproved === false && contract.config.liveApiApproved === false &&
     contract.config.endpoint === null && typeof developmentRead.fetch === 'function';
-  const enabled = development || (contract.config.enabled === true && contract.config.amazonSupportApproved === true &&
-    typeof contract.config.endpoint === 'string' && contract.config.endpoint.startsWith('https://'));
+  const webPageAllowed = !contract.config.webDisplayOn || (window.location?.origin === 'https://apps.yzrswork.com' &&
+    ['/deals/', '/deals/index.html'].includes(window.location?.pathname) && contract.config.webDisplayOn.includes('deals'));
+  const enabled = development || (webPageAllowed && (contract.config.enabled === true && contract.config.amazonSupportApproved === true &&
+    typeof contract.config.endpoint === 'string' && contract.config.endpoint.startsWith('https://')));
   const slots = () => document.querySelectorAll('[data-commerce-slot]');
 
   function clear() {
@@ -63,7 +65,7 @@ export function createCommerceController({ contract = commerceConfig, document, 
       slot.replaceChildren(); slot.hidden = true;
       if (cta && originals.has(cta)) cta.href = originals.get(cta);
       const card = slot.closest('[data-deals-card]');
-      if (card && enabled) card.hidden = true;
+      if (card) card.hidden = false;
       if (item?.offer && item.deadline <= monotonic()) {
         const status = offerState(item.offer, item.serverNow + monotonic() - item.started);
         state[key] = { status: status === 'expired' ? 'expired' : 'stale', offer: null };
@@ -80,8 +82,9 @@ export function createCommerceController({ contract = commerceConfig, document, 
         continue;
       }
       const { offer } = current;
-      if (card && !saleEligible(contract.products[key], offer, item.serverNow + monotonic() - item.started, contract.config)) continue;
-      if (card) card.hidden = false;
+      if (card && saleEligible(contract.products[key], offer, item.serverNow + monotonic() - item.started, contract.config)) {
+        const badge = document.createElement('p'); badge.className = 'commerce-sale'; badge.textContent = 'SALE条件を満たしています'; slot.append(badge);
+      }
       const line = document.createElement('p'); line.className = 'commerce-price';
       line.textContent = `取得時の価格 ¥${new Intl.NumberFormat('ja-JP').format(offer.price)}${offer.primeExclusive ? '（Prime会員限定）' : ''}`;
       slot.append(line);
@@ -95,7 +98,10 @@ export function createCommerceController({ contract = commerceConfig, document, 
       }
       const time = document.createElement('p'); time.className = 'commerce-time';
       time.textContent = `${new Date(item.fetchedAt).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })} JST取得。価格・在庫はAmazonで確認してください。`;
-      slot.append(time); slot.hidden = false;
+      slot.append(time);
+      const disclaimer = document.createElement('p'); disclaimer.className = 'commerce-time';
+      disclaimer.textContent = '価格・在庫状況は取得日時点の情報であり、変更される場合があります。購入時にAmazon.co.jpに表示される価格・在庫状況が適用されます。';
+      slot.append(disclaimer); slot.hidden = false;
       if (cta) {
         if (!originals.has(cta)) originals.set(cta, cta.href);
         cta.href = offer.detailPageURL;

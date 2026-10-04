@@ -18,6 +18,7 @@ export function validateCommerceCatalog(catalog) {
   if (config?.enabled && (!config.liveApiApproved || !config.amazonSupportApproved || !https(config.endpoint))) {
     errors.push('Commerce publication requires API/support gates and HTTPS endpoint');
   }
+  if (config?.enabled && JSON.stringify(config.webDisplayOn) !== '["deals"]') errors.push('Production commerce display requires normal Deals web page only');
   if (config?.endpoint !== null && !https(config?.endpoint)) errors.push('Commerce endpoint invalid');
   const seen = new Set();
   for (const [key, p] of Object.entries(catalog.site.affiliate.products)) {
