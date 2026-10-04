@@ -1,3 +1,13 @@
+## YZRS DEALS production (2026-10-04 Owner GO)
+
+通常Webの /deals/ のみAmazon commerceを表示します。既存PWAには表示しません。
+推薦理由・順序はsite/catalog.json、価格はCreators API v3.3 JPから専用KVへ最大60分のみ保持します。
+no-offer / stale / 障害時も推薦と通常CTAを残し、価格・Dealのみ停止します。
+Worker: yzrs-commerce-api。公開GET /v1/offersはKVを読むだけ、固定Origin、query禁止。
+Cronは毎時0分。SecretsはCloudflareのみ。AuthとsnapshotはPoCとは別namespaceです。
+amazonSupportApprovedは旧gate名を維持していますが、今回はOwnerによる通常Web公開GOで解除した出版gateです。Amazon個別回答取得を意味しません。
+以下のPhase 0 / support回答待ち記述は過去の記録です。公開後の障害時はWorkerのLIVE_API_ENABLED / COMMERCE_PUBLIC_ENABLEDをfalse、Cronを空、workers_devをfalseに戻し、catalog表示も停止します。
+
 # yzrswork_apps
 
 や印工務店(yzrswork)の道具箱。電子工作と自作PCのための実用ツールを、単一HTML製のPWAとしてGitHub Pagesで配布する公開リポジトリ。
@@ -28,7 +38,7 @@
 | ねじ下穴ナビ | タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見 | `neji/` |
 | プライバシーポリシー | GA4、広告、Amazonアソシエイトについて | `privacy/` |
 | 運営者について | や印工務店、サイトの成り立ち、お問い合わせ | `about/` |
-| YZRS DEALS（準備中） | 承認済み推薦品のCommerce基盤。Phase 0は表示停止・noindex。 | `deals/` |
+| YZRS DEALS | 承認済み推薦品のCommerce基盤。Phase 0は表示停止・noindex。 | `deals/` |
 <!-- BUILD:README-TOOLS:END -->
 
 ## コンテンツ品質監査

@@ -11,16 +11,16 @@ function setup(handler) {
   const fetcher = async (url, init) => { calls.push({ url, init }); return url.includes('/auth/') ? tokenResponse() : handler ? handler(url, init, calls) : json({ itemsResult: { items: [rawItem()] } }); };
   return { ...h, calls, worker: createWorker({ contract: contract(), fetcher, clock: h.clock, sleep: h.sleep, timeoutMS: 20 }), fetcher };
 }
-test('production default and unapproved allowlist: zero outbound and no public data even with env true', async () => {
+test('disabled gates and unapproved allowlist: zero outbound and no public data even with env true', async () => {
   const h = harness(); const fetcher = async () => { assert.fail('network forbidden'); };
-  for (const c of [commerceConfig, contract({ pending: product({ ownerReview: 'pending' }) }), contract({ disabled: product({ enabled: false }) })]) {
+  for (const c of [{...commerceConfig,config:{...commerceConfig.config,enabled:false,liveApiApproved:false}}, contract({ pending: product({ ownerReview: 'pending' }) }), contract({ disabled: product({ enabled: false }) })]) {
     const worker = createWorker({ contract: c, fetcher, clock: h.clock });
     assert.equal((await worker.scheduled({}, h.env)).status, 'disabled');
     assert.deepEqual((await (await worker.fetch(offersRequest(), h.env)).json()).items, {});
   }
   const config = readFileSync(new URL('../../workers/commerce-api/wrangler.toml', import.meta.url), 'utf8');
-  assert.match(config, /crons = \[\]/); assert.match(config, /LIVE_API_ENABLED = "false"/);
-  assert.ok(!config.includes('[[kv_namespaces]]'));
+  assert.match(config, /crons = \["0 \* \* \* \*"\]/); assert.match(config, /LIVE_API_ENABLED = "true"/);
+  assert.ok(config.includes('[[kv_namespaces]]'));
 });
 test('normal Cron → KV; read endpoint never calls Amazon/auth; projection is minimal/no-store/CORS', async () => {
   const h = setup(); assert.equal((await h.worker.scheduled({}, h.env)).status, 'updated');
@@ -40,6 +40,13 @@ test('normal Cron → KV; read endpoint never calls Amazon/auth; projection is m
   assert.equal((await h.worker.fetch(new Request('https://worker.invalid/v1/offers', { method: 'POST', headers: { Origin: 'https://apps.yzrswork.com' } }), h.env)).status, 405);
   assert.equal((await (await h.worker.fetch(new Request('https://worker.invalid/health'), {})).json()).status, 'ok');
   assert.equal(h.calls.length, 2);
+});
+
+test('production contract remains closed with disabled runtime flags despite catalog GO', async () => {
+  const h = harness(); const env = {...h.env,LIVE_API_ENABLED:'false',COMMERCE_PUBLIC_ENABLED:'false'};
+  const worker = createWorker({contract:commerceConfig,fetcher:async()=>assert.fail('staged deployment cannot request Amazon')});
+  assert.equal((await worker.scheduled({},env)).status,'disabled');
+  assert.equal((await (await worker.fetch(offersRequest(),env)).json()).status,'disabled');
 });
 test('10 ASIN batch, 1 TPS, order independent joins; cache reused across batches/cold runs', async () => {
   const h = harness(), products = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`mock${i}`, product({ asin: `B${String(i + 1).padStart(9, '0')}` })]));

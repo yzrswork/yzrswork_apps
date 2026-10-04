@@ -195,14 +195,17 @@
       "canonical": "https://apps.yzrswork.com/deals/",
       "marketplace": "www.amazon.co.jp",
       "credentialVersion": "3.3",
-      "enabled": false,
-      "liveApiApproved": false,
-      "amazonSupportApproved": false,
-      "endpoint": null,
+      "enabled": true,
+      "liveApiApproved": true,
+      "amazonSupportApproved": true,
+      "endpoint": "https://yzrs-commerce-api.yzrswork.workers.dev/v1/offers",
       "saleGate": {
         "minPercent": 10,
         "minJPY": 500
-      }
+      },
+      "webDisplayOn": [
+        "deals"
+      ]
     }
   },
   "featured": {
@@ -528,15 +531,15 @@
     },
     {
       "slug": "deals",
-      "name": "YZRS DEALS（準備中）",
+      "name": "YZRS DEALS",
       "readmeDescription": "承認済み推薦品のCommerce基盤。Phase 0は表示停止・noindex。",
       "readmeOrder": 30,
       "sitemap": false,
       "managedHead": true,
-      "title": "YZRS DEALS — おすすめしている物が、今は安い",
-      "metaDescription": "YZRSの推薦理由と用途を起点に、承認済み商品の価格を確認するための常設ハブ。現在は公開準備中。",
-      "ogDescription": "おすすめしている物が、今は安い。現在は公開準備中。",
-      "twitterDescription": "YZRS DEALSは公開準備中です。",
+      "title": "YZRS DEALS — 用途から選ぶ、おすすめの装備",
+      "metaDescription": "YZRSの推薦理由と用途を起点に、承認済み商品のAmazon価格を確認する常設ページ。",
+      "ogDescription": "用途・推薦理由・メーカー仕様を先に確認し、現在のAmazon価格を確認できます。",
+      "twitterDescription": "YZRSが仕様から選定した装備を、用途と推薦理由から確認。",
       "canonical": "https://apps.yzrswork.com/deals/",
       "themeColor": "#f0ebe3",
       "robots": "noindex, follow",
