@@ -39,9 +39,9 @@ export default {
       }
     }
 
-    // AI WRITE: Token Monitor, using the existing publish token.
+    // AI WRITE: Token Monitor, isolated from the full dashboard publish token.
     if (url.pathname === "/dashboard/ai" && request.method === "POST") {
-      const token = env.DASHBOARD_WRITE_TOKEN;
+      const token = env.DASHBOARD_AI_WRITE_TOKEN;
       if (typeof token !== "string" || token.length === 0 ||
           request.headers.get("Authorization") !== `Bearer ${token}`) {
         return json({ error: "unauthorized" }, 401, {

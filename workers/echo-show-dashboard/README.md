@@ -11,7 +11,7 @@
 
 ## AI の送信
 
-`POST /dashboard/ai` に、`Authorization: Bearer <DASHBOARD_WRITE_TOKEN>` と `Content-Type: application/json` を付けて次の形だけを送る。送信時は `updatedAt` を実際の観測時刻に置き換える。
+`POST /dashboard/ai` に、AI専用の `Authorization: Bearer <DASHBOARD_AI_WRITE_TOKEN>` と `Content-Type: application/json` を付けて次の形だけを送る。`DASHBOARD_WRITE_TOKEN` は従来の `/dashboard/publish` 専用のまま共有しない。送信時は `updatedAt` を実際の観測時刻に置き換える。
 
 ```json
 {
@@ -85,4 +85,4 @@ npx wrangler@4.119.0 deploy --dry-run --config workers/echo-show-dashboard/wrang
 
 テストはメモリー内 KV と GitHub dispatch のモックを使用し、認証情報・本番への書き込み・実通信を必要としない。通常のリポジトリ CI でも AI と既存 Commerce のテストを実行する。
 
-`wrangler.toml` は既存の Worker 名・KV・compatibility date を使用し、`keep_vars` で既存の GitHub dispatch 変数を保持する。秘密は既存の Worker Secrets を使用する。PR 作成では本番デプロイを実施しない。Butler 上の AI 表示 UI と Token Monitor の自動送信設定は、この Worker 追加の対象に含めない。
+`wrangler.toml` は既存の Worker 名・KV・compatibility date を使用し、`keep_vars` で既存の GitHub dispatch 変数を保持する。`DASHBOARD_AI_WRITE_TOKEN` は Worker Secret として別途設定し、Windows の Token Monitor sender だけに保持する。既存の `DASHBOARD_WRITE_TOKEN` / read / refresh secret は変更しない。PR 作成では本番デプロイを実施しない。Butler 上の AI 表示 UI と Token Monitor の自動送信設定は、この Worker 追加の対象に含めない。

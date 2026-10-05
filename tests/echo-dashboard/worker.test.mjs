@@ -5,6 +5,7 @@ import { normalizeAiUsage, isHealthyAiUsage, readAiUsage } from "../../workers/e
 
 const READ_TOKEN = "test-read";
 const WRITE_TOKEN = "test-write";
+const AI_WRITE_TOKEN = "test-ai-write";
 const REFRESH_TOKEN = "test-refresh";
 
 function aiPayload(overrides = {}) {
@@ -70,6 +71,7 @@ function environment(kv) {
     DASHBOARD_KV: kv,
     DASHBOARD_READ_TOKEN: READ_TOKEN,
     DASHBOARD_WRITE_TOKEN: WRITE_TOKEN,
+    DASHBOARD_AI_WRITE_TOKEN: AI_WRITE_TOKEN,
     DASHBOARD_REFRESH_TOKEN: REFRESH_TOKEN,
     GITHUB_OWNER: "test-owner",
     GITHUB_REPO: "test-repo",
@@ -97,7 +99,7 @@ async function request(kv, path, {
 }
 
 async function postAi(kv, body = aiPayload(), options = {}) {
-  return request(kv, "/dashboard/ai", { method: "POST", token: WRITE_TOKEN, body, ...options });
+  return request(kv, "/dashboard/ai", { method: "POST", token: AI_WRITE_TOKEN, body, ...options });
 }
 
 function assertDashboardPreserved(result, existing) {
@@ -129,7 +131,7 @@ test("AI ingest accepts the PoC shape and writes only independent AI keys", asyn
 });
 
 test("AI ingest requires the write token and never writes on auth failure", async (t) => {
-  for (const token of [null, "wrong", READ_TOKEN, REFRESH_TOKEN]) {
+  for (const token of [null, "wrong", READ_TOKEN, WRITE_TOKEN, REFRESH_TOKEN]) {
     await t.test(String(token), async () => {
       const kv = memoryKv();
       const response = await postAi(kv, aiPayload(), { token });
@@ -144,7 +146,7 @@ test("AI ingest refuses an unconfigured write token", async () => {
   const kv = memoryKv();
   const response = await postAi(kv, aiPayload(), {
     token: "undefined",
-    envOverrides: { DASHBOARD_WRITE_TOKEN: undefined },
+    envOverrides: { DASHBOARD_AI_WRITE_TOKEN: undefined },
   });
   assert.equal(response.status, 401);
   assert.equal(kv.puts.length, 0);
@@ -154,7 +156,7 @@ test("AI ingest refuses an empty write token", async () => {
   const kv = memoryKv();
   const response = await postAi(kv, aiPayload(), {
     token: "",
-    envOverrides: { DASHBOARD_WRITE_TOKEN: "" },
+    envOverrides: { DASHBOARD_AI_WRITE_TOKEN: "" },
   });
   assert.equal(response.status, 401);
   assert.equal(kv.puts.length, 0);
