@@ -117,10 +117,44 @@ const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
 const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([
   'mem-team-ddr4-32',
 ]);
-// Owner's 2026-10-02 approval is an explicit guard, not another Product Master.
+// Owner approvals are explicit guards, not another Product Master.
 const EXPECTED_APPROVED_PRODUCTS = Object.freeze({
-  'mem-crucial-ddr4-32': { model: 'CP2K16G4DFRA32A', asin: 'B0C29R9LNL', ddr: 'DDR4' },
-  'mem-crucial-ddr5-32': { model: 'CP2K16G60C48U5', asin: 'B0CT9BMGLF', ddr: 'DDR5' },
+  'mem-crucial-ddr4-32': {
+    maker: 'Crucial', model: 'CP2K16G4DFRA32A', asin: 'B0C29R9LNL', ownerReviewedAt: '2026-10-02',
+    evidenceLevel: 'specification', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
+    specSummary: 'DDR4 / 32GB / 16GB×2 / 3200 MT/s',
+    conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
+  },
+  'mem-crucial-ddr5-32': {
+    maker: 'Crucial', model: 'CP2K16G60C48U5', asin: 'B0CT9BMGLF', ownerReviewedAt: '2026-10-02',
+    evidenceLevel: 'specification', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
+    specSummary: 'DDR5 / 32GB / 16GB×2 / 6000 MT/s',
+    conditions: { ddr: 'DDR5', capacity: '32GB', kit: '16GBx2' },
+  },
+  'solder-hakko-fx600a': {
+    maker: 'HAKKO', model: 'FX600A', asin: 'B076KMS5CV', ownerReviewedAt: '2026-10-05',
+    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'handa', 'deals'],
+    specSummary: '50W / 200–500℃ / セラミックヒーター / T18シリーズ',
+    conditions: { power: '50W', temperature: '200-500C', tipSeries: 'T18' },
+  },
+  'tool-engineer-paw01': {
+    maker: 'ENGINEER', model: 'PAW-01', asin: 'B072BYT2V3', ownerReviewedAt: '2026-10-05',
+    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'deals'],
+    specSummary: '0.05–8mm² / AWG30–8 / 電線径自動調整 / ワイヤーカッター',
+    conditions: { wireArea: '0.05-8mm2', awg: 'AWG30-8', cutter: '3.2mm' },
+  },
+  'hdd-wd-blue-4tb-wd40ezax-ajp': {
+    maker: 'Western Digital', model: 'WD40EZAX-AJP', asin: 'B0CKLCK9SW', ownerReviewedAt: '2026-10-05',
+    evidenceLevel: 'specification', useCases: ['storage', 'archive'], displayOn: ['hdd', 'build', 'deals'],
+    specSummary: '4TB / 3.5インチ / SATA / 5400RPM / CMR / 256MBキャッシュ',
+    conditions: { capacity: '4TB', formFactor: '3.5-inch', interface: 'SATA', recording: 'CMR', rpm: '5400', cache: '256MB' },
+  },
+  'solder-goot-sd83': {
+    maker: 'goot', model: 'SD-83', asin: 'B0C8YYM78X', ownerReviewedAt: '2026-10-05',
+    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'handa', 'deals'],
+    specSummary: 'Sn60/Pb40 / φ1.0mm / 約3.0m / ヤニ入り',
+    conditions: { composition: 'Sn60/Pb40', diameter: '1.0mm', length: '3.0m', rosin: 'core' },
+  },
 });
 
 assertUnique(categoryIds, 'category.id');
@@ -184,12 +218,14 @@ if (affiliateProducts) {
   }
   for (const [key, expected] of Object.entries(EXPECTED_APPROVED_PRODUCTS)) {
     const p = affiliateProducts[key];
-    if (p?.kind !== 'product' || p.maker !== 'Crucial' || p.model !== expected.model || p.asin !== expected.asin ||
-        p.ownerReview !== 'approved' || p.enabled !== true || p.ownerReviewedAt !== '2026-10-02' ||
-        p.evidence?.level !== 'specification' || p.conditions?.ddr !== expected.ddr ||
-        p.conditions?.capacity !== '32GB' || p.conditions?.kit !== '16GBx2' ||
-        JSON.stringify(p.useCases) !== JSON.stringify(['game', 'creative', 'ai']) ||
-        JSON.stringify(p.displayOn) !== JSON.stringify(['mem', 'deals'])) {
+    if (p?.kind !== 'product' ||
+        p.maker !== expected.maker || p.model !== expected.model || p.asin !== expected.asin ||
+        p.ownerReview !== 'approved' || p.enabled !== true || p.ownerReviewedAt !== expected.ownerReviewedAt ||
+        p.evidence?.level !== expected.evidenceLevel ||
+        p.specSummary !== expected.specSummary ||
+        JSON.stringify(p.conditions) !== JSON.stringify(expected.conditions) ||
+        JSON.stringify(p.useCases) !== JSON.stringify(expected.useCases) ||
+        JSON.stringify(p.displayOn) !== JSON.stringify(expected.displayOn)) {
       fail(`Owner個別承認と商品構成が一致しない: ${key}`);
     }
   }
