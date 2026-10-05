@@ -874,7 +874,17 @@ function main() {
     const cards = Object.entries(commerce.products).filter(([, p]) => p.displayOn.includes('deals')).map(([key, p]) => {
       const url = `https://www.amazon.co.jp/dp/${p.asin}?tag=${encodeURIComponent(commerce.config.associateTag)}`;
       const uses = p.useCases.map(use => ({ game: 'ゲーム', creative: '制作・動画編集', ai: 'ローカルAI', web: 'ブラウジング・文書作業', maker: '電子工作', repair: '修理', storage: '大容量保存', archive: 'アーカイブ' })[use] || use).join(' / ');
-      return `<article class="commerce-card" data-deals-card="${escapeHtml(key)}"><h2>${escapeHtml(p.label)}</h2><p>用途：${escapeHtml(uses)}</p><p class="commerce-reason">${escapeHtml(p.recommendationReason)}</p><p class="commerce-trust">${escapeHtml(EVIDENCE_LABELS[p.evidence.level])}</p><p>${escapeHtml(p.specSummary)}${p.note ? ` — ${escapeHtml(p.note)}` : ''}</p><p class="commerce-evidence">${escapeHtml(p.evidence.description)} <a href="${escapeHtml(p.evidence.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(p.model)}のメーカー仕様（新しいタブ）">メーカー仕様</a></p><div data-commerce-slot="${escapeHtml(key)}" hidden></div><a href="${escapeHtml(url)}" data-commerce-cta="${escapeHtml(key)}" aria-label="${escapeHtml(p.label)}をAmazonで確認（新しいタブ）" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></article>`;
+      const note = p.note || '';
+      // Keep hazard/action visible from canonical notes; retain the full note in details.
+      const leadWarning = p.tags.includes('lead-containing')
+        ? (note.match(/[^。]+。?/g) || []).filter(sentence => /鉛入り|換気/.test(sentence)).join('') : '';
+      const compatibility = note.replace(/^YZRS実使用品。/, '');
+      const sources = p.relatedArticles.map(article => `<li><a href="${escapeHtml(article.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(article.label)}（新しいタブ）">${escapeHtml(article.label)}</a></li>`).join('');
+      return `<article class="commerce-card" data-deals-card="${escapeHtml(key)}">
+<div class="commerce-identification"><h2>${escapeHtml(p.label)}</h2><p class="commerce-trust">${escapeHtml(EVIDENCE_LABELS[p.evidence.level])}</p><p class="commerce-use">用途：${escapeHtml(uses)}</p><p class="commerce-spec">${escapeHtml(p.specSummary)}</p>${leadWarning ? `<p class="commerce-warning"><strong>注意：</strong>${escapeHtml(leadWarning)}</p>` : compatibility ? `<p class="commerce-compatibility">${escapeHtml(compatibility)}</p>` : ''}</div>
+<div class="commerce-purchase"><div data-commerce-slot="${escapeHtml(key)}" hidden></div><a href="${escapeHtml(url)}" data-commerce-cta="${escapeHtml(key)}" aria-label="${escapeHtml(p.label)}をAmazonで確認（新しいタブ）" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonで詳細を見る</a></div>
+<details class="commerce-details"><summary>詳細・選定根拠を見る</summary><div class="commerce-detail-body"><h3>選定理由</h3><p class="commerce-reason">${escapeHtml(p.recommendationReason)}</p><h3>仕様・注意事項</h3>${note ? `<p class="commerce-note">${escapeHtml(note)}</p>` : ''}<p class="commerce-full-spec">${escapeHtml(p.specSummary)}</p><h3>根拠・出典</h3><p class="commerce-evidence">${escapeHtml(p.evidence.description)}</p><ul class="commerce-sources">${sources}<li><a href="${escapeHtml(p.evidence.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(p.model)}のメーカー仕様（新しいタブ）">メーカー仕様</a></li></ul></div></details>
+</article>`;
     }).join('\n');
     html = replaceMarked(html, '<!-- BUILD:RECOMMENDATIONS:START -->', '<!-- BUILD:RECOMMENDATIONS:END -->', cards);
     writeIfChanged(path, html, results);

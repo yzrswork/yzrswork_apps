@@ -3,12 +3,39 @@
 [data-commerce-slot] p { margin: 4px 0; }
 .commerce-price { font-weight: 700; }
 .commerce-time { color: var(--muted); font-size: 11px; }
-.commerce-card { padding: 20px; border: 1px solid var(--rule-soft); background: var(--card); margin: 16px 0; min-width: 0; overflow-wrap: anywhere; }
-.commerce-card h2 { font-size: 18px; }
-.commerce-card a { display: inline-flex; min-height: 44px; align-items: center; color: var(--terracotta-deep); }
+.commerce-card { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 20px 32px; padding: 28px 0; border-top: 1px solid var(--rule-soft); min-width: 0; overflow-wrap: anywhere; }
+.commerce-card:last-child { border-bottom: 1px solid var(--rule-soft); }
+.commerce-card > * { min-width: 0; }
+.commerce-card h2 { margin: 0; font-size: 20px; line-height: 1.5; }
+.commerce-card p { margin: 10px 0 0; }
+.commerce-card .commerce-trust { margin-top: 6px; font-size: 14px; }
+.commerce-use, .commerce-spec { font-size: 15px; }
+.commerce-compatibility { font-size: 14px; color: var(--ink-soft); }
+.commerce-warning { padding: 12px 14px; border-left: 3px solid var(--terracotta-deep); background: var(--card); font-size: 15px; }
+.commerce-purchase { align-self: start; padding-left: 24px; border-left: 1px solid var(--rule-soft); }
+.commerce-card [data-commerce-slot] { margin: 0 0 12px; font-size: 14px; }
+.commerce-card [data-commerce-slot] p { margin: 0 0 8px; }
+.commerce-card .commerce-price { font-size: 17px; font-weight: 600; }
+.commerce-card .commerce-sale { color: var(--terracotta-deep); font-weight: 700; font-size: 13px; }
+/* Existing controller emits plain Deal/savings notes; only gated SALE presents them. */
+.commerce-card [data-commerce-slot]:has(.commerce-price):not(:has(.commerce-sale)) > p:not([class]) { display: none; }
+.commerce-card .commerce-time { font-size: 12px; }
+.commerce-card a { display: inline-flex; min-height: 44px; align-items: center; color: var(--terracotta-deep); text-underline-offset: 3px; }
+.commerce-card [data-commerce-cta] { padding: 8px 12px; border: 1px solid var(--rule-soft); color: var(--ink); text-decoration: none; font-size: 14px; }
+.commerce-card [data-commerce-cta]:hover { border-color: var(--ink); background: var(--card); }
+.commerce-details { grid-column: 1 / -1; }
+.commerce-details > summary { min-height: 44px; padding: 10px 0; cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.commerce-detail-body { max-width: 72ch; padding: 0 0 8px; font-size: 15px; }
+.commerce-detail-body h3 { margin: 20px 0 0; font-size: 15px; }
+.commerce-sources { padding-left: 20px; margin: 10px 0 0; }
 .commerce-trust, .pk-trust { color: var(--ink); font-weight: 700; }
 .commerce-evidence { color: var(--muted); font-size: 12px; }
-.commerce-card a:focus-visible { outline: 3px solid var(--terracotta-deep); outline-offset: 4px; }
+.commerce-card .commerce-evidence { font-size: 14px; }
+.commerce-card :is(a, summary):focus-visible { outline: 3px solid var(--terracotta-deep); outline-offset: 4px; }
+@media (max-width: 760px) {
+  .commerce-card { grid-template-columns: minmax(0, 1fr); gap: 16px; padding-block: 24px; }
+  .commerce-purchase { padding-left: 0; border-left: 0; }
+}
 @media (max-width: 600px) {
   .picks .pick { flex-direction: column; align-items: stretch; }
   .picks .pick > div { width: 100%; overflow-wrap: anywhere; }

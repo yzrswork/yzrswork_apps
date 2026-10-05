@@ -47,18 +47,61 @@ test('real catalog: six Owner-approved products; TEAMGROUP remains pending; prod
   assert.equal(catalog.site.commerce.liveApiApproved, true);
   assert.equal(catalog.site.commerce.amazonSupportApproved, true);
 });
-test('static Deals: all approved cards use generic spec summaries; Trust/reason before price slot', () => {
+test('static Deals: six ordered rows keep judgment and safety visible; full rationale and canonical sources remain in native details', () => {
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
-  assert.equal([...html.matchAll(/data-deals-card=/g)].length, Object.keys(browser.products).length);
+  const rows = [...html.matchAll(/<article\b[^>]*data-deals-card="([^"]+)"[^>]*>[\s\S]*?<\/article>/g)];
+  assert.deepEqual(rows.map(row => row[1]), Object.keys(browser.products));
   assert.ok(!html.includes('mem-team-ddr4-32')); assert.ok(!html.includes('B093GNJS1T'));
-  for (const [key, p] of Object.entries(browser.products)) {
-    const card = html.split(`data-deals-card="${key}"`)[1].split('</article>')[0];
-    assert.ok(card.indexOf('commerce-trust') < card.indexOf('data-commerce-slot'));
-    assert.ok(card.indexOf(p.recommendationReason) < card.indexOf('data-commerce-slot'));
-    assert.ok(card.includes(p.specSummary));
-    assert.ok(card.includes(`https://www.amazon.co.jp/dp/${p.asin}?tag=yzrs_apps-22`));
+  const escaped = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+  for (const [card, key] of rows) {
+    const p = browser.products[key];
+    const disclosure = card.match(/<details\b([^>]*)>([\s\S]*?)<\/details>/);
+    assert.ok(disclosure, `${key}: native disclosure`);
+    assert.match(disclosure[1], /class="[^"]*\bcommerce-details\b/);
+    assert.doesNotMatch(disclosure[1], /\bopen\b/);
+    const firstLayer = card.slice(0, disclosure.index), details = disclosure[2];
+    const stages = ['<h2', 'commerce-trust', '用途：', 'commerce-spec', key === 'solder-goot-sd83' ? 'commerce-warning' : 'commerce-compatibility', 'data-commerce-slot', 'data-commerce-cta'];
+    let previous = -1;
+    for (const stage of stages) {
+      const position = firstLayer.indexOf(stage);
+      assert.ok(position > previous, `${key}: ${stage} follows the prior judgment step`);
+      previous = position;
+    }
+    assert.ok(firstLayer.includes(escaped(p.label)), `${key}: full product title`);
+    assert.ok(firstLayer.includes(p.evidence.level === 'used' ? '実使用' : '仕様から選定'), `${key}: canonical provenance`);
+    assert.match(firstLayer, /<p\b[^>]*class="[^"]*\bcommerce-spec\b[^>]*>/);
+    assert.ok(firstLayer.includes(escaped(p.specSummary)), `${key}: plain major specification`);
+    assert.ok(firstLayer.includes(`https://www.amazon.co.jp/dp/${p.asin}?tag=yzrs_apps-22`), `${key}: approved fallback CTA`);
     assert.match(card, /data-commerce-slot="[^"]+" hidden/);
+    assert.match(details, /^\s*<summary\b[^>]*>[^<]+<\/summary>/);
+    assert.ok(!firstLayer.includes(escaped(p.recommendationReason)), `${key}: full rationale belongs to the second layer`);
+    assert.ok(details.includes(escaped(p.recommendationReason)), `${key}: recommendation reason`);
+    assert.ok(details.includes(escaped(p.note)), `${key}: complete existing note`);
+    assert.ok(details.includes(escaped(p.specSummary)), `${key}: full specification`);
+    assert.ok(details.includes(escaped(p.evidence.description)), `${key}: canonical evidence description`);
+    let previousDetail = -1;
+    for (const stage of ['commerce-reason', 'commerce-note', 'commerce-full-spec', 'commerce-evidence', 'commerce-sources']) {
+      const position = details.indexOf(stage);
+      assert.ok(position > previousDetail, `${key}: ${stage} follows the prior detail step`);
+      previousDetail = position;
+    }
+    for (const source of new Set([p.sourceUrl, p.evidence.sourceUrl])) {
+      assert.ok(details.includes(`href="${escaped(source)}"`), `${key}: canonical source link`);
+    }
+    for (const article of p.relatedArticles) {
+      assert.ok(details.includes(`href="${escaped(article.url)}"`), `${key}: related article link`);
+      assert.ok(details.includes(escaped(article.label)), `${key}: related article label`);
+    }
   }
+  const memoryFirstLayer = rows.find(row => row[1] === 'mem-crucial-ddr4-32')[0].split('<details')[0];
+  assert.match(memoryFirstLayer, /QVL/);
+  const sd83FirstLayer = rows.find(row => row[1] === 'solder-goot-sd83')[0].split('<details')[0];
+  const warning = sd83FirstLayer.match(/<p\b[^>]*class="[^"]*\bcommerce-warning\b[^>]*>([\s\S]*?)<\/p>/);
+  assert.ok(warning, 'SD-83 critical safety stays visible while details are collapsed');
+  assert.match(warning[1], /鉛/); assert.match(warning[1], /換気/);
+  assert.ok(warning.index < sd83FirstLayer.indexOf('data-commerce-slot'), 'SD-83 hazard and immediate action precede Commerce');
+  assert.ok(!html.slice(0, rows[0].index).includes('実使用・実測は未確認'), 'intro does not override individual provenance with a blanket unverified claim');
+  assert.ok(!html.includes('PC装備ナビ'));
   assert.match(html, /Sn60\/Pb40/); assert.match(html, /鉛入りはんだ/);
   assert.ok(!html.includes('undefined / undefined / undefined'));
   assert.ok(!html.includes('manifest.webmanifest')); assert.ok(!html.includes('serviceWorker'));
