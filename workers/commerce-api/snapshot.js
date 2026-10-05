@@ -1,5 +1,6 @@
 import { commerceConfig } from './generated-products.js';
 import { isCommerceProduct, MAX_AGE_MS, safeAmazonUrl, offerState, validSavings } from '../../shared/commerce-policy.js';
+import { MAX_IMAGE_AGE_MS, validProductImage } from '../../shared/product-image-policy.js';
 import { createAmazonClient } from './amazon.js';
 import { normalizeItem } from './normalize.js';
 export const snapshotKey = revision => `offers:v1:${revision}`;
@@ -37,7 +38,7 @@ export function createSnapshotOperations({ contract = commerceConfig, fetcher = 
       }
       if (!Object.keys(items).length) return { status: 'unavailable' };
       const fetchedAt = Math.min(...Object.values(items).map(item => item.fetchedAt));
-      const expiresAt = Math.max(...Object.values(items).map(item => item.expiresAt));
+      const expiresAt = Math.max(...Object.values(items).map(item => Math.max(item.expiresAt, item.image?.expiresAt || 0)));
       const snapshot = { schemaVersion: 1, catalogRevision: revision, fetchedAt, expiresAt, items };
       // KV expiration is absolute. Failed runs never write a new freshness window.
       if (expiresAt > clock() + 60_000) {
@@ -59,9 +60,11 @@ export function createSnapshotOperations({ contract = commerceConfig, fetcher = 
     try {
       const snapshot = await env.COMMERCE_SNAPSHOTS.get(snapshotKey(revision), 'json');
       const now = clock(); base.serverNow = now;
+      // The envelope may outlive economics to retain an image URL. Each resource
+      // is validated independently below; corrupt image metadata cannot hide a price.
       if (snapshot?.schemaVersion !== 1 || snapshot.catalogRevision !== revision ||
           !Number.isFinite(snapshot.fetchedAt) || snapshot.fetchedAt > now || !Number.isFinite(snapshot.expiresAt) ||
-          snapshot.expiresAt <= now || snapshot.expiresAt > snapshot.fetchedAt + MAX_AGE_MS + 60_000 ||
+          snapshot.expiresAt <= now || snapshot.expiresAt > snapshot.fetchedAt + MAX_IMAGE_AGE_MS + 60_000 ||
           !snapshot.items || typeof snapshot.items !== 'object') return response({ ...base, status: 'unavailable' }, 503);
       for (const [key, product] of Object.entries(products)) {
         const item = snapshot.items[key];
@@ -69,9 +72,11 @@ export function createSnapshotOperations({ contract = commerceConfig, fetcher = 
             item.expiresAt > item.fetchedAt + MAX_AGE_MS) continue;
         const lifecycle = item.offer ? offerState(item.offer, now) : null;
         const offer = item.status === 'fresh' && item.expiresAt > now ? publicOffer(item.offer, product, config.associateTag, now, item.fetchedAt, item.expiresAt) : null;
+        const image = validProductImage(item.image, now);
         const status = offer ? 'fresh' : lifecycle === 'expired' ? 'expired' : item.expiresAt <= now ? 'stale' :
           ['expired', 'stale', 'not-accessible'].includes(item.status) ? item.status : 'no-offer';
-        base.items[key] = { status, fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: offer ? item.expiresAt - now : 0, offer };
+        base.items[key] = { status, fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: offer ? item.expiresAt - now : 0, offer,
+          image: image ? { ...image, remainingMS: image.expiresAt - now } : null };
       }
       return response({ ...base, status: 'ok' });
     } catch { return response({ ...base, status: 'unavailable' }, 503); }

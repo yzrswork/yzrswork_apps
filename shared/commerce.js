@@ -1,5 +1,6 @@
 import { commerceConfig } from './commerce-config.js';
 import { isCommerceProduct, MAX_AGE_MS, safeAmazonUrl, saleEligible, offerState, validSavings } from './commerce-policy.js';
+import { validProductImage } from './product-image-policy.js';
 
 export function validatePayload(payload, contract) {
   if (payload?.schemaVersion !== 1 || payload.catalogRevision !== contract.revision || payload.status !== 'ok' ||
@@ -7,11 +8,18 @@ export function validatePayload(payload, contract) {
   const valid = {};
   for (const [key, product] of Object.entries(contract.products)) {
     const item = payload.items[key], offer = item?.offer;
-    if (!isCommerceProduct(product) || !item ||
+    if (!isCommerceProduct(product) || !item) continue;
+    const candidateImage = validProductImage(item.image, payload.serverNow);
+    const image = candidateImage && Number.isFinite(item.image.remainingMS) && item.image.remainingMS > 0 &&
+      item.image.remainingMS <= candidateImage.expiresAt - payload.serverNow
+      ? { ...candidateImage, remainingMS: item.image.remainingMS } : null;
+    // An optional image is independent of offer validation and its shorter deadline.
+    if (image) valid[key] = { image };
+    if (
         !Number.isFinite(item.fetchedAt) || !Number.isFinite(item.expiresAt) || item.fetchedAt > payload.serverNow ||
         item.expiresAt > item.fetchedAt + MAX_AGE_MS) continue;
     if (['expired', 'stale', 'no-offer', 'not-accessible'].includes(item.status) && item.offer === null && item.remainingMS === 0) {
-      valid[key] = { status: item.status, fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: 0, offer: null };
+      valid[key] = { ...valid[key], status: item.status, fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: 0, offer: null };
       continue;
     }
     if (item.status !== 'fresh' || !offer || offer.asin !== product.asin || item.expiresAt <= payload.serverNow ||
@@ -21,7 +29,7 @@ export function validatePayload(payload, contract) {
         typeof offer.primeExclusive !== 'boolean' || !safeAmazonUrl(offer.detailPageURL, product.asin, contract.config.associateTag)) continue;
     if (offerState(offer, payload.serverNow) !== 'fresh') continue;
     const savingsValid = validSavings(offer);
-    valid[key] = { status: 'fresh', fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: item.remainingMS,
+    valid[key] = { ...valid[key], status: 'fresh', fetchedAt: item.fetchedAt, expiresAt: item.expiresAt, remainingMS: item.remainingMS,
       offer: { asin: offer.asin, price: offer.price, currency: 'JPY', availability: 'available',
         detailPageURL: offer.detailPageURL, fetchedAt: offer.fetchedAt, expiresAt: offer.expiresAt,
         primeExclusive: offer.primeExclusive, deal: offer.deal ? { active: true, startAt: offer.deal.startAt, endAt: offer.deal.endAt } : null,
@@ -34,7 +42,7 @@ export function validatePayload(payload, contract) {
 export function createCommerceController({ contract = commerceConfig, document, window, navigator,
   fetcher = globalThis.fetch, monotonic = () => performance.now(), setTimer = setTimeout, clearTimer = clearTimeout,
   developmentRead = null }) {
-  let state = {}, timer, generation = 0, pending, pendingGeneration, refreshAgain = false, disposed = false;
+  let state = {}, imageState = {}, timer, generation = 0, pending, pendingGeneration, refreshAgain = false, disposed = false;
   const originals = new Map();
   // A development adapter is only usable on the exact loopback page. Its entry
   // separately validates the unchanged disabled contract; public pages pass none.
@@ -48,9 +56,48 @@ export function createCommerceController({ contract = commerceConfig, document, 
     typeof contract.config.endpoint === 'string' && contract.config.endpoint.startsWith('https://')));
   const slots = () => document.querySelectorAll('[data-commerce-slot]');
 
+  function hideImage(anchor) {
+    if (!anchor?.dataset?.commerceImage || typeof anchor.querySelector !== 'function') return;
+    anchor.hidden = true;
+    const img = anchor.querySelector('img');
+    if (img) { img.onload = null; img.onerror = null; img.removeAttribute('src'); }
+    delete anchor.dataset.imageUrl;
+    if (anchor.dataset.amazonHref) anchor.href = anchor.dataset.amazonHref;
+  }
+
+  function renderImages() {
+    let next = Infinity;
+    if (typeof document.querySelector !== 'function') return next;
+    for (const [key, product] of Object.entries(contract.products)) {
+      if (!isCommerceProduct(product)) continue;
+      const anchor = document.querySelector(`[data-commerce-image="${key}"]`);
+      const current = imageState[key];
+      if (!current || current.deadline <= monotonic()) { hideImage(anchor); delete imageState[key]; continue; }
+      next = Math.min(next, current.deadline - monotonic());
+      if (anchor?.dataset?.commerceImage !== key || typeof anchor.querySelector !== 'function') continue;
+      const img = anchor.querySelector('img');
+      if (!img) continue;
+      const cta = document.querySelector(`[data-commerce-cta="${key}"]`);
+      anchor.href = cta?.href || anchor.dataset.amazonHref;
+      if (anchor.dataset.imageUrl === current.url) continue;
+      anchor.hidden = true;
+      anchor.dataset.imageUrl = current.url;
+      img.width = current.width; img.height = current.height;
+      img.onload = () => {
+        if (anchor.dataset.imageUrl === current.url && imageState[key]?.deadline > monotonic()) anchor.hidden = false;
+      };
+      img.onerror = () => {
+        if (anchor.dataset.imageUrl === current.url) { hideImage(anchor); delete imageState[key]; }
+      };
+      img.src = current.url;
+    }
+    return next;
+  }
+
   function clear() {
-    clearTimer(timer); state = {};
+    clearTimer(timer); state = {}; imageState = {};
     for (const slot of slots()) { slot.replaceChildren(); slot.hidden = true; }
+    for (const [key] of Object.entries(contract.products)) hideImage(document.querySelector?.(`[data-commerce-image="${key}"]`));
     for (const [cta, href] of originals) if (cta.isConnected) cta.href = href;
     originals.clear();
   }
@@ -108,6 +155,7 @@ export function createCommerceController({ contract = commerceConfig, document, 
       }
       next = Math.min(next, item.deadline - monotonic());
     }
+    next = Math.min(next, renderImages());
     if (Number.isFinite(next)) timer = setTimer(apply, Math.max(1, next));
   }
 
@@ -127,6 +175,9 @@ export function createCommerceController({ contract = commerceConfig, document, 
         const payload = await response.json();
         if (current !== generation || disposed || navigator.onLine === false || document.visibilityState === 'hidden') return;
         const items = validatePayload(payload, contract);
+        imageState = Object.fromEntries(Object.entries(items).filter(([, item]) => item.image).map(([key, item]) => [key, {
+          ...item.image, deadline: started + item.image.remainingMS,
+        }]));
         state = Object.fromEntries(Object.entries(items).map(([key, item]) => [key, {
           ...item, serverNow: payload.serverNow, started, deadline: started + item.remainingMS,
         }]));
