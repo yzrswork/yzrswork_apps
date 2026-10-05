@@ -4,7 +4,7 @@ export const TAG = 'fixture-22';
 export function product(overrides = {}) {
   return { kind: 'product', ownerReview: 'approved', enabled: true, asin: 'B000000001', maker: 'MOCK',
     model: 'MOCK-32', label: 'MOCK ONLY メモリ', category: 'memory', tags: [], useCases: ['game', 'creative'],
-    displayOn: ['mem', 'deals'], recommendationReason: 'MOCK ONLY 推薦理由', conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
+    displayOn: ['mem', 'deals'], recommendationReason: 'MOCK ONLY 推薦理由', specSummary: 'DDR4 / 32GB / 16GB×2', conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
     ownerReviewedAt: '2026-10-02', relatedArticles: [], evidence: { level: 'specification', description: 'MOCK ONLY 仕様候補', sourceUrl: 'https://example.invalid/spec' }, ...overrides };
 }
 export function contract(products = { mock: product() }) {
