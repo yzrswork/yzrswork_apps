@@ -33,7 +33,7 @@ export function validateCommerceCatalog(catalog) {
     if (p.ownerReview === 'approved') {
       let validDay = false;
       try { validDay = day(p.ownerReviewedAt); } catch { /* invalid date */ }
-      if (![p.maker, p.model, p.label, p.category, p.recommendationReason].every(nonempty) || !validDay ||
+      if (![p.maker, p.model, p.label, p.category, p.recommendationReason, p.specSummary].every(nonempty) || !validDay ||
           !p.useCases?.length || !p.displayOn?.length || !Object.hasOwn(EVIDENCE_LABELS, p.evidence?.level || '') ||
           !nonempty(p.evidence?.description) || !https(p.evidence?.sourceUrl)) errors.push(`${key}: individual review/evidence incomplete`);
     }
