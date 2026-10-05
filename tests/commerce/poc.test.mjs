@@ -3,7 +3,12 @@ import assert from 'node:assert/strict';
 import { createPoCWorker } from '../../workers/commerce-api/poc-worker.js';
 import gateway from '../../workers/commerce-api/poc-gateway.js';
 import { commerceConfig as productionConfig } from '../../workers/commerce-api/generated-products.js';
-const commerceConfig = {...productionConfig, config: {...productionConfig.config, enabled:false,liveApiApproved:false,amazonSupportApproved:false,endpoint:null}};
+const POC_PRODUCT_KEYS = ['mem-crucial-ddr4-32', 'mem-crucial-ddr5-32'];
+const commerceConfig = {
+  ...productionConfig,
+  products: Object.fromEntries(POC_PRODUCT_KEYS.map(key => [key, productionConfig.products[key]])),
+  config: {...productionConfig.config, enabled:false,liveApiApproved:false,amazonSupportApproved:false,endpoint:null},
+};
 import { isPoCContract } from '../../shared/commerce-poc-policy.js';
 import { createCommerceController } from '../../shared/commerce.js';
 import { harness, rawItem, tokenResponse, json } from './fixtures.mjs';

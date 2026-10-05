@@ -12,19 +12,34 @@ import { commerceConfig as browser } from '../../shared/commerce-config.js';
 import { commerceConfig as worker } from '../../workers/commerce-api/generated-products.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../../site/catalog.json', import.meta.url)));
-test('real catalog: exactly two Owner-approved Crucial products; TEAMGROUP remains pending; production normal web only', () => {
+test('real catalog: six Owner-approved products; TEAMGROUP remains pending; production normal web only', () => {
   assert.deepEqual(validateCommerceCatalog(catalog), []);
   const projection = commerceProjection(catalog);
   assert.deepEqual(browser, projection); assert.deepEqual(worker, projection);
-  assert.deepEqual(Object.keys(projection.products), ['mem-crucial-ddr4-32', 'mem-crucial-ddr5-32']);
+  assert.deepEqual(Object.keys(projection.products), [
+    'mem-crucial-ddr4-32',
+    'mem-crucial-ddr5-32',
+    'solder-hakko-fx600a',
+    'tool-engineer-paw01',
+    'hdd-wd-blue-4tb-wd40ezax-ajp',
+    'solder-goot-sd83',
+  ]);
   assert.deepEqual(Object.values(projection.products).map(p => [p.model, p.asin]), [
-    ['CP2K16G4DFRA32A', 'B0C29R9LNL'], ['CP2K16G60C48U5', 'B0CT9BMGLF'],
+    ['CP2K16G4DFRA32A', 'B0C29R9LNL'],
+    ['CP2K16G60C48U5', 'B0CT9BMGLF'],
+    ['FX600A', 'B076KMS5CV'],
+    ['PAW-01', 'B072BYT2V3'],
+    ['WD40EZAX-AJP', 'B0CKLCK9SW'],
+    ['SD-83', 'B0C8YYM78X'],
   ]);
   for (const p of Object.values(projection.products)) {
     assert.equal(p.ownerReview, 'approved'); assert.equal(p.enabled, true);
-    assert.equal(p.ownerReviewedAt, '2026-10-02'); assert.equal(p.evidence.level, 'specification');
-    assert.deepEqual(p.useCases, ['game', 'creative', 'ai']); assert.deepEqual(p.displayOn, ['mem', 'deals']);
+    assert.ok(p.specSummary); assert.ok(p.recommendationReason); assert.ok(p.evidence);
+    assert.ok(p.displayOn.includes('deals'));
   }
+  const sd83 = projection.products['solder-goot-sd83'];
+  assert.equal(sd83.evidence.level, 'used');
+  assert.match(sd83.note, /鉛入り/); assert.match(sd83.note, /換気/); assert.match(sd83.note, /手を洗/);
   const pending = catalog.site.affiliate.products['mem-team-ddr4-32'];
   assert.equal(pending.ownerReview, 'pending'); assert.equal(pending.enabled, false); assert.equal(pending.evidence, null);
   assert.equal(catalog.site.commerce.enabled, true);
@@ -32,17 +47,20 @@ test('real catalog: exactly two Owner-approved Crucial products; TEAMGROUP remai
   assert.equal(catalog.site.commerce.liveApiApproved, true);
   assert.equal(catalog.site.commerce.amazonSupportApproved, true);
 });
-test('static Deals: exactly approved cards, Trust/reason before price slot, no price/schema/index publication', () => {
+test('static Deals: all approved cards use generic spec summaries; Trust/reason before price slot', () => {
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
-  assert.equal([...html.matchAll(/data-deals-card=/g)].length, 2);
+  assert.equal([...html.matchAll(/data-deals-card=/g)].length, Object.keys(browser.products).length);
   assert.ok(!html.includes('mem-team-ddr4-32')); assert.ok(!html.includes('B093GNJS1T'));
   for (const [key, p] of Object.entries(browser.products)) {
     const card = html.split(`data-deals-card="${key}"`)[1].split('</article>')[0];
     assert.ok(card.indexOf('commerce-trust') < card.indexOf('data-commerce-slot'));
     assert.ok(card.indexOf(p.recommendationReason) < card.indexOf('data-commerce-slot'));
+    assert.ok(card.includes(p.specSummary));
     assert.ok(card.includes(`https://www.amazon.co.jp/dp/${p.asin}?tag=yzrs_apps-22`));
     assert.match(card, /data-commerce-slot="[^"]+" hidden/);
   }
+  assert.match(html, /Sn60\/Pb40/); assert.match(html, /鉛入りはんだ/);
+  assert.ok(!html.includes('undefined / undefined / undefined'));
   assert.ok(!html.includes('manifest.webmanifest')); assert.ok(!html.includes('serviceWorker'));
   assert.match(html, /noindex, follow/); assert.ok(!html.includes('commerce-price'));
   assert.doesNotMatch(html, /"@type":\s*"(?:Product|Offer|WebApplication)"/);
@@ -66,7 +84,7 @@ test('repository explicit approval guard rejects ASIN substitution and otherwise
     const mismatch = run(); assert.equal(mismatch.status, 1); assert.match(mismatch.stderr, /Owner個別承認と商品構成が一致しない/);
     const unapproved = structuredClone(catalog), p = unapproved.site.affiliate.products['mem-team-ddr4-32'];
     Object.assign(p, { enabled: true, ownerReview: 'approved', ownerReviewedAt: '2026-10-02',
-      useCases: ['game'], displayOn: ['mem', 'deals'], recommendationReason: 'MOCK ONLY',
+      useCases: ['game'], displayOn: ['mem', 'deals'], recommendationReason: 'MOCK ONLY', specSummary: 'MOCK ONLY',
       evidence: { level: 'specification', description: 'MOCK ONLY', sourceUrl: p.sourceUrl } });
     assert.deepEqual(validateCommerceCatalog(unapproved), []); // Schema completeness cannot grant approval.
     writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(unapproved));
