@@ -1,3 +1,5 @@
+import { normalizeAiUsage, isHealthyAiUsage, readAiUsage } from "./ai-usage.mjs";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -23,7 +25,9 @@ export default {
           return json({ error: "dashboard_not_found" }, 404);
         }
 
-        return new Response(value, {
+        // AI is optional. Any AI failure preserves the existing response.
+        const merged = await mergeAiUsage(value, env.DASHBOARD_KV);
+        return new Response(merged, {
           status: 200,
           headers: {
             "content-type": "application/json; charset=utf-8",
@@ -33,6 +37,56 @@ export default {
       } catch {
         return json({ error: "internal_error" }, 500);
       }
+    }
+
+    // AI WRITE: Token Monitor, using the existing publish token.
+    if (url.pathname === "/dashboard/ai" && request.method === "POST") {
+      const token = env.DASHBOARD_WRITE_TOKEN;
+      if (typeof token !== "string" || token.length === 0 ||
+          request.headers.get("Authorization") !== `Bearer ${token}`) {
+        return json({ error: "unauthorized" }, 401, {
+          "www-authenticate": "Bearer"
+        });
+      }
+
+      const contentType = request.headers.get("Content-Type") || "";
+      if (contentType.split(";")[0].trim().toLowerCase() !== "application/json") {
+        return json({ error: "content_type_must_be_application_json" }, 415);
+      }
+
+      let input;
+      try {
+        input = JSON.parse(await readLimitedBody(request, 8192));
+      } catch (error) {
+        return error instanceof BodyTooLarge
+          ? json({ error: "payload_too_large" }, 413)
+          : json({ error: "invalid_json" }, 400);
+      }
+
+      const now = Date.now();
+      const payload = normalizeAiUsage(input, now);
+      if (payload === null) {
+        return json({ error: "invalid_ai_payload" }, 400);
+      }
+
+      const healthy = isHealthyAiUsage(payload, now);
+      try {
+        const value = JSON.stringify(payload);
+        // Failed/stale observations never replace the healthy AI backup.
+        if (healthy) {
+          await env.DASHBOARD_KV.put("dashboard:ai:lkg", value);
+        }
+        await env.DASHBOARD_KV.put("dashboard:ai", value);
+      } catch {
+        return json({ error: "internal_error" }, 500);
+      }
+
+      return json({
+        ok: true,
+        key: "dashboard:ai",
+        updatedAt: payload.updatedAt,
+        stale: !healthy
+      });
     }
 
     // ----------------------------
@@ -160,4 +214,48 @@ function json(body, status = 200, extraHeaders = {}) {
       ...extraHeaders
     }
   });
+}
+
+async function mergeAiUsage(value, kv) {
+  try {
+    const snapshot = JSON.parse(value);
+    if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+      return value;
+    }
+    const ai = await readAiUsage(kv);
+    if (ai === null) return value;
+    const merged = JSON.stringify({ ...snapshot, ai });
+    // Butler's existing reader caps the entire response at 128 KiB.
+    return new TextEncoder().encode(merged).byteLength <= 128 * 1024 ? merged : value;
+  } catch {
+    return value;
+  }
+}
+
+class BodyTooLarge extends Error {}
+
+async function readLimitedBody(request, limit) {
+  const declaredLength = Number(request.headers.get("Content-Length"));
+  if (declaredLength > limit) throw new BodyTooLarge();
+  if (request.body === null) return "";
+
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder("utf-8", { fatal: true });
+  let bytes = 0;
+  let text = "";
+  try {
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      bytes += chunk.value.byteLength;
+      if (bytes > limit) {
+        await reader.cancel();
+        throw new BodyTooLarge();
+      }
+      text += decoder.decode(chunk.value, { stream: true });
+    }
+    return text + decoder.decode();
+  } finally {
+    reader.releaseLock();
+  }
 }

@@ -1,0 +1,15 @@
+name = "echo-show-dashboard"
+main = "worker.mjs"
+account_id = "6f5ab4de678487058a637479d3e7fb76"
+compatibility_date = "2026-09-27"
+workers_dev = true
+preview_urls = false
+send_metrics = false
+# Preserve the existing GitHub dispatch variables configured in Cloudflare.
+keep_vars = true
+
+[[kv_namespaces]]
+binding = "DASHBOARD_KV"
+id = "ccbf85badeff4a3ea158e043de17e440"
+
+# Existing tokens remain Worker Secrets; no credentials belong in this file.
