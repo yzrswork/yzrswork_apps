@@ -1,3 +1,17 @@
+<!-- YZRS:REPOSITORY-STATE:START -->
+## Repository State
+
+| | |
+| --- | --- |
+| What this repository is | YZRSWORK's toolbox: practical web/PWA tools for electronics and custom PCs, with the YZRS DEALS commerce implementation. |
+| Status | active |
+| Authority | App and Commerce Worker source implementation; `site/catalog.json` and per-app `app.json` for generated site/PWA content; committed Worker configuration. |
+| Live | https://apps.yzrswork.com/ |
+| Verification / Evidence | [Verify Build](https://github.com/yzrswork/yzrswork_apps/actions/runs/37247019071) passed at `7f8a938a0216d9c19d477f5ca653b49959975960` (GitHub Actions, Ubuntu, Node.js 24): generated assets, repository checks and Commerce mock tests. This run does not verify deployed services, real Amazon responses or physical-device/PWA behavior. |
+
+State source: [.github/yzrs-repository.yml](.github/yzrs-repository.yml).
+<!-- YZRS:REPOSITORY-STATE:END -->
+
 ## YZRS DEALS production (2026-10-04 Owner GO)
 
 通常Webの /deals/ のみAmazon commerceを表示します。既存PWAには表示しません。

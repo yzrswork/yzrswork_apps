@@ -1,0 +1,18 @@
+schema_version: "0.1"
+title: yzrswork_apps
+kind: collection
+status: active
+authority: >-
+  App and Commerce Worker source implementation; site/catalog.json and per-app
+  app.json for generated site/PWA content; committed Worker configuration.
+verification: >-
+  Verify Build passed for revision 7f8a938a0216d9c19d477f5ca653b49959975960
+  on GitHub Actions (ubuntu-latest, Node.js 24): npm run build produced no
+  changes, npm run check passed, and the mock Commerce tests passed.
+  Public evidence:
+  https://github.com/yzrswork/yzrswork_apps/actions/runs/37247019071
+  Scope: generated-asset consistency, catalog/assets/Service Worker checks
+  and Commerce tests using fabricated HTTP responses, fake KV/clocks and
+  DOM/Service Worker adapters. This run does not verify deployed services,
+  real Amazon responses, KV propagation or physical-device/PWA behavior.
+live_url: https://apps.yzrswork.com/
