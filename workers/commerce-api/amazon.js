@@ -2,8 +2,8 @@ import { CommerceError, jsonRequest, retryAfter } from './http.js';
 import { createTokenCache } from './oauth-cache.js';
 
 export const ITEMS_URL = 'https://creatorsapi.amazon/catalog/v1/getItems';
-export const RESOURCES = Object.freeze(['availability', 'condition', 'dealDetails', 'isBuyBoxWinner', 'price', 'type']
-  .map(field => `offersV2.listings.${field}`));
+export const RESOURCES = Object.freeze(['images.primary.medium', ...['availability', 'condition', 'dealDetails', 'isBuyBoxWinner', 'price', 'type']
+  .map(field => `offersV2.listings.${field}`)]);
 
 export function createAmazonClient({ fetcher, clock = Date.now, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)), timeoutMS, maxAttempts = 3, observeToken = () => {} }) {
   const getToken = createTokenCache({ fetcher, clock, timeoutMS });
