@@ -6,6 +6,11 @@
 .commerce-card { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 20px 32px; padding: 28px 0; border-top: 1px solid var(--rule-soft); min-width: 0; overflow-wrap: anywhere; }
 .commerce-card:last-child { border-bottom: 1px solid var(--rule-soft); }
 .commerce-card > * { min-width: 0; }
+.commerce-heading:has([data-commerce-image]:not([hidden])) { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 16px; align-items: start; }
+.commerce-title { min-width: 0; }
+.commerce-card [data-commerce-image] { display: flex; width: 84px; height: 84px; align-items: center; justify-content: center; background: var(--card); }
+.commerce-card [data-commerce-image][hidden] { display: none; }
+.commerce-card [data-commerce-image] img { width: 84px; height: 84px; object-fit: contain; }
 .commerce-card h2 { margin: 0; font-size: 20px; line-height: 1.5; }
 .commerce-card p { margin: 10px 0 0; }
 .commerce-card .commerce-trust { margin-top: 6px; font-size: 14px; }
