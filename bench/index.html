@@ -594,6 +594,99 @@
     .guide-grid { grid-template-columns: 1fr; }
     header { flex-direction: column; }
   }
+
+  /* Wave 5: a compact workshop index before the native calculator details. */
+  .section-head { margin-top: 24px; }
+  .tool-index {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 14px;
+    margin: 0 0 10px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .tool-index a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    min-height: 46px;
+    padding: 7px 2px;
+    border-bottom: 1px solid var(--rule-soft);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .index-num { flex: 0 0 auto; color: var(--terracotta-deep); font: 500 11px var(--mono); }
+  .tool-index a:focus-visible,
+  .tool-list summary:focus-visible,
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .ohm-field input:focus-visible,
+  .toggle-row button:focus-visible,
+  .affiliate-link:focus-visible,
+  .meta a:focus-visible,
+  footer a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 2px; }
+
+  .tool-list { gap: 0; margin-bottom: 26px; border-top: 1px solid var(--rule); }
+  details.tool {
+    border: 0;
+    border-bottom: 1px solid var(--rule-soft);
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  details.tool[open] { border-bottom-color: var(--terracotta); }
+  details.tool summary {
+    min-height: 64px;
+    align-items: center;
+    padding: 12px 8px;
+  }
+  .tool-num { min-width: 2ch; }
+  .tool-head, .tool-title { min-width: 0; }
+  .tool-title { flex-wrap: wrap; gap: 0 8px; line-height: 1.45; }
+  .tool-desc { overflow-wrap: anywhere; }
+  .tool-body { min-width: 0; padding: 12px 8px 20px; }
+  .result-box { border-radius: 4px; }
+  .fields, .ohm-inputs { min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fields.single { grid-template-columns: minmax(0, 1fr); }
+  .fields.triple { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .field, .ohm-field { min-width: 0; }
+  .field input, .field select, .ohm-field input { min-width: 0; min-height: 44px; }
+  .ohm-field label { min-width: 0; flex-wrap: wrap; gap: 2px; }
+
+  .toggle-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-radius: 4px;
+  }
+  .toggle-row button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 3px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  .toggle-row button.active { font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .field input:focus, .field select:focus { outline: 3px solid var(--terracotta); outline-offset: 1px; border-color: var(--terracotta); }
+  .ohm-field input:focus { outline: 3px solid var(--terracotta); outline-offset: 1px; border-color: var(--terracotta); }
+  .affiliate-link { min-height: 44px; border-radius: 4px; }
+
+  .guide-grid { grid-template-columns: 1fr; gap: 0; }
+  .guide-card {
+    min-width: 0;
+    padding: 14px 0;
+    border: 0;
+    border-top: 1px solid var(--rule-soft);
+    border-radius: 0;
+    background: transparent;
+  }
+  @media (max-width: 480px) {
+    .fields { grid-template-columns: minmax(0, 1fr); }
+    .fields.triple { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
 </style>
 </head>
 <body>
@@ -621,10 +714,20 @@
 
   <!-- ── Free Tools ───────────────────────────── -->
   <div class="section-head">
-    <span class="label-jp">計 算 ツ ー ル</span>
-    <span class="label-en">— Free Tools</span>
+    <span class="label-jp">使う計算を選ぶ</span>
+    <span class="label-en">— Calculator index</span>
   </div>
   <hr class="section-rule" />
+
+  <nav class="tool-index" aria-label="計算の種類">
+    <a href="#tool-ohm"><span class="index-num">01</span><span>オームの法則</span></a>
+    <a href="#tool-led"><span class="index-num">02</span><span>LED直列抵抗</span></a>
+    <a href="#tool-color"><span class="index-num">03</span><span>抵抗カラーコード</span></a>
+    <a href="#tool-vdiv"><span class="index-num">04</span><span>分圧回路</span></a>
+    <a href="#tool-555"><span class="index-num">05</span><span>555タイマー</span></a>
+    <a href="#tool-bat"><span class="index-num">06</span><span>電池駆動時間</span></a>
+    <a href="#tool-eng"><span class="index-num">07</span><span>エンジニア表記</span></a>
+  </nav>
 
   <div class="tool-list">
 

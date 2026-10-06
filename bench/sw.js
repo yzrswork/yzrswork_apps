@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bench-v14';
+const CACHE_NAME = 'bench-v15';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',

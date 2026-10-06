@@ -1,5 +1,5 @@
 /* 塗れるくん Service Worker -- 最小構成 (アプリ殻のみキャッシュ) */
-const CACHE = 'nurerukun-v12';
+const CACHE = 'nurerukun-v13';
 const CACHE_PREFIX = 'nurerukun-';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', '../affiliate.js'];
 
