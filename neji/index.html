@@ -319,27 +319,28 @@
     .qtext { font-size: 17px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> ねじ下穴ナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>ねじ下穴ナビ<span class="en">— Tap &amp; Drill Advisor</span></h1>
       <p>タップの下穴、ボルトのバカ穴、木ねじの下穴。ねじのサイズを選ぶだけで、開けるドリル径がわかります。</p>
     </header>
 
-    <div class="tabs">
-      <button class="tab active" id="tab-tap">タップ下穴</button>
-      <button class="tab" id="tab-clear">バカ穴(通し穴)</button>
-      <button class="tab" id="tab-wood">木ねじ下穴</button>
+    <div class="tabs yapps-nav-options">
+      <button class="tab active" id="tab-tap" aria-pressed="true">タップ下穴</button>
+      <button class="tab" id="tab-clear" aria-pressed="false">バカ穴(通し穴)</button>
+      <button class="tab" id="tab-wood" aria-pressed="false">木ねじ下穴</button>
     </div>
 
-    <div id="app"></div>
+    <div class="yapps-nav-result" id="app"></div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>「下穴、何ミリだっけ」を毎回調べ直す問題</h2>
       <p>M6のタップを立てるのに、その都度スマホで「M6 タップ 下穴」と検索していないでしょうか。ネット上には並目と細目が混ざった表、単位を間違えた表、出典不明の数字もあります。下穴が小さすぎればタップの負荷が増えて折損し、折れたタップの除去は難しい作業になります。逆に下穴が大きすぎると有効なねじ山が不足します。毎回検索し直す手間と、根拠が不明な数字を使うリスクの両方を減らすために、このツールを作りました。</p>
       <p>タップ下穴の「呼び径 − ピッチ」は、並目でよく使われる簡便な目安です。実際にはねじ精度、タップ形状、被削材、ねじ込み長さなどによって許容下穴径に幅があるため、使用するタップメーカーの下穴表を優先します。特に高硬度材や加工負荷が高い条件では、許容範囲内で下穴を大きめにして切削負荷を軽くする場合があり、「硬い材ほど小さくする」という一律の調整はしません。バカ穴(通し穴)側は逆に「ねじ山を切らず、ボルトが通る」ための穴で、必要な位置精度と組立余裕に応じて穴径を選びます。</p>
@@ -347,7 +348,7 @@
       <p>結論として、このツールが出す数字はすべて「目安」です。材質のロット差、ドリルの摩耗、木材の含水率で最適な下穴径は前後します。本番の材で1本開ける前に、端材で試し穴を開けて締まり具合を確かめてください。タップ作業では被削材とタップに適合する切削油を選び、木ねじ作業ではねじメーカーの下穴案内も優先します。頭を沈めたい場合は皿取り(面取り)の適否も確認してください。タップ下穴の考え方は、OSGの<a href="https://www.osg.co.jp/media_dl/mail_magazine/2017/01/133.html" target="_blank" rel="noopener noreferrer">技術情報「タップ下穴径」</a>と<a href="https://faq.osg.co.jp/faq/show/8323" target="_blank" rel="noopener noreferrer">FAQ「下穴径を大きくするメリット」</a>も参照してください。</p>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -452,6 +453,9 @@ function setTab(t) {
   document.getElementById('tab-tap').classList.toggle('active', t === 'tap');
   document.getElementById('tab-clear').classList.toggle('active', t === 'clear');
   document.getElementById('tab-wood').classList.toggle('active', t === 'wood');
+  document.getElementById('tab-tap').setAttribute('aria-pressed', String(t === 'tap'));
+  document.getElementById('tab-clear').setAttribute('aria-pressed', String(t === 'clear'));
+  document.getElementById('tab-wood').setAttribute('aria-pressed', String(t === 'wood'));
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -465,10 +469,10 @@ function render() {
 /* ==================== タブA: タップ下穴 ==================== */
 function renderTap() {
   const sizeChips = SIZES.map(s =>
-    `<button class="matchip${tapSize === s ? ' active' : ''}" data-size="${esc(s)}">${esc(s)}</button>`).join('');
+    `<button class="matchip${tapSize === s ? ' active' : ''}" data-size="${esc(s)}" aria-pressed="${tapSize === s}">${esc(s)}</button>`).join('');
   const pitchChips = `
-    <button class="condchip${!tapFine ? ' active' : ''}" data-fine="0">並目</button>
-    <button class="condchip${tapFine ? ' active' : ''}" data-fine="1">細目</button>`;
+    <button class="condchip${!tapFine ? ' active' : ''}" data-fine="0" aria-pressed="${!tapFine}">並目</button>
+    <button class="condchip${tapFine ? ' active' : ''}" data-fine="1" aria-pressed="${tapFine}">細目</button>`;
 
   appEl.innerHTML = `
     <div class="section-label">— ねじ径</div>
@@ -556,9 +560,9 @@ function renderTapResult() {
 /* ==================== タブB: バカ穴(通し穴) ==================== */
 function renderClear() {
   const sizeChips = SIZES.map(s =>
-    `<button class="matchip${clearSize === s ? ' active' : ''}" data-size="${esc(s)}">${esc(s)}</button>`).join('');
+    `<button class="matchip${clearSize === s ? ' active' : ''}" data-size="${esc(s)}" aria-pressed="${clearSize === s}">${esc(s)}</button>`).join('');
   const gradeChips = [1, 2, 3].map(g =>
-    `<button class="condchip${clearGrade === g ? ' active' : ''}" data-grade="${g}">${esc(GRADE_LABEL[g])}</button>`).join('');
+    `<button class="condchip${clearGrade === g ? ' active' : ''}" data-grade="${g}" aria-pressed="${clearGrade === g}">${esc(GRADE_LABEL[g])}</button>`).join('');
 
   appEl.innerHTML = `
     <div class="section-label">— ボルト径</div>
@@ -616,10 +620,10 @@ function renderClearResult() {
 /* ==================== タブC: 木ねじ下穴 ==================== */
 function renderWood() {
   const sizeChips = WOOD_SIZES.map(s =>
-    `<button class="matchip${woodSize === s ? ' active' : ''}" data-size="${esc(fmt(s))}">${esc(fmt(s))}mm</button>`).join('');
+    `<button class="matchip${woodSize === s ? ' active' : ''}" data-size="${esc(fmt(s))}" aria-pressed="${woodSize === s}">${esc(fmt(s))}mm</button>`).join('');
   const matChips = ['soft', 'hard'].map(m => {
     const info = WOOD_MATERIAL[m];
-    return `<button class="condchip${woodMaterial === m ? ' active' : ''}" data-mat="${m}">${esc(info.label)}<span class="cc-sub">${esc(info.sub)}</span></button>`;
+    return `<button class="condchip${woodMaterial === m ? ' active' : ''}" data-mat="${m}" aria-pressed="${woodMaterial === m}">${esc(info.label)}<span class="cc-sub">${esc(info.sub)}</span></button>`;
   }).join('');
 
   appEl.innerHTML = `

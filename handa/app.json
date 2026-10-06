@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "はんだの種類と作業から適温を提示。トラブル診断と道具選びつきのはんだ付けナビ。オフライン対応。",
   "hasServiceWorker": true,
-  "swVersion": 4,
+  "swVersion": 5,
   "assets": [
     "./",
     "./index.html",
@@ -22,7 +22,8 @@
     "../icons/icon-192.png",
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
-    "../shared/tokens.css"
+    "../shared/tokens.css",
+    "../shared/navigator.css"
   ],
   "manifestIcons": [
     {

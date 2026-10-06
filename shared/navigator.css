@@ -1,0 +1,341 @@
+/* Wave 4A shared Navigator foundation. Every rule stays inside the opt-in scope. */
+.yapps-navigator {
+  --yapps-nav-divider: var(--rule-soft);
+  color: var(--ink);
+}
+
+.yapps-navigator.page {
+  padding-top: 18px;
+  padding-right: 18px;
+  padding-left: 18px;
+}
+
+.yapps-navigator.yapps-nav-with-cart.page {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.yapps-navigator .yapps-nav-topbar {
+  min-height: 28px;
+  padding-bottom: 9px;
+  margin-bottom: 14px;
+  border-color: var(--yapps-nav-divider);
+}
+
+.yapps-navigator .yapps-nav-hero {
+  margin-bottom: 14px;
+}
+
+.yapps-navigator .yapps-nav-hero h1 {
+  margin-bottom: 4px;
+  font-size: clamp(24px, 6.5vw, 34px);
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+
+.yapps-navigator .yapps-nav-hero .en {
+  margin: 3px 0 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.07em;
+}
+
+.yapps-navigator .yapps-nav-hero p {
+  max-width: 48ch;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.yapps-navigator .yapps-nav-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 0 0 14px;
+}
+
+.yapps-navigator .yapps-nav-options > button {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.yapps-navigator .yapps-nav-options .gb-sub,
+.yapps-navigator .yapps-nav-options .mc-sub {
+  line-height: 1.35;
+}
+
+.yapps-navigator .yapps-nav-first {
+  margin: 0 0 14px;
+  padding: 12px;
+  border-color: var(--yapps-nav-divider);
+  border-radius: 8px;
+}
+
+.yapps-navigator .yapps-nav-first h2 {
+  margin-top: 3px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.yapps-navigator .yapps-nav-first > p {
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.yapps-navigator .yapps-nav-first .decision-options {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.yapps-navigator .yapps-nav-first .decision-option {
+  min-height: 68px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.yapps-navigator .yapps-nav-first .decision-option[aria-pressed="true"] {
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.yapps-navigator .yapps-nav-options#groups {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.yapps-navigator .yapps-nav-result {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.yapps-navigator .yapps-nav-result .matgrid,
+.yapps-navigator .yapps-nav-result .condgrid {
+  gap: 8px;
+  min-width: 0;
+}
+
+.yapps-navigator .yapps-nav-result .section-label {
+  margin: 16px 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--yapps-nav-divider);
+}
+
+.yapps-navigator .yapps-nav-result > .section-label:first-child {
+  margin-top: 0;
+}
+
+.yapps-navigator .yapps-nav-result .matchip,
+.yapps-navigator .yapps-nav-result .condchip {
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 11px;
+  border-radius: 6px;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.yapps-navigator .yapps-nav-options .active,
+.yapps-navigator .yapps-nav-result .active,
+.yapps-navigator .yapps-nav-first .decision-option[aria-pressed="true"],
+.yapps-navigator .yapps-nav-result .btn.on {
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.yapps-navigator .yapps-nav-result .card {
+  margin-top: 16px;
+  padding: 14px 0 0;
+  border: 0;
+  border-top: 2px solid var(--rule);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.yapps-navigator .yapps-nav-result .card.solution {
+  border-top-color: var(--ok);
+}
+
+.yapps-navigator .yapps-nav-result .card.notice {
+  border-top-color: var(--terracotta);
+}
+
+.yapps-navigator .yapps-nav-result .item {
+  margin: 0;
+  padding: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--yapps-nav-divider);
+  border-radius: 0;
+  background: transparent;
+}
+
+.yapps-navigator .yapps-nav-result .item.deferred {
+  border-top-style: dashed;
+}
+
+.yapps-navigator .yapps-nav-result .group-head {
+  margin-top: 22px;
+  border-bottom: 0;
+}
+
+.yapps-navigator .yapps-nav-result .qtext {
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.yapps-navigator .yapps-nav-result .principle,
+.yapps-navigator .yapps-nav-result .help {
+  max-width: 60ch;
+  line-height: 1.7;
+}
+
+.yapps-navigator .yapps-nav-result a.p-buy,
+.yapps-navigator .yapps-nav-result a.ext-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.yapps-navigator .yapps-nav-result .warn,
+.yapps-navigator .yapps-nav-result .warn-card {
+  border-left: 3px solid var(--ng);
+  border-radius: 0 6px 6px 0;
+  background: var(--paper-2);
+}
+
+.yapps-navigator .yapps-nav-support,
+.yapps-navigator .yapps-nav-guidance {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--yapps-nav-divider);
+}
+
+.yapps-navigator .yapps-nav-support > h2,
+.yapps-navigator .yapps-nav-guidance > h2 {
+  margin-top: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.yapps-navigator .yapps-nav-support .guide-grid,
+.yapps-navigator .yapps-nav-guidance .preflight-grid {
+  display: block;
+}
+
+.yapps-navigator .yapps-nav-support .guide-card,
+.yapps-navigator .yapps-nav-guidance .preflight-card {
+  padding: 13px 0;
+  border: 0;
+  border-top: 1px solid var(--yapps-nav-divider);
+  border-radius: 0;
+  background: transparent;
+}
+
+.yapps-navigator .yapps-nav-support .guide-card.wide {
+  grid-column: auto;
+}
+
+.yapps-navigator .yapps-nav-support .ch-grid {
+  grid-template-columns: 1fr;
+}
+
+.yapps-navigator .yapps-nav-support .ch {
+  padding: 13px 0;
+  border: 0;
+  border-top: 1px solid var(--yapps-nav-divider);
+  border-radius: 0;
+  background: transparent;
+}
+
+.yapps-navigator .yapps-nav-next-action {
+  gap: 9px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top-color: var(--rule);
+}
+
+.yapps-navigator .yapps-nav-result :is(.tbl-scroll, .tbl-wrap) {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.yapps-navigator .yapps-nav-result :is(table, svg, img) {
+  max-width: 100%;
+}
+
+.yapps-navigator :is(a, button, input, select, summary):focus-visible {
+  outline: 3px solid var(--terracotta);
+  outline-offset: 2px;
+}
+
+.yapps-navigator .yapps-nav-options button:disabled,
+.yapps-navigator .yapps-nav-result button:disabled {
+  cursor: not-allowed;
+}
+
+@media (max-width: 460px) {
+  .yapps-navigator.page {
+    padding: 16px 16px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  .yapps-navigator .yapps-nav-topbar {
+    margin-bottom: 12px;
+  }
+
+  .yapps-navigator .yapps-nav-hero {
+    margin-bottom: 12px;
+  }
+
+  .yapps-navigator .yapps-nav-hero h1 {
+    font-size: clamp(23px, 7.2vw, 30px);
+  }
+
+  .yapps-navigator .yapps-nav-options {
+    grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .yapps-navigator .yapps-nav-options > button {
+    min-height: 46px;
+    padding: 7px 8px;
+    font-size: 12.5px;
+  }
+
+  .yapps-navigator .yapps-nav-first {
+    padding: 11px;
+  }
+
+  .yapps-navigator .yapps-nav-first .decision-options {
+    grid-template-columns: 1fr;
+  }
+
+  .yapps-navigator .yapps-nav-result .matchip,
+  .yapps-navigator .yapps-nav-result .condchip {
+    flex: 1 1 122px;
+  }
+}
+
+@media (max-width: 340px) {
+  .yapps-navigator.page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .yapps-navigator .yapps-nav-first .decision-option {
+    min-height: 0;
+  }
+}

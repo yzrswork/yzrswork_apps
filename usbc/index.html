@@ -280,26 +280,27 @@
     .qtext { font-size: 17px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> USB-C見分けナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>USB-C見分けナビ<span class="en">— USB-C Cable Advisor</span></h1>
       <p>USB-Cケーブルの型番・性能表記から、電力、転送速度、映像経路の確認項目を整理します。</p>
     </header>
 
-    <div class="tabs">
-      <button class="tab active" id="tab-check">表記を確認</button>
-      <button class="tab" id="tab-choose">用途から選ぶ</button>
+    <div class="tabs yapps-nav-options">
+      <button class="tab active" id="tab-check" aria-pressed="true">表記を確認</button>
+      <button class="tab" id="tab-choose" aria-pressed="false">用途から選ぶ</button>
     </div>
 
-    <div id="app"></div>
+    <div class="yapps-nav-result" id="app"></div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>USB-Cの形だけでは能力を決められません</h2>
       <p>USB-Cはコネクタ形状です。給電、データ、映像の可否と上限は、ケーブル、接続元、接続先それぞれの仕様で決まります。太さ、硬さ、色、付属品かどうかといった外観から、速度・電力・映像対応を判断することはできません。型番とメーカー仕様、性能表示、認証表示を照合してください。</p>
       <p>電力では、3 Aケーブルで20 Vを契約する場合の上限が60 W（20 V × 3 A）です。USB PD 3.1でEPRが導入される前の上限は、20 V・5 Aによる100 Wでした。USB PD 3.1のEPRは、対応する充電器・ケーブル・受電機器がそろう場合に最大240 W（48 V・5 A）までを定義します。e-markerはケーブルがUSB PDのDiscover Identityに応答して返す識別情報であり、5 AやEPRのケーブル能力を伝えるために使われます。e-markerや電力表記だけで、接続した機器がその電力を使えることまでは示しません。</p>
@@ -307,7 +308,7 @@
       <p>ThunderboltはUSB-C形状を使う別の認証・機能要件です。Thunderbolt 4は40 Gbpsを必須要件とし、Thunderbolt 5は最大80 Gbpsの双方向帯域を定義します。Thunderbolt 5の最大120 Gbpsは映像量が多い場合のBandwidth Boostであり、すべての通信や任意のUSB-Cケーブルに当てはまる速度ではありません。世代表記と製品仕様を確認してください。</p>
     </section>
 
-    <section class="about" aria-labelledby="usbc-primary-sources">
+    <section class="about yapps-nav-support" aria-labelledby="usbc-primary-sources">
       <h2 id="usbc-primary-sources">一次資料（2026年8月13日確認）</h2>
       <ul>
         <li><a href="https://www.usb.org/usb-charger-pd" target="_blank" rel="noopener noreferrer">USB-IF: USB Charger (USB Power Delivery)</a> — PD 3.1/EPR、100 Wから最大240 Wへの拡張。</li>
@@ -318,7 +319,7 @@
       </ul>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -496,6 +497,8 @@ function setTab(t) {
   tab = t;
   document.getElementById('tab-check').classList.toggle('active', t === 'check');
   document.getElementById('tab-choose').classList.toggle('active', t === 'choose');
+  document.getElementById('tab-check').setAttribute('aria-pressed', String(t === 'check'));
+  document.getElementById('tab-choose').setAttribute('aria-pressed', String(t === 'choose'));
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -507,7 +510,7 @@ function render() {
 /* ---------- タブA: 表記を確認 ---------- */
 function renderCheck() {
   const chips = CLUES.map(c =>
-    `<button class="matchip${clues.has(c.id) ? ' active' : ''}" data-clue="${c.id}">
+    `<button class="matchip${clues.has(c.id) ? ' active' : ''}" data-clue="${c.id}" aria-pressed="${clues.has(c.id)}">
        ${esc(c.label)}${c.sub ? `<span class="mc-sub">${esc(c.sub)}</span>` : ''}
      </button>`).join('');
 
@@ -521,6 +524,7 @@ function renderCheck() {
       const id = btn.getAttribute('data-clue');
       if (clues.has(id)) clues.delete(id); else clues.add(id);
       btn.classList.toggle('active', clues.has(id));
+      btn.setAttribute('aria-pressed', String(clues.has(id)));
       renderCheckResult();
     });
   });
@@ -575,7 +579,7 @@ function renderCheckResult() {
 /* ---------- タブB: 用途から選ぶ ---------- */
 function renderChoose() {
   const chips = USES.map(u =>
-    `<button class="matchip${useSel === u.id ? ' active' : ''}" data-use="${u.id}">
+    `<button class="matchip${useSel === u.id ? ' active' : ''}" data-use="${u.id}" aria-pressed="${useSel === u.id}">
        ${esc(u.label)}${u.sub ? `<span class="mc-sub">${esc(u.sub)}</span>` : ''}
      </button>`).join('');
 

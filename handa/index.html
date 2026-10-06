@@ -310,27 +310,28 @@
     .temp-readout { font-size: 27px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> はんだ付けナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>はんだ付けナビ<span class="en">— Soldering Advisor</span></h1>
       <p>こて先の温度、うまく付かない原因、道具の選び方。はんだの種類と作業から、適温とコツを引き出します。</p>
     </header>
 
-    <div class="tabs">
-      <button class="tab active" id="tab-temp">こて温度</button>
-      <button class="tab" id="tab-trouble">トラブル診断</button>
-      <button class="tab" id="tab-gear">道具の選び方</button>
+    <div class="tabs yapps-nav-options">
+      <button class="tab active" id="tab-temp" aria-pressed="true">こて温度</button>
+      <button class="tab" id="tab-trouble" aria-pressed="false">トラブル診断</button>
+      <button class="tab" id="tab-gear" aria-pressed="false">道具の選び方</button>
     </div>
 
-    <div id="app"></div>
+    <div class="yapps-nav-result" id="app"></div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>付かない、汚い、を減らすために確認したい3点</h2>
       <p>はんだ付け不良では、接合部への熱の伝わり方、こて先や母材の酸化・汚れ、フラックスの状態、部品の固定などを順に切り分けます。症状が似ているため、うまく付かない時に温度だけを上げると、ランドや部品へ余分な熱を加えることがあります。まず、こて先と接合面が清潔か、こて先にはんだが薄く濡れているか、ランドとリードの両方へ熱が伝わっているかを確認し、それから製品の推奨範囲内で温度を調整します。</p>
       <p>有鉛はんだでも組成によって溶融特性は異なります。Sn63Pb37は183℃で固体から液体へ移る共晶組成ですが、Sn60Pb40は固相線が約183℃、液相線が約190℃で、その間に半溶融の温度幅があります。鉛フリーのSAC305は約217〜220℃が目安で、有鉛より高温になり、濡れや酸化への配慮も必要です。個人の電子工作で有鉛はんだを使う場合も、鉛は有害な金属です。フラックス煙を吸い込まないよう局所換気または十分な換気を行い、作業場所では飲食せず、口や顔に触れる前と作業後に石けんで手を洗ってください。</p>
@@ -338,7 +339,7 @@
       <p>結論として必要なのは、温調式のこてと、作業に合ったこて先と、フラックスの3点です。消費電力だけでなく、温度制御、熱回復、こて先形状と接触面積を作業に合わせます。このツールで示す温度や対処は代表的な目安なので、使用製品の取扱説明書を優先してください。白光公式の <a href="https://www.hakko.com/japan/products/hakko_fx600.html" target="_blank" rel="noopener noreferrer">FX-600製品情報・取扱説明書</a> と <a href="https://www.hakko.com/japan/support/maintenance/detail.php?seq=113" target="_blank" rel="noopener noreferrer">こて先を良い状態で作業する方法</a> も確認できます。作業中はフラックス煙を避けて換気し、鉛入りはんだを扱う場所では飲食せず、作業後に手を洗ってください。</p>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -545,6 +546,9 @@ function setTab(t) {
   document.getElementById('tab-temp').classList.toggle('active', t === 'temp');
   document.getElementById('tab-trouble').classList.toggle('active', t === 'trouble');
   document.getElementById('tab-gear').classList.toggle('active', t === 'gear');
+  document.getElementById('tab-temp').setAttribute('aria-pressed', String(t === 'temp'));
+  document.getElementById('tab-trouble').setAttribute('aria-pressed', String(t === 'trouble'));
+  document.getElementById('tab-gear').setAttribute('aria-pressed', String(t === 'gear'));
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -558,11 +562,11 @@ function render() {
 /* ---------- タブA: こて温度 ---------- */
 function renderTemp() {
   const chipsSolder = SOLDERS.map(s =>
-    `<button class="matchip${solderSel === s.id ? ' active' : ''}" data-group="solder" data-id="${s.id}">
+    `<button class="matchip${solderSel === s.id ? ' active' : ''}" data-group="solder" data-id="${s.id}" aria-pressed="${solderSel === s.id}">
        ${esc(s.label)}${s.sub ? `<span class="mc-sub">${esc(s.sub)}</span>` : ''}
      </button>`).join('');
   const chipsWork = WORKS.map(w =>
-    `<button class="matchip${workSel === w.id ? ' active' : ''}" data-group="work" data-id="${w.id}">
+    `<button class="matchip${workSel === w.id ? ' active' : ''}" data-group="work" data-id="${w.id}" aria-pressed="${workSel === w.id}">
        ${esc(w.label)}${w.sub ? `<span class="mc-sub">${esc(w.sub)}</span>` : ''}
      </button>`).join('');
 
@@ -631,7 +635,7 @@ function renderTempResult() {
 /* ---------- タブB: トラブル診断 ---------- */
 function renderTrouble() {
   const chips = TROUBLES.map(t =>
-    `<button class="matchip${troubleSel === t.id ? ' active' : ''}" data-id="${t.id}">
+    `<button class="matchip${troubleSel === t.id ? ' active' : ''}" data-id="${t.id}" aria-pressed="${troubleSel === t.id}">
        ${esc(t.label)}${t.sub ? `<span class="mc-sub">${esc(t.sub)}</span>` : ''}
      </button>`).join('');
 
