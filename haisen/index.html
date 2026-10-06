@@ -307,28 +307,29 @@
     .preflight-grid { grid-template-columns: 1fr; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot"></span> 配線ナビ(初級)</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>配線ナビ<span class="en">Wiring Guide for Beginners</span></h1>
       <p>はんだづけで毎回迷う部品の端子と極性を色分けで確認。「どの足が何か」と「テスターでの確かめ方」を1部品ずつ表示します。</p>
     </header>
 
-    <div class="groups" id="groups">
-      <button class="group-btn active" data-group="wire">端子の見分け<span class="gb-sub">Terminals</span></button>
-      <button class="group-btn" data-group="pol">極性 / 向き<span class="gb-sub">Polarity</span></button>
+    <div class="groups yapps-nav-options" id="groups">
+      <button class="group-btn active" data-group="wire" aria-pressed="true">端子の見分け<span class="gb-sub">Terminals</span></button>
+      <button class="group-btn" data-group="pol" aria-pressed="false">極性 / 向き<span class="gb-sub">Polarity</span></button>
     </div>
 
-    <div class="picker" id="picker"></div>
+    <div class="picker yapps-nav-options" id="picker"></div>
 
-    <div id="detail"></div>
+    <div class="yapps-nav-result" id="detail"></div>
 
-    <section class="preflight" aria-labelledby="preflight-title">
+    <section class="preflight yapps-nav-guidance" aria-labelledby="preflight-title">
       <h2 id="preflight-title">通電前に確認する5原則</h2>
       <p>図は端子を探す入口です。同じ種類に見えても、ラグの配置やピン順は型番、メーカー、見る向きで変わるため、手元の部品を電源オフで確かめてから配線します。</p>
       <div class="preflight-grid">
@@ -351,14 +352,14 @@
       </div>
     </section>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>配線の何でつまずくのか</h2>
       <p>電子工作で作業台の手が止まる原因は、大きな失敗よりも「端子の取り違え」です。ステレオジャックのLとRがどっちの足かわからない。DCジャックの3つの端子のどれが何か。タクトスイッチの4本足を、押していないのにつながる向きに挿してしまう。電解コンデンサやLEDを逆向きにつけてしまう。どれも部品を見ただけでは判断しづらく、一度覚えても次の作業ではまた迷います。</p>
       <p>やっかいなのは、同じ種類の部品でも型番や品物によって足の並びが変わることです。トランジスタや三端子レギュレータは特にそうで、「この型番はこの並び」を思い込みで決めると壊します。だからこのナビは、配置の早見だけでなく、テスターの導通チェックやデータシートで「自分の手元の部品を自分で確かめる」やり方をセットで載せています。確かめ方さえ身につけば、載っていない部品でも迷わなくなります。</p>
       <p>ここに載せた配置や極性は、代表的な仕様や各部品の一般的な決まりに基づいています。ただし手元の部品が本当にその通りかは、配線する前にテスターや製品のデータシートでも確認してください。</p>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -806,7 +807,7 @@ function renderPicker() {
   var list = componentsInGroup(state.group);
   pickerEl.innerHTML = list.map(function (c) {
     var active = c.id === state.id ? ' active' : '';
-    return '<button class="pick' + active + '" data-id="' + c.id + '">' + esc(c.name) + '</button>';
+    return '<button class="pick' + active + '" data-id="' + c.id + '" aria-pressed="' + (c.id === state.id) + '">' + esc(c.name) + '</button>';
   }).join('');
 }
 
@@ -850,7 +851,9 @@ function selectGroup(g) {
   var first = componentsInGroup(g)[0];
   state.id = first ? first.id : null;
   Array.prototype.forEach.call(groupsEl.querySelectorAll('.group-btn'), function (b) {
-    b.classList.toggle('active', b.getAttribute('data-group') === g);
+    var selected = b.getAttribute('data-group') === g;
+    b.classList.toggle('active', selected);
+    b.setAttribute('aria-pressed', String(selected));
   });
   renderPicker();
   renderDetail();
@@ -883,7 +886,9 @@ pickerEl.addEventListener('click', function (e) {
     state.group = comp.group;
     state.id = comp.id;
     Array.prototype.forEach.call(groupsEl.querySelectorAll('.group-btn'), function (b) {
-      b.classList.toggle('active', b.getAttribute('data-group') === state.group);
+      var selected = b.getAttribute('data-group') === state.group;
+      b.classList.toggle('active', selected);
+      b.setAttribute('aria-pressed', String(selected));
     });
   }
 })();

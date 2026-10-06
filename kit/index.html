@@ -309,19 +309,20 @@
     .modal .m-row button { flex-basis: auto; width: 100%; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page" id="main-content" tabindex="-1">
-    <div class="topbar">
+  <main class="page yapps-navigator yapps-nav-with-cart" id="main-content" tabindex="-1">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> 装備ナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>装備ナビ<span class="en">— Maker's Starter Kit</span></h1>
       <p>電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、買い物リストに集約。持っているものは「持ってる」で消し込めます。</p>
     </header>
 
-    <section class="first-decision" aria-labelledby="first-decision-title">
+    <section class="first-decision yapps-nav-first" aria-labelledby="first-decision-title">
       <div class="decision-kicker">First project decision</div>
       <h2 id="first-decision-title">今回の工作にはんだ付けが必要？</h2>
       <p>作るものと工程を先に決めます。はんだ付け不要なら、はんだごては今は買わなくて大丈夫。必要なら、Step 1の温調式を基本候補にします。</p>
@@ -338,16 +339,16 @@
       <p class="decision-note" id="project-decision-note" role="status">選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。</p>
     </section>
 
-    <div class="chips" id="chips"></div>
+    <div class="chips yapps-nav-options" id="chips"></div>
     <div class="toolbar-row">
       <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
       <span class="count-note" id="ownCount"></span>
     </div>
     <p class="list-hint">上の判断と作るものを決めたら、「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
 
-    <div id="list"></div>
+    <div class="yapps-nav-result" id="list"></div>
 
-    <section class="buying-guide" aria-labelledby="buying-guide-title">
+    <section class="buying-guide yapps-nav-support" aria-labelledby="buying-guide-title">
       <div class="group-head"><span class="g-jp">道具を選ぶ基準</span><span class="g-en">Before buying</span></div>
       <div class="guide-grid">
         <article class="guide-card wide">
@@ -382,17 +383,17 @@
       <p class="guide-note"><strong>note 3部作の要約：</strong>vol.1は急ぎ・数量・品質・珍しさで調達先を使い分ける話、vol.2は必須工具から始めて困りごとに合わせて足す順番、vol.3は作業を止めやすい消耗品と定番部品を少しずつ備える考え方です。</p>
     </section>
 
-    <section class="channels">
+    <section class="channels yapps-nav-support">
       <div class="group-head"><span class="g-jp">部品はどこで買う？</span><span class="g-en">Where to buy</span></div>
       <div class="ch-grid" id="channels"></div>
     </section>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <p>電子工作を始めたころ、いちばん困ったのは「何をどこで買えばいいか分からない」ことでした。Amazon、AliExpress、秋月電子、千石電商などは品揃えや配送条件が異なり、使い分けが分かるまでにはけっこう遠回りをしました。工具も同じで、「とりあえず安いハンダごて」で始めると結局温度調整つきに買い直すことになるし、いざ作り始めてから「抵抗が足りない」「ハンダが切れた」で手が止まるのもお約束です。このツールは、そうした経験をもとに「最初にこれを買えばよかった」という工具と、切らすと作業が止まる消耗品や部品ストックをステップ別のチェックリストにしたものです。手持ちを確認しながら、足りないものだけを買い物リストに集約できます。掲載品には、原文で実使用が確認できる品、記事で紹介した品、必要仕様から探すための候補が混在するため、「実使用」「記事で紹介」「仕様候補」を商品ごとに表示しています。</p>
       <p>調達先の使い分けや工具選びの詳しい話は、noteの電子工作3部作で読めます： <a href="https://note.com/yzrswork/n/nf679f6a190d9" target="_blank" rel="noopener noreferrer">vol.1 部品調達編</a> / <a href="https://note.com/yzrswork/n/nd08cb43b6ca4" target="_blank" rel="noopener noreferrer">vol.2 工具編</a> / <a href="https://note.com/yzrswork/n/n65791c58ad52" target="_blank" rel="noopener noreferrer">vol.3 消耗品と部品ストック編</a></p>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>このリストは、noteの「電子工作」3部作をもとに、実使用品・記事で紹介した品・仕様候補を区別してまとめたものです。</div>
       <div>記事・商品情報確認: 2026年7月（原文のはんだごてはHAKKO FX600A）。価格・在庫・販売元・配送予定・最新仕様は購入時にリンク先で確認してください。</div>
       <div><!-- BUILD:BACKLINK:START -->
@@ -535,7 +536,7 @@ decisionButtons.forEach(button => button.addEventListener('click', () => {
 const FILTERS = [ { id: 'all', label: 'すべて' }, { id: 'tool', label: '工具' }, { id: 'stock', label: '部品ストック' } ];
 function renderChips() {
   document.getElementById('chips').innerHTML = FILTERS.map(f =>
-    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}">${f.label}</button>`
+    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}" aria-pressed="${filter === f.id}">${f.label}</button>`
   ).join('');
   document.querySelectorAll('.chip').forEach(c =>
     c.addEventListener('click', () => { filter = c.getAttribute('data-f'); renderChips(); renderList(); })
@@ -573,8 +574,8 @@ function renderList() {
           ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
           ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
           <div class="it-actions">
-            <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
-            <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
+            <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}" aria-pressed="${isOwned}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
+            <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}" aria-pressed="${inCart}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
           </div>
         </div>`;
     });
