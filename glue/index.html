@@ -314,26 +314,27 @@
     .qtext { font-size: 17px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> 接着剤選びナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>接着剤選びナビ<span class="en">— Glue Advisor</span></h1>
       <p>くっつけたい素材を2つ選ぶだけで、接着剤タイプと推奨製品、注意点が分かります。素材が分からない時は見分け方から。</p>
     </header>
 
-    <div class="tabs">
+    <div class="tabs yapps-nav-options">
       <button class="tab active" id="tab-diag">診断する</button>
       <button class="tab" id="tab-id">素材の見分け方</button>
     </div>
 
-    <div id="app"></div>
+    <div id="app" class="yapps-nav-result"></div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>なぜ素材で接着剤を変えるのか</h2>
       <p>「接着剤」は1本あれば何でもくっつく、と思って買うと、たいてい痛い目を見ます。プラモデルの合わせ目に瞬間接着剤を盛って表面が荒れたり、ポリキャップにどんな接着剤を使っても数日で剥がれたり。原因は、素材によって「くっつき方」がまったく違うからです。大きく分けると2種類あります。ひとつは、PS(ポリスチレン)同士のように、接着剤で貼るのではなく樹脂そのものを溶剤で溶かして一体化させる「溶剤溶着」。もうひとつは、金属やガラス、木材と異素材のように、溶剤では溶けない素材を、接着剤という別の層で機械的に貼り合わせる「機械的接着」です。この違いを知らずに製品を選ぶと、強度が出なかったり、逆に素材そのものを傷めたりします。</p>
       <p>溶剤溶着が使える代表がPSとABSです。プラモデル用セメントは対応する樹脂の表面を溶かして一体化するため、適合する未塗装材同士の接合では有力な方法です。ただし、荷重が接合面を引きはがす「剥離」方向に繰り返しかかる箇所や、着脱・再作業が必要な箇所では、接着剤だけに頼らない固定も検討します。ABSは溶剤でケミカルクラックを起こす場合があるため、製品の適合表示と端材試験が必要です。逆に、ポリキャップやタッパーに使われるPE、PPは表面エネルギーが低い難接着素材です。プライマーとセットの専用品でも、用途、荷重、屋外適合を製品表示で確認してください。</p>
@@ -341,7 +342,7 @@
       <p>接着剤選びでは「素材」「荷重方向」「着脱・再作業の有無」を先に確認します。位置決めが難しい作業は、少量の瞬間接着剤や両面テープで仮固定し、適合する本固定材で受け持たせる方法もあります。<a href="https://note.com/yzrswork/n/nc614297f457f" target="_blank" rel="noopener noreferrer">Re:Drive製作の実例</a>では、部位と再作業性に応じて2液エポキシとスポンジ両面テープを使い分けています。ここで示すのは代表例なので、目立たない場所や端材で試し、購入前・施工前に製品ラベルの対応素材、使用環境、硬化時間を確認してください。溶剤系を使う時は必ず換気してください。</p>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -661,10 +662,12 @@ function renderDiagnose() {
     `<button class="condchip${conds.has(c.id) ? ' active' : ''}" data-cond="${c.id}">${esc(c.label)}</button>`).join('');
 
   let html = `
-    <div class="section-label">— 素材A</div>
-    <div class="matgrid" id="grid-a">${chipsA}</div>
-    <div class="section-label">— 素材B</div>
-    <div class="matgrid" id="grid-b">${chipsB}</div>
+    <section class="yapps-nav-first" aria-label="接着する素材の選択">
+      <div class="section-label">— 素材A</div>
+      <div class="matgrid" id="grid-a">${chipsA}</div>
+      <div class="section-label">— 素材B</div>
+      <div class="matgrid" id="grid-b">${chipsB}</div>
+    </section>
     <div class="section-label">— 条件（任意、複数選択可）</div>
     <div class="condgrid" id="grid-c">${condChips}</div>
     <div id="result"></div>`;
@@ -720,6 +723,17 @@ function renderResult() {
       <p class="qtext">${esc(rule.title)}</p>
       <p class="principle">${esc(rule.principle)}</p>`;
 
+  if (rule.cautions && rule.cautions.length) {
+    html += '<div class="plabel">注意点</div><ul class="cautions">';
+    rule.cautions.forEach(c => { html += `<li>${esc(c)}</li>`; });
+    html += '</ul>';
+  }
+
+  if (notes.length) {
+    html += '<div class="plabel">選んだ条件について</div>';
+    notes.forEach(n => { html += `<div class="note-box">${esc(n)}</div>`; });
+  }
+
   html += '<div class="plabel">推奨製品</div><div class="products">';
   rule.products.forEach(p => {
     html += `
@@ -732,17 +746,6 @@ function renderResult() {
       </div>`;
   });
   html += '</div>';
-
-  if (rule.cautions && rule.cautions.length) {
-    html += '<div class="plabel">注意点</div><ul class="cautions">';
-    rule.cautions.forEach(c => { html += `<li>${esc(c)}</li>`; });
-    html += '</ul>';
-  }
-
-  if (notes.length) {
-    html += '<div class="plabel">選んだ条件について</div>';
-    notes.forEach(n => { html += `<div class="note-box">${esc(n)}</div>`; });
-  }
 
   html += '</div>';
   resultEl.innerHTML = html;

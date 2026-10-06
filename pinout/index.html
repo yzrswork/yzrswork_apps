@@ -320,34 +320,35 @@
     .pincell .pnum { width: 15px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> ピンアサインナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>ピンアサインナビ<span class="en">— Pinout Reference</span></h1>
       <p>Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32 / ESP32-WROOM-32系のピン情報を色分けで表示。</p>
     </header>
 
-    <div class="tabs">
+    <div class="tabs yapps-nav-options">
       <button class="tab active" id="tab-rpi">Raspberry Pi 3 Model B</button>
       <button class="tab" id="tab-uno">Arduino Uno R3互換</button>
       <button class="tab" id="tab-esp32">classic ESP32 / WROOM-32</button>
     </div>
 
-    <div id="app"></div>
+    <div id="app" class="yapps-nav-result"></div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>対象ボードを限定した早見表です</h2>
       <p>このページは、Raspberry Pi 3 Model Bの40ピンGPIO、Arduino Uno R3互換、classic ESP32を搭載したESP32-WROOM-32系だけを対象にします。GPIOの電圧、物理ピン番号、BCM/GPIO番号、起動時の役割を混同しないための一次資料ベースの早見表です。</p>
       <p>Raspberry Pi 3 Model BのGPIOは3.3Vロジックで、5V入力に耐えるものではありません。Uno R3互換は5Vロジックで、D0/D1はシリアル、D13は内蔵LEDと関係します。classic ESP32 / WROOM-32は3.0〜3.6V電源で、GPIO34〜39は入力専用、GPIO0/2/5/12/15はストラッピング、GPIO6〜11はモジュール内のSPIフラッシュ用途です。ESP32の周辺機能はGPIO Matrixで割り当てられるため、ここでは物理配置を断定しません。</p>
       <p>所有するESP32-S3 Super Mini互換（HW-747 V0.0.2）はこのページの対象外です。ESP32-S3はclassic ESP32とは別のSoCであり、当該基板のピン配置・シルク・接続は未検証です。このページのclassic ESP32/WROOM-32情報からS3のピンや機能を推測しないでください。</p>
     </section>
 
-    <section class="about" aria-labelledby="pinout-primary-sources">
+    <section class="about yapps-nav-support" aria-labelledby="pinout-primary-sources">
       <h2 id="pinout-primary-sources">一次資料</h2>
       <ul>
         <li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html" target="_blank" rel="noopener noreferrer">Raspberry Pi Documentation: Raspberry Pi computer hardware</a> — GPIO電圧とGPIO情報。</li>
@@ -357,7 +358,7 @@
       </ul>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>

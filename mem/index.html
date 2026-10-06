@@ -159,14 +159,15 @@
   }
 
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> メモリ選びナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>メモリ選びナビ<span class="en">— DDR Spec & Capacity</span></h1>
       <p>自作PCのメモリ選び。マザーボードに合うDDRを確認し、用途から容量を選び、対応環境では2枚構成を基本候補にします。</p>
     </header>
@@ -181,17 +182,19 @@
     </div>
 
     <!-- 1. 規格 -->
-    <div class="sec-head"><span class="s-jp">1. 規格（DDR世代）を確認</span><span class="s-en">By socket</span></div>
-    <div class="opts" id="sockets"></div>
-    <div id="socket-info"><div class="info-empty">ソケットを選び、マザーボードに合うDDRを確認します。</div></div>
+    <section class="yapps-nav-first" aria-label="規格（DDR世代）を確認">
+      <div class="sec-head"><span class="s-jp">1. 規格（DDR世代）を確認</span><span class="s-en">By socket</span></div>
+      <div class="opts yapps-nav-options" id="sockets"></div>
+      <div class="yapps-nav-result" id="socket-info"><div class="info-empty">ソケットを選び、マザーボードに合うDDRを確認します。</div></div>
+    </section>
 
     <!-- 2. 容量 -->
     <div class="sec-head"><span class="s-jp">2. 容量を用途で選ぶ</span><span class="s-en">By use</span></div>
-    <div class="opts" id="uses"></div>
-    <div id="use-info"><div class="info-empty">用途を選ぶと、推奨容量が出ます。</div></div>
+    <div class="opts yapps-nav-options" id="uses"></div>
+    <div class="yapps-nav-result" id="use-info"><div class="info-empty">用途を選ぶと、推奨容量が出ます。</div></div>
 
     <!-- 組み合わせ結果 -->
-    <div id="reco"></div>
+    <div class="yapps-nav-result" id="reco"></div>
 
     <!-- 3. 鉄則 -->
     <div class="sec-head"><span class="s-jp">3. 構成の鉄則</span><span class="s-en">Rules</span></div>
@@ -207,14 +210,14 @@
       <div class="picks" id="picks"></div>
     </div>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <p>自作PCを組んだとき、地味に悩んだのがメモリでした。DDR3、DDR4、DDR5と数字が増えるたびに何が違うのか分からなくなりますが、実は迷う余地は意外と少なくて、規格はマザーボードを買った時点で決まっています。世代ごとにノッチ（切り欠き）の位置が違うので、合わない規格はそもそも刺さりません。だから順番は「まずマザーボードで規格を確認、次に用途で容量を決める」。容量が足りないとOSはSSDをメモリ代わりに使い始めて（スワップ）、体感がいっきに重くなります。「なんか遅い」の原因はCPUよりメモリ不足のことが多い、というのが組んでみての実感です。自分はRyzen 7 5700XのAM4構成だったのでDDR4一択、用途から32GB（16GBを2枚のデュアルチャネル）を選びました。このナビは、その時の検討をそのまま「ソケットから規格、用途から容量」の順にたどれる形にしたものです。</p>
       <p>選定の一部始終と価格高騰の話はnoteで: <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">DDR3からDDR5の進化と16GBのTEAMGROUPを選んだ話</a></p>
     </section>
 
     <p class="disclaimer">※ 規格・速度の最終判断は、CPUの公式仕様とマザーボードの製品ページ「メモリ」欄、対応リスト（QVL）で確認してください。EXPO / XMPはオーバークロック設定で、定格動作を保証するものではありません。Intel LGA1700はマザーによりDDR4専用／DDR5専用が分かれます。情報は2026年7月時点。</p>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>この早見は <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">note「DDR3〜DDR5の進化と16GBのTEAMGROUPを選んだ話」 ↗</a> と最新の公式情報をもとにしています。</div>
       <div><!-- BUILD:BACKLINK:START -->
 <nav class="yapps-related" aria-label="関連情報">
@@ -293,7 +296,7 @@ function renderSocketInfo() {
   const s = selectedSocket();
   const ddr = resolvedDdr();
   const ddrLabel = ddr || 'マザーボードで確認';
-  const choices = s.id === 'lga1700' ? `<div class="ddr-choices" role="group" aria-label="LGA1700マザーのDDR規格"><button type="button" class="ddr-choice" data-ddr-choice="DDR4" aria-pressed="${selDdrChoice === 'DDR4' ? 'true' : 'false'}">DDR4マザー</button><button type="button" class="ddr-choice" data-ddr-choice="DDR5" aria-pressed="${selDdrChoice === 'DDR5' ? 'true' : 'false'}">DDR5マザー</button><button type="button" class="ddr-choice" data-ddr-choice="unknown" aria-pressed="${selDdrChoice === 'unknown' ? 'true' : 'false'}">わからない</button></div>` : '';
+  const choices = s.id === 'lga1700' ? `<div class="ddr-choices" role="group" aria-label="LGA1700マザーのDDR規格"><button type="button" class="ddr-choice${selDdrChoice === 'DDR4' ? ' active' : ''}" data-ddr-choice="DDR4" aria-pressed="${selDdrChoice === 'DDR4' ? 'true' : 'false'}">DDR4マザー</button><button type="button" class="ddr-choice${selDdrChoice === 'DDR5' ? ' active' : ''}" data-ddr-choice="DDR5" aria-pressed="${selDdrChoice === 'DDR5' ? 'true' : 'false'}">DDR5マザー</button><button type="button" class="ddr-choice${selDdrChoice === 'unknown' ? ' active' : ''}" data-ddr-choice="unknown" aria-pressed="${selDdrChoice === 'unknown' ? 'true' : 'false'}">わからない</button></div>` : '';
   el.innerHTML = `<div class="info-card"><div class="ic-big">対応: ${esc(ddrLabel)}</div><div class="ic-line">${esc(s.sweet)}</div>${choices}<div class="ic-note">${esc(s.note)}</div></div>`;
   el.querySelectorAll('[data-ddr-choice]').forEach(b => b.addEventListener('click', () => {
     selDdrChoice = b.getAttribute('data-ddr-choice');

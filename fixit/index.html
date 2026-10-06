@@ -461,17 +461,18 @@
     .qtext { font-size: 18px; }
   }
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
+  <main class="page yapps-navigator">
     <h1 class="sr-only">直し方ナビ</h1>
-    <div class="topbar">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand" id="brand"><span class="dot">●</span> 直し方ナビ</span>
     </div>
 
-    <div id="app"></div>
+    <div id="app" class="yapps-nav-result"></div>
 
-    <section class="static-guides" aria-labelledby="safety-guides-title">
+    <section class="static-guides yapps-nav-guidance" aria-labelledby="safety-guides-title">
       <h2 id="safety-guides-title">4つのトラブル：安全な確認順</h2>
       <p>診断を始める前に読める、データ消失やセキュリティ低下を避けるための要点です。</p>
       <div class="guide-grid">
@@ -495,7 +496,7 @@
       </div>
     </section>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>
         電子工作、DIY、自作PCなどの記録は note で公開しています。
         <a href="https://note.com/yzrswork" target="_blank" rel="noopener noreferrer">や印工務店の note 記事一覧を見る ↗</a>
@@ -1146,13 +1147,15 @@ function renderHome() {
   });
 
   appEl.innerHTML = `
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <div class="screen-title" aria-hidden="true">直し方ナビ<span class="en">— Fix-it Navigator</span></div>
       <p>「何もしてないのに急に繋がらない」よくあるトラブルを、質問に答えるだけで切り分けます。オフラインでも動きます。</p>
     </header>
-    <div class="section-label">— 診断メニュー</div>
-    <ul class="menu">${cards}</ul>
-    <section class="about">
+    <section class="yapps-nav-first" aria-label="診断メニュー">
+      <div class="section-label">— 診断メニュー</div>
+      <ul class="menu">${cards}</ul>
+    </section>
+    <section class="about yapps-nav-support">
       <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側の外部メール利用設定とIMAP・SMTPを確認して復旧した話。Windows 11の共有フォルダーが見えなくなり、資格情報・Function Discovery・ESET設定の3点を確認・変更したあとに復旧した話（個別の原因は未分離）。自作PCのビープ音が、ケーブルやモニターも含めた切り分け後、HDMIセレクターを挟んだ構成では再発しなくなった話（原因仮説は未検証）。ObsidianとiCloudの過去記事は現在の公式情報と非推奨追記を踏まえ、バックアップ優先の安全手順へ改訂しています。トラブルの渦中でも確認しやすいよう、観測事実と未確認の仮説を分けてナビ形式に組み直しました。</p>
     </section>`;
 
