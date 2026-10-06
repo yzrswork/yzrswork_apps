@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mem-v16';
+const CACHE_NAME = 'mem-v17';
 const CACHE_PREFIX = 'mem-';
 const ASSETS = [
   './',
@@ -8,6 +8,7 @@ const ASSETS = [
   '../icons/icon-512.png',
   '../icons/icon-512-maskable.png',
   '../shared/tokens.css',
+  '../shared/navigator.css',
   '../affiliate.js',
   '../shared/commerce-policy.js',
   '../shared/commerce.js',

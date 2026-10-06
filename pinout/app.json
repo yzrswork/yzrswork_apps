@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系のピン早見表。",
   "hasServiceWorker": true,
-  "swVersion": 5,
+  "swVersion": 6,
   "assets": [
     "./",
     "./index.html",
@@ -22,7 +22,8 @@
     "../icons/icon-192.png",
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
-    "../shared/tokens.css"
+    "../shared/tokens.css",
+    "../shared/navigator.css"
   ],
   "manifestIcons": [
     {

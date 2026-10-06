@@ -14,7 +14,7 @@
   "manifestHref": "./manifest.webmanifest",
   "manifestFile": "manifest.webmanifest",
   "hasServiceWorker": true,
-  "swVersion": 16,
+  "swVersion": 17,
   "assets": [
     "./",
     "./index.html",
@@ -23,6 +23,7 @@
     "../icons/icon-512.png",
     "../icons/icon-512-maskable.png",
     "../shared/tokens.css",
+    "../shared/navigator.css",
     "../affiliate.js",
     "../shared/commerce-policy.js",
     "../shared/commerce.js",

@@ -191,19 +191,20 @@
   .footer-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 
 </style>
+<link rel="stylesheet" href="../shared/navigator.css" />
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
+  <main class="page yapps-navigator">
+    <div class="topbar yapps-nav-topbar">
       <span class="brand"><span class="dot">●</span> HDD選びナビ</span>
     </div>
 
-    <header class="hero">
+    <header class="hero yapps-nav-hero">
       <h1>HDD選びナビ<span class="en">— WD Color & CMR/SMR</span></h1>
       <p>Western DigitalのHDDを、用途から候補ファミリーで絞るか、完全な型番から直接確認する選び方ナビ。速度重視ならSSDも先に検討できます。</p>
     </header>
 
-    <nav class="entry-nav" aria-label="始め方">
+    <nav class="entry-nav yapps-nav-first yapps-nav-options" aria-label="始め方">
       <a href="#use-path" class="entry-tab active" data-entry-path="use" aria-current="page">用途から選ぶ</a>
       <a href="#model-checker" class="entry-tab" data-entry-path="model">型番がわかる</a>
     </nav>
@@ -211,20 +212,20 @@
 
     <!-- A. 用途から色 -->
     <div class="sec-head" id="use-path"><span class="s-jp">用途から候補を絞る</span><span class="s-en">Pick by use</span></div>
-    <div class="uses" id="uses"></div>
-    <div class="result" id="result" aria-live="polite"><div class="result-empty">用途を選ぶと、候補ファミリーが出ます。</div></div>
+    <div class="uses yapps-nav-options" id="uses"></div>
+    <div class="result yapps-nav-result" id="result" aria-live="polite"><div class="result-empty">用途を選ぶと、候補ファミリーが出ます。</div></div>
 
     <!-- B. 型番チェッカー -->
     <div class="sec-head" id="model-checker"><span class="s-jp">型番から直接確認</span><span class="s-en">Model checker</span></div>
     <p class="path-note">登録済みの完全な型番だけ断定します。末尾の登録例だけ一致する場合や未登録の場合は、WD公式で確認してください。</p>
-    <div class="checker">
+    <div class="checker yapps-nav-first">
       <label for="model">型番を入力（例: WD20EFRX）</label>
       <input type="text" id="model" placeholder="WD20EFRX" autocomplete="off" spellcheck="false" />
-      <div class="check-out" id="check-out" role="status" aria-live="polite"></div>
+      <div class="check-out yapps-nav-result" id="check-out" role="status" aria-live="polite"></div>
       <div class="examples" id="examples"></div>
     </div>
 
-    <details class="advanced-details">
+    <details class="advanced-details yapps-nav-guidance">
       <summary>技術情報・シリーズ一覧（詳しく知りたい人向け）</summary>
       <p class="detail-intro">候補を絞った後の確認用です。色やシリーズ名だけで、個々のドライブの記録方式を確定しません。</p>
 
@@ -253,7 +254,7 @@
       </div>
     </details>
 
-    <section class="about">
+    <section class="about yapps-nav-support">
       <h2>この早見の使い方</h2>
       <p>用途から色を絞る入口と、完全な型番を直接確認する入口を分けました。購入前は、ドライブ本体や箱の型番とWD公式仕様を照合してください。</p>
       <p><b>公式資料確認済みモデル例:</b> WD40EFZZは登録済みのCMR型番例です。これは一つの確認例で、容量や世代が違う製品へ自動的に適用するものではありません。</p>
@@ -262,7 +263,7 @@
 
     <p class="disclaimer">※ 色や末尾例だけでは記録方式を確定できません。最終判断は完全な型番ごとの「Recording Technology」を<a href="https://support-en.wd.com/app/answers/detailweb/a_id/50697/" target="_blank" rel="noopener noreferrer">WD公式</a>で確認してください。</p>
 
-    <footer>
+    <footer class="yapps-nav-next-action">
       <div>この早見は <a href="https://note.com/yzrswork/n/nd2c3b422957a" target="_blank" rel="noopener noreferrer">note「WDの色の選び方ガイド」 ↗</a> と最新の公式情報をもとにしています。役に立ったら記事にスキをもらえると励みになります。</div>
       <div><!-- BUILD:BACKLINK:START -->
 <nav class="yapps-related" aria-label="関連情報">
