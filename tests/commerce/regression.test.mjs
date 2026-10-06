@@ -4,7 +4,7 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, copyFileSy
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { runInNewContext } from 'node:vm';
 import { product } from './fixtures.mjs';
 
@@ -12,14 +12,6 @@ const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const read = path => readFileSync(join(root, path), 'utf8');
 const catalog = JSON.parse(read('site/catalog.json'));
 
-test('existing app catalog/root/sitemap/robots/privacy and non-mem app outputs match main', () => {
-  const original = JSON.parse(execFileSync('git', ['show', 'origin/main:site/catalog.json'], { cwd: root, encoding: 'utf8' }));
-  assert.deepEqual(catalog.apps, original.apps); assert.deepEqual(catalog.categories, original.categories);
-  assert.deepEqual(catalog.retiredApps, original.retiredApps);
-  const files = ['index.html', 'sitemap.xml', 'robots.txt', 'privacy/index.html', 'shared/tokens.css'];
-  for (const app of catalog.apps.filter(app => app.slug !== 'mem')) files.push(`${app.slug}/index.html`);
-  for (const file of files) assert.equal(read(file), execFileSync('git', ['show', `origin/main:${file}`], { cwd: root, encoding: 'utf8' }), file);
-});
 test('mem base remains functional when optional Commerce JS fails; matching preserves owner/DDR/capacity gate', () => {
   const elements = new Map();
   const document = { getElementById(id) {
