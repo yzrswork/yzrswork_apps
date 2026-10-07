@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bench-v16';
+const CACHE_NAME = 'bench-v17';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',
@@ -21,6 +21,12 @@ const ASSETS = [
 const BENCH_ASSET_URLS = new Set(
   ASSETS.map(path => new URL(path, self.location.href).href)
 );
+
+// 文書route aliasはpathnameで照合し、query付き公開URLも同じcached documentへ寄せる。
+const BENCH_DOCUMENT_ALIASES = new Map([
+  [new URL('./en', self.location.href).pathname, new URL('./en.html', self.location.href).href],
+  [new URL('./en.html', self.location.href).pathname, new URL('./en.html', self.location.href).href]
+]);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -56,14 +62,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const documentCacheUrl = BENCH_DOCUMENT_ALIASES.get(url.pathname) || null;
+
   // benchアプリの既知アセット以外は素通り（他ページに介入しない）
-  if (!BENCH_ASSET_URLS.has(url.href)) {
+  if (!documentCacheUrl && !BENCH_ASSET_URLS.has(url.href)) {
     return;
   }
 
   // Cache First + ネットワークフォールバック
   event.respondWith(
-    caches.match(request).then((cached) => {
+    caches.match(documentCacheUrl || request).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
@@ -71,12 +79,13 @@ self.addEventListener('fetch', (event) => {
           if (response.ok && response.type === 'basic') {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
+              cache.put(documentCacheUrl || request, clone);
             });
           }
           return response;
         })
         .catch(() => {
+          if (documentCacheUrl) return caches.match(documentCacheUrl);
           if (request.destination === 'document') {
             return caches.match('./index.html');
           }
