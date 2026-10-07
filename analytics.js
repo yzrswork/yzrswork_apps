@@ -29,13 +29,17 @@ if (/\/bench\/?$/.test(location.pathname)) {
   document.head.appendChild(benchEngFix);
 }
 
+function yzrsIsBenchEnglish() {
+  return /^\/bench\/en(?:\.html)?\/?$/.test(location.pathname);
+}
+
 function yzrsAppName() {
-  if (/^\/bench\/en\.html$/.test(location.pathname)) return "bench";
+  if (yzrsIsBenchEnglish()) return "bench";
   return location.pathname.replace(/\/$/, "").split("/").pop() || "root";
 }
 
 function yzrsAnalyticsParams(params) {
-  if (/^\/bench\/en\.html$/.test(location.pathname)) params.language = "en";
+  if (yzrsIsBenchEnglish()) params.language = "en";
   return params;
 }
 
