@@ -612,7 +612,10 @@ const LEGACY_AFFILIATE_REQUIREMENTS = {
   nurerukun: { helper: 'function affHref', metadata: 'data-item-key' },
 };
 for (const [slug, requirement] of Object.entries(LEGACY_AFFILIATE_REQUIREMENTS)) {
-  const source = read(join(ROOT, slug, 'index.html'));
+  const indexSource = read(join(ROOT, slug, 'index.html'));
+  const source = slug === 'bench'
+    ? `${indexSource}\n${read(join(ROOT, slug, 'main.js'))}`
+    : indexSource;
   if (!source.includes(requirement.helper)) {
     fail(`${slug}: legacy affiliate helper/rendererがない`);
   }

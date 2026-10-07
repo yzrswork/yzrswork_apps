@@ -7,7 +7,7 @@
     "build": "node scripts/build.mjs",
     "build:check": "node scripts/build.mjs --check",
     "check": "node scripts/build.mjs --check && node scripts/check.mjs",
-    "test": "node --test tests/commerce/*.test.mjs tests/echo-dashboard/*.test.mjs",
+    "test": "node --test tests/bench/*.test.mjs tests/commerce/*.test.mjs tests/echo-dashboard/*.test.mjs",
     "test:echo-dashboard": "node --test tests/echo-dashboard/*.test.mjs"
   }
 }

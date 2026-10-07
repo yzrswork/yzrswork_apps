@@ -30,7 +30,13 @@ if (/\/bench\/?$/.test(location.pathname)) {
 }
 
 function yzrsAppName() {
+  if (/^\/bench\/en\.html$/.test(location.pathname)) return "bench";
   return location.pathname.replace(/\/$/, "").split("/").pop() || "root";
+}
+
+function yzrsAnalyticsParams(params) {
+  if (/^\/bench\/en\.html$/.test(location.pathname)) params.language = "en";
+  return params;
 }
 
 // アフィリエイトリンクをリンク上でも明示し、規約向けrelを揃える。
@@ -92,10 +98,10 @@ function yzrsTrackToolStart(e) {
   var control = target.closest("button, select, input[type=checkbox], input[type=radio], input[type=text], input[type=number]");
   if (!control) return;
   yzrsToolStarted = true;
-  window.yzrsTrack("tool_start", {
+  window.yzrsTrack("tool_start", yzrsAnalyticsParams({
     app_name: yzrsAppName(),
     control_type: (control.tagName || "control").toLowerCase()
-  });
+  }));
 }
 document.addEventListener("click", yzrsTrackToolStart, true);
 document.addEventListener("change", yzrsTrackToolStart, true);
@@ -141,11 +147,11 @@ window.yzrsTrackResult = function (resultType, category) {
   var allowed = YZRS_RESULT_CATEGORIES[category];
   if (!allowed || allowed.indexOf(resultType) === -1 || !window.yzrsTrack) return;
 
-  var params = {
+  var params = yzrsAnalyticsParams({
     app_name: yzrsAppName(),
     result_type: resultType,
     category: category
-  };
+  });
   window.yzrsTrack("result_view", params);
 
   if (!yzrsResultCompleted[resultType]) {

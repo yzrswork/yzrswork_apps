@@ -1,8 +1,13 @@
-const CACHE_NAME = 'bench-v15';
+const CACHE_NAME = 'bench-v16';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',
   './index.html',
+  './en.html',
+  './en.js',
+  './main.js',
+  './calculations.js',
+  './bench.css',
   './manifest.webmanifest',
   './eng-notation-fix.js',
   '../analytics.js',
