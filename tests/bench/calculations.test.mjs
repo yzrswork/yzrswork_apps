@@ -57,6 +57,14 @@ test('LED resistor selection rounds up to the E12 ceiling, including exact value
   assert.equal(recommendE12Ceiling(99.9), 100);
   assert.equal(recommendE12Ceiling(999.9), 1000);
   assert.equal(recommendE12Ceiling(9999.9), 10000);
+
+  const arithmeticBoundary = calculateLedResistor(0.66, 0.1, 10);
+  assert.equal(arithmeticBoundary.requiredOhms, 56.00000000000001);
+  assert.equal(arithmeticBoundary.recommendedOhms, 56);
+
+  const genuinelyAboveBoundary = calculateLedResistor(0.660000000001, 0.1, 10);
+  assert.ok(genuinelyAboveBoundary.requiredOhms > 56);
+  assert.equal(genuinelyAboveBoundary.recommendedOhms, 68);
 });
 
 test('LED resistor dissipation uses the recommended resistor and the power ceiling fails closed above 5 W', () => {
