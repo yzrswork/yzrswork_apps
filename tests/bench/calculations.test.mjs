@@ -50,6 +50,9 @@ test('LED resistor selection rounds up to the E12 ceiling, including exact value
 
   assert.equal(recommendE12Ceiling(330), 330);
   assert.equal(recommendE12Ceiling(82), 82);
+  assert.equal(recommendE12Ceiling(0.056), 0.056);
+  assert.equal(recommendE12Ceiling(0.56), 0.56);
+  assert.equal(recommendE12Ceiling(0.082), 0.082);
   assert.equal(recommendE12Ceiling(82.01), 100);
   assert.equal(recommendE12Ceiling(99.9), 100);
   assert.equal(recommendE12Ceiling(999.9), 1000);
@@ -85,6 +88,17 @@ test('resistor color code supports value-to-bands and bands-to-value for four an
   assert.equal(fiveBandValue.tolerancePercent, 1);
   assert.equal(fiveBandValue.minimumOhms, 99000);
   assert.equal(fiveBandValue.maximumOhms, 101000);
+
+  const fourBandCarry = resistorValueToBands(999, 5, 4);
+  assert.equal(fourBandCarry.status, 'ok');
+  assert.equal(fourBandCarry.resistanceOhms, 1000);
+  assert.deepEqual(fourBandCarry.bands, ['brown', 'black', 'red', 'gold']);
+
+  const fiveBandCarry = resistorValueToBands(9999, 1, 5);
+  assert.equal(fiveBandCarry.status, 'ok');
+  assert.equal(fiveBandCarry.resistanceOhms, 10000);
+  assert.deepEqual(fiveBandCarry.bands, ['brown', 'black', 'black', 'red', 'brown']);
+
   assert.equal(resistorValueToBands(0, 5, 4).status, 'error');
 });
 
