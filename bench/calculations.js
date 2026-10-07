@@ -79,7 +79,11 @@ export function recommendE12Ceiling(requiredOhms) {
   if (!finitePositive(requiredOhms)) return null;
   const supported = [];
   for (let decade = E12_MIN_DECADE; decade <= E12_MAX_DECADE; decade += 1) {
-    for (const base of E12_VALUES) supported.push(base * (10 ** decade));
+    for (const base of E12_VALUES) {
+      // Normalize generated preferred values so an exact nominal value such as
+      // 0.056 Ω does not become 0.055999... and get skipped by the ceiling test.
+      supported.push(Number((base * (10 ** decade)).toPrecision(12)));
+    }
   }
   supported.sort((a, b) => a - b);
   return supported.find((value) => value >= requiredOhms) ?? null;
@@ -132,10 +136,19 @@ export function resistorValueToBands(valueInput, toleranceInput, bandCountInput)
 
   const digitCount = bandCount === 4 ? 2 : 3;
   const exponent = Math.floor(Math.log10(value)) - (digitCount - 1);
-  const multiplier = 10 ** exponent;
-  const significantDigits = Math.round(value / multiplier);
+  let multiplier = 10 ** exponent;
+  let significantDigits = Math.round(value / multiplier);
   const minimumDigits = 10 ** (digitCount - 1);
   const maximumDigits = (10 ** digitCount) - 1;
+
+  // Rounding can carry into the next decade (for example 999 Ω -> 1000 Ω
+  // in a two-significant-digit / four-band representation). Normalize that
+  // carry instead of rejecting an otherwise representable standard code.
+  if (significantDigits === 10 ** digitCount) {
+    significantDigits /= 10;
+    multiplier *= 10;
+  }
+
   if (!Number.isFinite(significantDigits) || significantDigits < minimumDigits || significantDigits > maximumDigits) {
     return { status: 'error', error: 'outside-significant-digit-range' };
   }
