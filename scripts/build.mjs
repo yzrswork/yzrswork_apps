@@ -119,7 +119,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   ${aliasLookup}// ${app.slug}アプリの既知アセット以外は素通り（他ページに介入しない）
-  ${assetGuard}
+${assetGuard}
     return;
   }
 
