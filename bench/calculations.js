@@ -86,7 +86,15 @@ export function recommendE12Ceiling(requiredOhms) {
     }
   }
   supported.sort((a, b) => a - b);
-  return supported.find((value) => value >= requiredOhms) ?? null;
+  return supported.find((value) => {
+    if (value >= requiredOhms) return true;
+    // Arithmetic such as (0.66 - 0.1) / 0.01 can produce
+    // 56.00000000000001 instead of the nominal 56. Treat only a few ULPs
+    // as representation noise; a materially higher requirement must still
+    // advance to the next E12 value.
+    const tolerance = Number.EPSILON * Math.max(Math.abs(value), Math.abs(requiredOhms)) * 8;
+    return requiredOhms - value <= tolerance;
+  }) ?? null;
 }
 
 /** Calculate an LED series resistor and its power rating from the selected E12 part. */
