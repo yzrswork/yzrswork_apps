@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Maker's Bench — English Pilot</title>
+<meta name="description" content="Five practical electronics calculators for makers: Ohm's Law, LED series resistor, resistor color code, 555 astable, and theoretical battery life." />
+<link rel="canonical" href="https://apps.yzrswork.com/bench/en.html" />
+<meta name="theme-color" content="#f0ebe3" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../shared/tokens.css" />
+<link rel="stylesheet" href="./bench.css" />
+<script async src="../analytics.js"></script>
+</head>
+<body>
+<main class="page">
+  <div class="meta">
+    <span><span class="vol">YZRS WORK</span><span class="dot"> · </span>MAKER'S BENCH</span>
+    <nav class="meta-nav" aria-label="Page links">
+      <a href="https://yzrswork.com/en/tools/makers-bench/">PILOT SCOPE</a>
+      <a href="./">日本語</a>
+    </nav>
+  </div>
+
+  <header>
+    <div class="header-text">
+      <div class="brand-en"><span class="em"></span> EN-US Pilot · A</div>
+      <h1 class="brand-jp">Maker's Bench</h1>
+      <p class="tagline">A compact electronics workbench for quick calculations. Inputs stay in this browser; the calculators do not send them.</p>
+    </div>
+  </header>
+
+  <div class="section-head">
+    <span class="label-jp">Choose a calculator</span>
+    <span class="label-en">— Pilot A / five tools</span>
+  </div>
+  <hr class="section-rule" />
+
+  <nav class="tool-index" aria-label="Calculators">
+    <a href="#tool-ohm"><span class="index-num">01</span><span>Ohm's Law</span></a>
+    <a href="#tool-led"><span class="index-num">02</span><span>LED Series Resistor</span></a>
+    <a href="#tool-color"><span class="index-num">03</span><span>Resistor Color Code</span></a>
+    <a href="#tool-555"><span class="index-num">04</span><span>555 Astable</span></a>
+    <a href="#tool-bat"><span class="index-num">05</span><span>Battery Life</span></a>
+  </nav>
+
+  <div class="tool-list">
+    <details class="tool" id="tool-ohm">
+      <summary>
+        <span class="tool-num">01</span>
+        <div class="tool-head">
+          <span class="tool-title">Ohm's Law</span>
+          <span class="tool-desc">Enter any two of voltage, current, resistance, and power.</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <p class="note-small">Enter two positive values. Leave a field blank or set it to zero to clear it.</p>
+        <div class="ohm-inputs">
+          <div class="ohm-field"><label for="ohm-V">V <span class="hint">Voltage [V]</span></label><input type="number" id="ohm-V" min="0" step="any" /></div>
+          <div class="ohm-field"><label for="ohm-I">I <span class="hint">Current [A]</span></label><input type="number" id="ohm-I" min="0" step="any" /></div>
+          <div class="ohm-field"><label for="ohm-R">R <span class="hint">Resistance [Ω]</span></label><input type="number" id="ohm-R" min="0" step="any" /></div>
+          <div class="ohm-field"><label for="ohm-P">P <span class="hint">Power [W]</span></label><input type="number" id="ohm-P" min="0" step="any" /></div>
+        </div>
+        <div id="ohm-result" aria-live="polite"></div>
+      </div>
+    </details>
+
+    <details class="tool" id="tool-led">
+      <summary>
+        <span class="tool-num">02</span>
+        <div class="tool-head">
+          <span class="tool-title">LED Series Resistor</span>
+          <span class="tool-desc">Estimate a current-limiting resistor and a power rating.</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields triple">
+          <div class="field"><label for="led-Vs">Supply voltage, Vs [V]</label><input type="number" id="led-Vs" placeholder="5" step="any" /></div>
+          <div class="field"><label for="led-Vf">LED forward voltage, Vf [V]</label><input type="number" id="led-Vf" placeholder="2.0" min="0" step="any" /></div>
+          <div class="field"><label for="led-If">Target current, If [mA]</label><input type="number" id="led-If" placeholder="10" min="0" step="any" /></div>
+        </div>
+        <div id="led-result" aria-live="polite"></div>
+        <p id="led-note" class="note-small">The E12 recommendation is the smallest supported value at or above the calculated resistance, so the estimated current does not exceed the target.</p>
+      </div>
+    </details>
+
+    <details class="tool" id="tool-color">
+      <summary>
+        <span class="tool-num">03</span>
+        <div class="tool-head">
+          <span class="tool-title">Resistor Color Code</span>
+          <span class="tool-desc">Convert values to bands or bands to values; supports four-band and five-band codes.</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="toggle-row" role="group" aria-label="Conversion direction">
+          <button id="cc-mode-v2c" class="active" type="button">Value → bands</button>
+          <button id="cc-mode-c2v" type="button">Bands → value</button>
+          <button id="cc-bands-4" class="active" type="button">4 bands</button>
+          <button id="cc-bands-5" type="button">5 bands</button>
+        </div>
+        <div id="cc-v2c-panel">
+          <div class="fields mt16">
+            <div class="field"><label for="cc-val">Resistance [Ω]</label><input type="number" id="cc-val" placeholder="4700" min="0" step="any" /></div>
+            <div class="field">
+              <label for="cc-tol">Tolerance</label>
+              <select id="cc-tol">
+                <option value="1">Brown ±1%</option><option value="2">Red ±2%</option>
+                <option value="0.5">Green ±0.5%</option><option value="0.25">Blue ±0.25%</option>
+                <option value="0.1">Violet ±0.1%</option><option value="5" selected>Gold ±5%</option>
+                <option value="10">Silver ±10%</option>
+              </select>
+            </div>
+          </div>
+          <div id="cc-v2c-result" aria-live="polite"></div>
+        </div>
+        <div id="cc-c2v-panel" style="display:none;">
+          <div id="cc-selects" class="mt16" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+          <div id="cc-c2v-result" class="mt12" aria-live="polite"></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="tool" id="tool-555">
+      <summary>
+        <span class="tool-num">04</span>
+        <div class="tool-head">
+          <span class="tool-title">555 Astable</span>
+          <span class="tool-desc">Estimate frequency, period, and output duty cycle from R1, R2, and C.</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields triple">
+          <div class="field"><label for="t555-R1">R1 [Ω]</label><input type="number" id="t555-R1" placeholder="1000" min="0" step="any" /></div>
+          <div class="field"><label for="t555-R2">R2 [Ω]</label><input type="number" id="t555-R2" placeholder="1000" min="0" step="any" /></div>
+          <div class="field"><label for="t555-C">C [µF]</label><input type="number" id="t555-C" placeholder="1" min="0" step="any" /></div>
+        </div>
+        <div id="t555-result" aria-live="polite"></div>
+        <p class="note-small">This is an ideal estimate for the classic 555 astable circuit. Component tolerances and timer characteristics affect the actual output.</p>
+      </div>
+    </details>
+
+    <details class="tool" id="tool-bat">
+      <summary>
+        <span class="tool-num">05</span>
+        <div class="tool-head">
+          <span class="tool-title">Battery Life</span>
+          <span class="tool-desc">Estimate runtime from capacity and average current.</span>
+        </div>
+      </summary>
+      <div class="tool-body">
+        <div class="fields">
+          <div class="field"><label for="bat-cap">Capacity [mAh]</label><input type="number" id="bat-cap" placeholder="2000" min="0" step="any" /></div>
+          <div class="field"><label for="bat-cur">Average current [mA]</label><input type="number" id="bat-cur" placeholder="50" min="0" step="any" /></div>
+        </div>
+        <div id="bat-result" aria-live="polite"></div>
+        <p class="note-small"><strong>Theoretical estimate. Real battery runtime has not been physically validated by this calculator.</strong> Actual runtime varies with battery chemistry, discharge characteristics, load variation, temperature, battery age, converter efficiency, and cutoff voltage. No generic correction factor is applied.</p>
+      </div>
+    </details>
+  </div>
+
+  <footer>
+    <p class="footer-meta">Pilot A · English calculator surface · Reviewed 2026-10-07</p>
+    <nav class="yapps-related" aria-label="More about Maker's Bench">
+      <a href="https://yzrswork.com/en/tools/makers-bench/">Scope, validation status, and technical sources</a>
+      <a href="./">Open the Japanese Maker's Bench</a>
+    </nav>
+    <p class="footer-meta"><a href="https://github.com/yzrswork/yzrswork_apps/tree/main/bench">Calculator source on GitHub</a></p>
+  </footer>
+</main>
+<script type="module" src="./en.js"></script>
+</body>
+</html>

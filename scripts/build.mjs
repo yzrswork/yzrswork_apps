@@ -50,7 +50,29 @@ function loadApp(slug) {
 // --- sw.js 生成 ---
 function renderSw(app) {
   const varName = app.slug.toUpperCase().replace(/[^A-Z0-9]/g, '_') + '_ASSET_URLS';
+  const aliasVarName = app.slug.toUpperCase().replace(/[^A-Z0-9]/g, '_') + '_DOCUMENT_ALIASES';
   const assets = app.assets.map((a) => `  '${a}'`).join(',\n');
+  const documentAliases = Object.entries(app.documentAliases || {});
+  const aliasBlock = documentAliases.length
+    ? `
+// 文書route aliasはpathnameで照合し、query付き公開URLも同じcached documentへ寄せる。
+const ${aliasVarName} = new Map([
+${documentAliases.map(([route, asset]) =>
+  `  [new URL('${route}', self.location.href).pathname, new URL('${asset}', self.location.href).href]`
+).join(',\n')}
+]);
+`
+    : '';
+  const aliasLookup = documentAliases.length
+    ? `  const documentCacheUrl = ${aliasVarName}.get(url.pathname) || null;\n\n`
+    : '';
+  const assetGuard = documentAliases.length
+    ? `  if (!documentCacheUrl && !${varName}.has(url.href)) {`
+    : `  if (!${varName}.has(url.href)) {`;
+  const cacheKey = documentAliases.length ? 'documentCacheUrl || request' : 'request';
+  const documentFallback = documentAliases.length
+    ? `          if (documentCacheUrl) return caches.match(documentCacheUrl);\n`
+    : '';
   return `const CACHE_NAME = '${app.slug}-v${app.swVersion}';
 const CACHE_PREFIX = '${app.slug}-';
 const ASSETS = [
@@ -61,7 +83,7 @@ ${assets}
 const ${varName} = new Set(
   ASSETS.map(path => new URL(path, self.location.href).href)
 );
-
+${aliasBlock}
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
@@ -96,14 +118,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ${app.slug}アプリの既知アセット以外は素通り（他ページに介入しない）
-  if (!${varName}.has(url.href)) {
+${aliasLookup}  // ${app.slug}アプリの既知アセット以外は素通り（他ページに介入しない）
+${assetGuard}
     return;
   }
 
   // Cache First + ネットワークフォールバック
   event.respondWith(
-    caches.match(request).then((cached) => {
+    caches.match(${cacheKey}).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
@@ -111,13 +133,13 @@ self.addEventListener('fetch', (event) => {
           if (response.ok && response.type === 'basic') {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
+              cache.put(${cacheKey}, clone);
             });
           }
           return response;
         })
         .catch(() => {
-          if (request.destination === 'document') {
+${documentFallback}          if (request.destination === 'document') {
             return caches.match('./index.html');
           }
         });
