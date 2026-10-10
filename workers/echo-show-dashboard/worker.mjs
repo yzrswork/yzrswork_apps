@@ -1,4 +1,5 @@
 import { normalizeAiUsage, isHealthyAiUsage, readAiUsage } from "./ai-usage.mjs";
+import { normalizeHostMetrics, writeHostMetrics, readHostMetrics } from "./host-metrics.mjs";
 
 export default {
   async fetch(request, env) {
@@ -26,7 +27,7 @@ export default {
         }
 
         // AI is optional. Any AI failure preserves the existing response.
-        const merged = await mergeAiUsage(value, env.DASHBOARD_KV);
+        const merged = await mergeHostMetrics(await mergeAiUsage(value, env.DASHBOARD_KV), env.DASHBOARD_KV);
         return new Response(merged, {
           status: 200,
           headers: {
@@ -37,6 +38,28 @@ export default {
       } catch {
         return json({ error: "internal_error" }, 500);
       }
+    }
+
+    // Host measurements have their own credential and never write TODAY or AI keys.
+    if (url.pathname === "/dashboard/host" && request.method === "POST") {
+      const token = env.DASHBOARD_HOST_WRITE_TOKEN;
+      if (typeof token !== "string" || !token || request.headers.get("Authorization") !== `Bearer ${token}`) {
+        return json({ error: "unauthorized" }, 401, { "www-authenticate": "Bearer" });
+      }
+      if ((request.headers.get("Content-Type") || "").split(";")[0].trim().toLowerCase() !== "application/json") {
+        return json({ error: "content_type_must_be_application_json" }, 415);
+      }
+      let input;
+      try { input = JSON.parse(await readLimitedBody(request, 2048)); } catch (error) {
+        return json({ error: error instanceof BodyTooLarge ? "payload_too_large" : "invalid_json" }, error instanceof BodyTooLarge ? 413 : 400);
+      }
+      const now = Date.now();
+      const payload = normalizeHostMetrics(input, now);
+      if (!payload) return json({ error: "invalid_host_payload" }, 400);
+      try {
+        if (!await writeHostMetrics(env.DASHBOARD_KV, payload, now)) return json({ error: "host_timestamp_not_newer" }, 409);
+        return json({ ok: true, measuredAt: payload.measuredAt, status: payload.codexTemp.status });
+      } catch { return json({ error: "internal_error" }, 500); }
     }
 
     // AI WRITE: Token Monitor, isolated from the full dashboard publish token.
@@ -233,6 +256,19 @@ async function mergeAiUsage(value, kv) {
 }
 
 class BodyTooLarge extends Error {}
+
+async function mergeHostMetrics(value, kv) {
+  try {
+    const snapshot = JSON.parse(value);
+    if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) return value;
+    // Do not trust a host lane accidentally supplied by the TODAY publisher.
+    const { host: ignored, ...base } = snapshot;
+    const host = await readHostMetrics(kv);
+    if (host === null && !Object.hasOwn(snapshot, "host")) return value;
+    const merged = JSON.stringify(host ? { ...base, host } : base);
+    return new TextEncoder().encode(merged).byteLength <= 128 * 1024 ? merged : JSON.stringify(base);
+  } catch { return value; }
+}
 
 async function readLimitedBody(request, limit) {
   const declaredLength = Number(request.headers.get("Content-Length"));

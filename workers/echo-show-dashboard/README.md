@@ -73,7 +73,39 @@ AI latest が欠落・不正・読取エラー・stale・非 `ok`・15分超の�
 
 Butler の受信上限128 KiBを合成後に超える場合も、AI を追加せず元の Snapshot を返す。AI の合成は既存 Snapshot が取得できた場合だけで、既存404・500・認証エラーの意味を変えない。
 
-## 検証とリリース
+## CODEX TEMP（任意のWindowsホスト計測）
+
+`POST /dashboard/host` は専用 `DASHBOARD_HOST_WRITE_TOKEN` と JSON 本文（最大2 KiB）で認証する。
+read / publish / AI credential では書き込めない。Windowsから送る項目は次の5種類だけで、パス・ホスト名・ファイル一覧は含めない。
+
+```json
+{
+  "schemaVersion": 1,
+  "source": "windows-codex-temp",
+  "measuredAt": "2026-10-10T09:00:00.000Z",
+  "codexTemp": { "bytes": 6912, "status": "ok" }
+}
+```
+
+上記は契約説明用の例。実際の送信値は実測値に置き換える。
+`bytes` は0〜16 TiBの整数。`ok` / `no-matches` のみ数値を許可し、`no-matches` は0限定。
+`partial` / `access-denied` / `timeout` / `error` は明示的 `null` 必須。欠損・未知項目・不正な日付・未来時刻は400。
+同じまたは古い観測時刻は409。成功200、認証401、サイズ413、Content-Type415、KV障害500。
+
+KVはCASを提供しないため、観測を `dashboard:host:valid:<逆順時刻>` または
+`dashboard:host:failure:<逆順時刻>` の不変キーに保存する（保存期限30日）。並列の古いPOSTが後から完了しても新しい観測キーを上書きしない。
+GETは各prefixの先頭1件だけを参照する。KVの分散反映は即時保証ではなく、ネイティブ側でも時刻の巻き戻りを防ぐ。
+TODAY / AI / 他KVキーを書き換えない。
+
+`GET /dashboard` に任意の `host` を追加する。形はPOSTと同じで、トップレベルにboolean `stale` を追加する。
+有効観測から15分超、または後続の失敗観測がある場合は前回有効値を `stale: true` として返す。
+前回有効値がなければ失敗値（bytes:null）またはhost省略。host障害は既存TODAY/AIの応答を無効にしない。
+元の応答にhostがなく取得もできない場合は元の本文をそのまま返す。合成後128 KiB上限を維持する。
+
+Windows処理・5分周期統合・表示は `yzrswork/techo5` の `docs/yzrs-operational-polish-03.md` を参照。
+新しいsecretの登録と本番配備は明示的なクラウド承認境界。秘密値はチャットや引数に含めず、既存DPAPI＋標準入力の手順を使う。
+
+## 検証とリリース手順
 
 ```sh
 npm test
