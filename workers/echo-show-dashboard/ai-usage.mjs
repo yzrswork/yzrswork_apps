@@ -45,7 +45,7 @@ function isPercent(value) {
 
 // Keep the original timestamp, including monitor precision and UTC offset.
 // Validate the calendar ourselves: Date.parse can normalize impossible dates.
-function timestampMs(value) {
+export function timestampMs(value) {
   if (typeof value !== "string") return null;
   const parts = /^(\d{4})-(\d{2})-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?([Zz]|([+-])(\d{2}):(\d{2}))$/.exec(value);
   if (!parts || parts[0].length !== value.length) return null;
