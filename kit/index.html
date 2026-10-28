@@ -162,7 +162,7 @@
     border-radius: 11px; padding: 15px 15px 13px; margin-bottom: 11px;
     transition: opacity 160ms ease;
   }
-  .item.owned { opacity: 0.5; }
+  .item.owned { opacity: 0.72; padding-bottom: 11px; }
   .item.deferred { border-style: dashed; }
   .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
   .item .it-title { flex: 1 1 12rem; min-width: 0; font-weight: 700; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
@@ -208,6 +208,15 @@
     color: var(--muted); font-size: 11.5px;
   }
   .item .it-details p { margin: 0 0 8px; color: var(--ink-soft); font-size: 12px; overflow-wrap: anywhere; }
+  .item .it-more { margin: -2px 0 8px; border-top: 1px dashed var(--rule-soft); }
+  .item .it-more summary {
+    min-height: 44px; display: flex; align-items: center; cursor: pointer;
+    color: var(--muted); font-size: 12px;
+  }
+  .item .it-more[open] summary { margin-bottom: 4px; }
+  .group-head .g-count { margin-left: auto; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 420px) { .group-head .g-en { display: none; } }
+  .item.owned .it-top { margin-bottom: 8px; }
   .item .it-tip { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; margin: 0 0 10px; }
   .item .it-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -551,10 +560,12 @@ function renderList() {
   GROUPS.forEach(g => {
     if (filter === 'tool' && g.kind !== 'tool') return;
     if (filter === 'stock' && g.kind !== 'stock') return;
-    let items = ITEMS.filter(i => i.cat === g.cat);
+    const groupItems = ITEMS.filter(i => i.cat === g.cat);
+    const groupOwned = groupItems.filter(i => owned.has(i.id)).length;
+    let items = groupItems;
     if (hideOwned) items = items.filter(i => !owned.has(i.id));
     if (!items.length) return;
-    html += `<div class="group-head"><span class="g-jp">${esc(g.jp)}</span><span class="g-en">${esc(g.en)}</span></div>`;
+    html += `<div class="group-head"><span class="g-jp">${esc(g.jp)}</span><span class="g-en">${esc(g.en)}</span><span class="g-count">持ってる ${groupOwned} / ${groupItems.length}</span></div>`;
     items.forEach(i => {
       const isOwned = owned.has(i.id);
       const inCart = cart.has(i.id);
@@ -565,14 +576,16 @@ function renderList() {
             <div class="it-title">${esc(i.title)}</div>
             <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
           </div>
-          <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
+          ${isOwned ? '' : `<div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
           ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
           ${ironDeferred ? '<div class="it-decision-note">今回の工作では、はんだ付けが必要になるまで今は買わないでOK。</div>' : ''}
-          ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
           ${i.pick && !ironDeferred ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
           ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
-          ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
-          ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+          ${i.specs || i.tip || i.relatedSlug === 'usbc' ? `<details class="it-more"><summary>必要仕様${i.tip ? '・買い方のコツ' : ''}を見る</summary>
+            ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
+            ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
+            ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+          </details>` : ''}`}
           <div class="it-actions">
             <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}" aria-pressed="${isOwned}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
             <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}" aria-pressed="${inCart}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
