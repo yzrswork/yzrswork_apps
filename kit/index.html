@@ -117,6 +117,9 @@
   .answers .ans { padding: 3px 10px; border-radius: 12px; background: var(--sub-tint); color: var(--sub); }
   .answers .btn.ghost { min-height: 32px; font-size: 12.5px; }
   .need-head { font-weight: 700; font-size: 19px; line-height: 1.4; margin: 6px 0 2px; }
+  .done-box { display: grid; gap: 8px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--terracotta); border-radius: 10px; background: var(--tint); font-size: 13.5px; }
+  .done-box .btn { justify-content: center; background: var(--terracotta); border-color: var(--terracotta); color: #fff; font-weight: 700; }
+  .q-foot .btn.q-skip-btn { color: var(--ink); border-color: var(--rule); }
   .need-sub { margin: 0 0 12px; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
   .ksteps { list-style: none; margin: 0; padding: 0; }
   .kstep { position: relative; padding-left: 40px; padding-bottom: 4px; }
@@ -197,7 +200,7 @@
     font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
     white-space: nowrap;
   }
-  .item .it-basis.basis-used { color: var(--ok); border-color: var(--ok); background: rgba(79, 111, 62, 0.07); }
+  .item .it-basis.basis-used { color: var(--sub); border-color: var(--sub); background: var(--sub-tint); }
   .item .it-basis.basis-article { color: var(--terracotta-deep); border-color: var(--terracotta); background: rgba(181, 69, 27, 0.06); }
   .item .it-basis.basis-spec { color: var(--muted); }
   .item .it-why { font-size: 13px; color: var(--muted); margin: 5px 0 8px; }
@@ -334,7 +337,7 @@
   .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin: 14px 0 6px; letter-spacing: 0.05em; }
   .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
-  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+  .modal .saved { font-size: 12px; color: var(--sub); margin-top: 10px; min-height: 16px; }
   @media (max-width: 460px) {
     .decision-options { grid-template-columns: 1fr; }
     .cart-item { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -364,7 +367,7 @@
       <div class="decision-options" id="q-options" role="group" aria-labelledby="q-title"></div>
       <div class="q-foot">
         <button type="button" class="btn ghost" id="q-back" hidden>← 質問1に戻る</button>
-        <button type="button" class="btn ghost" id="q-skip">質問なしで全部見る</button>
+        <button type="button" class="btn q-skip-btn" id="q-skip">質問なしで全部見る</button>
       </div>
     </section>
 
@@ -544,12 +547,12 @@ const QUESTIONS = [
     { v: 'yes', label: 'する', sub: '部品や配線を基板に固定する。温調式を基本候補に。' },
     { v: 'unsure', label: 'まだ分からない', sub: 'いったん「しない」で進めて、あとで変えられます。' }
   ] },
-  { key: 'circuit', title: '作るものの回路図や部品表はある？', options: [
-    { v: 'yes', label: 'ある', sub: '抵抗やLEDは、そこに書かれた数だけ揃えれば足ります。' },
-    { v: 'no', label: 'まだない', sub: '部品ストックは、作るものが決まってからでOK。' }
+  { key: 'circuit', title: '作るもの、もう決まってる？', options: [
+    { v: 'yes', label: '決まってる', sub: '回路図や部品表に書かれた数だけ、抵抗やLEDを揃えれば足ります。' },
+    { v: 'no', label: 'まだ', sub: '部品ストックは、作るものが決まってからでOK。' }
   ] }
 ];
-const ANSWER_LABELS = { solder: { yes: 'はんだ付け：する', no: 'はんだ付け：しない', unsure: 'はんだ付け：未定' }, circuit: { yes: '回路図：ある', no: '回路図：まだ' } };
+const ANSWER_LABELS = { solder: { yes: 'はんだ付け：する', no: 'はんだ付け：しない', unsure: 'はんだ付け：未定' }, circuit: { yes: '作るもの：決まってる', no: '作るもの：まだ' } };
 const SOLDER_IDS = ['iron', 'solder', 'wick', 'shrink', 'protoboard'];
 const PART_IDS = ['resistor', 'elcap', 'ceracap', 'led'];
 const questionsEl = document.getElementById('questions');
@@ -601,9 +604,9 @@ function buildSteps() {
   });
   return [
     { title: '今回そろえる', desc: '答えから選んだ、今回の工作に必要な道具と消耗品です。', items: need, need: true },
-    { title: '回路図の数だけそろえる部品', desc: '大容量セットは必須ではありません。書かれた値と数＋少しの予備で足ります。', items: parts, need: true },
+    { title: '作るものに合わせてそろえる部品', desc: '回路図や部品表に書かれた値と数＋少しの予備で足ります。大容量セットは必須ではありません。', items: parts, need: true },
     { title: 'あると作業が変わる', desc: '作業してみて困ったら足す物。今決めなくても大丈夫です。', items: soon },
-    { title: '今は買わなくていい', desc: '今回の答えでは、まだ要らない物です。', items: wait, wait: true }
+    { title: 'あとで必要になる物', desc: 'はんだ付けを始めたときや、作るものが決まったときに見直せば大丈夫です。', items: wait, wait: true }
   ];
 }
 function stateOf(id) { return owned.has(id) ? 'have' : cart.has(id) ? 'buy' : later.has(id) ? 'later' : ''; }
@@ -649,7 +652,13 @@ function renderList() {
   } else {
     html += `<div class="answers"><button type="button" class="btn ghost" data-act="change">← 2つの質問で絞る</button></div><div class="need-head">全${ITEMS.length}点をステップ順に</div>`;
   }
-  html += `<p class="need-sub">決めた ${decided} / ${scope.length}${answered() && steps.filter(st => st.need).every(st => st.items.every(i => stateOf(i.id))) ? '　・　今回そろえる分は決まりました。続きは困ったときで大丈夫です' : ''}</p><ol class="ksteps">`;
+  html += `<p class="need-sub">決めた ${decided} / ${scope.length}</p>`;
+  if (answered() && steps.filter(st => st.need).every(st => st.items.every(i => stateOf(i.id)))) {
+    html += cart.size
+      ? `<div class="done-box"><span>今回そろえる分は決まりました。あとはリストの物を確認するだけです。</span><button type="button" class="btn" data-act="open-cart">買い物リストを見る（${cart.size}点）</button></div>`
+      : '<div class="done-box"><span>今回そろえる分は決まりました。リストに入れた物はないので、手持ちで始められます。</span></div>';
+  }
+  html += '<ol class="ksteps">';
   let num = 0;
   steps.forEach((st, k) => {
     if (!st.items.length) return;
@@ -671,6 +680,8 @@ function renderList() {
     sm.addEventListener('click', () => { const d = sm.parentElement; openState[d.getAttribute('data-k')] = !d.open; }));
   listEl.querySelectorAll('[data-set]').forEach(b =>
     b.addEventListener('click', () => setState(b.getAttribute('data-id'), b.getAttribute('data-set'))));
+  const openFromList = listEl.querySelector('[data-act="open-cart"]');
+  if (openFromList) openFromList.addEventListener('click', openCart);
   const change = listEl.querySelector('[data-act="change"]');
   if (change) change.addEventListener('click', () => {
     answers = {}; saveAnswers(); renderAll();
