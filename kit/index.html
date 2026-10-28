@@ -98,24 +98,52 @@
   .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 15px; letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
   .hero p { font-size: 14px; color: var(--ink-soft); max-width: 40ch; margin: 0; }
 
-  /* ── Filter chips ── */
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
-  .chip {
-    min-height: 44px;
-    font-family: var(--jp); font-size: 13px; font-weight: 500;
-    padding: 7px 14px; border-radius: 20px; cursor: pointer;
-    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
-  }
-  .chip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
-  .toolbar-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; gap: 8px; }
-  .hide-owned { min-height: 44px; font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-  .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
-  .count-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
-  .list-hint {
-    margin: 0 0 16px; padding: 10px 12px;
-    border-left: 3px solid var(--terracotta); background: rgba(181, 69, 27, 0.05);
-    color: var(--ink-soft); font-size: 12.5px;
-  }
+  .fold { margin: 0 0 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
+  .fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-family: var(--jp); font-weight: 700; color: var(--ink); list-style: none; }
+  .fold > summary::-webkit-details-marker { display: none; }
+  .fold > summary::after { content: '＋'; margin-left: auto; color: var(--ink-soft); }
+  .fold[open] > summary::after { content: '－'; }
+  .fold > summary .fold-sub { font-weight: 400; font-size: 12.5px; color: var(--ink-soft); }
+  .fold > .fold-body { padding: 0 14px 14px; }
+  .fold .group-head { display: none; }
+  .yapps-navigator .fold.yapps-nav-support { margin: 0 0 10px; padding-top: 0; border: 1px solid var(--rule); }
+  .yapps-navigator .fold.buying-guide { margin-top: 28px; }
+  /* ── 質問と工程表 ── */
+  [hidden] { display: none !important; }
+  :root { --sub: #3f5f7a; --sub-tint: #e3eaf0; --tint: #f3e2d6; --rule: #b9a690; }  /* kit内だけ: 黒い線をやわらげ、テラコッタ軸＋青灰の補助色に揃える */  /* yzrswork.com の補助色(青灰)。リンク・答え・持ってる表示だけに使う */
+  .q-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .btn.ghost { border-color: transparent; background: transparent; color: var(--sub); padding-left: 4px; padding-right: 4px; }
+  .answers { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 18px 0 4px; font-size: 12.5px; }
+  .answers .ans { padding: 3px 10px; border-radius: 12px; background: var(--sub-tint); color: var(--sub); }
+  .answers .btn.ghost { min-height: 32px; font-size: 12.5px; }
+  .need-head { font-weight: 700; font-size: 19px; line-height: 1.4; margin: 6px 0 2px; }
+  .done-box { display: grid; gap: 8px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--terracotta); border-radius: 10px; background: var(--tint); font-size: 13.5px; }
+  .done-box .btn { justify-content: center; background: var(--terracotta); border-color: var(--terracotta); color: #fff; font-weight: 700; }
+  .q-foot .btn.q-skip-btn { color: var(--ink); border-color: var(--rule); }
+  .need-sub { margin: 0 0 12px; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .ksteps { list-style: none; margin: 0; padding: 0; }
+  .kstep { position: relative; padding-left: 40px; padding-bottom: 4px; }
+  .kstep::before { content: ""; position: absolute; left: 14px; top: 34px; bottom: 0; width: 2px; background: var(--rule-soft); }
+  .kstep:last-child::before { display: none; }
+  .kstep .num { position: absolute; left: 0; top: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 13px; background: var(--paper); border: 2px solid var(--rule-soft); color: var(--ink-soft); }
+  .kstep.current .num { border-color: var(--terracotta); color: var(--terracotta); }
+  .kstep.complete .num { background: var(--muted); border-color: var(--muted); color: var(--paper); }
+  .kstep > details > summary { list-style: none; cursor: pointer; min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .kstep > details > summary::-webkit-details-marker { display: none; }
+  .kstep .st-title { flex: 1; min-width: 0; font-weight: 700; font-size: 16px; line-height: 1.4; }
+  .kstep .st-status { font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 10px; white-space: nowrap; background: rgba(181, 69, 27, 0.1); color: var(--terracotta-deep); }
+  .kstep .st-status.done { background: transparent; border: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .kstep .st-status.wait { background: transparent; color: var(--muted); }
+  .kstep .st-desc { margin: 0 0 4px; color: var(--muted); font-size: 12.5px; }
+  .item .it-reason { display: inline-block; margin: 4px 0 0; padding: 1px 8px; border-radius: 10px; background: var(--sub-tint); color: var(--sub); font-size: 11.5px; }
+  .item.decided .it-top { align-items: center; }
+  .tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule-soft); border-radius: 9px; overflow: hidden; margin-top: 8px; }
+  .tri button { min-height: 44px; padding: 4px 2px; border: 0; border-right: 1px solid var(--rule-soft); background: var(--paper); color: var(--ink-soft); font-family: var(--jp); font-size: 13px; font-weight: 700; cursor: pointer; }
+  .tri button:last-child { border-right: 0; }
+  .tri button:focus-visible { outline: 3px solid var(--sub); outline-offset: -3px; }
+  .tri button[aria-pressed="true"][data-set="have"] { background: var(--sub-tint); color: var(--sub); }
+  .tri button[aria-pressed="true"][data-set="buy"] { background: var(--terracotta); color: #fff; }
+  .tri button[aria-pressed="true"][data-set="later"] { background: var(--rule-soft); color: var(--ink); }
 
   /* ── First project decision ── */
   .first-decision {
@@ -162,7 +190,7 @@
     border-radius: 11px; padding: 15px 15px 13px; margin-bottom: 11px;
     transition: opacity 160ms ease;
   }
-  .item.owned { opacity: 0.5; }
+  .item.owned { opacity: 0.72; padding-bottom: 11px; }
   .item.deferred { border-style: dashed; }
   .item .it-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
   .item .it-title { flex: 1 1 12rem; min-width: 0; font-weight: 700; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
@@ -172,7 +200,7 @@
     font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
     white-space: nowrap;
   }
-  .item .it-basis.basis-used { color: var(--ok); border-color: var(--ok); background: rgba(79, 111, 62, 0.07); }
+  .item .it-basis.basis-used { color: var(--sub); border-color: var(--sub); background: var(--sub-tint); }
   .item .it-basis.basis-article { color: var(--terracotta-deep); border-color: var(--terracotta); background: rgba(181, 69, 27, 0.06); }
   .item .it-basis.basis-spec { color: var(--muted); }
   .item .it-why { font-size: 13px; color: var(--muted); margin: 5px 0 8px; }
@@ -208,12 +236,21 @@
     color: var(--muted); font-size: 11.5px;
   }
   .item .it-details p { margin: 0 0 8px; color: var(--ink-soft); font-size: 12px; overflow-wrap: anywhere; }
+  .item .it-more { margin: -2px 0 8px; border-top: 1px dashed var(--rule-soft); }
+  .item .it-more summary {
+    min-height: 44px; display: flex; align-items: center; cursor: pointer;
+    color: var(--muted); font-size: 12px;
+  }
+  .item .it-more[open] summary { margin-bottom: 4px; }
+  .group-head .g-count { margin-left: auto; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 420px) { .group-head .g-en { display: none; } }
+  .item.owned .it-top { margin-bottom: 8px; }
   .item .it-tip { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; margin: 0 0 10px; }
   .item .it-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
   .btn { min-height: 44px; font-family: var(--jp); font-size: 13px; font-weight: 500; border-radius: 8px; padding: 9px 13px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
   .btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
-  .btn.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn.buy { background: var(--terracotta-deep); color: #fff; border-color: var(--terracotta-deep); }
   .btn.buy:hover { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .btn.add.on { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .btn.own { font-size: 12.5px; }
@@ -267,14 +304,15 @@
   /* ── Sticky cart bar ── */
   .cartbar {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
-    background: rgba(28, 26, 22, 0.96); color: var(--paper);
+    background: var(--tint); color: var(--ink); border-top: 2px solid var(--terracotta);
+    box-shadow: 0 -4px 14px rgba(142, 53, 20, 0.12);
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
     transform: translateY(120%); transition: transform 220ms ease;
   }
   .cartbar.show { transform: translateY(0); }
-  .cartbar .ct-label { font-size: 13px; }
-  .cartbar .ct-count { font-family: var(--mono); color: #f0c9b8; }
+  .cartbar .ct-label { font-size: 13px; font-weight: 700; }
+  .cartbar .ct-count { font-family: var(--mono); font-size: 15px; color: var(--terracotta-deep); }
   .cartbar button { min-height: 44px; font-family: var(--jp); font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; background: var(--terracotta); color: #fff; }
 
   /* ── Modal (cart + settings) ── */
@@ -291,7 +329,7 @@
   .cart-item .ci-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .cart-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
   .mini { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
-  .mini.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mini.buy { background: var(--terracotta-deep); color: #fff; border-color: var(--terracotta-deep); }
   .mini.del { color: var(--terracotta); }
   .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
   .modal .m-row { flex-wrap: wrap; }
@@ -299,7 +337,7 @@
   .modal .m-row button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .modal label { font-size: 12px; font-family: var(--mono); color: var(--muted); display: block; margin: 14px 0 6px; letter-spacing: 0.05em; }
   .modal input { width: 100%; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; background: var(--card); color: var(--ink); }
-  .modal .saved { font-size: 12px; color: var(--ok); margin-top: 10px; min-height: 16px; }
+  .modal .saved { font-size: 12px; color: var(--sub); margin-top: 10px; min-height: 16px; }
   @media (max-width: 460px) {
     .decision-options { grid-template-columns: 1fr; }
     .cart-item { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -319,36 +357,23 @@
 
     <header class="hero yapps-nav-hero">
       <h1>装備ナビ<span class="en">— Maker's Starter Kit</span></h1>
-      <p>電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、買い物リストに集約。持っているものは「持ってる」で消し込めます。</p>
+      <p>電子工作、まず何を買えばいい？ 2つの質問に答えると、今そろえる物だけに絞れます。持ってる物は消し込んで、足りない物だけ買い物リストへ。</p>
     </header>
 
-    <section class="first-decision yapps-nav-first" aria-labelledby="first-decision-title">
-      <div class="decision-kicker">First project decision</div>
-      <h2 id="first-decision-title">今回の工作にはんだ付けが必要？</h2>
-      <p>作るものと工程を先に決めます。はんだ付け不要なら、はんだごては今は買わなくて大丈夫。必要なら、Step 1の温調式を基本候補にします。</p>
-      <div class="decision-options" role="group" aria-label="今回の工作ではんだ付けが必要か">
-        <button type="button" class="decision-option" data-project-decision="no-solder" aria-pressed="false">
-          <strong>不要：まずは仮組み</strong>
-          <span>ブレッドボードやモジュールで試すなら、温調式はんだごてを今は買わない。</span>
-        </button>
-        <button type="button" class="decision-option" data-project-decision="solder" aria-pressed="false">
-          <strong>必要：温調式を基本候補に</strong>
-          <span>配線や部品を固定する工作なら、Step 1の温調式はんだごてから検討する。</span>
-        </button>
+    <section class="first-decision yapps-nav-first" id="questions" aria-labelledby="q-title">
+      <div class="decision-kicker" id="q-step">質問 1 / 2</div>
+      <h2 id="q-title">今回の工作で、はんだ付けはする？</h2>
+      <p id="q-lead">答えに合わせて、今そろえる物だけに絞ります。</p>
+      <div class="decision-options" id="q-options" role="group" aria-labelledby="q-title"></div>
+      <div class="q-foot">
+        <button type="button" class="btn ghost" id="q-back" hidden>← 質問1に戻る</button>
+        <button type="button" class="btn q-skip-btn" id="q-skip">質問なしで全部見る</button>
       </div>
-      <p class="decision-note" id="project-decision-note" role="status">選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。</p>
     </section>
-
-    <div class="chips yapps-nav-options" id="chips"></div>
-    <div class="toolbar-row">
-      <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
-      <span class="count-note" id="ownCount"></span>
-    </div>
-    <p class="list-hint">上の判断と作るものを決めたら、「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
 
     <div class="yapps-nav-result" id="list"></div>
 
-    <section class="buying-guide yapps-nav-support" aria-labelledby="buying-guide-title">
+    <details class="fold buying-guide yapps-nav-support"><summary>買う前の考え方<span class="fold-sub">選ぶ基準・ラベルの読み方</span></summary><div class="fold-body">
       <div class="group-head"><span class="g-jp">道具を選ぶ基準</span><span class="g-en">Before buying</span></div>
       <div class="guide-grid">
         <article class="guide-card wide">
@@ -381,17 +406,17 @@
         </article>
       </div>
       <p class="guide-note"><strong>note 3部作の要約：</strong>vol.1は急ぎ・数量・品質・珍しさで調達先を使い分ける話、vol.2は必須工具から始めて困りごとに合わせて足す順番、vol.3は作業を止めやすい消耗品と定番部品を少しずつ備える考え方です。</p>
-    </section>
+    </div></details>
 
-    <section class="channels yapps-nav-support">
+    <details class="fold channels yapps-nav-support"><summary>部品はどこで買う？<span class="fold-sub">店の使い分け</span></summary><div class="fold-body">
       <div class="group-head"><span class="g-jp">部品はどこで買う？</span><span class="g-en">Where to buy</span></div>
       <div class="ch-grid" id="channels"></div>
-    </section>
+    </div></details>
 
-    <section class="about yapps-nav-support">
+    <details class="fold about yapps-nav-support"><summary>このナビについて</summary><div class="fold-body">
       <p>電子工作を始めたころ、いちばん困ったのは「何をどこで買えばいいか分からない」ことでした。Amazon、AliExpress、秋月電子、千石電商などは品揃えや配送条件が異なり、使い分けが分かるまでにはけっこう遠回りをしました。工具も同じで、「とりあえず安いハンダごて」で始めると結局温度調整つきに買い直すことになるし、いざ作り始めてから「抵抗が足りない」「ハンダが切れた」で手が止まるのもお約束です。このツールは、そうした経験をもとに「最初にこれを買えばよかった」という工具と、切らすと作業が止まる消耗品や部品ストックをステップ別のチェックリストにしたものです。手持ちを確認しながら、足りないものだけを買い物リストに集約できます。掲載品には、原文で実使用が確認できる品、記事で紹介した品、必要仕様から探すための候補が混在するため、「実使用」「記事で紹介」「仕様候補」を商品ごとに表示しています。</p>
       <p>調達先の使い分けや工具選びの詳しい話は、noteの電子工作3部作で読めます： <a href="https://note.com/yzrswork/n/nf679f6a190d9" target="_blank" rel="noopener noreferrer">vol.1 部品調達編</a> / <a href="https://note.com/yzrswork/n/nd08cb43b6ca4" target="_blank" rel="noopener noreferrer">vol.2 工具編</a> / <a href="https://note.com/yzrswork/n/n65791c58ad52" target="_blank" rel="noopener noreferrer">vol.3 消耗品と部品ストック編</a></p>
-    </section>
+    </div></details>
 
     <footer class="yapps-nav-next-action">
       <div>このリストは、noteの「電子工作」3部作をもとに、実使用品・記事で紹介した品・仕様候補を区別してまとめたものです。</div>
@@ -486,17 +511,22 @@ const CHANNELS = [
 ];
 
 /* ---------- 状態 ---------- */
-let filter = 'all';                                  // 'all' | 'tool' | 'stock'
-let hideOwned = localStorage.getItem('kit:hideOwned') === '1';
 let owned = loadSet('kit:owned');
 let cart = loadSet('kit:cart');
-let projectDecision = '';                             // ephemeral: 'no-solder' | 'solder'
+let later = loadSet('kit:later');                     // 「今はいい」
+let answers = loadAnswers();                          // { solder: 'yes'|'no'|'unsure', circuit: 'yes'|'no', skip: bool }
+const openState = {};                                 // 工程の開閉（ユーザーが触ったものだけ）
 
 function loadSet(key) {
   try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
   catch (e) { return new Set(); }
 }
-function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+function saveSet(key, set) { try { localStorage.setItem(key, JSON.stringify([...set])); } catch (e) {} }
+function loadAnswers() {
+  try { return JSON.parse(localStorage.getItem('kit:answers') || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function saveAnswers() { try { localStorage.setItem('kit:answers', JSON.stringify(answers)); } catch (e) {} }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(keyword) {
   return window.yzrsAffiliate.searchUrl(keyword);
@@ -510,97 +540,166 @@ function itemAmazonUrl(item) {
 function basisLabel(item) { return BASIS_LABELS[item.basis] || BASIS_LABELS.spec; }
 function byId(id) { return ITEMS.find(i => i.id === id); }
 
-/* ---------- 最初の工作判断（永続化しない） ---------- */
-const decisionButtons = [...document.querySelectorAll('[data-project-decision]')];
-const decisionNote = document.getElementById('project-decision-note');
-function renderProjectDecision() {
-  decisionButtons.forEach(button => {
-    const selected = button.getAttribute('data-project-decision') === projectDecision;
-    button.setAttribute('aria-pressed', selected ? 'true' : 'false');
-  });
-  if (!projectDecision) {
-    decisionNote.textContent = '選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。';
-  } else if (projectDecision === 'no-solder') {
-    decisionNote.textContent = 'はんだ付け不要を選択中：はんだごては今は買わず、必要になった時点で検討できます。';
-  } else {
-    decisionNote.textContent = 'はんだ付けが必要を選択中：Step 1の温調式はんだごてを基本候補として確認します。';
-  }
-}
-decisionButtons.forEach(button => button.addEventListener('click', () => {
-  projectDecision = button.getAttribute('data-project-decision');
-  renderProjectDecision();
-  renderList();
-}));
+/* ---------- 2つの質問 ---------- */
+const QUESTIONS = [
+  { key: 'solder', title: '今回の工作で、はんだ付けはする？', options: [
+    { v: 'no', label: 'しない・まず仮組み', sub: 'ブレッドボードで試すなら、はんだごては今は不要。' },
+    { v: 'yes', label: 'する', sub: '部品や配線を基板に固定する。温調式を基本候補に。' },
+    { v: 'unsure', label: 'まだ分からない', sub: 'いったん「しない」で進めて、あとで変えられます。' }
+  ] },
+  { key: 'circuit', title: '作るもの、もう決まってる？', options: [
+    { v: 'yes', label: '決まってる', sub: '回路図や部品表に書かれた数だけ、抵抗やLEDを揃えれば足ります。' },
+    { v: 'no', label: 'まだ', sub: '部品ストックは、作るものが決まってからでOK。' }
+  ] }
+];
+const ANSWER_LABELS = { solder: { yes: 'はんだ付け：する', no: 'はんだ付け：しない', unsure: 'はんだ付け：未定' }, circuit: { yes: '作るもの：決まってる', no: '作るもの：まだ' } };
+const SOLDER_IDS = ['iron', 'solder', 'wick', 'shrink', 'protoboard'];
+const PART_IDS = ['resistor', 'elcap', 'ceracap', 'led'];
+const questionsEl = document.getElementById('questions');
 
-/* ---------- フィルタチップ ---------- */
-const FILTERS = [ { id: 'all', label: 'すべて' }, { id: 'tool', label: '工具' }, { id: 'stock', label: '部品ストック' } ];
-function renderChips() {
-  document.getElementById('chips').innerHTML = FILTERS.map(f =>
-    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}" aria-pressed="${filter === f.id}">${f.label}</button>`
+function answered() { return !!(answers.solder && answers.circuit); }
+function renderQuestions() {
+  const showing = !answered() && !answers.skip;
+  questionsEl.hidden = !showing;
+  if (!showing) return;
+  const n = answers.solder ? 1 : 0;
+  const q = QUESTIONS[n];
+  document.getElementById('q-step').textContent = `質問 ${n + 1} / 2`;
+  document.getElementById('q-title').textContent = q.title;
+  document.getElementById('q-back').hidden = n === 0;
+  document.getElementById('q-options').innerHTML = q.options.map(o =>
+    `<button type="button" class="decision-option" data-q="${q.key}" data-a="${o.v}" aria-pressed="${answers[q.key] === o.v}"><strong>${esc(o.label)}</strong><span>${esc(o.sub)}</span></button>`
   ).join('');
-  document.querySelectorAll('.chip').forEach(c =>
-    c.addEventListener('click', () => { filter = c.getAttribute('data-f'); renderChips(); renderList(); })
-  );
 }
+document.getElementById('q-options').addEventListener('click', e => {
+  const b = e.target.closest('[data-q]'); if (!b) return;
+  answers[b.getAttribute('data-q')] = b.getAttribute('data-a');
+  answers.skip = false;
+  saveAnswers(); renderAll();
+  const target = answered() ? document.getElementById('list') : document.getElementById('q-title');
+  target.scrollIntoView({ block: 'start' });
+  if (!answered()) document.querySelector('#q-options button').focus();
+});
+document.getElementById('q-back').addEventListener('click', () => { delete answers.solder; saveAnswers(); renderAll(); });
+document.getElementById('q-skip').addEventListener('click', () => { answers.skip = true; saveAnswers(); renderAll(); });
+
+/* ---------- 工程に分ける ---------- */
+function laterReason(i) {
+  if (SOLDER_IDS.includes(i.id) && answers.solder !== 'yes') return 'はんだ付けするときに';
+  if (PART_IDS.includes(i.id) && answers.circuit !== 'yes') return '作るものが決まってから';
+  return '必要になったら';
+}
+function buildSteps() {
+  if (!answered()) {
+    return GROUPS.map(g => ({ title: g.jp.replace(/^Step \d・/, ''), items: ITEMS.filter(i => i.cat === g.cat) }));
+  }
+  const need = [], parts = [], soon = [], wait = [];
+  ITEMS.forEach(i => {
+    const soldering = SOLDER_IDS.includes(i.id);
+    if (soldering && answers.solder !== 'yes') return wait.push(i);
+    if (PART_IDS.includes(i.id)) return (answers.circuit === 'yes' ? parts : wait).push(i);
+    if (i.cat === 'tool-2') return soon.push(i);
+    if (i.cat === 'tool-3') return wait.push(i);
+    need.push(i);
+  });
+  return [
+    { title: '今回そろえる', desc: '答えから選んだ、今回の工作に必要な道具と消耗品です。', items: need, need: true },
+    { title: '作るものに合わせてそろえる部品', desc: '回路図や部品表に書かれた値と数＋少しの予備で足ります。大容量セットは必須ではありません。', items: parts, need: true },
+    { title: 'あると作業が変わる', desc: '作業してみて困ったら足す物。今決めなくても大丈夫です。', items: soon },
+    { title: 'あとで必要になる物', desc: 'はんだ付けを始めたときや、作るものが決まったときに見直せば大丈夫です。', items: wait, wait: true }
+  ];
+}
+function stateOf(id) { return owned.has(id) ? 'have' : cart.has(id) ? 'buy' : later.has(id) ? 'later' : ''; }
 
 /* ---------- リスト ---------- */
-function groupKind(cat) { return GROUPS.find(g => g.cat === cat).kind; }
+function itemHtml(i, showReason) {
+  const st = stateOf(i.id);
+  const tri = `<div class="tri" role="group" aria-label="${esc(i.title)}">${[['have', '持ってる'], ['buy', 'リストへ'], ['later', '今はいい']].map(([k, label]) =>
+    `<button type="button" data-set="${k}" data-id="${i.id}"${k === 'buy' ? ` data-add="${i.id}"` : ''} aria-pressed="${st === k}">${label}</button>`).join('')}</div>`;
+  if (st) {
+    return `<div class="item decided${st === 'have' ? ' owned' : ''}"><div class="it-top"><div class="it-title">${esc(i.title)}</div><span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span></div>${tri}</div>`;
+  }
+  return `
+    <div class="item">
+      <div class="it-top">
+        <div class="it-title">${esc(i.title)}</div>
+        <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
+      </div>
+      ${showReason ? `<span class="it-reason">${esc(laterReason(i))}</span>` : ''}
+      <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
+      ${i.pick ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
+      ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
+      <details class="it-more"><summary>選び方・仕様を見る</summary>
+        ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
+        ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
+        ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
+        ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+      </details>
+      ${tri}
+    </div>`;
+}
 function renderList() {
   const listEl = document.getElementById('list');
+  if (!answered() && !answers.skip) { listEl.innerHTML = ''; return; }
+  const steps = buildSteps();
+  const scope = steps.filter(st => !st.wait).flatMap(st => st.items);
+  const decided = scope.filter(i => stateOf(i.id)).length;
+  const current = steps.findIndex(st => !st.wait && st.items.some(i => !stateOf(i.id)));
   let html = '';
-  GROUPS.forEach(g => {
-    if (filter === 'tool' && g.kind !== 'tool') return;
-    if (filter === 'stock' && g.kind !== 'stock') return;
-    let items = ITEMS.filter(i => i.cat === g.cat);
-    if (hideOwned) items = items.filter(i => !owned.has(i.id));
-    if (!items.length) return;
-    html += `<div class="group-head"><span class="g-jp">${esc(g.jp)}</span><span class="g-en">${esc(g.en)}</span></div>`;
-    items.forEach(i => {
-      const isOwned = owned.has(i.id);
-      const inCart = cart.has(i.id);
-      const ironDeferred = i.id === 'iron' && projectDecision === 'no-solder';
-      html += `
-        <div class="item${isOwned ? ' owned' : ''}${ironDeferred ? ' deferred' : ''}">
-          <div class="it-top">
-            <div class="it-title">${esc(i.title)}</div>
-            <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
-          </div>
-          <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
-          ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
-          ${ironDeferred ? '<div class="it-decision-note">今回の工作では、はんだ付けが必要になるまで今は買わないでOK。</div>' : ''}
-          ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
-          ${i.pick && !ironDeferred ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
-          ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
-          ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
-          ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
-          <div class="it-actions">
-            <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}" aria-pressed="${isOwned}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
-            <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}" aria-pressed="${inCart}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
-          </div>
-        </div>`;
-    });
+  if (answered()) {
+    html += `<div class="answers"><span class="ans">${esc(ANSWER_LABELS.solder[answers.solder])}</span><span class="ans">${esc(ANSWER_LABELS.circuit[answers.circuit])}</span><button type="button" class="btn ghost" data-act="change">答えを変える</button></div>
+      <div class="need-head">今回そろえるのは ${steps.filter(st => st.need).reduce((n, st) => n + st.items.length, 0)}点</div>`;
+  } else {
+    html += `<div class="answers"><button type="button" class="btn ghost" data-act="change">← 2つの質問で絞る</button></div><div class="need-head">全${ITEMS.length}点をステップ順に</div>`;
+  }
+  html += `<p class="need-sub">決めた ${decided} / ${scope.length}</p>`;
+  if (answered() && steps.filter(st => st.need).every(st => st.items.every(i => stateOf(i.id)))) {
+    html += cart.size
+      ? `<div class="done-box"><span>今回そろえる分は決まりました。あとはリストの物を確認するだけです。</span><button type="button" class="btn" data-act="open-cart">買い物リストを見る（${cart.size}点）</button></div>`
+      : '<div class="done-box"><span>今回そろえる分は決まりました。リストに入れた物はないので、手持ちで始められます。</span></div>';
+  }
+  html += '<ol class="ksteps">';
+  let num = 0;
+  steps.forEach((st, k) => {
+    if (!st.items.length) return;
+    num++;
+    const left = st.items.filter(i => !stateOf(i.id)).length;
+    const complete = !st.wait && !left;
+    const open = openState[k] !== undefined ? openState[k] : k === current;
+    const status = st.wait ? `<span class="st-status wait">${st.items.length}点</span>` : complete ? '<span class="st-status done">確認済み</span>' : `<span class="st-status">あと${left}つ</span>`;
+    html += `<li class="kstep${complete ? ' complete' : ''}${k === current ? ' current' : ''}">
+      <span class="num" aria-hidden="true">${complete ? '✓' : num}</span>
+      <details data-k="${k}"${open ? ' open' : ''}><summary><span class="st-title">${esc(st.title)}</span>${status}</summary>
+        ${st.desc ? `<p class="st-desc">${esc(st.desc)}</p>` : ''}
+        ${st.items.map(i => itemHtml(i, !!st.wait)).join('')}
+      </details></li>`;
   });
-  if (!html) html = '<p class="cart-empty">表示する項目がありません。フィルタや「持ってるものを隠す」を見直してください。</p>';
-  listEl.innerHTML = html;
+  listEl.innerHTML = html + '</ol>';
 
-  listEl.querySelectorAll('[data-own]').forEach(b =>
-    b.addEventListener('click', () => toggleSet(owned, 'kit:owned', b.getAttribute('data-own'))));
-  listEl.querySelectorAll('[data-add]').forEach(b =>
-    b.addEventListener('click', () => toggleSet(cart, 'kit:cart', b.getAttribute('data-add'))));
-
-  updateOwnCount();
+  listEl.querySelectorAll('details[data-k] > summary').forEach(sm =>
+    sm.addEventListener('click', () => { const d = sm.parentElement; openState[d.getAttribute('data-k')] = !d.open; }));
+  listEl.querySelectorAll('[data-set]').forEach(b =>
+    b.addEventListener('click', () => setState(b.getAttribute('data-id'), b.getAttribute('data-set'))));
+  const openFromList = listEl.querySelector('[data-act="open-cart"]');
+  if (openFromList) openFromList.addEventListener('click', openCart);
+  const change = listEl.querySelector('[data-act="change"]');
+  if (change) change.addEventListener('click', () => {
+    answers = {}; saveAnswers(); renderAll();
+    questionsEl.scrollIntoView({ block: 'start' });
+  });
 }
 
-function toggleSet(set, key, id) {
-  if (set.has(id)) set.delete(id); else set.add(id);
-  saveSet(key, set);
+function setState(id, next) {
+  const was = stateOf(id);
+  owned.delete(id); cart.delete(id); later.delete(id);
+  if (was !== next) ({ have: owned, buy: cart, later: later })[next].add(id);
+  saveSet('kit:owned', owned); saveSet('kit:cart', cart); saveSet('kit:later', later);
   renderList();
   updateCartBar();
+  const again = document.querySelector(`[data-set="${next}"][data-id="${id}"]`);
+  if (again) again.focus({ preventScroll: true });
 }
-
-function updateOwnCount() {
-  document.getElementById('ownCount').textContent = `所有 ${owned.size} / 全 ${ITEMS.length}`;
-}
+function renderAll() { renderQuestions(); renderList(); }
 
 /* ---------- 調達先 ---------- */
 function renderChannels() {
@@ -720,18 +819,9 @@ function fallbackCopy(text) {
   document.body.removeChild(ta);
 }
 
-const hideOwnedEl = document.getElementById('hideOwned');
-hideOwnedEl.checked = hideOwned;
-hideOwnedEl.addEventListener('change', () => {
-  hideOwned = hideOwnedEl.checked;
-  localStorage.setItem('kit:hideOwned', hideOwned ? '1' : '0');
-  renderList();
-});
 
 /* ---------- 起動 ---------- */
-renderProjectDecision();
-renderChips();
-renderList();
+renderAll();
 renderChannels();
 updateCartBar();
 
