@@ -100,6 +100,8 @@
 
   /* ── Filter chips ── */
   .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
+  .chip .chip-n { margin-left: 5px; font-size: 11px; opacity: 0.7; font-variant-numeric: tabular-nums; }
+  .btn.next-step { width: 100%; min-height: 48px; margin: 6px 0 18px; justify-content: center; }
   .chip {
     min-height: 44px;
     font-family: var(--jp); font-size: 13px; font-weight: 500;
@@ -107,6 +109,19 @@
     border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
   }
   .chip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .yapps-navigator .chips.yapps-nav-options { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .yapps-navigator .chips.yapps-nav-options > .chip { min-height: 44px; padding: 6px 2px; border-radius: 20px; font-size: 13px; white-space: nowrap; }
+  .yapps-navigator .chips .chip-n { margin-left: 3px; }
+  .fold { margin: 0 0 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
+  .fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-family: var(--jp); font-weight: 700; color: var(--ink); list-style: none; }
+  .fold > summary::-webkit-details-marker { display: none; }
+  .fold > summary::after { content: '＋'; margin-left: auto; color: var(--ink-soft); }
+  .fold[open] > summary::after { content: '－'; }
+  .fold > summary .fold-sub { font-weight: 400; font-size: 12.5px; color: var(--ink-soft); }
+  .fold > .fold-body { padding: 0 14px 14px; }
+  .fold .group-head { display: none; }
+  .yapps-navigator .fold.yapps-nav-support { margin: 0 0 10px; padding-top: 0; border: 1px solid var(--rule); }
+  .yapps-navigator .fold.buying-guide { margin-top: 28px; }
   .toolbar-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; gap: 8px; }
   .hide-owned { min-height: 44px; font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
   .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
@@ -353,11 +368,11 @@
       <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
       <span class="count-note" id="ownCount"></span>
     </div>
-    <p class="list-hint">上の判断と作るものを決めたら、「持ってる」で手持ちを消し込み、足りない候補だけ「＋ リスト」へ。Amazonで探す導線は、選んだ候補をまとめた買い物リスト内にあります。</p>
+    <p class="list-hint">持ってるものは「持ってる」、足りないものだけ「＋ リスト」へ。</p>
 
     <div class="yapps-nav-result" id="list"></div>
 
-    <section class="buying-guide yapps-nav-support" aria-labelledby="buying-guide-title">
+    <details class="fold buying-guide yapps-nav-support"><summary>買う前の考え方<span class="fold-sub">選ぶ基準・ラベルの読み方</span></summary><div class="fold-body">
       <div class="group-head"><span class="g-jp">道具を選ぶ基準</span><span class="g-en">Before buying</span></div>
       <div class="guide-grid">
         <article class="guide-card wide">
@@ -390,17 +405,17 @@
         </article>
       </div>
       <p class="guide-note"><strong>note 3部作の要約：</strong>vol.1は急ぎ・数量・品質・珍しさで調達先を使い分ける話、vol.2は必須工具から始めて困りごとに合わせて足す順番、vol.3は作業を止めやすい消耗品と定番部品を少しずつ備える考え方です。</p>
-    </section>
+    </div></details>
 
-    <section class="channels yapps-nav-support">
+    <details class="fold channels yapps-nav-support"><summary>部品はどこで買う？<span class="fold-sub">店の使い分け</span></summary><div class="fold-body">
       <div class="group-head"><span class="g-jp">部品はどこで買う？</span><span class="g-en">Where to buy</span></div>
       <div class="ch-grid" id="channels"></div>
-    </section>
+    </div></details>
 
-    <section class="about yapps-nav-support">
+    <details class="fold about yapps-nav-support"><summary>このナビについて</summary><div class="fold-body">
       <p>電子工作を始めたころ、いちばん困ったのは「何をどこで買えばいいか分からない」ことでした。Amazon、AliExpress、秋月電子、千石電商などは品揃えや配送条件が異なり、使い分けが分かるまでにはけっこう遠回りをしました。工具も同じで、「とりあえず安いハンダごて」で始めると結局温度調整つきに買い直すことになるし、いざ作り始めてから「抵抗が足りない」「ハンダが切れた」で手が止まるのもお約束です。このツールは、そうした経験をもとに「最初にこれを買えばよかった」という工具と、切らすと作業が止まる消耗品や部品ストックをステップ別のチェックリストにしたものです。手持ちを確認しながら、足りないものだけを買い物リストに集約できます。掲載品には、原文で実使用が確認できる品、記事で紹介した品、必要仕様から探すための候補が混在するため、「実使用」「記事で紹介」「仕様候補」を商品ごとに表示しています。</p>
       <p>調達先の使い分けや工具選びの詳しい話は、noteの電子工作3部作で読めます： <a href="https://note.com/yzrswork/n/nf679f6a190d9" target="_blank" rel="noopener noreferrer">vol.1 部品調達編</a> / <a href="https://note.com/yzrswork/n/nd08cb43b6ca4" target="_blank" rel="noopener noreferrer">vol.2 工具編</a> / <a href="https://note.com/yzrswork/n/n65791c58ad52" target="_blank" rel="noopener noreferrer">vol.3 消耗品と部品ストック編</a></p>
-    </section>
+    </div></details>
 
     <footer class="yapps-nav-next-action">
       <div>このリストは、noteの「電子工作」3部作をもとに、実使用品・記事で紹介した品・仕様候補を区別してまとめたものです。</div>
@@ -495,7 +510,7 @@ const CHANNELS = [
 ];
 
 /* ---------- 状態 ---------- */
-let filter = 'all';                                  // 'all' | 'tool' | 'stock'
+let filter = 'tool-1';                               // 'all' | GROUPS[].cat
 let hideOwned = localStorage.getItem('kit:hideOwned') === '1';
 let owned = loadSet('kit:owned');
 let cart = loadSet('kit:cart');
@@ -542,10 +557,10 @@ decisionButtons.forEach(button => button.addEventListener('click', () => {
 }));
 
 /* ---------- フィルタチップ ---------- */
-const FILTERS = [ { id: 'all', label: 'すべて' }, { id: 'tool', label: '工具' }, { id: 'stock', label: '部品ストック' } ];
+const FILTERS = [ { id: 'tool-1', label: 'Step 1' }, { id: 'tool-2', label: 'Step 2' }, { id: 'tool-3', label: 'Step 3' }, { id: 'stock', label: '部品' }, { id: 'all', label: 'すべて' } ];
 function renderChips() {
   document.getElementById('chips').innerHTML = FILTERS.map(f =>
-    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}" aria-pressed="${filter === f.id}">${f.label}</button>`
+    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}" aria-pressed="${filter === f.id}">${f.label}${f.id === 'all' ? '' : `<span class="chip-n">${ITEMS.filter(i => i.cat === f.id).length}</span>`}</button>`
   ).join('');
   document.querySelectorAll('.chip').forEach(c =>
     c.addEventListener('click', () => { filter = c.getAttribute('data-f'); renderChips(); renderList(); })
@@ -558,8 +573,7 @@ function renderList() {
   const listEl = document.getElementById('list');
   let html = '';
   GROUPS.forEach(g => {
-    if (filter === 'tool' && g.kind !== 'tool') return;
-    if (filter === 'stock' && g.kind !== 'stock') return;
+    if (filter !== 'all' && g.cat !== filter) return;
     const groupItems = ITEMS.filter(i => i.cat === g.cat);
     const groupOwned = groupItems.filter(i => owned.has(i.id)).length;
     let items = groupItems;
@@ -577,11 +591,11 @@ function renderList() {
             <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
           </div>
           ${isOwned ? '' : `<div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
-          ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
           ${ironDeferred ? '<div class="it-decision-note">今回の工作では、はんだ付けが必要になるまで今は買わないでOK。</div>' : ''}
           ${i.pick && !ironDeferred ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
           ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
-          ${i.specs || i.tip || i.relatedSlug === 'usbc' ? `<details class="it-more"><summary>必要仕様${i.tip ? '・買い方のコツ' : ''}を見る</summary>
+          ${i.criteria || i.specs || i.tip || i.relatedSlug === 'usbc' ? `<details class="it-more"><summary>選び方・仕様を見る</summary>
+            ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
             ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
             ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
             ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
@@ -593,9 +607,17 @@ function renderList() {
         </div>`;
     });
   });
+  const nextIndex = FILTERS.findIndex(f => f.id === filter) + 1;
+  const next = filter !== 'all' && FILTERS[nextIndex] && FILTERS[nextIndex].id !== 'all' ? FILTERS[nextIndex] : null;
   if (!html) html = '<p class="cart-empty">表示する項目がありません。フィルタや「持ってるものを隠す」を見直してください。</p>';
+  if (next) html += `<button class="btn next-step" data-next="${next.id}">次へ：${esc(GROUPS.find(g => g.cat === next.id).jp)} →</button>`;
   listEl.innerHTML = html;
 
+  listEl.querySelectorAll('[data-next]').forEach(b =>
+    b.addEventListener('click', () => {
+      filter = b.getAttribute('data-next'); renderChips(); renderList();
+      document.getElementById('chips').scrollIntoView({ block: 'start' });
+    }));
   listEl.querySelectorAll('[data-own]').forEach(b =>
     b.addEventListener('click', () => toggleSet(owned, 'kit:owned', b.getAttribute('data-own'))));
   listEl.querySelectorAll('[data-add]').forEach(b =>
