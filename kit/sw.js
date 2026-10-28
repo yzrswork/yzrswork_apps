@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kit-v16';
+const CACHE_NAME = 'kit-v17';
 const CACHE_PREFIX = 'kit-';
 const ASSETS = [
   './',

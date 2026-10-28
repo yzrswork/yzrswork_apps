@@ -98,20 +98,6 @@
   .hero .en { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 15px; letter-spacing: 0.1em; display: block; margin-bottom: 14px; }
   .hero p { font-size: 14px; color: var(--ink-soft); max-width: 40ch; margin: 0; }
 
-  /* ── Filter chips ── */
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
-  .chip .chip-n { margin-left: 5px; font-size: 11px; opacity: 0.7; font-variant-numeric: tabular-nums; }
-  .btn.next-step { width: 100%; min-height: 48px; margin: 6px 0 18px; justify-content: center; }
-  .chip {
-    min-height: 44px;
-    font-family: var(--jp); font-size: 13px; font-weight: 500;
-    padding: 7px 14px; border-radius: 20px; cursor: pointer;
-    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
-  }
-  .chip.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
-  .yapps-navigator .chips.yapps-nav-options { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
-  .yapps-navigator .chips.yapps-nav-options > .chip { min-height: 44px; padding: 6px 2px; border-radius: 20px; font-size: 13px; white-space: nowrap; }
-  .yapps-navigator .chips .chip-n { margin-left: 3px; }
   .fold { margin: 0 0 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
   .fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-family: var(--jp); font-weight: 700; color: var(--ink); list-style: none; }
   .fold > summary::-webkit-details-marker { display: none; }
@@ -122,15 +108,39 @@
   .fold .group-head { display: none; }
   .yapps-navigator .fold.yapps-nav-support { margin: 0 0 10px; padding-top: 0; border: 1px solid var(--rule); }
   .yapps-navigator .fold.buying-guide { margin-top: 28px; }
-  .toolbar-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; gap: 8px; }
-  .hide-owned { min-height: 44px; font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-  .hide-owned input { accent-color: var(--terracotta); width: 15px; height: 15px; }
-  .count-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
-  .list-hint {
-    margin: 0 0 16px; padding: 10px 12px;
-    border-left: 3px solid var(--terracotta); background: rgba(181, 69, 27, 0.05);
-    color: var(--ink-soft); font-size: 12.5px;
-  }
+  /* ── 質問と工程表 ── */
+  [hidden] { display: none !important; }
+  :root { --sub: #3f5f7a; --sub-tint: #e3eaf0; }  /* yzrswork.com の補助色(青灰)。リンク・答え・持ってる表示だけに使う */
+  .q-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .btn.ghost { border-color: transparent; background: transparent; color: var(--sub); padding-left: 4px; padding-right: 4px; }
+  .answers { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 18px 0 4px; font-size: 12.5px; }
+  .answers .ans { padding: 3px 10px; border-radius: 12px; background: var(--sub-tint); color: var(--sub); }
+  .answers .btn.ghost { min-height: 32px; font-size: 12.5px; }
+  .need-head { font-weight: 700; font-size: 19px; line-height: 1.4; margin: 6px 0 2px; }
+  .need-sub { margin: 0 0 12px; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .ksteps { list-style: none; margin: 0; padding: 0; }
+  .kstep { position: relative; padding-left: 40px; padding-bottom: 4px; }
+  .kstep::before { content: ""; position: absolute; left: 14px; top: 34px; bottom: 0; width: 2px; background: var(--rule-soft); }
+  .kstep:last-child::before { display: none; }
+  .kstep .num { position: absolute; left: 0; top: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 13px; background: var(--paper); border: 2px solid var(--rule-soft); color: var(--ink-soft); }
+  .kstep.current .num { border-color: var(--terracotta); color: var(--terracotta); }
+  .kstep.complete .num { background: var(--muted); border-color: var(--muted); color: var(--paper); }
+  .kstep > details > summary { list-style: none; cursor: pointer; min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .kstep > details > summary::-webkit-details-marker { display: none; }
+  .kstep .st-title { flex: 1; min-width: 0; font-weight: 700; font-size: 16px; line-height: 1.4; }
+  .kstep .st-status { font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 10px; white-space: nowrap; background: rgba(181, 69, 27, 0.1); color: var(--terracotta-deep); }
+  .kstep .st-status.done { background: transparent; border: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .kstep .st-status.wait { background: transparent; color: var(--muted); }
+  .kstep .st-desc { margin: 0 0 4px; color: var(--muted); font-size: 12.5px; }
+  .item .it-reason { display: inline-block; margin: 4px 0 0; padding: 1px 8px; border-radius: 10px; background: var(--sub-tint); color: var(--sub); font-size: 11.5px; }
+  .item.decided .it-top { align-items: center; }
+  .tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule-soft); border-radius: 9px; overflow: hidden; margin-top: 8px; }
+  .tri button { min-height: 44px; padding: 4px 2px; border: 0; border-right: 1px solid var(--rule-soft); background: var(--paper); color: var(--ink-soft); font-family: var(--jp); font-size: 13px; font-weight: 700; cursor: pointer; }
+  .tri button:last-child { border-right: 0; }
+  .tri button:focus-visible { outline: 3px solid var(--sub); outline-offset: -3px; }
+  .tri button[aria-pressed="true"][data-set="have"] { background: var(--sub-tint); color: var(--sub); }
+  .tri button[aria-pressed="true"][data-set="buy"] { background: var(--terracotta); color: #fff; }
+  .tri button[aria-pressed="true"][data-set="later"] { background: var(--rule-soft); color: var(--ink); }
 
   /* ── First project decision ── */
   .first-decision {
@@ -343,32 +353,19 @@
 
     <header class="hero yapps-nav-hero">
       <h1>装備ナビ<span class="en">— Maker's Starter Kit</span></h1>
-      <p>電子工作、まず何を買えばいい？ 工具と部品ストックをステップ別にチェックして、買い物リストに集約。持っているものは「持ってる」で消し込めます。</p>
+      <p>電子工作、まず何を買えばいい？ 2つの質問に答えると、今そろえる物だけに絞れます。持ってる物は消し込んで、足りない物だけ買い物リストへ。</p>
     </header>
 
-    <section class="first-decision yapps-nav-first" aria-labelledby="first-decision-title">
-      <div class="decision-kicker">First project decision</div>
-      <h2 id="first-decision-title">今回の工作にはんだ付けが必要？</h2>
-      <p>作るものと工程を先に決めます。はんだ付け不要なら、はんだごては今は買わなくて大丈夫。必要なら、Step 1の温調式を基本候補にします。</p>
-      <div class="decision-options" role="group" aria-label="今回の工作ではんだ付けが必要か">
-        <button type="button" class="decision-option" data-project-decision="no-solder" aria-pressed="false">
-          <strong>不要：まずは仮組み</strong>
-          <span>ブレッドボードやモジュールで試すなら、温調式はんだごてを今は買わない。</span>
-        </button>
-        <button type="button" class="decision-option" data-project-decision="solder" aria-pressed="false">
-          <strong>必要：温調式を基本候補に</strong>
-          <span>配線や部品を固定する工作なら、Step 1の温調式はんだごてから検討する。</span>
-        </button>
+    <section class="first-decision yapps-nav-first" id="questions" aria-labelledby="q-title">
+      <div class="decision-kicker" id="q-step">質問 1 / 2</div>
+      <h2 id="q-title">今回の工作で、はんだ付けはする？</h2>
+      <p id="q-lead">答えに合わせて、今そろえる物だけに絞ります。</p>
+      <div class="decision-options" id="q-options" role="group" aria-labelledby="q-title"></div>
+      <div class="q-foot">
+        <button type="button" class="btn ghost" id="q-back" hidden>← 質問1に戻る</button>
+        <button type="button" class="btn ghost" id="q-skip">質問なしで全部見る</button>
       </div>
-      <p class="decision-note" id="project-decision-note" role="status">選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。</p>
     </section>
-
-    <div class="chips yapps-nav-options" id="chips"></div>
-    <div class="toolbar-row">
-      <label class="hide-owned"><input type="checkbox" id="hideOwned" /> 持ってるものを隠す</label>
-      <span class="count-note" id="ownCount"></span>
-    </div>
-    <p class="list-hint">持ってるものは「持ってる」、足りないものだけ「＋ リスト」へ。</p>
 
     <div class="yapps-nav-result" id="list"></div>
 
@@ -510,17 +507,22 @@ const CHANNELS = [
 ];
 
 /* ---------- 状態 ---------- */
-let filter = 'tool-1';                               // 'all' | GROUPS[].cat
-let hideOwned = localStorage.getItem('kit:hideOwned') === '1';
 let owned = loadSet('kit:owned');
 let cart = loadSet('kit:cart');
-let projectDecision = '';                             // ephemeral: 'no-solder' | 'solder'
+let later = loadSet('kit:later');                     // 「今はいい」
+let answers = loadAnswers();                          // { solder: 'yes'|'no'|'unsure', circuit: 'yes'|'no', skip: bool }
+const openState = {};                                 // 工程の開閉（ユーザーが触ったものだけ）
 
 function loadSet(key) {
   try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); }
   catch (e) { return new Set(); }
 }
-function saveSet(key, set) { localStorage.setItem(key, JSON.stringify([...set])); }
+function saveSet(key, set) { try { localStorage.setItem(key, JSON.stringify([...set])); } catch (e) {} }
+function loadAnswers() {
+  try { return JSON.parse(localStorage.getItem('kit:answers') || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function saveAnswers() { try { localStorage.setItem('kit:answers', JSON.stringify(answers)); } catch (e) {} }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function amazonUrl(keyword) {
   return window.yzrsAffiliate.searchUrl(keyword);
@@ -534,108 +536,158 @@ function itemAmazonUrl(item) {
 function basisLabel(item) { return BASIS_LABELS[item.basis] || BASIS_LABELS.spec; }
 function byId(id) { return ITEMS.find(i => i.id === id); }
 
-/* ---------- 最初の工作判断（永続化しない） ---------- */
-const decisionButtons = [...document.querySelectorAll('[data-project-decision]')];
-const decisionNote = document.getElementById('project-decision-note');
-function renderProjectDecision() {
-  decisionButtons.forEach(button => {
-    const selected = button.getAttribute('data-project-decision') === projectDecision;
-    button.setAttribute('aria-pressed', selected ? 'true' : 'false');
-  });
-  if (!projectDecision) {
-    decisionNote.textContent = '選択すると、下のStep 1で温調式はんだごての扱いが分かります。選ばないまま見ても構いません。';
-  } else if (projectDecision === 'no-solder') {
-    decisionNote.textContent = 'はんだ付け不要を選択中：はんだごては今は買わず、必要になった時点で検討できます。';
-  } else {
-    decisionNote.textContent = 'はんだ付けが必要を選択中：Step 1の温調式はんだごてを基本候補として確認します。';
-  }
-}
-decisionButtons.forEach(button => button.addEventListener('click', () => {
-  projectDecision = button.getAttribute('data-project-decision');
-  renderProjectDecision();
-  renderList();
-}));
+/* ---------- 2つの質問 ---------- */
+const QUESTIONS = [
+  { key: 'solder', title: '今回の工作で、はんだ付けはする？', options: [
+    { v: 'no', label: 'しない・まず仮組み', sub: 'ブレッドボードで試すなら、はんだごては今は不要。' },
+    { v: 'yes', label: 'する', sub: '部品や配線を基板に固定する。温調式を基本候補に。' },
+    { v: 'unsure', label: 'まだ分からない', sub: 'いったん「しない」で進めて、あとで変えられます。' }
+  ] },
+  { key: 'circuit', title: '作るものの回路図や部品表はある？', options: [
+    { v: 'yes', label: 'ある', sub: '抵抗やLEDは、そこに書かれた数だけ揃えれば足ります。' },
+    { v: 'no', label: 'まだない', sub: '部品ストックは、作るものが決まってからでOK。' }
+  ] }
+];
+const ANSWER_LABELS = { solder: { yes: 'はんだ付け：する', no: 'はんだ付け：しない', unsure: 'はんだ付け：未定' }, circuit: { yes: '回路図：ある', no: '回路図：まだ' } };
+const SOLDER_IDS = ['iron', 'solder', 'wick', 'shrink', 'protoboard'];
+const PART_IDS = ['resistor', 'elcap', 'ceracap', 'led'];
+const questionsEl = document.getElementById('questions');
 
-/* ---------- フィルタチップ ---------- */
-const FILTERS = [ { id: 'tool-1', label: 'Step 1' }, { id: 'tool-2', label: 'Step 2' }, { id: 'tool-3', label: 'Step 3' }, { id: 'stock', label: '部品' }, { id: 'all', label: 'すべて' } ];
-function renderChips() {
-  document.getElementById('chips').innerHTML = FILTERS.map(f =>
-    `<button class="chip${filter === f.id ? ' active' : ''}" data-f="${f.id}" aria-pressed="${filter === f.id}">${f.label}${f.id === 'all' ? '' : `<span class="chip-n">${ITEMS.filter(i => i.cat === f.id).length}</span>`}</button>`
+function answered() { return !!(answers.solder && answers.circuit); }
+function renderQuestions() {
+  const showing = !answered() && !answers.skip;
+  questionsEl.hidden = !showing;
+  if (!showing) return;
+  const n = answers.solder ? 1 : 0;
+  const q = QUESTIONS[n];
+  document.getElementById('q-step').textContent = `質問 ${n + 1} / 2`;
+  document.getElementById('q-title').textContent = q.title;
+  document.getElementById('q-back').hidden = n === 0;
+  document.getElementById('q-options').innerHTML = q.options.map(o =>
+    `<button type="button" class="decision-option" data-q="${q.key}" data-a="${o.v}" aria-pressed="${answers[q.key] === o.v}"><strong>${esc(o.label)}</strong><span>${esc(o.sub)}</span></button>`
   ).join('');
-  document.querySelectorAll('.chip').forEach(c =>
-    c.addEventListener('click', () => { filter = c.getAttribute('data-f'); renderChips(); renderList(); })
-  );
 }
+document.getElementById('q-options').addEventListener('click', e => {
+  const b = e.target.closest('[data-q]'); if (!b) return;
+  answers[b.getAttribute('data-q')] = b.getAttribute('data-a');
+  answers.skip = false;
+  saveAnswers(); renderAll();
+  const target = answered() ? document.getElementById('list') : document.getElementById('q-title');
+  target.scrollIntoView({ block: 'start' });
+  if (!answered()) document.querySelector('#q-options button').focus();
+});
+document.getElementById('q-back').addEventListener('click', () => { delete answers.solder; saveAnswers(); renderAll(); });
+document.getElementById('q-skip').addEventListener('click', () => { answers.skip = true; saveAnswers(); renderAll(); });
+
+/* ---------- 工程に分ける ---------- */
+function laterReason(i) {
+  if (SOLDER_IDS.includes(i.id) && answers.solder !== 'yes') return 'はんだ付けするときに';
+  if (PART_IDS.includes(i.id) && answers.circuit !== 'yes') return '作るものが決まってから';
+  return '必要になったら';
+}
+function buildSteps() {
+  if (!answered()) {
+    return GROUPS.map(g => ({ title: g.jp.replace(/^Step \d・/, ''), items: ITEMS.filter(i => i.cat === g.cat) }));
+  }
+  const need = [], parts = [], soon = [], wait = [];
+  ITEMS.forEach(i => {
+    const soldering = SOLDER_IDS.includes(i.id);
+    if (soldering && answers.solder !== 'yes') return wait.push(i);
+    if (PART_IDS.includes(i.id)) return (answers.circuit === 'yes' ? parts : wait).push(i);
+    if (i.cat === 'tool-2') return soon.push(i);
+    if (i.cat === 'tool-3') return wait.push(i);
+    need.push(i);
+  });
+  return [
+    { title: '今回そろえる', desc: '答えから選んだ、今回の工作に必要な道具と消耗品です。', items: need, need: true },
+    { title: '回路図の数だけそろえる部品', desc: '大容量セットは必須ではありません。書かれた値と数＋少しの予備で足ります。', items: parts, need: true },
+    { title: 'あると作業が変わる', desc: '作業してみて困ったら足す物。今決めなくても大丈夫です。', items: soon },
+    { title: '今は買わなくていい', desc: '今回の答えでは、まだ要らない物です。', items: wait, wait: true }
+  ];
+}
+function stateOf(id) { return owned.has(id) ? 'have' : cart.has(id) ? 'buy' : later.has(id) ? 'later' : ''; }
 
 /* ---------- リスト ---------- */
-function groupKind(cat) { return GROUPS.find(g => g.cat === cat).kind; }
+function itemHtml(i, showReason) {
+  const st = stateOf(i.id);
+  const tri = `<div class="tri" role="group" aria-label="${esc(i.title)}">${[['have', '持ってる'], ['buy', 'リストへ'], ['later', '今はいい']].map(([k, label]) =>
+    `<button type="button" data-set="${k}" data-id="${i.id}"${k === 'buy' ? ` data-add="${i.id}"` : ''} aria-pressed="${st === k}">${label}</button>`).join('')}</div>`;
+  if (st) {
+    return `<div class="item decided${st === 'have' ? ' owned' : ''}"><div class="it-top"><div class="it-title">${esc(i.title)}</div><span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span></div>${tri}</div>`;
+  }
+  return `
+    <div class="item">
+      <div class="it-top">
+        <div class="it-title">${esc(i.title)}</div>
+        <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
+      </div>
+      ${showReason ? `<span class="it-reason">${esc(laterReason(i))}</span>` : ''}
+      <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
+      ${i.pick ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
+      ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
+      <details class="it-more"><summary>選び方・仕様を見る</summary>
+        ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
+        ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
+        ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
+        ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+      </details>
+      ${tri}
+    </div>`;
+}
 function renderList() {
   const listEl = document.getElementById('list');
+  if (!answered() && !answers.skip) { listEl.innerHTML = ''; return; }
+  const steps = buildSteps();
+  const scope = steps.filter(st => !st.wait).flatMap(st => st.items);
+  const decided = scope.filter(i => stateOf(i.id)).length;
+  const current = steps.findIndex(st => !st.wait && st.items.some(i => !stateOf(i.id)));
   let html = '';
-  GROUPS.forEach(g => {
-    if (filter !== 'all' && g.cat !== filter) return;
-    const groupItems = ITEMS.filter(i => i.cat === g.cat);
-    const groupOwned = groupItems.filter(i => owned.has(i.id)).length;
-    let items = groupItems;
-    if (hideOwned) items = items.filter(i => !owned.has(i.id));
-    if (!items.length) return;
-    html += `<div class="group-head"><span class="g-jp">${esc(g.jp)}</span><span class="g-en">${esc(g.en)}</span><span class="g-count">持ってる ${groupOwned} / ${groupItems.length}</span></div>`;
-    items.forEach(i => {
-      const isOwned = owned.has(i.id);
-      const inCart = cart.has(i.id);
-      const ironDeferred = i.id === 'iron' && projectDecision === 'no-solder';
-      html += `
-        <div class="item${isOwned ? ' owned' : ''}${ironDeferred ? ' deferred' : ''}">
-          <div class="it-top">
-            <div class="it-title">${esc(i.title)}</div>
-            <span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span>
-          </div>
-          ${isOwned ? '' : `<div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
-          ${ironDeferred ? '<div class="it-decision-note">今回の工作では、はんだ付けが必要になるまで今は買わないでOK。</div>' : ''}
-          ${i.pick && !ironDeferred ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
-          ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
-          ${i.criteria || i.specs || i.tip || i.relatedSlug === 'usbc' ? `<details class="it-more"><summary>選び方・仕様を見る</summary>
-            ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
-            ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
-            ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
-            ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
-          </details>` : ''}`}
-          <div class="it-actions">
-            <button class="btn own${isOwned ? ' on' : ''}" data-own="${i.id}" aria-pressed="${isOwned}">${isOwned ? '✓ 持ってる' : '持ってる'}</button>
-            <button class="btn add${inCart ? ' on' : ''}" data-add="${i.id}" aria-pressed="${inCart}">${inCart ? '✓ リスト' : '＋ リスト'}</button>
-          </div>
-        </div>`;
-    });
+  if (answered()) {
+    html += `<div class="answers"><span class="ans">${esc(ANSWER_LABELS.solder[answers.solder])}</span><span class="ans">${esc(ANSWER_LABELS.circuit[answers.circuit])}</span><button type="button" class="btn ghost" data-act="change">答えを変える</button></div>
+      <div class="need-head">今回そろえるのは ${steps.filter(st => st.need).reduce((n, st) => n + st.items.length, 0)}点</div>`;
+  } else {
+    html += `<div class="answers"><button type="button" class="btn ghost" data-act="change">← 2つの質問で絞る</button></div><div class="need-head">全${ITEMS.length}点をステップ順に</div>`;
+  }
+  html += `<p class="need-sub">決めた ${decided} / ${scope.length}${answered() && steps.filter(st => st.need).every(st => st.items.every(i => stateOf(i.id))) ? '　・　今回そろえる分は決まりました。続きは困ったときで大丈夫です' : ''}</p><ol class="ksteps">`;
+  let num = 0;
+  steps.forEach((st, k) => {
+    if (!st.items.length) return;
+    num++;
+    const left = st.items.filter(i => !stateOf(i.id)).length;
+    const complete = !st.wait && !left;
+    const open = openState[k] !== undefined ? openState[k] : k === current;
+    const status = st.wait ? `<span class="st-status wait">${st.items.length}点</span>` : complete ? '<span class="st-status done">確認済み</span>' : `<span class="st-status">あと${left}つ</span>`;
+    html += `<li class="kstep${complete ? ' complete' : ''}${k === current ? ' current' : ''}">
+      <span class="num" aria-hidden="true">${complete ? '✓' : num}</span>
+      <details data-k="${k}"${open ? ' open' : ''}><summary><span class="st-title">${esc(st.title)}</span>${status}</summary>
+        ${st.desc ? `<p class="st-desc">${esc(st.desc)}</p>` : ''}
+        ${st.items.map(i => itemHtml(i, !!st.wait)).join('')}
+      </details></li>`;
   });
-  const nextIndex = FILTERS.findIndex(f => f.id === filter) + 1;
-  const next = filter !== 'all' && FILTERS[nextIndex] && FILTERS[nextIndex].id !== 'all' ? FILTERS[nextIndex] : null;
-  if (!html) html = '<p class="cart-empty">表示する項目がありません。フィルタや「持ってるものを隠す」を見直してください。</p>';
-  if (next) html += `<button class="btn next-step" data-next="${next.id}">次へ：${esc(GROUPS.find(g => g.cat === next.id).jp)} →</button>`;
-  listEl.innerHTML = html;
+  listEl.innerHTML = html + '</ol>';
 
-  listEl.querySelectorAll('[data-next]').forEach(b =>
-    b.addEventListener('click', () => {
-      filter = b.getAttribute('data-next'); renderChips(); renderList();
-      document.getElementById('chips').scrollIntoView({ block: 'start' });
-    }));
-  listEl.querySelectorAll('[data-own]').forEach(b =>
-    b.addEventListener('click', () => toggleSet(owned, 'kit:owned', b.getAttribute('data-own'))));
-  listEl.querySelectorAll('[data-add]').forEach(b =>
-    b.addEventListener('click', () => toggleSet(cart, 'kit:cart', b.getAttribute('data-add'))));
-
-  updateOwnCount();
+  listEl.querySelectorAll('details[data-k] > summary').forEach(sm =>
+    sm.addEventListener('click', () => { const d = sm.parentElement; openState[d.getAttribute('data-k')] = !d.open; }));
+  listEl.querySelectorAll('[data-set]').forEach(b =>
+    b.addEventListener('click', () => setState(b.getAttribute('data-id'), b.getAttribute('data-set'))));
+  const change = listEl.querySelector('[data-act="change"]');
+  if (change) change.addEventListener('click', () => {
+    answers = {}; saveAnswers(); renderAll();
+    questionsEl.scrollIntoView({ block: 'start' });
+  });
 }
 
-function toggleSet(set, key, id) {
-  if (set.has(id)) set.delete(id); else set.add(id);
-  saveSet(key, set);
+function setState(id, next) {
+  const was = stateOf(id);
+  owned.delete(id); cart.delete(id); later.delete(id);
+  if (was !== next) ({ have: owned, buy: cart, later: later })[next].add(id);
+  saveSet('kit:owned', owned); saveSet('kit:cart', cart); saveSet('kit:later', later);
   renderList();
   updateCartBar();
+  const again = document.querySelector(`[data-set="${next}"][data-id="${id}"]`);
+  if (again) again.focus({ preventScroll: true });
 }
-
-function updateOwnCount() {
-  document.getElementById('ownCount').textContent = `所有 ${owned.size} / 全 ${ITEMS.length}`;
-}
+function renderAll() { renderQuestions(); renderList(); }
 
 /* ---------- 調達先 ---------- */
 function renderChannels() {
@@ -755,18 +807,9 @@ function fallbackCopy(text) {
   document.body.removeChild(ta);
 }
 
-const hideOwnedEl = document.getElementById('hideOwned');
-hideOwnedEl.checked = hideOwned;
-hideOwnedEl.addEventListener('change', () => {
-  hideOwned = hideOwnedEl.checked;
-  localStorage.setItem('kit:hideOwned', hideOwned ? '1' : '0');
-  renderList();
-});
 
 /* ---------- 起動 ---------- */
-renderProjectDecision();
-renderChips();
-renderList();
+renderAll();
 renderChannels();
 updateCartBar();
 
