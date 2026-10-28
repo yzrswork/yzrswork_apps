@@ -110,7 +110,7 @@
   .yapps-navigator .fold.buying-guide { margin-top: 28px; }
   /* ── 質問と工程表 ── */
   [hidden] { display: none !important; }
-  :root { --sub: #3f5f7a; --sub-tint: #e3eaf0; }  /* yzrswork.com の補助色(青灰)。リンク・答え・持ってる表示だけに使う */
+  :root { --sub: #3f5f7a; --sub-tint: #e3eaf0; --tint: #f3e2d6; --rule: #b9a690; }  /* kit内だけ: 黒い線をやわらげ、テラコッタ軸＋青灰の補助色に揃える */  /* yzrswork.com の補助色(青灰)。リンク・答え・持ってる表示だけに使う */
   .q-foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .btn.ghost { border-color: transparent; background: transparent; color: var(--sub); padding-left: 4px; padding-right: 4px; }
   .answers { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 18px 0 4px; font-size: 12.5px; }
@@ -247,7 +247,7 @@
 
   .btn { min-height: 44px; font-family: var(--jp); font-size: 13px; font-weight: 500; border-radius: 8px; padding: 9px 13px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
   .btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
-  .btn.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn.buy { background: var(--terracotta-deep); color: #fff; border-color: var(--terracotta-deep); }
   .btn.buy:hover { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .btn.add.on { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
   .btn.own { font-size: 12.5px; }
@@ -301,14 +301,15 @@
   /* ── Sticky cart bar ── */
   .cartbar {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
-    background: rgba(28, 26, 22, 0.96); color: var(--paper);
+    background: var(--tint); color: var(--ink); border-top: 2px solid var(--terracotta);
+    box-shadow: 0 -4px 14px rgba(142, 53, 20, 0.12);
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
     transform: translateY(120%); transition: transform 220ms ease;
   }
   .cartbar.show { transform: translateY(0); }
-  .cartbar .ct-label { font-size: 13px; }
-  .cartbar .ct-count { font-family: var(--mono); color: #f0c9b8; }
+  .cartbar .ct-label { font-size: 13px; font-weight: 700; }
+  .cartbar .ct-count { font-family: var(--mono); font-size: 15px; color: var(--terracotta-deep); }
   .cartbar button { min-height: 44px; font-family: var(--jp); font-weight: 700; font-size: 13.5px; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; background: var(--terracotta); color: #fff; }
 
   /* ── Modal (cart + settings) ── */
@@ -325,7 +326,7 @@
   .cart-item .ci-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .cart-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
   .mini { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; color: var(--ink); text-decoration: none; }
-  .mini.buy { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mini.buy { background: var(--terracotta-deep); color: #fff; border-color: var(--terracotta-deep); }
   .mini.del { color: var(--terracotta); }
   .modal .m-row { display: flex; gap: 10px; margin-top: 16px; }
   .modal .m-row { flex-wrap: wrap; }
