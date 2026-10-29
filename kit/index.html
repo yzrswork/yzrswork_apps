@@ -118,7 +118,13 @@
   .answers .btn.ghost { min-height: 32px; font-size: 12.5px; }
   .need-head { font-weight: 700; font-size: 19px; line-height: 1.4; margin: 6px 0 2px; }
   .done-box { display: grid; gap: 8px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--terracotta); border-radius: 10px; background: var(--tint); font-size: 13.5px; }
-  .done-box .btn { justify-content: center; background: var(--terracotta); border-color: var(--terracotta); color: #fff; font-weight: 700; }
+  .done-box .btn, .bulk-box .btn { justify-content: center; background: var(--terracotta); border-color: var(--terracotta); color: #fff; font-weight: 700; }
+  .bulk-box { display: grid; gap: 8px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--terracotta); border-radius: 10px; background: var(--tint); font-size: 13.5px; }
+  .bulk-box .bulk-lead { margin: 0; font-weight: 700; }
+  .bulk-box .bulk-names { margin: 0; padding-left: 1.2em; }
+  .bulk-box .bulk-note, .done-box .done-note { margin: 0; color: var(--ink-soft); font-size: 12px; }
+  .done-list .cart-item:last-child { border-bottom: 0; }
+  .modal .m-row button.weak { border-color: transparent; background: transparent; color: var(--muted); font-weight: 500; }
   .q-foot .btn.q-skip-btn { color: var(--ink); border-color: var(--rule); }
   .need-sub { margin: 0 0 12px; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
   .ksteps { list-style: none; margin: 0; padding: 0; }
@@ -452,7 +458,7 @@
       <div id="cart-items"></div>
       <div class="m-row">
         <button id="copyList">リストをコピー</button>
-        <button id="clearList">全部クリア</button>
+        <button id="clearList" class="weak">全部クリア</button>
         <button class="primary" id="closeCart">閉じる</button>
       </div>
       <div class="saved" id="copyMsg"></div>
@@ -515,6 +521,10 @@ let owned = loadSet('kit:owned');
 let cart = loadSet('kit:cart');
 let later = loadSet('kit:later');                     // 「今はいい」
 let answers = loadAnswers();                          // { solder: 'yes'|'no'|'unsure', circuit: 'yes'|'no', skip: bool }
+try {
+  const preset = new URLSearchParams(location.search).get('solder');
+  if (!answers.solder && ['yes', 'no', 'unsure'].includes(preset)) { answers.solder = preset; saveAnswers(); }
+} catch (e) {}
 const openState = {};                                 // 工程の開閉（ユーザーが触ったものだけ）
 
 function loadSet(key) {
@@ -534,8 +544,24 @@ function amazonUrl(keyword) {
 function amazonProductUrl(asin) {
   return window.yzrsAffiliate.productUrl(asin);
 }
+/* 商品台帳(site/catalog.json)で承認済み・kit表示可の商品は、検索結果ではなく商品ページへつなぐ */
+const CATALOG_KEYS = { iron: 'solder-hakko-fx600a', solder: 'solder-goot-sd83', stripper: 'tool-engineer-paw01' };
+function catalogProduct(item) {
+  const key = CATALOG_KEYS[item.id];
+  const p = key && window.yzrsAffiliate.getProduct(key);
+  return p && p.kind === 'product' && p.displayOn && p.displayOn.includes('kit') ? p : null;
+}
 function itemAmazonUrl(item) {
+  const p = catalogProduct(item);
+  if (p) return amazonProductUrl(p.asin);
   return item.asin ? amazonProductUrl(item.asin) : amazonUrl(item.kw);
+}
+function itemAmazonLabel(item) {
+  return catalogProduct(item) || item.asin ? 'Amazonで商品を見る' : 'Amazonで探す';
+}
+function itemPickLabel(item) {
+  const p = catalogProduct(item);
+  return p ? p.label : item.pick;
 }
 function basisLabel(item) { return BASIS_LABELS[item.basis] || BASIS_LABELS.spec; }
 function byId(id) { return ITEMS.find(i => i.id === id); }
@@ -653,9 +679,13 @@ function renderList() {
     html += `<div class="answers"><button type="button" class="btn ghost" data-act="change">← 2つの質問で絞る</button></div><div class="need-head">全${ITEMS.length}点をステップ順に</div>`;
   }
   html += `<p class="need-sub">決めた ${decided} / ${scope.length}</p>`;
-  if (answered() && steps.filter(st => st.need).every(st => st.items.every(i => stateOf(i.id)))) {
+  const needLeft = answered() ? steps.filter(st => st.need).flatMap(st => st.items).filter(i => !stateOf(i.id)) : [];
+  if (needLeft.length) {
+    // 事前チェックはしない。何が入るかを全部見せてから、本人が1回押す
+    html += `<div class="bulk-box"><p class="bulk-lead">まだ決めていない ${needLeft.length}点</p><ul class="bulk-names">${needLeft.map(i => `<li>${esc(i.title)}</li>`).join('')}</ul><button type="button" class="btn" data-act="bulk-add">この${needLeft.length}点をリストに入れる</button><p class="bulk-note">持っている物があれば、下の一覧で先に「持ってる」にしてください。入れたあとでも外せます。</p></div>`;
+  } else if (answered()) {
     html += cart.size
-      ? `<div class="done-box"><span>今回そろえる分は決まりました。あとはリストの物を確認するだけです。</span><button type="button" class="btn" data-act="open-cart">買い物リストを見る（${cart.size}点）</button></div>`
+      ? `<div class="done-box"><span>今回そろえる分は決まりました。あとは商品を確認するだけです。</span><div class="done-list" id="done-list"></div><p class="done-note">広告リンクです。価格・在庫・販売元・お届け予定日・最新の仕様は、購入時にAmazonで確認してください。</p></div>`
       : '<div class="done-box"><span>今回そろえる分は決まりました。リストに入れた物はないので、手持ちで始められます。</span></div>';
   }
   html += '<ol class="ksteps">';
@@ -680,8 +710,17 @@ function renderList() {
     sm.addEventListener('click', () => { const d = sm.parentElement; openState[d.getAttribute('data-k')] = !d.open; }));
   listEl.querySelectorAll('[data-set]').forEach(b =>
     b.addEventListener('click', () => setState(b.getAttribute('data-id'), b.getAttribute('data-set'))));
-  const openFromList = listEl.querySelector('[data-act="open-cart"]');
-  if (openFromList) openFromList.addEventListener('click', openCart);
+  const bulk = listEl.querySelector('[data-act="bulk-add"]');
+  if (bulk) bulk.addEventListener('click', () => {
+    needLeft.forEach(i => cart.add(i.id));
+    saveSet('kit:cart', cart);
+    renderList();
+    updateCartBar();
+    const box = document.getElementById('done-list');
+    if (box) { box.closest('.done-box').scrollIntoView({ block: 'start' }); const first = box.querySelector('a'); if (first) first.focus({ preventScroll: true }); }
+  });
+  const doneList = listEl.querySelector('#done-list');
+  if (doneList) doneList.innerHTML = cartRowsHtml();
   const change = listEl.querySelector('[data-act="change"]');
   if (change) change.addEventListener('click', () => {
     answers = {}; saveAnswers(); renderAll();
@@ -726,17 +765,7 @@ function renderCart() {
     wrap.innerHTML = '<p class="cart-empty">まだ何も入っていません。各アイテムの「＋ リスト」で追加できます。</p>';
     return;
   }
-  wrap.innerHTML = [...cart].map(id => {
-    const i = byId(id); if (!i) return '';
-    return `
-      <div class="cart-item">
-        <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(i.pick)}</div></div>
-        <div class="ci-actions">
-          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-item-key="kit-${esc(i.id)}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">${esc(i.amazonLabel || 'Amazonで確認')}</a>
-          <button class="mini del" data-del="${i.id}">削除</button>
-        </div>
-      </div>`;
-  }).join('');
+  wrap.innerHTML = cartRowsHtml();
   wrap.querySelectorAll('[data-del]').forEach(b =>
     b.addEventListener('click', () => {
       cart.delete(b.getAttribute('data-del'));
@@ -748,6 +777,19 @@ function renderCart() {
       (nextDelete || closeCartButton).focus();
     }));
   if (window.yzrsTrackResult) window.yzrsTrackResult('electronics_kit', 'electronics');
+}
+function cartRowsHtml() {
+  return [...cart].map(id => {
+    const i = byId(id); if (!i) return '';
+    return `
+      <div class="cart-item">
+        <div><div class="ci-name">${esc(i.title)}［${esc(basisLabel(i))}］</div><div class="ci-pick">${esc(itemPickLabel(i))}</div></div>
+        <div class="ci-actions">
+          <a class="mini buy" href="${esc(itemAmazonUrl(i))}" data-item-key="kit-${esc(i.id)}" data-track-label="${esc(i.title)}" target="_blank" rel="noopener sponsored nofollow">${esc(itemAmazonLabel(i))}</a>
+          <button class="mini del" data-del="${i.id}">外す</button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function cartAsText() {
@@ -775,6 +817,12 @@ function closeCart() {
   (cart.size > 0 ? openCartButton : (firstVisibleAdd || document.getElementById('main-content'))).focus();
 }
 openCartButton.addEventListener('click', openCart);
+document.getElementById('list').addEventListener('click', e => {
+  const b = e.target.closest('#done-list [data-del]'); if (!b) return;
+  // ページ内で外した物は「今はいい」にして、決めた状態を保つ
+  const id = b.getAttribute('data-del'); cart.delete(id); later.add(id);
+  saveSet('kit:cart', cart); saveSet('kit:later', later); renderList(); updateCartBar();
+});
 closeCartButton.addEventListener('click', closeCart);
 cartBg.addEventListener('click', e => { if (e.target === cartBg) closeCart(); });
 document.addEventListener('keydown', e => {
@@ -802,7 +850,7 @@ document.addEventListener('keydown', e => {
     first.focus();
   }
 });
-document.getElementById('clearList').addEventListener('click', () => { cart.clear(); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); });
+document.getElementById('clearList').addEventListener('click', () => { if (!window.confirm('買い物リストを全部消しますか？')) return; cart.clear(); saveSet('kit:cart', cart); renderCart(); renderList(); updateCartBar(); });
 document.getElementById('copyList').addEventListener('click', () => {
   const text = cartAsText();
   const msg = document.getElementById('copyMsg');
