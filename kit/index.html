@@ -143,6 +143,8 @@
   .kstep .st-desc { margin: 0 0 4px; color: var(--muted); font-size: 12.5px; }
   .item .it-reason { display: inline-block; margin: 4px 0 0; padding: 1px 8px; border-radius: 10px; background: var(--sub-tint); color: var(--sub); font-size: 11.5px; }
   .item.decided .it-top { align-items: center; }
+  .item.decided .it-more { margin: 6px 0 0; }
+  .item.decided .it-more .it-why { margin: 2px 0 6px; }
   .tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule-soft); border-radius: 9px; overflow: hidden; margin-top: 8px; }
   .tri button { min-height: 44px; padding: 4px 2px; border: 0; border-right: 1px solid var(--rule-soft); background: var(--paper); color: var(--ink-soft); font-family: var(--jp); font-size: 13px; font-weight: 700; cursor: pointer; }
   .tri button:last-child { border-right: 0; }
@@ -638,12 +640,24 @@ function buildSteps() {
 function stateOf(id) { return owned.has(id) ? 'have' : cart.has(id) ? 'buy' : later.has(id) ? 'later' : ''; }
 
 /* ---------- リスト ---------- */
+function moreHtml(i) {
+  return `${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
+        ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
+        ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
+        ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}`;
+}
 function itemHtml(i, showReason) {
   const st = stateOf(i.id);
   const tri = `<div class="tri" role="group" aria-label="${esc(i.title)}">${[['have', '持ってる'], ['buy', 'リストへ'], ['later', '今はいい']].map(([k, label]) =>
     `<button type="button" data-set="${k}" data-id="${i.id}"${k === 'buy' ? ` data-add="${i.id}"` : ''} aria-pressed="${st === k}">${label}</button>`).join('')}</div>`;
   if (st) {
-    return `<div class="item decided${st === 'have' ? ' owned' : ''}"><div class="it-top"><div class="it-title">${esc(i.title)}</div><span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span></div>${tri}</div>`;
+    return `<div class="item decided${st === 'have' ? ' owned' : ''}"><div class="it-top"><div class="it-title">${esc(i.title)}</div><span class="it-basis basis-${esc(i.basis || 'spec')}">${esc(basisLabel(i))}</span></div>
+      <details class="it-more"><summary>用途・選び方を見る</summary>
+        <div class="it-why"><span class="it-label">用途</span>${esc(i.why)}</div>
+        ${i.pick ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
+        ${i.detail ? `<div class="it-specs"><span class="it-label">電流測定の注意</span>${esc(i.detail)}</div>` : ''}
+        ${moreHtml(i)}
+      </details>${tri}</div>`;
   }
   return `
     <div class="item">
@@ -656,10 +670,7 @@ function itemHtml(i, showReason) {
       ${i.pick ? `<div class="it-reco"><span class="it-label">候補例</span><span class="pick">${esc(i.pick)}</span></div>` : ''}
       ${i.detail ? `<details class="it-details"><summary>電流測定の注意を読む</summary><p>${esc(i.detail)}</p></details>` : ''}
       <details class="it-more"><summary>選び方・仕様を見る</summary>
-        ${i.criteria ? `<div class="it-criteria"><span class="it-label">判断基準</span>${esc(i.criteria)}</div>` : ''}
-        ${i.specs ? `<div class="it-specs"><span class="it-label">必要仕様</span>${esc(i.specs)}</div>` : ''}
-        ${i.relatedSlug === 'usbc' ? '<div class="it-related">USB-C端子やケーブル表記を確認したい場合：<a href="../usbc/" data-related-slug="usbc">USB-C見分けナビ</a>（計の定格は各候補の仕様表で確認）</div>' : ''}
-        ${i.tip ? `<div class="it-tip">調達: ${esc(i.tip)}</div>` : ''}
+        ${moreHtml(i)}
       </details>
       ${tri}
     </div>`;
