@@ -8,7 +8,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8467165715973366"
      crossorigin="anonymous"></script>
 <!-- BUILD:ADSENSE:END -->
-<meta name="theme-color" content="#f0ebe3">
+<meta name="theme-color" content="#f8f9fb">
 <title>塗れるくん -- 今日、DIY塗装できる?</title>
 <meta name="description" content="住所を入れると、今日や数日先にDIY塗装(家具・木部・金属・スプレー缶)ができるかを気温・湿度・露点・降水・風から判定します。や印工務店のニッチツール。">
 <link rel="canonical" href="https://apps.yzrswork.com/nurerukun/">
@@ -39,11 +39,14 @@
 </script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/tokens.css">
 <style>
   *{box-sizing:border-box}
   body{
-    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+    margin:0; font-family:var(--jp);
     background:var(--paper); color:var(--ink); line-height:1.6;
     -webkit-text-size-adjust:100%;
   }
@@ -52,34 +55,37 @@
   header h1{margin:0; font-size:1.55rem; letter-spacing:.02em}
   header h1 .drop{color:var(--terracotta)}
   header .tag{margin:4px 0 0; color:var(--muted); font-size:.82rem}
-  .card{min-width:0; background:transparent; border:0; border-top:1px solid var(--rule); border-radius:0; box-shadow:none; padding:16px 0; margin:12px 0}
-  .input-card{border-bottom:1px solid var(--rule); padding:14px 0 16px}
+  .card{min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:none; padding:16px; margin:12px 0}
+  .input-card{padding:16px}
   .inputrow{display:flex; gap:8px; min-width:0}
   .input-heading{font-size:.9rem; font-weight:700; margin:12px 0 6px; color:var(--ink)}
   .input-heading:first-child{margin-top:0}
   input[type=text]{
-    flex:1; min-width:0; padding:12px 14px; font-size:1rem; border:1px solid var(--rule-soft);
-    border-radius:4px; background:#fff; color:var(--ink);
+    flex:1; min-width:0; padding:12px 14px; font-size:1rem; border:1px solid var(--line-strong);
+    border-radius:8px; background:#fff; color:var(--ink);
   }
-  input[type=text]:focus{outline:2px solid var(--terracotta); border-color:transparent}
+  input[type=text]:focus{outline:2px solid var(--action); border-color:transparent}
   button{
     min-height:44px;
-    font-family:inherit; font-size:.95rem; border:none; border-radius:4px; cursor:pointer;
-    padding:12px 14px; background:var(--terracotta); color:#fff; font-weight:600; white-space:nowrap;
+    font-family:inherit; font-size:.95rem; border:none; border-radius:8px; cursor:pointer;
+    padding:12px 14px; background:var(--action); color:#fff; font-weight:600; white-space:nowrap;
   }
-  button.ghost{background:#fff; color:var(--terracotta); border:1px solid var(--terracotta)}
+  button:hover{background:var(--action-deep)}
+  button.ghost{background:#fff; color:var(--action); border:1px solid var(--action)}
+  button.ghost:hover{background:var(--action-tint)}
   button:active{transform:translateY(1px)}
   .geobtn{width:100%; margin-top:8px}
   .paintrow{display:flex; gap:8px; margin-top:10px}
   .ptbtn{
     flex:1; min-height:44px; font-family:inherit; font-size:.86rem; font-weight:600; padding:9px 8px;
-    border:1px solid var(--rule-soft); border-radius:4px; background:#fff; color:var(--muted); cursor:pointer;
+    border:1px solid var(--line-strong); border-radius:8px; background:#fff; color:var(--ink-soft); cursor:pointer;
   }
-  .ptbtn.active{background:var(--terracotta); border-color:var(--terracotta); color:#fff; font-weight:700; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px}
+  .ptbtn:hover{border-color:var(--action)}
+  .ptbtn.active{background:var(--action-tint); border-color:var(--action); box-shadow:inset 0 0 0 1px var(--action); color:var(--ink); font-weight:700; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px}
   .place{font-size:.86rem; color:var(--muted); margin-top:10px; min-height:1.2em}
   .verdict{text-align:left; padding:4px 0 10px}
-  .verdict .badge{display:inline-flex; align-items:center; min-height:44px; font-size:1.2rem; font-weight:800; padding:8px 16px; border-radius:4px; color:#fff}
-  .badge.ok{background:var(--ok)} .badge.ng{background:var(--ng)} .badge.warn{background:var(--warn)}
+  .verdict .badge{display:inline-flex; align-items:center; min-height:44px; font-size:1.2rem; font-weight:800; padding:8px 16px; border-radius:8px; color:#fff}
+  .badge.ok{background:var(--action)} .badge.ng{background:var(--ng)} .badge.warn{background:var(--warn)}
   .verdict .lead{margin:10px 0 2px; font-size:1.1rem; font-weight:700; line-height:1.5}
   .verdict .sub{color:var(--muted); font-size:.88rem}
   .reasons{list-style:none; padding:0; margin:12px 0 0}
@@ -88,7 +94,7 @@
   .reasons li.bad::before{content:"x"; color:var(--ng); font-weight:700}
   .reasons li.good::before{content:"o"; color:var(--ok); font-weight:700}
   .result-support-heading{font-size:.86rem; margin:8px 0 2px; color:var(--ink)}
-  .best-time{border-top:1px solid var(--rule-soft); margin-top:12px; padding-top:10px}
+  .best-time{border-top:1px solid var(--line); margin-top:12px; padding-top:10px}
   .best-time .label{font-size:.8rem; font-weight:700; margin:0 0 4px; color:var(--ink)}
   #window{margin:0; color:var(--terracotta-deep); font-size:1rem; font-weight:700}
   #dryTime{margin:8px 0 0; padding-left:10px; border-left:2px solid var(--rule-soft)}
@@ -97,26 +103,26 @@
   .hours{display:flex; gap:3px; overflow-x:auto; padding-bottom:6px}
   .hour{flex:0 0 auto; width:42px; text-align:center; font-size:.7rem; color:var(--muted)}
   .hour .bar{height:46px; border-radius:3px; margin:4px 0; display:flex; align-items:flex-end; justify-content:center; color:#fff; font-size:.66rem; font-weight:700; padding-bottom:2px}
-  .hour .bar.ok{background:var(--ok)} .hour .bar.ng{background:#e3c9c1} .hour .bar.warn{background:var(--warn)}
+  .hour .bar.ok{background:var(--action)} .hour .bar.ng{background:#e3c9c1} .hour .bar.warn{background:var(--warn)}
   .hour .pop{font-size:.62rem; white-space:nowrap}
   .days{display:flex; flex-direction:column; gap:8px}
-  .day{display:flex; align-items:center; justify-content:space-between; gap:8px; min-width:0; padding:8px 4px; border-bottom:1px solid var(--rule-soft)}
+  .day{display:flex; align-items:center; justify-content:space-between; gap:8px; min-width:0; padding:8px 4px; border-bottom:1px solid var(--line)}
   .day:last-child{border-bottom:none}
   .day .d{min-width:0; font-weight:600; overflow-wrap:anywhere}
-  .day .pill{max-width:65%; font-size:.78rem; padding:4px 8px; border-radius:4px; color:#fff; text-align:right; overflow-wrap:anywhere}
-  .pill.ok{background:var(--ok)} .pill.ng{background:var(--ng)} .pill.warn{background:var(--warn)}
-  .affi{border-top:1px solid var(--rule-soft); }
+  .day .pill{max-width:65%; font-size:.78rem; padding:4px 8px; border-radius:6px; color:#fff; text-align:right; overflow-wrap:anywhere}
+  .pill.ok{background:var(--action)} .badge.warn,.pill.warn{color:var(--ink)} .pill.ng{background:var(--ng)} .pill.warn{background:var(--warn)}
+  .affi{}
   .affi h2{color:var(--terracotta-deep)}
   .affi .slot{font-size:.86rem; color:var(--muted); padding:8px 0}
   .affi-link{display:inline-flex; align-items:center; min-height:44px; margin-left:4px; color:var(--terracotta-deep); font-weight:600; text-decoration:underline; text-underline-offset:2px}
-  .guide{border-top:2px solid var(--ink)}
+  .guide{}
   .guide h2{font-size:1rem; margin:0 0 10px; color:var(--ink)}
   .guide h3{font-size:.9rem; margin:16px 0 6px}
   .guide p,.guide li{font-size:.86rem; color:var(--muted)}
   .guide p{margin:0 0 10px}
   .guide ul{margin:0; padding-left:1.25rem}
   .guide li{margin:5px 0}
-  .note-cta{display:flex; align-items:center; justify-content:center; min-height:46px; text-align:center; text-decoration:none; background:var(--ink); color:#fff; padding:10px 14px; border-radius:4px; font-weight:600}
+  .note-cta{display:flex; align-items:center; justify-content:center; min-height:46px; text-align:center; text-decoration:none; background:var(--action); color:#fff; padding:10px 14px; border-radius:8px; font-weight:600}
   .muted{color:var(--muted); font-size:.78rem}
   .muted a{color:inherit; text-decoration:underline}
   footer{text-align:center; margin-top:22px}
@@ -124,9 +130,9 @@
   .spin{display:inline-block; width:16px; height:16px; border:2px solid var(--rule-soft); border-top-color:var(--terracotta); border-radius:50%; animation:s .8s linear infinite; vertical-align:-3px}
   @keyframes s{to{transform:rotate(360deg)}}
   .hidden{display:none}
-  input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+  input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--terracotta); outline-offset:3px}
   .err{border-left:3px solid var(--ng); padding-left:12px}
-  #result{border-top:3px solid var(--terracotta); border-left:3px solid var(--terracotta); padding:14px 14px 16px}
+  #result{border-color:var(--line-strong); padding:16px}
   #result .reasons{margin-top:4px}
   #result.hidden ~ section.guide,
   #result.hidden ~ .note-story{display:none}
@@ -646,6 +652,6 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
 </script>
-<a href="../" aria-label="アプリ一覧へ戻る" style="position:fixed;top:env(safe-area-inset-top,0px);left:env(safe-area-inset-left,0px);z-index:999999;margin:8px;padding:6px 11px;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans',system-ui,sans-serif;color:#fff;background:rgba(28,26,22,.62);border-radius:9px;text-decoration:none;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 1px 4px rgba(0,0,0,.25)">&larr; アプリ一覧</a>
+<a href="../" aria-label="アプリ一覧へ戻る" style="position:fixed;top:env(safe-area-inset-top,0px);left:env(safe-area-inset-left,0px);z-index:999999;margin:8px;padding:6px 11px;font:600 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans',system-ui,sans-serif;color:#fff;background:var(--action);border-radius:9px;text-decoration:none;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);box-shadow:0 1px 4px rgba(0,0,0,.25)">&larr; アプリ一覧</a>
 </body>
 </html>

@@ -22,7 +22,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f0ebe3">
+<meta name="theme-color" content="#f8f9fb">
 <!-- TODO: アプリ名に置換 -->
 <title>TODO_アプリ名 -- 一行説明</title>
 <meta name="description" content="TODO: 説明文">
@@ -111,7 +111,7 @@ header .tag{color:var(--muted);font-size:.84rem;margin-top:var(--sp-xs)}
   padding:var(--sp-md) 18px;margin:12px 0;
 }
 .card:active{transform:translateY(1px)}
-.card-accent{border-left:3px solid var(--terracotta)}
+.card-accent{border-left:3px solid var(--action)}
 
 /* ━━━ Button ━━━ */
 .btn{
@@ -122,11 +122,11 @@ header .tag{color:var(--muted);font-size:.84rem;margin-top:var(--sp-xs)}
   transition:opacity .15s;
 }
 .btn:active{transform:translateY(1px)}
-.btn:focus-visible{outline:2px solid var(--terracotta);outline-offset:2px}
-.btn-primary{background:var(--terracotta);color:#fff}
+.btn:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.btn-primary{background:var(--action);color:#fff}
 .btn-primary:active{opacity:.85}
-.btn-ghost{background:transparent;color:var(--terracotta);border:1px solid var(--terracotta)}
-.btn-ghost:active{background:var(--terra-l)}
+.btn-ghost{background:var(--card);color:var(--action);border:1px solid var(--line-strong)}
+.btn-ghost:active{background:var(--action-tint)}
 .btn-small{padding:6px 10px;font-size:var(--text-xs);border-radius:var(--r-sm)}
 
 /* ━━━ Input ━━━ */
@@ -135,7 +135,7 @@ header .tag{color:var(--muted);font-size:.84rem;margin-top:var(--sp-xs)}
   padding:10px 14px;font-size:var(--text-md);font-family:var(--font-body);
   background:var(--card);color:var(--ink);outline:none;
 }
-.input:focus{border-color:var(--terracotta);box-shadow:0 0 0 2px var(--terra-l)}
+.input:focus{border-color:var(--action);box-shadow:0 0 0 2px var(--action-tint)}
 .input::placeholder{color:var(--muted)}
 
 /* ━━━ Toolbar (sticky) ━━━ */
@@ -158,7 +158,7 @@ header .tag{color:var(--muted);font-size:.84rem;margin-top:var(--sp-xs)}
 .bar{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
   background:var(--card);border-top:1px solid var(--rule-soft);
-  box-shadow:0 -2px 12px rgba(60,40,20,.1);
+  box-shadow:0 -2px 12px rgba(27,37,48,.08);
   padding:10px var(--sp-md) calc(10px + env(safe-area-inset-bottom,0px));
   display:flex;align-items:center;gap:var(--sp-sm);
   transform:translateY(100%);transition:transform .2s ease;

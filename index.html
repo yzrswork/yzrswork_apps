@@ -9,7 +9,7 @@
      crossorigin="anonymous"></script>
 <!-- BUILD:ADSENSE:END -->
 <meta name="google-site-verification" content="Gx-rIx1a-8EGxWvW9O4_LmfSJxdIXqbgKj-RKIntctQ" />
-<meta name="theme-color" content="#f0ebe3">
+<meta name="theme-color" content="#f8f9fb">
 <title>や印工務店の道具箱 -- yzrswork apps</title>
 <meta name="description" content="や印工務店(yzrswork)の実用ツール集。電子工作の工具チェック、自作PCのパーツ選び、トラブル診断、DIYと模型の接着剤選びと塗装タイミング判定。オフラインで使える単一HTML製PWA。">
 <link rel="canonical" href="https://apps.yzrswork.com/">
@@ -43,18 +43,18 @@
 </script>
 <link rel="stylesheet" href="shared/tokens.css">
 <style>
-  /* 装備ナビ・yzrswork.com と同じ見た目: テラコッタ軸＋青灰の補助色。黒と緑の面は使わない。 */
-  :root{--rule:#b9a690; --sub:#3f5f7a; --sub-tint:#e3eaf0; --tint:#f3e2d6; --raised:#f6f1e8}
+  /* yzrswork.com と同じハイブリッド配色: ボタン・選択は青灰、強調文字はテラコッタ。黒と緑の面は使わない。 */
+  :root{--rule:var(--line-strong); --sub:var(--action); --sub-tint:var(--action-tint); --tint:var(--action-tint); --raised:var(--card)}
   *{box-sizing:border-box}
   [hidden]{display:none!important}
   body{
     margin:0; font-family:var(--jp); background:var(--paper); color:var(--ink); line-height:1.6; -webkit-text-size-adjust:100%;
   }
-  .sitebar{border-bottom:1px solid var(--rule)}
+  .sitebar{background:var(--card); border-bottom:1px solid var(--line)}
   .sitebar-inner{width:100%; max-width:720px; margin:0 auto; padding:4px 20px; display:flex; align-items:center; justify-content:space-between; gap:0 16px}
   .sitebar a{display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); text-decoration:none}
   .sitebar b{font-size:16px; letter-spacing:.06em}
-  .sitebar span{color:var(--muted); font:italic 14px/1.2 var(--serif)}
+  .sitebar span{color:var(--muted); font:500 11px/1.2 var(--mono); letter-spacing:.12em; text-transform:uppercase}
   .sitebar .to-site{font-size:13px; font-weight:700; color:var(--sub)}
   .wrap{width:100%; max-width:720px; min-width:0; margin:0 auto; padding:8px 20px 48px}
   .wrap > header{padding:22px 0 4px}
@@ -65,55 +65,56 @@
   .quick-nav{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:0 0 4px}
   .quick-nav a{
     display:flex; align-items:center; justify-content:center; min-height:48px; min-width:0; padding:6px 8px; text-align:center;
-    text-decoration:none; color:var(--ink); background:var(--raised); border:1px solid var(--rule); border-radius:999px;
+    text-decoration:none; color:var(--ink); background:var(--raised); border:1px solid var(--line-strong); border-radius:999px;
     font-size:.84rem; font-weight:700; line-height:1.35;
   }
-  .quick-nav a:hover{border-color:var(--terracotta); color:var(--terracotta-deep)}
-  .quick-nav a:first-child{background:var(--tint); border-color:var(--terracotta); color:var(--terracotta-deep)}
+  .quick-nav a:hover{border-color:var(--action); color:var(--action-deep)}
+  .quick-nav a:first-child{background:var(--action-tint); border-color:var(--action); color:var(--action-deep)}
   :is(.quick-nav a,.featured,.app,.note-cta,.sitebar a,footer a):focus-visible{outline:3px solid var(--sub); outline-offset:3px}
-  .about-detail{margin:28px 0 0; padding:16px 18px; border-left:4px solid var(--sub); background:var(--raised); border-radius:0 10px 10px 0}
+  .about-detail{margin:28px 0 0; padding:16px 18px; border:1px solid var(--line); border-left:4px solid var(--sub); background:var(--card); border-radius:0 12px 12px 0}
   .about-detail h2{font-size:1rem; margin:0 0 8px; color:var(--ink)}
   .about-detail p{font-size:.84rem; color:var(--ink-soft); line-height:1.8; margin:0}
 
   /* ── 最初の入口 ── */
   a.featured{
     display:block; min-width:0; text-decoration:none; color:inherit;
-    background:var(--tint); border:1px solid var(--terracotta); border-radius:12px;
-    padding:16px 18px; margin:20px 0 8px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+    padding:18px 20px; margin:20px 0 8px;
   }
   a.featured:active{transform:translateY(1px)}
   .f-eyebrow{
-    display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--terracotta-deep); font-weight:600; margin-bottom:6px;
+    display:inline-block; font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--terracotta-deep); font-weight:500; margin-bottom:6px;
   }
   .featured .name{font-size:1.3rem; font-weight:700}
   .featured .desc{margin:6px 0 14px; color:var(--ink-soft); font-size:.9rem}
   .featured .go{
-    display:inline-flex; align-items:center; min-height:44px; background:var(--terracotta); color:#fff; font-weight:700;
-    font-size:.88rem; padding:8px 18px; border-radius:999px;
+    display:inline-flex; align-items:center; min-height:44px; background:var(--action); color:#fff; font-weight:700;
+    font-size:.88rem; padding:8px 18px; border-radius:8px;
   }
 
   /* ── カテゴリ ── */
   .cat-head{
     display:flex; align-items:baseline; gap:8px; margin:28px 0 10px;
-    padding-bottom:6px; border-bottom:1px solid var(--rule); scroll-margin-top:12px;
+    padding-bottom:6px; border-bottom:1px solid var(--line); scroll-margin-top:12px;
   }
   .cat-head h2{margin:0; font-size:1rem; font-weight:700; letter-spacing:.02em}
-  .cat-head .cnt{margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--terracotta); letter-spacing:.08em}
+  .cat-head .cnt{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--terracotta-deep); letter-spacing:.12em; text-transform:uppercase}
 
   .grid{display:grid; gap:8px; min-width:0}
 
   a.app{
     position:relative; display:block; min-width:0; text-decoration:none; color:inherit;
-    background:var(--raised); border:1px solid var(--rule-soft); border-radius:10px; padding:12px 40px 12px 16px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 40px 12px 16px;
   }
   a.app::after{content:"→"; position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--sub); font-weight:700}
-  a.app:hover{border-color:var(--terracotta)}
+  a.app:hover{border-color:var(--action)}
+  a.featured:hover .go{background:var(--action-deep)}
   a.app:active{transform:translateY(1px)}
   a.app .name{font-size:1rem; font-weight:700; color:var(--ink)}
   a.app .desc{max-width:72ch; overflow-wrap:anywhere; margin:3px 0 0; color:var(--muted); font-size:.82rem; line-height:1.65}
 
-  .note-cta{display:flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--raised); color:var(--sub); border:1px solid var(--sub); padding:10px 14px; border-radius:999px; font-weight:700; margin-top:26px}
+  .note-cta{display:flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--raised); color:var(--sub); border:1px solid var(--sub); padding:10px 14px; border-radius:8px; font-weight:700; margin-top:26px}
   .note-cta:hover{background:var(--sub-tint)}
   .muted{color:var(--muted); font-size:.78rem}
   footer{text-align:center; margin-top:24px}

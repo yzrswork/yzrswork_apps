@@ -6,7 +6,7 @@
   "ogDescription": "はんだの種類と作業から適正なこて先温度を提示。イモはんだ・ブリッジ等のトラブル診断と道具選びつきのはんだ付けナビ。",
   "twitterDescription": "こて先温度・トラブル診断・道具選び。電子工作のはんだ付けを整理した診断ナビ。",
   "ogImage": "https://apps.yzrswork.com/icons/og-handa.png",
-  "themeColor": "#f0ebe3",
+  "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/handa/",
   "appleTouchIcon": "../icons/icon-192.png",
   "hasManifest": true,
@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "はんだの種類と作業から適温を提示。トラブル診断と道具選びつきのはんだ付けナビ。オフライン対応。",
   "hasServiceWorker": true,
-  "swVersion": 6,
+  "swVersion": 7,
   "assets": [
     "./",
     "./index.html",

@@ -6,7 +6,7 @@
   "ogDescription": "タップの下穴、ボルトのバカ穴(通し穴)、木ねじの下穴を、ねじサイズを選ぶだけで表示。並目/細目ピッチ・計算式つきの早見ナビ。",
   "twitterDescription": "タップ下穴・バカ穴・木ねじ下穴を、ねじサイズを選ぶだけで表示する早見ナビ。",
   "ogImage": "https://apps.yzrswork.com/icons/og-neji.png",
-  "themeColor": "#f0ebe3",
+  "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/neji/",
   "appleTouchIcon": "../icons/icon-192.png",
   "hasManifest": true,
@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "タップ下穴・バカ穴・木ねじ下穴の径を、ねじサイズから即座に表示。オフライン早見表。",
   "hasServiceWorker": true,
-  "swVersion": 6,
+  "swVersion": 7,
   "assets": [
     "./",
     "./index.html",

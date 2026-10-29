@@ -9,7 +9,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8467165715973366"
      crossorigin="anonymous"></script>
 <link rel="manifest" href="./manifest.webmanifest" />
-<meta name="theme-color" content="#f0ebe3" />
+<meta name="theme-color" content="#f8f9fb" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="直し方ナビ" />
@@ -71,20 +71,6 @@
     position: relative;
     overflow-x: hidden;
   }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
-      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
-    background-size: 3px 3px, 7px 7px;
-    background-position: 0 0, 1px 2px;
-    z-index: 0;
-    mix-blend-mode: multiply;
-    opacity: 0.9;
-  }
 
   .page {
     position: relative;
@@ -105,7 +91,7 @@
     text-transform: uppercase;
     color: var(--muted);
     padding-bottom: 14px;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 1px solid var(--line);
     margin-bottom: 26px;
   }
   .topbar .brand { color: var(--ink); cursor: pointer; }
@@ -140,8 +126,9 @@
     border: 0;
   }
   .hero .en {
-    font-family: var(--serif);
-    font-style: italic;
+    font-family: var(--mono);
+    font-style: normal;
+    text-transform: uppercase;
     color: var(--terracotta);
     font-size: 16px;
     letter-spacing: 0.1em;
@@ -158,9 +145,9 @@
   .section-label {
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--terracotta-deep);
     margin: 30px 0 12px;
   }
 
@@ -171,7 +158,7 @@
     width: 100%;
     text-align: left;
     background: var(--card);
-    border: 1px solid var(--rule-soft);
+    border: 1px solid var(--line);
     border-radius: 10px;
     padding: 18px 18px;
     cursor: pointer;
@@ -180,9 +167,8 @@
     font-family: var(--jp);
   }
   .menu-card:hover, .menu-card:focus-visible {
-    border-color: var(--terracotta);
+    border-color: var(--action);
     outline: none;
-    transform: translateX(2px);
   }
   .menu-card .mc-num {
     font-family: var(--mono);
@@ -225,7 +211,7 @@
     align-items: center;
     min-height: 44px;
     background: none;
-    border: 1px solid var(--rule-soft);
+    border: 1px solid var(--line);
     border-radius: 6px;
     padding: 5px 10px;
     cursor: pointer;
@@ -233,17 +219,17 @@
     font-family: var(--mono);
     font-size: 11px;
   }
-  .crumb .back:hover { border-color: var(--terracotta); color: var(--terracotta); }
+  .crumb .back:hover { border-color: var(--action); color: var(--action); }
   .crumb .now { color: var(--ink); }
 
   /* ── Node card ───────────────────────── */
   .card {
     background: var(--card);
-    border: 1px solid var(--rule-soft);
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 22px 20px 24px;
   }
-  .card.solution { border-color: rgba(79, 111, 62, 0.5); }
+  .card.solution { border-color: var(--line-strong); }
   .card.win { border-color: var(--terracotta); }
 
   .kicker {
@@ -254,7 +240,7 @@
     color: var(--terracotta);
     margin-bottom: 10px;
   }
-  .card.solution .kicker { color: var(--ok); }
+  .card.solution .kicker { color: var(--terracotta-deep); }
   .qtext {
     font-size: 19px;
     font-weight: 700;
@@ -290,7 +276,7 @@
     counter-increment: step;
     position: relative;
     padding: 8px 0 8px 38px;
-    border-bottom: 1px dashed var(--rule-soft);
+    border-bottom: 1px solid var(--line);
     font-size: 14.5px;
     line-height: 1.6;
   }
@@ -303,7 +289,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: var(--terracotta);
+    background: var(--action);
     color: #fff;
     font-family: var(--mono);
     font-size: 12px;
@@ -311,7 +297,7 @@
     align-items: center;
     justify-content: center;
   }
-  .card.solution ol.steps li::before { background: var(--ok); }
+  .card.solution ol.steps li::before { background: var(--action); }
   ol.steps code, .qtext code, .help code {
     font-family: var(--mono);
     font-size: 0.86em;
@@ -330,9 +316,9 @@
     gap: 12px;
     width: 100%;
     text-align: left;
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 9px;
+    background: var(--card);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
     padding: 14px 16px;
     font-size: 15px;
     font-weight: 500;
@@ -342,16 +328,16 @@
     transition: background 160ms ease, border-color 160ms ease;
   }
   .opt:hover, .opt:focus-visible {
-    background: var(--terracotta);
-    border-color: var(--terracotta);
-    color: #fff;
+    background: var(--action-tint);
+    border-color: var(--action);
+    color: var(--ink);
     outline: none;
   }
   .opt .arrow { font-family: var(--mono); opacity: 0.7; }
-  .opt.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
-  .opt.primary:hover { background: var(--terracotta-deep); }
+  .opt.primary { background: var(--action); border-color: var(--action); color: #fff; border-radius: 8px; }
+  .opt.primary:hover { background: var(--action-deep); border-color: var(--action-deep); color: #fff; }
   .opt.ghost { background: transparent; border-color: var(--rule-soft); color: var(--muted); font-weight: 400; }
-  .opt.ghost:hover { background: var(--paper-2); color: var(--ink); border-color: var(--rule); }
+  .opt.ghost:hover { background: var(--paper-2); color: var(--ink); border-color: var(--line-strong); }
 
   /* ── Links / affiliate ───────────────── */
   .extras { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule-soft); }
@@ -360,9 +346,9 @@
     align-items: center;
     gap: 8px;
     font-size: 13.5px;
-    color: var(--ink);
+    color: var(--terracotta-deep);
     text-decoration: none;
-    border-bottom: 1px solid var(--ink);
+    border-bottom: 1px solid var(--terracotta);
     padding-bottom: 2px;
     margin-bottom: 10px;
   }
@@ -370,25 +356,25 @@
   .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .affiliate {
     display: block;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--action);
+    color: #fff;
     text-decoration: none;
     text-align: center;
-    border-radius: 9px;
+    border-radius: 8px;
     padding: 13px 16px;
     font-weight: 700;
     font-size: 14.5px;
     margin-top: 8px;
     transition: background 160ms ease;
   }
-  .affiliate:hover { background: var(--terracotta); }
+  .affiliate:hover { background: var(--action-deep); }
   .affiliate .sub { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; opacity: 0.7; margin-top: 3px; letter-spacing: 0.04em; }
 
   /* ── Static safety guides ────────────── */
   .static-guides {
     margin-top: 38px;
     padding-top: 24px;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--line);
   }
   .static-guides > h2 {
     margin: 0 0 8px;
@@ -407,7 +393,7 @@
   }
   .safety-guide {
     background: rgba(255, 255, 255, 0.34);
-    border: 1px solid var(--rule-soft);
+    border: 1px solid var(--line);
     border-radius: 10px;
     padding: 16px 17px;
   }
@@ -437,14 +423,14 @@
   footer {
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 12px;
     font-size: 12px;
     color: var(--muted);
   }
-  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-soft); }
+  footer a { color: var(--terracotta-deep); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
   footer a:hover { color: var(--terracotta); border-color: var(--terracotta); }
   .about { margin-top: 26px; font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); }
   .about a { color: var(--terracotta); }
