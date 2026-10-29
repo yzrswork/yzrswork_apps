@@ -26,8 +26,8 @@
 .commerce-card [data-commerce-slot]:has(.commerce-price):not(:has(.commerce-sale)) > p:not([class]) { display: none; }
 .commerce-card .commerce-time { font-size: 12px; }
 .commerce-card a { display: inline-flex; min-height: 44px; align-items: center; color: var(--terracotta-deep); text-underline-offset: 3px; }
-.commerce-card [data-commerce-cta] { padding: 8px 12px; border: 1px solid var(--rule-soft); color: var(--ink); text-decoration: none; font-size: 14px; }
-.commerce-card [data-commerce-cta]:hover { border-color: var(--ink); background: var(--card); }
+.commerce-card [data-commerce-cta] { padding: 8px 12px; border: 1px solid var(--action); border-radius: 8px; background: var(--action); color: #fff; text-decoration: none; font-size: 14px; }
+.commerce-card [data-commerce-cta]:hover { border-color: var(--action-deep); background: var(--action-deep); color: #fff; }
 .commerce-details { grid-column: 1 / -1; }
 .commerce-details > summary { min-height: 44px; padding: 10px 0; cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
 .commerce-detail-body { max-width: 72ch; padding: 0 0 8px; font-size: 15px; }

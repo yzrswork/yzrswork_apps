@@ -6,7 +6,7 @@
   "ogDescription": "電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
   "twitterDescription": "電子工作のオフライン計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間。",
   "ogImage": "https://apps.yzrswork.com/icons/og-bench.png",
-  "themeColor": "#f0ebe3",
+  "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/bench/",
   "appleTouchIcon": "../icons/icon-192.png",
   "hasManifest": true,
@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "電子工作の作業台に常駐する計算ツール集。オームの法則・LED抵抗・カラーコード・555・電池駆動時間をオフラインで。",
   "hasServiceWorker": true,
-  "swVersion": 17,
+  "swVersion": 18,
   "assets": [
     "./",
     "./index.html",

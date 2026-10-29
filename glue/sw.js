@@ -1,4 +1,4 @@
-const CACHE_NAME = 'glue-v7';
+const CACHE_NAME = 'glue-v8';
 const CACHE_PREFIX = 'glue-';
 const ASSETS = [
   './',

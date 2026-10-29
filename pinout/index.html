@@ -9,7 +9,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8467165715973366"
      crossorigin="anonymous"></script>
 <link rel="manifest" href="./manifest.webmanifest" />
-<meta name="theme-color" content="#f0ebe3" />
+<meta name="theme-color" content="#f8f9fb" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="ピンアサインナビ" />
@@ -70,20 +70,6 @@
     position: relative;
     overflow-x: hidden;
   }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
-      radial-gradient(rgba(70, 50, 30, 0.04) 1px, transparent 1px);
-    background-size: 3px 3px, 7px 7px;
-    background-position: 0 0, 1px 2px;
-    z-index: 0;
-    mix-blend-mode: multiply;
-    opacity: 0.9;
-  }
 
   .page {
     position: relative;
@@ -104,7 +90,7 @@
     text-transform: uppercase;
     color: var(--muted);
     padding-bottom: 14px;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 1px solid var(--line);
     margin-bottom: 26px;
   }
   .topbar .brand { color: var(--ink); }
@@ -134,10 +120,10 @@
   .tabs { display: flex; gap: 8px; margin: 20px 0 22px; flex-wrap: wrap; }
   .tab {
     font-family: var(--jp); font-size: 13.5px; font-weight: 500;
-    padding: 9px 16px; border-radius: 20px; cursor: pointer;
-    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line-strong); background: var(--card); color: var(--ink-soft);
   }
-  .tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .tab.active { background: var(--action); border-color: var(--action); color: #fff; }
 
   .section-label {
     font-family: var(--mono);
@@ -282,10 +268,10 @@
   .product .p-buy {
     flex-shrink: 0;
     font-family: var(--jp); font-size: 12.5px; font-weight: 700;
-    background: var(--ink); color: var(--paper); text-decoration: none;
+    background: var(--action); color: #fff; text-decoration: none;
     border-radius: 8px; padding: 9px 12px; white-space: nowrap;
   }
-  .product .p-buy:hover { background: var(--terracotta); }
+  .product .p-buy:hover { background: var(--action-deep); }
 
   /* ── About ───────────────────── */
   .about { margin-top: 30px; font-size: 13.5px; line-height: 1.85; color: var(--ink-soft); }
@@ -296,7 +282,7 @@
   footer {
     margin-top: 36px;
     padding-top: 20px;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 12px;

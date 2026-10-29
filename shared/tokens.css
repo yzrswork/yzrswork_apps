@@ -1,21 +1,28 @@
-/* yzrswork_apps 共通デザイントークン(paper系)
+/* yzrswork_apps 共通デザイントークン
    正: 元kit/index.htmlの:rootブロック。各アプリの重複:root定義を統合。
    --warn は元mem/hddの#b5451b(--terracottaと衝突)から#c98a2b(nurerukun由来のアンバー)へ修正済み。 */
 :root {
-  --paper: #f0ebe3;
-  --paper-2: #e8e1d4;
-  --card: #f6f2ea;
-  --ink: #1c1a16;
-  --ink-soft: #2b2823;
-  --muted: #6f675b;
-  --rule: #3a342c;
-  --rule-soft: rgba(58, 52, 44, 0.28);
+  /* 2026-10-29 ハイブリッド型(yzrswork.com と共通): 青みの白い背景、白いカードと細い線、
+     ボタンと選択中はブルーグレー(--action)、強調文字とリンクはテラコッタ。黒の塗りと緑は使わない。 */
+  --paper: #f8f9fb;
+  --paper-2: #eef1f4;
+  --card: #ffffff;
+  --ink: #1b2530;
+  --ink-soft: #3a4652;
+  --muted: #5d6b78;
+  --rule: #3a4652;
+  --rule-soft: #d5dbe2;
+  --line: #e3e7ec;
+  --line-strong: #cfd6de;
   --terracotta: #b5451b;
-  --terracotta-deep: #8e3514;
-  --ok: #4f6f3e;
+  --terracotta-deep: #9a3a16;
+  --action: #3f5f7a;
+  --action-deep: #2b4256;
+  --action-tint: #e9eff4;
+  --ok: #3f5f7a;
   --warn: #c98a2b;
   --ng: #a83f22;
-  --shadow: 0 2px 10px rgba(58, 52, 44, 0.12);
+  --shadow: 0 1px 2px rgba(27, 37, 48, 0.06);
   --serif: "EB Garamond", "Times New Roman", serif;
   --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --jp: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;

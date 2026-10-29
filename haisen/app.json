@@ -6,7 +6,7 @@
   "ogDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。テスターやデータシートでの確かめ方つきの早見リファレンス。",
   "twitterDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示するオフライン早見リファレンス。",
   "ogImage": "https://apps.yzrswork.com/icons/icon-512.png",
-  "themeColor": "#f0ebe3",
+  "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/haisen/",
   "appleTouchIcon": "../icons/icon-192.png",
   "hasManifest": true,
@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。オフライン早見リファレンス。",
   "hasServiceWorker": true,
-  "swVersion": 8,
+  "swVersion": 9,
   "assets": [
     "./",
     "./index.html",

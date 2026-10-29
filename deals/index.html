@@ -56,29 +56,29 @@
   a:focus-visible { outline: 3px solid var(--terracotta-deep); outline-offset: 4px; }
   small { color: var(--muted); }
   /* DEALSページだけの見た目。テラコッタ軸＋青灰の補助色 */
-  :root { --sub: #3f5f7a; --sub-tint: #e3eaf0; --tint: #f3e2d6; }
+  :root { --sub: var(--action); --sub-tint: var(--action-tint); --tint: var(--action-tint); }
   .eyebrow { color: var(--terracotta); }
   .lead { max-width: 60ch; margin: 0; color: var(--ink-soft); }
-  .rules { max-width: 72ch; margin: 18px 0 0; padding: 12px 16px; border-left: 3px solid var(--sub); background: var(--sub-tint); font-size: 14px; color: var(--ink-soft); }
+  .rules { max-width: 72ch; margin: 18px 0 0; padding: 12px 16px; border-radius: 0 8px 8px 0; border-left: 3px solid var(--sub); background: var(--sub-tint); font-size: 14px; color: var(--ink-soft); }
   .rules p { margin: 0; }
   .rules p + p { margin-top: 4px; }
   .navis { margin: 22px 0 0; }
   .navis h2, .uses h2 { margin: 0 0 8px; font-size: 14px; color: var(--muted); font-weight: 700; }
   .navis nav { margin: 0; gap: 8px; }
   .navis nav a { padding: 0 14px; border: 1px solid var(--rule-soft); border-radius: 999px; background: var(--card); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 700; }
-  .navis nav a:hover { border-color: var(--terracotta); color: var(--terracotta-deep); }
+  .navis nav a:hover { border-color: var(--action); color: var(--action-deep); }
   .uses { margin: 26px 0 6px; }
   .use-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .use-chips button { min-height: 44px; padding: 0 16px; border: 1px solid var(--rule-soft); border-radius: 999px; background: var(--card); color: var(--ink); font: 700 14px var(--jp); cursor: pointer; }
   .use-chips button span { margin-left: 6px; font: 500 12px var(--mono); color: var(--muted); }
-  .use-chips button[aria-pressed="true"] { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .use-chips button[aria-pressed="true"] { background: var(--action); border-color: var(--action); color: #fff; }
   .use-chips button[aria-pressed="true"] span { color: #fff; }
   .use-chips button:focus-visible { outline: 3px solid var(--sub); outline-offset: 3px; }
   .commerce-card.is-filtered-out { display: none; }
   .commerce-card .commerce-trust { display: inline-block; padding: 1px 10px; border: 1px solid var(--rule-soft); border-radius: 999px; font-size: 12.5px; color: var(--ink-soft); }
   .commerce-card[data-evidence="used"] .commerce-trust { border-color: var(--sub); background: var(--sub-tint); color: var(--sub); }
-  .commerce-card [data-commerce-cta] { border-color: var(--terracotta); border-radius: 8px; color: var(--terracotta-deep); font-weight: 700; }
-  .commerce-card [data-commerce-cta]:hover { background: var(--tint); border-color: var(--terracotta-deep); }
+  .commerce-card [data-commerce-cta] { border-color: var(--action); border-radius: 8px; background: var(--action); color: #fff; font-weight: 700; }
+  .commerce-card [data-commerce-cta]:hover { background: var(--action-deep); border-color: var(--action-deep); }
   .commerce-details > summary { color: var(--sub); }
   .commerce-card .commerce-sources a { color: var(--sub); }
 </style>

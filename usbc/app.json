@@ -6,7 +6,7 @@
   "ogDescription": "USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認。60W/100W/240W EPR、e-marker、USB 5〜80Gbpsを整理。",
   "twitterDescription": "USB-Cケーブルの電力・データ・映像仕様を、型番・性能表記・認証表示から確認するナビ。",
   "ogImage": "https://apps.yzrswork.com/icons/og-usbc.png",
-  "themeColor": "#f0ebe3",
+  "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/usbc/",
   "appleTouchIcon": "../icons/icon-192.png",
   "hasManifest": true,
@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "USB-Cケーブルの電力・転送速度・映像仕様を、型番・性能表記から確認するオフライン早見表。",
   "hasServiceWorker": true,
-  "swVersion": 8,
+  "swVersion": 9,
   "assets": [
     "./",
     "./index.html",
