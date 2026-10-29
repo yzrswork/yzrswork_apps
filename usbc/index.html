@@ -300,16 +300,14 @@
 
     <div class="yapps-nav-result" id="app"></div>
 
-    <section class="about yapps-nav-support">
-      <h2>USB-Cの形だけでは能力を決められません</h2>
+    <details class="fold about yapps-nav-support"><summary><h2>USB-Cの形だけでは能力を決められません</h2></summary><div class="fold-body">
       <p>USB-Cはコネクタ形状です。給電、データ、映像の可否と上限は、ケーブル、接続元、接続先それぞれの仕様で決まります。太さ、硬さ、色、付属品かどうかといった外観から、速度・電力・映像対応を判断することはできません。型番とメーカー仕様、性能表示、認証表示を照合してください。</p>
       <p>電力では、3 Aケーブルで20 Vを契約する場合の上限が60 W（20 V × 3 A）です。USB PD 3.1でEPRが導入される前の上限は、20 V・5 Aによる100 Wでした。USB PD 3.1のEPRは、対応する充電器・ケーブル・受電機器がそろう場合に最大240 W（48 V・5 A）までを定義します。e-markerはケーブルがUSB PDのDiscover Identityに応答して返す識別情報であり、5 AやEPRのケーブル能力を伝えるために使われます。e-markerや電力表記だけで、接続した機器がその電力を使えることまでは示しません。</p>
       <p>USB-IFの消費者向け性能表記は USB 5Gbps / 10Gbps / 20Gbps / 40Gbps / 80Gbps です。製品に記された値は信号速度の区分であり、実際の転送量や対応機能を単独では保証しません。DisplayPort Alt Modeは、対応するUSB-Cポート・接続先・必要な信号を備えるケーブルで成立します。USB 2.0 Type-CケーブルはSuperSpeed信号とAlt Mode用SBU信号を実装しないため、Alt Modeには使えません。</p>
       <p>ThunderboltはUSB-C形状を使う別の認証・機能要件です。Thunderbolt 4は40 Gbpsを必須要件とし、Thunderbolt 5は最大80 Gbpsの双方向帯域を定義します。Thunderbolt 5の最大120 Gbpsは映像量が多い場合のBandwidth Boostであり、すべての通信や任意のUSB-Cケーブルに当てはまる速度ではありません。世代表記と製品仕様を確認してください。</p>
-    </section>
+    </div></details>
 
-    <section class="about yapps-nav-support" aria-labelledby="usbc-primary-sources">
-      <h2 id="usbc-primary-sources">一次資料（2026年8月13日確認）</h2>
+    <details class="fold about yapps-nav-support" aria-labelledby="usbc-primary-sources"><summary><h2 id="usbc-primary-sources">一次資料（2026年8月13日確認）</h2></summary><div class="fold-body">
       <ul>
         <li><a href="https://www.usb.org/usb-charger-pd" target="_blank" rel="noopener noreferrer">USB-IF: USB Charger (USB Power Delivery)</a> — PD 3.1/EPR、100 Wから最大240 Wへの拡張。</li>
         <li><a href="https://www.usb.org/sites/default/files/usb_data_performance_language_usage_guidelines_jan_2024.pdf" target="_blank" rel="noopener noreferrer">USB-IF: USB Data Performance Language Usage Guidelines</a> — USB 5/10/20/40/80Gbpsの表記。</li>
@@ -317,7 +315,7 @@
         <li><a href="https://vesa.org/featured-articles/vesa-releases-updated-displayport-alt-mode-spec-to-bring-displayport-2-0-performance-to-usb4-and-new-usb-type-c-devices/" target="_blank" rel="noopener noreferrer">VESA: DisplayPort Alt Mode</a> — USB-C上のDisplayPort Alt Mode。</li>
         <li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/overview.html" target="_blank" rel="noopener noreferrer">Intel: Thunderbolt Technology</a> — Thunderbolt 4/5の帯域要件とBandwidth Boost。</li>
       </ul>
-    </section>
+    </div></details>
 
     <footer class="yapps-nav-next-action">
       <div>

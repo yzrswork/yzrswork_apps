@@ -339,3 +339,103 @@
     min-height: 0;
   }
 }
+
+/* ── 装備ナビ(kit)にそろえる見た目 ──
+   テラコッタ軸＋青灰の補助色。黒と緑の面は使わない。
+   モード切替(タブ)は塗り、選択肢は淡い色＋テラコッタの枠、長い解説は .fold で折りたたむ。 */
+.yapps-navigator {
+  --rule: #b9a690;
+  --sub: #3f5f7a;
+  --sub-tint: #e3eaf0;
+  --tint: #f3e2d6;
+  --ok: var(--sub);
+}
+
+.yapps-navigator :is(.matchip, .condchip, .use-btn, .opt-btn, .ddr-choice, .pick):is(.active, [aria-pressed="true"]) {
+  background: var(--tint);
+  border-color: var(--terracotta);
+  box-shadow: inset 0 0 0 1px var(--terracotta);
+  color: var(--ink);
+}
+
+.yapps-navigator :is(.matchip, .condchip, .use-btn, .opt-btn, .ddr-choice, .pick):is(.active, [aria-pressed="true"]) :is(.mc-sub, .cc-sub) {
+  color: var(--ink-soft);
+}
+
+.yapps-navigator :is(.tab, .entry-tab, .group-btn).active {
+  background: var(--terracotta);
+  border-color: var(--terracotta);
+  color: #fff;
+}
+
+.yapps-navigator :is(.p-buy, .affiliate, .cc-accept, .cc-buy, .model-accept, .model-buy, .pick a) {
+  background: var(--terracotta-deep);
+  color: #fff;
+}
+
+.yapps-navigator :is(.p-buy, .affiliate, .cc-accept, .cc-buy, .model-accept, .model-buy, .pick a):hover {
+  background: var(--terracotta);
+}
+
+.yapps-navigator .yapps-nav-result .card {
+  border-top-color: var(--rule);
+}
+
+.yapps-navigator a:not([class]) {
+  color: var(--sub);
+}
+
+.yapps-navigator .fold {
+  margin: 0 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.yapps-navigator .fold.yapps-nav-support,
+.yapps-navigator .fold.yapps-nav-guidance {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.yapps-navigator .fold:first-of-type {
+  margin-top: 24px;
+}
+
+.yapps-navigator .fold > summary {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+  list-style: none;
+}
+
+.yapps-navigator .fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.yapps-navigator .fold > summary::after {
+  content: "＋";
+  margin-left: auto;
+  color: var(--ink-soft);
+}
+
+.yapps-navigator .fold[open] > summary::after {
+  content: "－";
+}
+
+.yapps-navigator .fold > .fold-body {
+  padding: 0 14px 14px;
+}
+
+.yapps-navigator .fold > summary h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+}

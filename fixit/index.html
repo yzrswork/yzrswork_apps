@@ -1155,9 +1155,9 @@ function renderHome() {
       <div class="section-label">— 診断メニュー</div>
       <ul class="menu">${cards}</ul>
     </section>
-    <section class="about yapps-nav-support">
+    <details class="fold about yapps-nav-support"><summary><span>このナビについて</span></summary><div class="fold-body">
       <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側の外部メール利用設定とIMAP・SMTPを確認して復旧した話。Windows 11の共有フォルダーが見えなくなり、資格情報・Function Discovery・ESET設定の3点を確認・変更したあとに復旧した話（個別の原因は未分離）。自作PCのビープ音が、ケーブルやモニターも含めた切り分け後、HDMIセレクターを挟んだ構成では再発しなくなった話（原因仮説は未検証）。ObsidianとiCloudの過去記事は現在の公式情報と非推奨追記を踏まえ、バックアップ優先の安全手順へ改訂しています。トラブルの渦中でも確認しやすいよう、観測事実と未確認の仮説を分けてナビ形式に組み直しました。</p>
-    </section>`;
+    </div></details>`;
 
   appEl.querySelectorAll('.menu-card').forEach((btn) => {
     btn.addEventListener('click', () => {

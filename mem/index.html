@@ -110,21 +110,21 @@
   .info-empty { font-size: 13px; color: var(--muted); padding: 4px 2px; }
 
   /* Combined recommendation */
-  .reco { margin-top: 16px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 16px; }
-  .reco .rc-lab { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #f0c9b8; }
+  .reco { margin-top: 16px; background: var(--tint); border: 1px solid var(--terracotta); color: var(--ink); border-radius: 12px; padding: 16px; }
+  .reco .rc-lab { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--terracotta-deep); }
   .reco .rc-core { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0 8px; }
-  .reco .rc-value { min-width: 0; padding: 9px 10px; border: 1px solid rgba(240, 235, 227, 0.2); border-radius: 8px; }
-  .reco .rc-value span { display: block; font-family: var(--mono); font-size: 10px; color: #f0c9b8; letter-spacing: 0.06em; }
+  .reco .rc-value { min-width: 0; padding: 9px 10px; border: 1px solid var(--rule-soft); border-radius: 8px; background: var(--paper); }
+  .reco .rc-value span { display: block; font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
   .reco .rc-value strong { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
   .reco .rc-sub { font-size: 12.5px; opacity: 0.85; }
   .reco .rc-accept, .reco .rc-buy { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 12px; border-radius: 8px; padding: 10px 16px; font-family: var(--jp); font-weight: 700; font-size: 13.5px; }
-  .reco .rc-accept { border: 1px solid rgba(240, 235, 227, 0.55); background: transparent; color: var(--paper); cursor: pointer; }
-  .reco .rc-accept:hover { border-color: #fff; background: rgba(240, 235, 227, 0.1); }
+  .reco .rc-accept { border: 1px solid var(--sub); background: var(--paper); color: var(--sub); cursor: pointer; }
+  .reco .rc-accept:hover { background: var(--sub-tint); }
   .reco .rc-buy { background: var(--terracotta); color: #fff; text-decoration: none; }
   .reco .rc-buy:hover { background: var(--terracotta-deep); }
-  .reco .rc-details { margin-top: 14px; border-top: 1px solid rgba(240, 235, 227, 0.2); }
-  .reco .rc-details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: #f0c9b8; font-size: 12px; }
-  .reco .rc-details p, .reco .rc-details li { color: rgba(240, 235, 227, 0.84); font-size: 12px; }
+  .reco .rc-details { margin-top: 14px; border-top: 1px solid var(--rule-soft); }
+  .reco .rc-details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--sub); font-size: 12px; }
+  .reco .rc-details p, .reco .rc-details li { color: var(--ink-soft); font-size: 12px; }
   .reco .rc-details p { margin: 0 0 6px; }
   .reco .rc-details ul { margin: 0; padding-left: 18px; }
 
@@ -210,10 +210,10 @@
       <div class="picks" id="picks"></div>
     </div>
 
-    <section class="about yapps-nav-support">
+    <details class="fold about yapps-nav-support"><summary><span>このナビについて</span></summary><div class="fold-body">
       <p>自作PCを組んだとき、地味に悩んだのがメモリでした。DDR3、DDR4、DDR5と数字が増えるたびに何が違うのか分からなくなりますが、実は迷う余地は意外と少なくて、規格はマザーボードを買った時点で決まっています。世代ごとにノッチ（切り欠き）の位置が違うので、合わない規格はそもそも刺さりません。だから順番は「まずマザーボードで規格を確認、次に用途で容量を決める」。容量が足りないとOSはSSDをメモリ代わりに使い始めて（スワップ）、体感がいっきに重くなります。「なんか遅い」の原因はCPUよりメモリ不足のことが多い、というのが組んでみての実感です。自分はRyzen 7 5700XのAM4構成だったのでDDR4一択、用途から32GB（16GBを2枚のデュアルチャネル）を選びました。このナビは、その時の検討をそのまま「ソケットから規格、用途から容量」の順にたどれる形にしたものです。</p>
       <p>選定の一部始終と価格高騰の話はnoteで: <a href="https://note.com/yzrswork/n/nce3e5fb266b4" target="_blank" rel="noopener noreferrer">DDR3からDDR5の進化と16GBのTEAMGROUPを選んだ話</a></p>
-    </section>
+    </div></details>
 
     <p class="disclaimer">※ 規格・速度の最終判断は、CPUの公式仕様とマザーボードの製品ページ「メモリ」欄、対応リスト（QVL）で確認してください。EXPO / XMPはオーバークロック設定で、定格動作を保証するものではありません。Intel LGA1700はマザーによりDDR4専用／DDR5専用が分かれます。情報は2026年7月時点。</p>
 
