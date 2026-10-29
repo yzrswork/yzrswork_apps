@@ -14,7 +14,7 @@
   "manifestFile": "manifest.webmanifest",
   "manifestDescription": "USB-Cケーブルの電力・転送速度・映像仕様を、型番・性能表記から確認するオフライン早見表。",
   "hasServiceWorker": true,
-  "swVersion": 7,
+  "swVersion": 8,
   "assets": [
     "./",
     "./index.html",

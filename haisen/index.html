@@ -352,12 +352,11 @@
       </div>
     </section>
 
-    <section class="about yapps-nav-support">
-      <h2>配線の何でつまずくのか</h2>
+    <details class="fold about yapps-nav-support"><summary><h2>配線の何でつまずくのか</h2></summary><div class="fold-body">
       <p>電子工作で作業台の手が止まる原因は、大きな失敗よりも「端子の取り違え」です。ステレオジャックのLとRがどっちの足かわからない。DCジャックの3つの端子のどれが何か。タクトスイッチの4本足を、押していないのにつながる向きに挿してしまう。電解コンデンサやLEDを逆向きにつけてしまう。どれも部品を見ただけでは判断しづらく、一度覚えても次の作業ではまた迷います。</p>
       <p>やっかいなのは、同じ種類の部品でも型番や品物によって足の並びが変わることです。トランジスタや三端子レギュレータは特にそうで、「この型番はこの並び」を思い込みで決めると壊します。だからこのナビは、配置の早見だけでなく、テスターの導通チェックやデータシートで「自分の手元の部品を自分で確かめる」やり方をセットで載せています。確かめ方さえ身につけば、載っていない部品でも迷わなくなります。</p>
       <p>ここに載せた配置や極性は、代表的な仕様や各部品の一般的な決まりに基づいています。ただし手元の部品が本当にその通りかは、配線する前にテスターや製品のデータシートでも確認してください。</p>
-    </section>
+    </div></details>
 
     <footer class="yapps-nav-next-action">
       <div>
@@ -396,7 +395,7 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
 var C = {
   sig:  'var(--terracotta)',       // 信号 / L / Tip / プラス
   r:    'var(--terracotta-deep)',  // R / Ring
-  gnd:  'var(--ink)',              // GND / マイナス / Sleeve
+  gnd:  'var(--muted)',              // GND / マイナス / Sleeve
   sw:   'var(--warn)',             // スイッチ / コモン / 特殊
   mid:  'var(--ok)',               // ワイパー / 中間
   plain:'var(--card)'
