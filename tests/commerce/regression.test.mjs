@@ -30,7 +30,9 @@ test('mem base remains functional when optional Commerce JS fails; matching pres
   assert.equal(elements.get('picks-section').hidden, false);
   assert.match(elements.get('picks').innerHTML, /mem-crucial-ddr4-32/);
   assert.ok(!elements.get('picks').innerHTML.includes('mem-crucial-ddr5-32'));
-  for (const [socket, expected, excluded] of [['am4', ['mem-crucial-ddr4-32', 'mem-team-ddr4-32'], ['mem-crucial-ddr5-32']], ['am5', ['mem-crucial-ddr5-32'], ['mem-crucial-ddr4-32', 'mem-team-ddr4-32']]]) {
+  const memKeys = ddr => Object.entries(api.products)
+    .filter(([, p]) => p.kind === 'product' && p.displayOn?.includes('mem') && p.conditions?.ddr === ddr).map(([key]) => key);
+  for (const [socket, expected, excluded] of [['am4', memKeys('DDR4'), memKeys('DDR5')], ['am5', memKeys('DDR5'), memKeys('DDR4')]]) {
     for (const use of ['game', 'creative', 'ai']) {
       runInNewContext(`selSocket = '${socket}'; selUse = '${use}'; candidateAccepted = true; renderReco(); renderPicks();`, sandbox);
       assert.equal(elements.get('picks-section').hidden, false);

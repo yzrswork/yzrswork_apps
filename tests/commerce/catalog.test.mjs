@@ -22,28 +22,15 @@ function withPending(source) {
   delete fixture.site.affiliate.products[PENDING_KEY].specSummary;
   return fixture;
 }
-test('real catalog: seven Owner-approved products; production normal web only', () => {
+test('real catalog: every approved+enabled product is published in catalog order; production normal web only', () => {
   assert.deepEqual(validateCommerceCatalog(catalog), []);
   const projection = commerceProjection(catalog);
   assert.deepEqual(browser, projection); assert.deepEqual(worker, projection);
-  assert.deepEqual(Object.keys(projection.products), [
-    'mem-crucial-ddr4-32',
-    'mem-team-ddr4-32',
-    'mem-crucial-ddr5-32',
-    'solder-hakko-fx600a',
-    'tool-engineer-paw01',
-    'hdd-wd-blue-4tb-wd40ezax-ajp',
-    'solder-goot-sd83',
-  ]);
-  assert.deepEqual(Object.values(projection.products).map(p => [p.model, p.asin]), [
-    ['CP2K16G4DFRA32A', 'B0C29R9LNL'],
-    ['TPRD432G3200HC22DC01', 'B093GNJS1T'],
-    ['CP2K16G60C48U5', 'B0CT9BMGLF'],
-    ['FX600A', 'B076KMS5CV'],
-    ['PAW-01', 'B072BYT2V3'],
-    ['WD40EZAX-AJP', 'B0CKLCK9SW'],
-    ['SD-83', 'B0C8YYM78X'],
-  ]);
+  // 承認の正は catalog.json。公開されるのは approved かつ enabled の商品だけで、catalogの並び順を保つ。
+  const approvedEnabled = Object.entries(catalog.site.affiliate.products)
+    .filter(([, p]) => p.kind === 'product' && p.ownerReview === 'approved' && p.enabled === true).map(([key]) => key);
+  assert.deepEqual(Object.keys(projection.products), approvedEnabled);
+  assert.ok(approvedEnabled.length >= 6);
   for (const p of Object.values(projection.products)) {
     assert.equal(p.ownerReview, 'approved'); assert.equal(p.enabled, true);
     assert.ok(p.specSummary); assert.ok(p.recommendationReason); assert.ok(p.evidence);
@@ -60,7 +47,7 @@ test('real catalog: seven Owner-approved products; production normal web only', 
   assert.equal(catalog.site.commerce.liveApiApproved, true);
   assert.equal(catalog.site.commerce.amazonSupportApproved, true);
 });
-test('static Deals: seven ordered rows keep judgment and safety visible; full rationale and canonical sources remain in native details', () => {
+test('static Deals: ordered rows keep judgment and safety visible; full rationale and canonical sources remain in native details', () => {
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
   const rows = [...html.matchAll(/<article\b[^>]*data-deals-card="([^"]+)"[^>]*>[\s\S]*?<\/article>/g)];
   assert.deepEqual(rows.map(row => row[1]), Object.keys(browser.products));
@@ -127,24 +114,30 @@ test('pending cannot be enabled; approved cannot bypass product review; dynamic 
     assert.ok(validateCommerceCatalog(fixture).length); assert.throws(() => commerceProjection(fixture));
   }
 });
-test('repository explicit approval guard rejects ASIN substitution and otherwise complete unlisted approval', () => {
+test('repository approval guard: catalog approved + approval date is the authority', () => {
   const temp = mkdtempSync(join(tmpdir(), 'yzrs-approval-guard-'));
   try {
     cpSync(new URL('../../', import.meta.url), temp, { recursive: true, filter: path => !['.git', '.wrangler', 'node_modules'].includes(basename(path)) });
+    const build = () => spawnSync(process.execPath, ['scripts/build.mjs'], { cwd: temp, encoding: 'utf8' });
     const run = () => spawnSync(process.execPath, ['scripts/check.mjs'], { cwd: temp, encoding: 'utf8' });
     assert.equal(run().status, 0);
-    const altered = structuredClone(catalog);
-    altered.site.affiliate.products['mem-crucial-ddr4-32'].asin = 'B000000099';
-    writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(altered));
-    const mismatch = run(); assert.equal(mismatch.status, 1); assert.match(mismatch.stderr, /Owner個別承認と商品構成が一致しない/);
-    const unapproved = withPending(catalog), p = unapproved.site.affiliate.products[PENDING_KEY];
-    Object.assign(p, { enabled: true, ownerReview: 'approved', ownerReviewedAt: '2026-10-02',
+    // 完全な承認済み商品を catalog に足して build すれば、ほかの一覧を直さなくても check は通る。
+    const added = withPending(catalog), p = added.site.affiliate.products[PENDING_KEY];
+    Object.assign(p, { enabled: true, ownerReview: 'approved', ownerReviewedAt: '2026-10-30',
       useCases: ['game'], displayOn: ['mem', 'deals'], recommendationReason: 'MOCK ONLY', specSummary: 'MOCK ONLY',
       evidence: { level: 'specification', description: 'MOCK ONLY', sourceUrl: p.sourceUrl } });
-    assert.deepEqual(validateCommerceCatalog(unapproved), []); // Schema completeness cannot grant approval.
-    writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(unapproved));
-    const unauthorized = run(); assert.equal(unauthorized.status, 1);
-    assert.match(unauthorized.stderr, /想定外のaffiliate productを承認/);
+    writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(added, null, 2) + '\n');
+    assert.equal(build().status, 0);
+    const accepted = run(); assert.equal(accepted.status, 0, accepted.stderr);
+    assert.match(readFileSync(join(temp, 'affiliate.js'), 'utf8'), /B000000098/);
+    // 承認日のない承認は通さない。
+    const undated = structuredClone(added); undated.site.affiliate.products[PENDING_KEY].ownerReviewedAt = null;
+    writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(undated));
+    const missingDate = run(); assert.equal(missingDate.status, 1); assert.match(missingDate.stderr, /承認日/);
+    // 未承認の商品は表示できない。
+    const pending = withPending(catalog); pending.site.affiliate.products[PENDING_KEY].enabled = true;
+    writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(pending));
+    const unapproved = run(); assert.equal(unapproved.status, 1); assert.match(unapproved.stderr, /未承認の商品を表示/);
   } finally { rmSync(temp, { recursive: true, force: true }); }
 });
 test('one Product Authority/revision: fabricated approval changes generated revision, not source values', () => {

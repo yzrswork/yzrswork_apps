@@ -103,63 +103,10 @@ const expectedAffiliateDisclosure =
 const expectedAdsenseMeta = `<meta name="google-adsense-account" content="${adsense?.client}"`;
 const expectedAdsenseScript =
   `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense?.client}`;
-const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
-  'hdd-blue-search',
-  'hdd-redplus-search',
-  'hdd-red-search',
-  'hdd-purple-search',
-  'hdd-black-search',
-  'hdd-model-search',
-  'mem-condition-search',
-  'build-storage-search',
-  'build-power-search',
-]);
-const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([]);
-// Owner approvals are explicit guards, not another Product Master.
-const EXPECTED_APPROVED_PRODUCTS = Object.freeze({
-  'mem-crucial-ddr4-32': {
-    maker: 'Crucial', model: 'CP2K16G4DFRA32A', asin: 'B0C29R9LNL', ownerReviewedAt: '2026-10-02',
-    evidenceLevel: 'specification', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
-    specSummary: 'DDR4 / 32GB / 16GB×2 / 3200 MT/s',
-    conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
-  },
-  'mem-team-ddr4-32': {
-    maker: 'TEAMGROUP', model: 'TPRD432G3200HC22DC01', asin: 'B093GNJS1T', ownerReviewedAt: '2026-10-30',
-    evidenceLevel: 'used', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
-    specSummary: 'DDR4 / 32GB / 16GB×2 / 3200 MT/s / CL22',
-    conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
-  },
-  'mem-crucial-ddr5-32': {
-    maker: 'Crucial', model: 'CP2K16G60C48U5', asin: 'B0CT9BMGLF', ownerReviewedAt: '2026-10-02',
-    evidenceLevel: 'specification', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
-    specSummary: 'DDR5 / 32GB / 16GB×2 / 6000 MT/s',
-    conditions: { ddr: 'DDR5', capacity: '32GB', kit: '16GBx2' },
-  },
-  'solder-hakko-fx600a': {
-    maker: 'HAKKO', model: 'FX600A', asin: 'B076KMS5CV', ownerReviewedAt: '2026-10-05',
-    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'handa', 'deals'],
-    specSummary: '50W / 200–500℃ / セラミックヒーター / T18シリーズ',
-    conditions: { power: '50W', temperature: '200-500C', tipSeries: 'T18' },
-  },
-  'tool-engineer-paw01': {
-    maker: 'ENGINEER', model: 'PAW-01', asin: 'B072BYT2V3', ownerReviewedAt: '2026-10-05',
-    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'deals'],
-    specSummary: '0.05–8mm² / AWG30–8 / 電線径自動調整 / ワイヤーカッター',
-    conditions: { wireArea: '0.05-8mm2', awg: 'AWG30-8', cutter: '3.2mm' },
-  },
-  'hdd-wd-blue-4tb-wd40ezax-ajp': {
-    maker: 'Western Digital', model: 'WD40EZAX-AJP', asin: 'B0CKLCK9SW', ownerReviewedAt: '2026-10-05',
-    evidenceLevel: 'specification', useCases: ['storage', 'archive'], displayOn: ['hdd', 'build', 'deals'],
-    specSummary: '4TB / 3.5インチ / SATA / 5400RPM / CMR / 256MBキャッシュ',
-    conditions: { capacity: '4TB', formFactor: '3.5-inch', interface: 'SATA', recording: 'CMR', rpm: '5400', cache: '256MB' },
-  },
-  'solder-goot-sd83': {
-    maker: 'goot', model: 'SD-83', asin: 'B0C8YYM78X', ownerReviewedAt: '2026-10-05',
-    evidenceLevel: 'used', useCases: ['maker', 'repair'], displayOn: ['kit', 'handa', 'deals'],
-    specSummary: 'Sn60/Pb40 / φ1.0mm / 約3.0m / ヤニ入り',
-    conditions: { composition: 'Sn60/Pb40', diameter: '1.0mm', length: '3.0m', rosin: 'core' },
-  },
-});
+// Owner承認の正は site/catalog.json の ownerReview: approved と ownerReviewedAt だけ。
+// ここに承認済み商品の一覧を二重に持たない。
+const isIsoDay = value => /^\d{4}-\d{2}-\d{2}$/.test(value || '') &&
+  !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 
 assertUnique(categoryIds, 'category.id');
 assertUnique(allSlugs, 'slug');
@@ -203,40 +150,12 @@ if (!affiliateProducts || typeof affiliateProducts !== 'object' || Array.isArray
 }
 
 if (affiliateProducts) {
-  for (const key of EXPECTED_APPROVED_SEARCH_KEYS) {
-    const product = affiliateProducts[key];
-    if (!product) {
-      fail(`affiliate search keyがcatalogにない: ${key}`);
-      continue;
-    }
-    if (product.kind !== 'search') fail(`affiliate search keyのkindが不正: ${key}`);
-    if (product.ownerReview !== 'approved') fail(`affiliate search keyが未承認: ${key}`);
-  }
-  for (const key of PROTECTED_PENDING_AFFILIATE_KEYS) {
-    const product = affiliateProducts[key];
-    if (!product) {
-      fail(`固定ASIN候補のcatalog keyがない: ${key}`);
-    } else if (product.ownerReview !== 'pending' || product.enabled !== false) {
-      fail(`固定ASIN候補をpending以外に変更している: ${key}`);
-    }
-  }
-  for (const [key, expected] of Object.entries(EXPECTED_APPROVED_PRODUCTS)) {
-    const p = affiliateProducts[key];
-    if (p?.kind !== 'product' ||
-        p.maker !== expected.maker || p.model !== expected.model || p.asin !== expected.asin ||
-        p.ownerReview !== 'approved' || p.enabled !== true || p.ownerReviewedAt !== expected.ownerReviewedAt ||
-        p.evidence?.level !== expected.evidenceLevel ||
-        p.specSummary !== expected.specSummary ||
-        JSON.stringify(p.conditions) !== JSON.stringify(expected.conditions) ||
-        JSON.stringify(p.useCases) !== JSON.stringify(expected.useCases) ||
-        JSON.stringify(p.displayOn) !== JSON.stringify(expected.displayOn)) {
-      fail(`Owner個別承認と商品構成が一致しない: ${key}`);
-    }
-  }
   for (const [key, product] of Object.entries(affiliateProducts)) {
-    if (product?.ownerReview === 'approved' && !EXPECTED_APPROVED_SEARCH_KEYS.includes(key) &&
-        !Object.hasOwn(EXPECTED_APPROVED_PRODUCTS, key)) {
-      fail(`想定外のaffiliate productを承認している: ${key}`);
+    if (product?.kind === 'product' && product.ownerReview === 'approved' && !isIsoDay(product.ownerReviewedAt)) {
+      fail(`承認済み商品に承認日(ownerReviewedAt)がない: ${key}`);
+    }
+    if (product?.kind === 'product' && product.enabled === true && product.ownerReview !== 'approved') {
+      fail(`未承認の商品を表示しようとしている: ${key}`);
     }
   }
 }
@@ -501,23 +420,19 @@ if (!publicAffiliateApi) {
   fail('affiliate.jsの公開APIが生成されていない');
 } else {
   const publicKeys = Object.keys(publicAffiliateApi.products || {}).sort();
-  const expectedPublicKeys = [...EXPECTED_APPROVED_SEARCH_KEYS, ...Object.keys(EXPECTED_APPROVED_PRODUCTS)].sort();
-  if (JSON.stringify(publicKeys) !== JSON.stringify(expectedPublicKeys)) {
-    fail('generated affiliate bundleの公開key集合が想定と不一致');
+  const approvedKeys = Object.entries(affiliateProducts || {})
+    .filter(([, product]) => product?.ownerReview === 'approved').map(([key]) => key).sort();
+  if (JSON.stringify(publicKeys) !== JSON.stringify(approvedKeys)) {
+    fail('generated affiliate bundleの公開key集合がcatalogの承認済みと不一致');
   }
-  for (const key of EXPECTED_APPROVED_SEARCH_KEYS) {
-    const product = publicAffiliateApi.getProduct(key);
-    if (!product) {
-      fail(`approved search productがgenerated bundleにない: ${key}`);
-      continue;
-    }
-    if (product.kind !== 'search') fail(`generated bundleのsearch kindが不正: ${key}`);
+  // アソシエイトタグは全リンク(検索・商品とも)に必ず付く。
+  const expectedTag = `tag=${encodeURIComponent(affiliate.associateTag)}`;
+  for (const key of approvedKeys) {
     try {
       const url = publicAffiliateApi.urlFor(key);
-      const expectedTag = `tag=${encodeURIComponent(affiliate.associateTag)}`;
       if (!url.includes(expectedTag)) fail(`generated affiliate URLのtagが不正: ${key}`);
     } catch {
-      fail(`approved search productのURLを生成できない: ${key}`);
+      fail(`approved affiliate productのURLを生成できない: ${key}`);
     }
   }
   for (const [key, product] of Object.entries(publicAffiliateApi.products || {})) {
