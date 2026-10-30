@@ -114,15 +114,19 @@ const EXPECTED_APPROVED_SEARCH_KEYS = Object.freeze([
   'build-storage-search',
   'build-power-search',
 ]);
-const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([
-  'mem-team-ddr4-32',
-]);
+const PROTECTED_PENDING_AFFILIATE_KEYS = Object.freeze([]);
 // Owner approvals are explicit guards, not another Product Master.
 const EXPECTED_APPROVED_PRODUCTS = Object.freeze({
   'mem-crucial-ddr4-32': {
     maker: 'Crucial', model: 'CP2K16G4DFRA32A', asin: 'B0C29R9LNL', ownerReviewedAt: '2026-10-02',
     evidenceLevel: 'specification', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
     specSummary: 'DDR4 / 32GB / 16GB×2 / 3200 MT/s',
+    conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
+  },
+  'mem-team-ddr4-32': {
+    maker: 'TEAMGROUP', model: 'TPRD432G3200HC22DC01', asin: 'B093GNJS1T', ownerReviewedAt: '2026-10-30',
+    evidenceLevel: 'used', useCases: ['game', 'creative', 'ai'], displayOn: ['mem', 'deals'],
+    specSummary: 'DDR4 / 32GB / 16GB×2 / 3200 MT/s / CL22',
     conditions: { ddr: 'DDR4', capacity: '32GB', kit: '16GBx2' },
   },
   'mem-crucial-ddr5-32': {
