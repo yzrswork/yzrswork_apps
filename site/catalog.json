@@ -378,6 +378,176 @@
           },
           "enabled": true,
           "ownerReviewedAt": "2026-10-05"
+        },
+        "tool-astroai-dt132a": {
+          "kind": "product",
+          "tags": [
+            "tester",
+            "multimeter"
+          ],
+          "useCases": [
+            "maker",
+            "repair"
+          ],
+          "relatedArticles": [
+            {
+              "label": "電子工作vol.2 — 工具の話",
+              "url": "https://note.com/yzrswork/n/nd08cb43b6ca4"
+            }
+          ],
+          "lastVerified": "2026-10-30",
+          "ownerReview": "approved",
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-30",
+          "label": "AstroAI DT132A デジタルマルチメーター（4000カウント）",
+          "maker": "AstroAI",
+          "model": "DT132A",
+          "asin": "B07FDBW1PT",
+          "category": "tester",
+          "conditions": {
+            "counts": "4000",
+            "ranging": "auto"
+          },
+          "specSummary": "4000カウント / オートレンジ / 電圧・電流・抵抗・導通・周波数・ダイオード・温度",
+          "note": "YZRS実使用品。電流測定は回路の電流経路へ直列に入れる測り方なので、端子とレンジを確認してから使う。",
+          "sourceUrl": "https://jp.astroai.com/digital-multimeter-4000-counts-dt132a/ap/100093",
+          "recommendationReason": "導通確認と電圧確認を中心に、電子工作の「つながっていない」「電圧が想定と違う」を切り分けるためのテスターです。YZRSではジャックの端子の見分けや電源の出力確認に使っています。",
+          "displayOn": [
+            "kit",
+            "deals"
+          ],
+          "evidence": {
+            "level": "used",
+            "description": "YZRS実使用品(ジャック端子の見分け、電源ボードPDB-1の出力5.46V確認など)。AstroAIの製品ページ記載の4000カウント・オートレンジ・測定項目に基づく推薦です。",
+            "sourceUrl": "https://jp.astroai.com/digital-multimeter-4000-counts-dt132a/ap/100093"
+          }
+        },
+        "tool-engineer-ns04": {
+          "kind": "product",
+          "tags": [
+            "nipper",
+            "esd"
+          ],
+          "useCases": [
+            "maker",
+            "repair"
+          ],
+          "relatedArticles": [
+            {
+              "label": "電子工作vol.2 — 工具の話",
+              "url": "https://note.com/yzrswork/n/nd08cb43b6ca4"
+            }
+          ],
+          "lastVerified": "2026-10-30",
+          "ownerReview": "approved",
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-30",
+          "label": "ENGINEER NS-04 ESDマイクロニッパー",
+          "maker": "ENGINEER",
+          "model": "NS-04",
+          "asin": "B000TGJSWG",
+          "category": "cutting",
+          "conditions": {
+            "length": "120mm",
+            "copperSolid": "2.6mm",
+            "esd": "yes"
+          },
+          "specSummary": "全長120mm / 銅線(単線)φ2.6mm / ESD対応グリップ / バネ付き",
+          "note": "YZRS実使用品。絶縁工具ではないため、通電中の回路には使わない。",
+          "sourceUrl": "https://www.nejisaurus.engineer.jp/product-page/ns-04-%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%8B%E3%83%83%E3%83%91%E3%83%BC",
+          "recommendationReason": "リード線や部品の足を切る、電子工作で一番出番の多い工具の候補です。安いニッパーとの切れ味の差が分かりやすく、YZRSでも長く使っています。",
+          "displayOn": [
+            "kit",
+            "deals"
+          ],
+          "evidence": {
+            "level": "used",
+            "description": "YZRS実使用品。メーカー直営ストア記載の全長120mm、銅線(単線)φ2.6mm、ESD対応グリップ、バネ付きに基づく推薦です。",
+            "sourceUrl": "https://www.nejisaurus.engineer.jp/product-page/ns-04-%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%8B%E3%83%83%E3%83%91%E3%83%BC"
+          }
+        },
+        "tool-shinfuji-rz300": {
+          "kind": "product",
+          "tags": [
+            "support-stand"
+          ],
+          "useCases": [
+            "maker",
+            "repair"
+          ],
+          "relatedArticles": [
+            {
+              "label": "電子工作vol.2 — 工具の話",
+              "url": "https://note.com/yzrswork/n/nd08cb43b6ca4"
+            }
+          ],
+          "lastVerified": "2026-10-30",
+          "ownerReview": "approved",
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-30",
+          "label": "新富士バーナー RZ-300 サポートスタンド",
+          "maker": "新富士バーナー",
+          "model": "RZ-300",
+          "asin": "B001V7M6PS",
+          "category": "holding",
+          "conditions": {
+            "poleHeight": "125mm",
+            "clipWidth": "120mm"
+          },
+          "specSummary": "ポール高125mm / クリップ幅120mm / 約550g / 360°可動",
+          "note": "YZRS実使用品。標準のプラスチックネジは取り回しにくいので、ステンレスの蝶ボルトへの交換がおすすめ。メーカー公式の仕様ページは未確認で、仕様は販売店の記載による。",
+          "sourceUrl": "https://joshinweb.jp/season/31256/4953571010908.html",
+          "recommendationReason": "はんだ付けで基板や部品をクリップで固定し、「押さえる手がない」を解決するスタンドです。YZRSで長年使っていて、ほぼ壊れず、ネジを替えて使い倒せます。",
+          "displayOn": [
+            "kit",
+            "deals"
+          ],
+          "evidence": {
+            "level": "used",
+            "description": "YZRS実使用品(電子工作vol.2で紹介)。販売店記載のポール高125mm、クリップ幅120mm、約550gに基づく推薦です。",
+            "sourceUrl": "https://joshinweb.jp/season/31256/4953571010908.html"
+          }
+        },
+        "solder-hakko-fh300": {
+          "kind": "product",
+          "tags": [
+            "soldering",
+            "iron-stand"
+          ],
+          "useCases": [
+            "maker",
+            "repair"
+          ],
+          "relatedArticles": [
+            {
+              "label": "電子工作vol.2 — 工具の話",
+              "url": "https://note.com/yzrswork/n/nd08cb43b6ca4"
+            }
+          ],
+          "lastVerified": "2026-10-30",
+          "ownerReview": "approved",
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-30",
+          "label": "HAKKO FH300-81 こて台（FX-600 / FX-601 / PRESTO / DASH用）",
+          "maker": "HAKKO",
+          "model": "FH300-81",
+          "asin": "B017SQ0TUO",
+          "category": "soldering",
+          "conditions": {
+            "compatible": "FX-600/FX-601/PRESTO/DASH"
+          },
+          "specSummary": "FX-600 / FX-601 / PRESTO / DASH対応 / クリーニングスポンジ付き",
+          "note": "YZRS実使用品。FX600Aと組み合わせて使っている。対応機種を確認してから選ぶ。",
+          "sourceUrl": "https://www.hakko.com/japan/products/hakko_fh300.html",
+          "recommendationReason": "FX600Aなどのペン型はんだごてを安全に置いておくための、こて台の候補です。はんだごてと一緒に最初から揃えると楽で、YZRSでもFX600Aと組み合わせて使っています。",
+          "displayOn": [
+            "deals"
+          ],
+          "evidence": {
+            "level": "used",
+            "description": "YZRS実使用品(電子工作vol.2で紹介)。対応機種FX-600 / FX-601 / PRESTO / DASHに基づく推薦です。",
+            "sourceUrl": "https://www.hakko.com/japan/products/hakko_fh300.html"
+          }
         }
       }
     },

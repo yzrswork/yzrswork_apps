@@ -17,7 +17,11 @@ function setup(products, incoming, configOverrides = {}) {
   const worker = createWorker({ contract: c, clock: h.clock, sleep: h.sleep, timeoutMS: 20,
     fetcher: async (url, init) => {
       calls.push({ url, init });
-      return url.includes('/auth/') ? tokenResponse() : json({ itemsResult: { items: typeof incoming === 'function' ? incoming() : incoming } });
+      if (url.includes('/auth/')) return tokenResponse();
+      // Answer like GetItems: only the ASINs requested in this batch (the Worker batches 10 at a time).
+      const requested = new Set(JSON.parse(init.body).itemIds);
+      const items = typeof incoming === 'function' ? incoming() : incoming;
+      return json({ itemsResult: { items: items.filter(item => requested.has(item.asin)) } });
     } });
   return { ...h, calls, worker, contract: c };
 }
@@ -142,7 +146,7 @@ function approvedItems() {
   return approvedKeys.map((key, index) => {
     const item = itemWithImage(commerceConfig.products[key].asin);
     item.detailPageURL = `https://www.amazon.co.jp/dp/${item.asin}?tag=${commerceConfig.config.associateTag}&linkCode=ogi`;
-    item.images.primary.medium = { ...primaryImage(), height: 96 + index * 8,
+    item.images.primary.medium = { ...primaryImage(), height: 96 + (index % 8) * 8, // stays within the 160px medium image bound
       url: `https://m.media-amazon.com/images/I/MOCK-ONLY-${item.asin}._SL160_.jpg` };
     return item;
   });
@@ -153,10 +157,14 @@ test('approved products: reversed upstream order joins by ASIN and preserves fro
   const before = JSON.stringify(commerceConfig.products), incoming = approvedItems();
   const h = setup(commerceConfig.products, [...incoming].reverse(), { associateTag: commerceConfig.config.associateTag });
   assert.deepEqual(await h.worker.scheduled({}, h.env), { status: 'updated', itemCount: approvedKeys.length });
-  const apiRequest = JSON.parse(h.calls.find(call => call.url.includes('/catalog/')).init.body);
-  assert.deepEqual(apiRequest.itemIds, approvedKeys.map(key => commerceConfig.products[key].asin));
-  assert.equal(apiRequest.partnerTag, commerceConfig.config.associateTag);
-  assert.ok(apiRequest.resources.includes('images.primary.medium'));
+  const apiRequests = h.calls.filter(call => call.url.includes('/catalog/')).map(call => JSON.parse(call.init.body));
+  assert.equal(apiRequests.length, Math.ceil(approvedKeys.length / 10));
+  assert.ok(apiRequests.every(request => request.itemIds.length <= 10));
+  assert.deepEqual(apiRequests.flatMap(request => request.itemIds), approvedKeys.map(key => commerceConfig.products[key].asin));
+  for (const apiRequest of apiRequests) {
+    assert.equal(apiRequest.partnerTag, commerceConfig.config.associateTag);
+    assert.ok(apiRequest.resources.includes('images.primary.medium'));
+  }
   const projected = (await body(h)).items;
   assert.deepEqual(Object.keys(projected), approvedKeys);
   for (const [index, key] of approvedKeys.entries()) {
@@ -164,18 +172,20 @@ test('approved products: reversed upstream order joins by ASIN and preserves fro
     assert.equal(item.status, 'fresh'); assert.equal(item.offer.asin, product.asin);
     assert.equal(item.offer.price, 9000); assert.equal(item.offer.savingsJPY, 1000); assert.equal(item.offer.savingsPercent, 10);
     assert.equal(item.offer.detailPageURL, incoming[index].detailPageURL);
-    assert.deepEqual(item.image, { ...incoming[index].images.primary.medium, fetchedAt: START,
-      expiresAt: START + MAX_IMAGE_AGE_MS, remainingMS: MAX_IMAGE_AGE_MS });
-    assert.equal(saleEligible(product, item.offer, START, h.contract.config), true);
+    // Each batch of 10 is fetched one second after the previous one (Worker request spacing).
+    const fetchedAt = START + 1000 * Math.floor(index / 10);
+    assert.deepEqual(item.image, { ...incoming[index].images.primary.medium, fetchedAt,
+      expiresAt: fetchedAt + MAX_IMAGE_AGE_MS, remainingMS: fetchedAt + MAX_IMAGE_AGE_MS - h.clock() });
+    assert.equal(saleEligible(product, item.offer, h.clock(), h.contract.config), true);
   }
   h.advance(MAX_AGE_MS);
   const stale = (await body(h)).items;
   assert.deepEqual(Object.keys(stale), approvedKeys);
   for (const key of approvedKeys) {
     assert.equal(stale[key].offer, null); assert.equal(stale[key].status, 'stale');
-    assert.equal(stale[key].image.remainingMS, MAX_IMAGE_AGE_MS - MAX_AGE_MS);
+    assert.equal(stale[key].image.remainingMS, stale[key].image.expiresAt - h.clock());
   }
-  assert.equal(h.calls.length, 2); assert.equal(JSON.stringify(commerceConfig.products), before);
+  assert.equal(h.calls.length, 1 + Math.ceil(approvedKeys.length / 10)); assert.equal(JSON.stringify(commerceConfig.products), before);
 });
 
 test('mixed image failures affect only images; no-offer retains current image and active Deal still grants SALE', async () => {
@@ -198,8 +208,10 @@ test('mixed image failures affect only images; no-offer retains current image an
     assert.equal(item.status, 'fresh'); assert.equal(item.offer.asin, product.asin);
     assert.equal(item.offer.price, index === 5 ? 9500 : 9000);
     assert.equal(item.offer.detailPageURL, incoming[index].detailPageURL);
-    assert.equal(saleEligible(product, item.offer, START, h.contract.config), true);
+    assert.equal(saleEligible(product, item.offer, h.clock(), h.contract.config), true);
   }
-  assert.equal(h.env.COMMERCE_SNAPSHOTS.puts[0].expiration, (START + MAX_IMAGE_AGE_MS) / 1000);
-  assert.equal(h.calls.length, 2);
+  const batches = Math.ceil(approvedKeys.length / 10);
+  // The snapshot lives as long as the latest batch's images.
+  assert.equal(h.env.COMMERCE_SNAPSHOTS.puts[0].expiration, (START + 1000 * (batches - 1) + MAX_IMAGE_AGE_MS) / 1000);
+  assert.equal(h.calls.length, 1 + batches);
 });

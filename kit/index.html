@@ -537,7 +537,8 @@ function amazonProductUrl(asin) {
   return window.yzrsAffiliate.productUrl(asin);
 }
 /* 商品台帳(site/catalog.json)で承認済み・kit表示可の商品は、検索結果ではなく商品ページへつなぐ */
-const CATALOG_KEYS = { iron: 'solder-hakko-fx600a', solder: 'solder-goot-sd83', stripper: 'tool-engineer-paw01' };
+const CATALOG_KEYS = { iron: 'solder-hakko-fx600a', solder: 'solder-goot-sd83', stripper: 'tool-engineer-paw01',
+  nipper: 'tool-engineer-ns04', tester: 'tool-astroai-dt132a', stand: 'tool-shinfuji-rz300' };
 function catalogProduct(item) {
   const key = CATALOG_KEYS[item.id];
   const p = key && window.yzrsAffiliate.getProduct(key);
