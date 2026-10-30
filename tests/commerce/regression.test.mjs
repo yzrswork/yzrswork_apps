@@ -30,13 +30,14 @@ test('mem base remains functional when optional Commerce JS fails; matching pres
   assert.equal(elements.get('picks-section').hidden, false);
   assert.match(elements.get('picks').innerHTML, /mem-crucial-ddr4-32/);
   assert.ok(!elements.get('picks').innerHTML.includes('mem-crucial-ddr5-32'));
-  for (const [socket, expected, excluded] of [['am4', 'mem-crucial-ddr4-32', 'mem-crucial-ddr5-32'], ['am5', 'mem-crucial-ddr5-32', 'mem-crucial-ddr4-32']]) {
+  const memKeys = ddr => Object.entries(api.products)
+    .filter(([, p]) => p.kind === 'product' && p.displayOn?.includes('mem') && p.conditions?.ddr === ddr).map(([key]) => key);
+  for (const [socket, expected, excluded] of [['am4', memKeys('DDR4'), memKeys('DDR5')], ['am5', memKeys('DDR5'), memKeys('DDR4')]]) {
     for (const use of ['game', 'creative', 'ai']) {
       runInNewContext(`selSocket = '${socket}'; selUse = '${use}'; candidateAccepted = true; renderReco(); renderPicks();`, sandbox);
       assert.equal(elements.get('picks-section').hidden, false);
-      assert.ok(elements.get('picks').innerHTML.includes(expected));
-      assert.ok(!elements.get('picks').innerHTML.includes(excluded));
-      assert.ok(!elements.get('picks').innerHTML.includes('mem-team-ddr4-32'));
+      for (const key of expected) assert.ok(elements.get('picks').innerHTML.includes(key));
+      for (const key of excluded) assert.ok(!elements.get('picks').innerHTML.includes(key));
     }
     runInNewContext("selUse = 'web'; renderPicks();", sandbox); assert.equal(elements.get('picks-section').hidden, true);
     runInNewContext("selUse = 'game'; candidateAccepted = false; renderPicks();", sandbox); assert.equal(elements.get('picks-section').hidden, true);
@@ -88,7 +89,9 @@ test('invalid Product Master stops build before overwriting generated artifacts'
     for (const dir of ['scripts', 'shared', 'site']) mkdirSync(join(temp, dir));
     for (const file of ['scripts/build.mjs', 'scripts/commerce-catalog.mjs', 'shared/commerce-policy.js']) copyFileSync(join(root, file), join(temp, file));
     writeFileSync(join(temp, 'package.json'), '{"type":"module"}');
-    const bad = structuredClone(catalog); bad.site.affiliate.products['mem-team-ddr4-32'].enabled = true;
+    const bad = structuredClone(catalog); // MOCK ONLY: a pending product cannot be enabled.
+    bad.site.affiliate.products['mock-pending-ddr4-32'] = { ...structuredClone(catalog.site.affiliate.products['mem-team-ddr4-32']),
+      asin: 'B000000098', model: 'MOCK-ONLY', ownerReview: 'pending', enabled: true, evidence: null, ownerReviewedAt: null };
     writeFileSync(join(temp, 'site/catalog.json'), JSON.stringify(bad));
     writeFileSync(join(temp, 'affiliate.js'), 'existing-generated-artifact');
     const result = spawnSync(process.execPath, ['scripts/build.mjs'], { cwd: temp, encoding: 'utf8' });

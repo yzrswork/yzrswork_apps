@@ -294,14 +294,13 @@ test('disabled publication and pages outside Deals initiate no image or offer re
   }
 });
 
-test('all six approved products preserve editorial order, recommendation, SALE and CTA through mixed image outcomes', async () => {
-  const expected = ['mem-crucial-ddr4-32', 'mem-crucial-ddr5-32', 'solder-hakko-fx600a',
-    'tool-engineer-paw01', 'hdd-wd-blue-4tb-wd40ezax-ajp', 'solder-goot-sd83'];
+test('all approved products preserve editorial order, recommendation, SALE and CTA through mixed image outcomes', async () => {
   const c = commerceConfig;
-  assert.deepEqual(Object.keys(c.products), expected);
+  const expected = Object.keys(c.products);
+  assert.ok(expected.length >= 6, 'mixed-image cases need at least six approved products');
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
   assert.deepEqual([...html.matchAll(/data-deals-card="([^"]+)"/g)].map(match => match[1]), expected);
-  function sixPayload(mixed = false) {
+  function approvedPayload(mixed = false) {
     const items = Object.fromEntries(Object.entries(c.products).map(([key, p], index) => {
       const raw = rawItem(p.asin);
       raw.detailPageURL = `https://www.amazon.co.jp/dp/${p.asin}?tag=${c.config.associateTag}&linkCode=ogi`;
@@ -320,17 +319,17 @@ test('all six approved products preserve editorial order, recommendation, SALE a
     return { schemaVersion: 1, catalogRevision: c.revision, status: 'ok', serverNow: START, items };
   }
   let calls = 0;
-  const h = ui(async () => json(sixPayload(++calls > 1)), {
+  const h = ui(async () => json(approvedPayload(++calls > 1)), {
     contract: c, location: { origin: 'https://apps.yzrswork.com', pathname: '/deals/' } });
   try {
     await h.controller.refresh();
-    assert.deepEqual(Object.keys(validatePayload(sixPayload(), c)), expected);
+    assert.deepEqual(Object.keys(validatePayload(approvedPayload(), c)), expected);
     for (const row of h.rows) {
       h.load(row); assert.equal(h.visibleImage(row), true); assertRecommendation(h, row);
       assert.match(h.text(row), /¥9,000/); assert.match(h.text(row), /SALE条件/);
       assert.equal(row.anchor.href, row.cta.href);
     }
-    await h.controller.refresh(); h.load(h.rows[0]); h.load(h.rows[5]); h.fail(h.rows[5]);
+    await h.controller.refresh(); h.load(h.rows[0]); for (const row of h.rows.slice(5)) { h.load(row); h.fail(row); }
     assert.deepEqual(h.rows.filter(row => h.visibleImage(row)).map(row => row.key), [expected[0]]);
     assert.deepEqual(h.rows.filter(row => !row.card.hidden).map(row => row.key), expected);
     for (const row of h.rows) {

@@ -86,31 +86,6 @@
           "category": "power",
           "ownerReview": "approved"
         },
-        "mem-team-ddr4-32": {
-          "kind": "product",
-          "label": "TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2）",
-          "maker": "TEAMGROUP",
-          "model": "TPRD432G3200HC22DC01",
-          "asin": "B093GNJS1T",
-          "category": "memory",
-          "conditions": {
-            "ddr": "DDR4",
-            "capacity": "32GB",
-            "kit": "16GBx2"
-          },
-          "note": "永久保証。3200動作はCPU・マザー・BIOS設定に依存するため、QVLと実動作速度を確認。",
-          "sourceUrl": "https://www.teamgroupinc.com/jp/product-detail/memory/TEAMGROUP/elite-plus-u-dimm-ddr4-red/elite-plus-u-dimm-ddr4-red-TPRD432G3200HC22DC01/",
-          "lastVerified": "2026-08-12",
-          "ownerReview": "pending",
-          "tags": [],
-          "useCases": [],
-          "recommendationReason": null,
-          "displayOn": [],
-          "relatedArticles": [],
-          "evidence": null,
-          "enabled": false,
-          "ownerReviewedAt": null
-        },
         "mem-crucial-ddr4-32": {
           "kind": "product",
           "label": "Crucial Pro DDR4-3200 32GB（16GB×2・CP2K16G4DFRA32A）",
@@ -147,6 +122,46 @@
           "enabled": true,
           "ownerReviewedAt": "2026-10-02",
           "specSummary": "DDR4 / 32GB / 16GB×2 / 3200 MT/s"
+        },
+        "mem-team-ddr4-32": {
+          "kind": "product",
+          "label": "TEAMGROUP ELITE PLUS DDR4-3200 32GB（16GB×2・TPRD432G3200HC22DC01）",
+          "maker": "TEAMGROUP",
+          "model": "TPRD432G3200HC22DC01",
+          "asin": "B093GNJS1T",
+          "category": "memory",
+          "conditions": {
+            "ddr": "DDR4",
+            "capacity": "32GB",
+            "kit": "16GBx2"
+          },
+          "note": "YZRS実使用品(自宅PC)。永久保証。3200動作はCPU・マザー・BIOS設定に依存するため、QVLと実動作速度を確認。",
+          "sourceUrl": "https://www.teamgroupinc.com/jp/product-detail/memory/TEAMGROUP/elite-plus-u-dimm-ddr4-red/elite-plus-u-dimm-ddr4-red-TPRD432G3200HC22DC01/",
+          "lastVerified": "2026-10-30",
+          "ownerReview": "approved",
+          "tags": [
+            "memory",
+            "ddr4"
+          ],
+          "useCases": [
+            "game",
+            "creative",
+            "ai"
+          ],
+          "recommendationReason": "DDR4対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。YZRSの自宅PCで使っていて、今のところ不具合は出ていません。CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
+          "displayOn": [
+            "mem",
+            "deals"
+          ],
+          "relatedArticles": [],
+          "evidence": {
+            "level": "used",
+            "description": "YZRS実使用品(自宅PCに搭載、2026-10-30時点で不具合なし)。メーカー仕様のDDR4、32GB（16GB×2）、3200MHz、CL22に基づく推薦です。",
+            "sourceUrl": "https://www.teamgroupinc.com/jp/product-detail/memory/TEAMGROUP/elite-plus-u-dimm-ddr4-red/elite-plus-u-dimm-ddr4-red-TPRD432G3200HC22DC01/"
+          },
+          "enabled": true,
+          "ownerReviewedAt": "2026-10-30",
+          "specSummary": "DDR4 / 32GB / 16GB×2 / 3200 MT/s / CL22"
         },
         "mem-crucial-ddr5-32": {
           "kind": "product",

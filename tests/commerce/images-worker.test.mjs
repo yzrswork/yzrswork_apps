@@ -137,10 +137,9 @@ test('image is associated only after matching ASIN and a safe approved detail UR
   }
 });
 
-const sixKeys = Object.freeze(['mem-crucial-ddr4-32', 'mem-crucial-ddr5-32', 'solder-hakko-fx600a',
-  'tool-engineer-paw01', 'hdd-wd-blue-4tb-wd40ezax-ajp', 'solder-goot-sd83']);
-function sixItems() {
-  return sixKeys.map((key, index) => {
+const approvedKeys = Object.freeze(Object.keys(commerceConfig.products));
+function approvedItems() {
+  return approvedKeys.map((key, index) => {
     const item = itemWithImage(commerceConfig.products[key].asin);
     item.detailPageURL = `https://www.amazon.co.jp/dp/${item.asin}?tag=${commerceConfig.config.associateTag}&linkCode=ogi`;
     item.images.primary.medium = { ...primaryImage(), height: 96 + index * 8,
@@ -149,18 +148,18 @@ function sixItems() {
   });
 }
 
-test('six approved products: reversed upstream order joins by ASIN and preserves frozen editorial order, economics and CTA', async () => {
-  assert.deepEqual(Object.keys(commerceConfig.products), sixKeys);
-  const before = JSON.stringify(commerceConfig.products), incoming = sixItems();
+test('approved products: reversed upstream order joins by ASIN and preserves frozen editorial order, economics and CTA', async () => {
+  assert.ok(approvedKeys.length >= 6, 'mixed cases need at least six approved products');
+  const before = JSON.stringify(commerceConfig.products), incoming = approvedItems();
   const h = setup(commerceConfig.products, [...incoming].reverse(), { associateTag: commerceConfig.config.associateTag });
-  assert.deepEqual(await h.worker.scheduled({}, h.env), { status: 'updated', itemCount: 6 });
+  assert.deepEqual(await h.worker.scheduled({}, h.env), { status: 'updated', itemCount: approvedKeys.length });
   const apiRequest = JSON.parse(h.calls.find(call => call.url.includes('/catalog/')).init.body);
-  assert.deepEqual(apiRequest.itemIds, sixKeys.map(key => commerceConfig.products[key].asin));
+  assert.deepEqual(apiRequest.itemIds, approvedKeys.map(key => commerceConfig.products[key].asin));
   assert.equal(apiRequest.partnerTag, commerceConfig.config.associateTag);
   assert.ok(apiRequest.resources.includes('images.primary.medium'));
   const projected = (await body(h)).items;
-  assert.deepEqual(Object.keys(projected), sixKeys);
-  for (const [index, key] of sixKeys.entries()) {
+  assert.deepEqual(Object.keys(projected), approvedKeys);
+  for (const [index, key] of approvedKeys.entries()) {
     const item = projected[key], product = commerceConfig.products[key];
     assert.equal(item.status, 'fresh'); assert.equal(item.offer.asin, product.asin);
     assert.equal(item.offer.price, 9000); assert.equal(item.offer.savingsJPY, 1000); assert.equal(item.offer.savingsPercent, 10);
@@ -171,16 +170,16 @@ test('six approved products: reversed upstream order joins by ASIN and preserves
   }
   h.advance(MAX_AGE_MS);
   const stale = (await body(h)).items;
-  assert.deepEqual(Object.keys(stale), sixKeys);
-  for (const key of sixKeys) {
+  assert.deepEqual(Object.keys(stale), approvedKeys);
+  for (const key of approvedKeys) {
     assert.equal(stale[key].offer, null); assert.equal(stale[key].status, 'stale');
     assert.equal(stale[key].image.remainingMS, MAX_IMAGE_AGE_MS - MAX_AGE_MS);
   }
   assert.equal(h.calls.length, 2); assert.equal(JSON.stringify(commerceConfig.products), before);
 });
 
-test('six-product mixed image failures affect only images; no-offer retains current image and active Deal still grants SALE', async () => {
-  const incoming = sixItems();
+test('mixed image failures affect only images; no-offer retains current image and active Deal still grants SALE', async () => {
+  const incoming = approvedItems();
   delete incoming[1].images;
   incoming[2].images.primary.medium.width = 0;
   incoming[3].images.primary.medium.url = 'https://evil.invalid/images/I/mock.jpg';
@@ -190,8 +189,8 @@ test('six-product mixed image failures affect only images; no-offer retains curr
   const h = setup(commerceConfig.products, [...incoming].reverse(), { associateTag: commerceConfig.config.associateTag });
   assert.equal((await h.worker.scheduled({}, h.env)).status, 'updated');
   const projected = (await body(h)).items;
-  assert.deepEqual(Object.keys(projected), sixKeys);
-  for (const [index, key] of sixKeys.entries()) {
+  assert.deepEqual(Object.keys(projected), approvedKeys);
+  for (const [index, key] of approvedKeys.entries()) {
     const item = projected[key], product = commerceConfig.products[key];
     if ([1, 2, 3].includes(index)) assert.equal(item.image, null);
     else assert.ok(item.image);
