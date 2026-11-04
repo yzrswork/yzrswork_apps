@@ -907,6 +907,7 @@
       "ogDescription": "用途・推薦理由・メーカー仕様を先に確認し、現在のAmazon価格を確認できます。",
       "twitterDescription": "YZRSが仕様から選定した装備を、用途と推薦理由から確認。",
       "canonical": "https://apps.yzrswork.com/deals/",
+      "ogImage": "https://apps.yzrswork.com/icons/og-deals.png?v=20261104",
       "themeColor": "#f0ebe3",
       "robots": "noindex, follow",
       "schemaType": "CollectionPage",
