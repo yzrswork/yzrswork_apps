@@ -75,14 +75,22 @@ test('Bench service worker maps extensionless and query EN documents to cached e
   const cached = { source: 'cached-en-document' };
   const expectedCacheUrl = 'https://apps.yzrswork.com/bench/en.html';
 
+  // SWは自アプリのキャッシュ(caches.open(CACHE_NAME))だけを引く。書き込み(put)には到達しないこと。
   const caches = {
-    match(key) {
-      const normalized = typeof key === 'string' ? key : key.url;
-      matchedKeys.push(normalized);
-      return Promise.resolve(normalized === expectedCacheUrl ? cached : null);
+    match() {
+      throw new Error('caches.match() crosses every app cache; the SW must read only its own cache');
     },
     open() {
-      throw new Error('network/cache write should not be reached when EN document is precached');
+      return Promise.resolve({
+        match(key) {
+          const normalized = typeof key === 'string' ? key : key.url;
+          matchedKeys.push(normalized);
+          return Promise.resolve(normalized === expectedCacheUrl ? cached : null);
+        },
+        put() {
+          throw new Error('network/cache write should not be reached when EN document is precached');
+        },
+      });
     },
     keys() { return Promise.resolve([]); },
   };
