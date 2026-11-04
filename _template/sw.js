@@ -25,5 +25,6 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
   var url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
-  e.respondWith(caches.match(e.request).then(function(r) { return r || fetch(e.request) }));
+  // 自キャッシュだけを引く(caches.match は他アプリの古い共有アセットも返すため)
+  e.respondWith(caches.open(CACHE).then(function(c) { return c.match(e.request) }).then(function(r) { return r || fetch(e.request) }));
 });

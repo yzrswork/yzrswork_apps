@@ -1,4 +1,4 @@
-const CACHE_NAME = 'glue-v8';
+const CACHE_NAME = 'glue-v9';
 const CACHE_PREFIX = 'glue-';
 const ASSETS = [
   './',
@@ -15,6 +15,10 @@ const ASSETS = [
 const GLUE_ASSET_URLS = new Set(
   ASSETS.map(path => new URL(path, self.location.href).href)
 );
+
+// 自アプリのキャッシュだけを引く。caches.match()は同一オリジンの全キャッシュを横断するため、
+// 他アプリに残った古い共有アセット(shared/tokens.css等)を返してしまう(2026-11-04 白文字が見えない不具合)。
+const cacheMatch = (req) => caches.open(CACHE_NAME).then((cache) => cache.match(req));
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -57,7 +61,7 @@ self.addEventListener('fetch', (event) => {
 
   // Cache First + ネットワークフォールバック
   event.respondWith(
-    caches.match(request).then((cached) => {
+    cacheMatch(request).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
@@ -72,7 +76,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           if (request.destination === 'document') {
-            return caches.match('./index.html');
+            return cacheMatch('./index.html');
           }
         });
     })

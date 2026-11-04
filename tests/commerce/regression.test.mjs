@@ -65,7 +65,8 @@ test('Service Worker offline: caches static assets only; Commerce endpoint never
   const caches = { async open(name) {
     if (!stores.has(name)) stores.set(name, new Map()); const store = stores.get(name);
     return { async addAll(paths) { for (const path of paths) { const url = new URL(path, base); const local = decodeURIComponent(url.pathname).slice(1); store.set(url.href, new Response(read(local.endsWith('/') ? `${local}index.html` : local))); } },
-      async put(request, response) { store.set(request.url, response); } };
+      async put(request, response) { store.set(request.url, response); },
+      async match(request) { const url = typeof request === 'string' ? new URL(request, base).href : request.url; if (store.has(url)) return store.get(url).clone(); } };
   }, async keys() { return [...stores.keys()]; }, async delete(name) { return stores.delete(name); },
   async match(request) { const url = typeof request === 'string' ? new URL(request, base).href : request.url; for (const store of stores.values()) if (store.has(url)) return store.get(url).clone(); } };
   let network = 0;
@@ -81,6 +82,11 @@ test('Service Worker offline: caches static assets only; Commerce endpoint never
   for (const url of [`${origin}/v1/offers`, 'https://mock.invalid/v1/offers', `${origin}/kit/`]) {
     let intercepted = false; listeners.fetch({ request: new Request(url), respondWith() { intercepted = true; } }); assert.equal(intercepted, false);
   }
+  // 他アプリ(hdd-v10)に残った古い共有CSSを返さず、自アプリのキャッシュの版を返すこと(2026-11-04 白文字不具合の回帰防止)
+  const hddStore = stores.get('hdd-v10'); hddStore.set(`${origin}/shared/tokens.css`, new Response(':root{--paper:#f0ebe3}'));
+  const others = [...stores].filter(([name]) => name !== 'hdd-v10'); stores.clear(); stores.set('hdd-v10', hddStore); for (const [name, store] of others) stores.set(name, store);
+  let tokensReply; listeners.fetch({ request: new Request(`${origin}/shared/tokens.css`), respondWith(promise) { tokensReply = promise; } });
+  assert.equal(await (await tokensReply).text(), read('shared/tokens.css'));
   assert.equal(network, 0); assert.ok([...stores.values()].every(store => [...store.keys()].every(key => !key.includes('/v1/offers'))));
 });
 test('invalid Product Master stops build before overwriting generated artifacts', () => {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bench-v18';
+const CACHE_NAME = 'bench-v19';
 const CACHE_PREFIX = 'bench-';
 const ASSETS = [
   './',
@@ -27,6 +27,10 @@ const BENCH_DOCUMENT_ALIASES = new Map([
   [new URL('./en', self.location.href).pathname, new URL('./en.html', self.location.href).href],
   [new URL('./en.html', self.location.href).pathname, new URL('./en.html', self.location.href).href]
 ]);
+
+// 自アプリのキャッシュだけを引く。caches.match()は同一オリジンの全キャッシュを横断するため、
+// 他アプリに残った古い共有アセット(shared/tokens.css等)を返してしまう(2026-11-04 白文字が見えない不具合)。
+const cacheMatch = (req) => caches.open(CACHE_NAME).then((cache) => cache.match(req));
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -71,7 +75,7 @@ self.addEventListener('fetch', (event) => {
 
   // Cache First + ネットワークフォールバック
   event.respondWith(
-    caches.match(documentCacheUrl || request).then((cached) => {
+    cacheMatch(documentCacheUrl || request).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
@@ -85,9 +89,9 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          if (documentCacheUrl) return caches.match(documentCacheUrl);
+          if (documentCacheUrl) return cacheMatch(documentCacheUrl);
           if (request.destination === 'document') {
-            return caches.match('./index.html');
+            return cacheMatch('./index.html');
           }
         });
     })

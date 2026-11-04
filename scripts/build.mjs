@@ -71,7 +71,7 @@ ${documentAliases.map(([route, asset]) =>
     : `  if (!${varName}.has(url.href)) {`;
   const cacheKey = documentAliases.length ? 'documentCacheUrl || request' : 'request';
   const documentFallback = documentAliases.length
-    ? `          if (documentCacheUrl) return caches.match(documentCacheUrl);\n`
+    ? `          if (documentCacheUrl) return cacheMatch(documentCacheUrl);\n`
     : '';
   return `const CACHE_NAME = '${app.slug}-v${app.swVersion}';
 const CACHE_PREFIX = '${app.slug}-';
@@ -84,6 +84,10 @@ const ${varName} = new Set(
   ASSETS.map(path => new URL(path, self.location.href).href)
 );
 ${aliasBlock}
+// 自アプリのキャッシュだけを引く。caches.match()は同一オリジンの全キャッシュを横断するため、
+// 他アプリに残った古い共有アセット(shared/tokens.css等)を返してしまう(2026-11-04 白文字が見えない不具合)。
+const cacheMatch = (req) => caches.open(CACHE_NAME).then((cache) => cache.match(req));
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
@@ -125,7 +129,7 @@ ${assetGuard}
 
   // Cache First + ネットワークフォールバック
   event.respondWith(
-    caches.match(${cacheKey}).then((cached) => {
+    cacheMatch(${cacheKey}).then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
@@ -140,7 +144,7 @@ ${assetGuard}
         })
         .catch(() => {
 ${documentFallback}          if (request.destination === 'document') {
-            return caches.match('./index.html');
+            return cacheMatch('./index.html');
           }
         });
     })
