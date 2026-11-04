@@ -5,7 +5,7 @@
   "metaDescription": "はんだづけ初心者がつまずく部品の端子と極性の早見。ステレオ/モノラルジャック、DCジャック、タクトスイッチ、3PDT、可変抵抗、トグルスイッチ、電解コンデンサ、LED、ダイオード、トランジスタ、三端子レギュレータを色分け表示。テスターでの確かめ方つき。",
   "ogDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示。テスターやデータシートでの確かめ方つきの早見リファレンス。",
   "twitterDescription": "はんだづけ初心者がつまずく部品の端子と極性を色分けで表示するオフライン早見リファレンス。",
-  "ogImage": "https://apps.yzrswork.com/icons/icon-512.png",
+  "ogImage": "https://apps.yzrswork.com/icons/og-haisen.png?v=20261104",
   "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/haisen/",
   "appleTouchIcon": "../icons/icon-192.png",

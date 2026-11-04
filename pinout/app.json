@@ -5,7 +5,7 @@
   "metaDescription": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32 / ESP32-WROOM-32系のピン情報を色分け表示。公式一次資料リンクと対象外のESP32-S3明記つき。",
   "ogDescription": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系に限定したピン早見表。",
   "twitterDescription": "Raspberry Pi 3 Model B、Arduino Uno R3互換、classic ESP32/WROOM-32系のオフライン早見リファレンス。",
-  "ogImage": "https://apps.yzrswork.com/icons/og-pinout.png",
+  "ogImage": "https://apps.yzrswork.com/icons/og-pinout.png?v=20261104",
   "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/pinout/",
   "appleTouchIcon": "../icons/icon-192.png",

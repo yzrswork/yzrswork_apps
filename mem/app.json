@@ -6,7 +6,7 @@
   "metaDescription": "自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成（デュアルチャネル）で組むための選び方ナビ。オフライン対応。",
   "ogDescription": "自作PCのメモリを、ソケットからDDR規格を確認し、用途から容量を選び、2枚構成で組むための選び方ナビ。",
   "twitterDescription": "ソケットからDDR規格、用途から容量、2枚構成（デュアルチャネル）で。2026年の対応を反映。",
-  "ogImage": "https://apps.yzrswork.com/icons/og-mem.png",
+  "ogImage": "https://apps.yzrswork.com/icons/og-mem.png?v=20261104",
   "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/mem/",
   "appleTouchIcon": "../icons/icon-192.png",
