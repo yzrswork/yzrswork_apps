@@ -6,7 +6,7 @@
   "metaDescription": "Western DigitalのHDDを用途から色で絞り、型番がわかる場合はCMR/SMRを確認する選び方ナビ。速度重視ならSSDを先に検討する出口と、RAID向けの確認ポイントつき。オフライン対応。",
   "ogDescription": "WDのHDDを用途から色で絞り、型番がわかる場合はCMR/SMRを確認。速度重視ならSSD、RAIDなら型番確認へ。",
   "twitterDescription": "WDのHDDを用途・型番から確認。速度重視ならSSD、RAIDなら記録方式を確認。",
-  "ogImage": "https://apps.yzrswork.com/icons/og-hdd.png",
+  "ogImage": "https://apps.yzrswork.com/icons/og-hdd.png?v=20261104",
   "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/hdd/",
   "appleTouchIcon": "../icons/icon-192.png",
