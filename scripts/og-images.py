@@ -23,9 +23,11 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "icons"
 
-# slug, カテゴリ, タイトル("|"で改行), 英語名, CHECK POINTS(3つ)
+# slug, カテゴリ, タイトル("|"で改行), 英語名, CHECK POINTS(3つ) [, 右列見出し(省略時 CHECK POINTS)]
+# slug "top" はトップページ用 (icons/og-top.png)。
 # タイトル内の [xx] は小さなバッジとして描画する。
 APPS = [
+    ("top",    "TOOLBOX",     "や印工務店の|道具箱",      "Tools for Makers",    ["Electronics", "PC Build", "DIY & Fix"], "WHAT'S INSIDE"),
     ("mem",    "PC BUILD",    "メモリ選びナビ",          "Memory Picker",       ["Socket", "Use", "Dual-channel"]),
     ("hdd",    "PC BUILD",    "HDD選びナビ",             "HDD Picker",          ["WD Color", "CMR / SMR", "Model check"]),
     ("build",  "PC BUILD",    "自作PC|構成プランナー",    "PC Build Planner",    ["DDR", "PSU", "Checklist"]),
@@ -75,7 +77,7 @@ h1 .badge{display:inline-block;font-size:.42em;font-weight:700;color:var(--muted
     <div class="brand"><b>YZRS WORK</b> / 作る人の道具箱</div>
   </div>
   <div class="r">
-    <div class="rh">CHECK POINTS</div>
+    <div class="rh">{rh}</div>
     {items}
     <div class="url">apps.yzrswork.com</div>
   </div>
@@ -116,11 +118,12 @@ def render_title(title):
 
 
 def build(app):
-    slug, cat, title, en, checks = app
+    slug, cat, title, en, checks = app[:5]
+    rh = app[5] if len(app) > 5 else "CHECK POINTS"
     title_html, fs = render_title(title)
     items = "".join(f'<div class="it"><span class="ck">{CHECK}</span>{html.escape(c)}</div>' for c in checks)
     return (TEMPLATE.replace("{cat}", html.escape(cat)).replace("{fs}", str(fs))
-            .replace("{title}", title_html).replace("{en}", html.escape(en)).replace("{items}", items))
+            .replace("{title}", title_html).replace("{rh}", html.escape(rh)).replace("{en}", html.escape(en)).replace("{items}", items))
 
 
 def main(only):
