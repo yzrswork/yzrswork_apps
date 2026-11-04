@@ -1,5 +1,5 @@
 /* 塗れるくん Service Worker -- 最小構成 (アプリ殻のみキャッシュ) */
-const CACHE = 'nurerukun-v14';
+const CACHE = 'nurerukun-v15';
 const CACHE_PREFIX = 'nurerukun-';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', '../affiliate.js'];
 
@@ -22,5 +22,6 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return; // API はそのまま通す
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+  // 自キャッシュだけを引く(caches.match は他アプリの古い共有アセットも返すため)
+  e.respondWith(caches.open(CACHE).then(c => c.match(e.request)).then(r => r || fetch(e.request)));
 });
