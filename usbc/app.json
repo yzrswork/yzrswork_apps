@@ -5,7 +5,7 @@
   "metaDescription": "USB-Cケーブルの型番・性能表記から、60W/100W/240W EPR、e-marker、USB 5/10/20/40/80Gbps、DP Alt Mode、Thunderboltを確認する公式資料ベースのナビ。",
   "ogDescription": "USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認。60W/100W/240W EPR、e-marker、USB 5〜80Gbpsを整理。",
   "twitterDescription": "USB-Cケーブルの電力・データ・映像仕様を、型番・性能表記・認証表示から確認するナビ。",
-  "ogImage": "https://apps.yzrswork.com/icons/og-usbc.png",
+  "ogImage": "https://apps.yzrswork.com/icons/og-usbc.png?v=20261104",
   "themeColor": "#f8f9fb",
   "canonical": "https://apps.yzrswork.com/usbc/",
   "appleTouchIcon": "../icons/icon-192.png",
