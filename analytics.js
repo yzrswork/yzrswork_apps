@@ -146,8 +146,11 @@ var YZRS_RESULT_CATEGORIES = Object.freeze({
   troubleshooting: Object.freeze(["troubleshooting_step"])
 });
 
+// 固定値として許可するトピック。アプリ側のツールIDのみを受け付け、それ以外は送らない。
+var YZRS_RESULT_TOPICS = Object.freeze(["yahoo-mail", "win-share", "pc-boot", "obsidian-sync"]);
+
 var yzrsResultCompleted = Object.create(null);
-window.yzrsTrackResult = function (resultType, category) {
+window.yzrsTrackResult = function (resultType, category, topic) {
   var allowed = YZRS_RESULT_CATEGORIES[category];
   if (!allowed || allowed.indexOf(resultType) === -1 || !window.yzrsTrack) return;
 
@@ -156,6 +159,7 @@ window.yzrsTrackResult = function (resultType, category) {
     result_type: resultType,
     category: category
   });
+  if (typeof topic === "string" && YZRS_RESULT_TOPICS.indexOf(topic) !== -1) params.topic = topic;
   window.yzrsTrack("result_view", params);
 
   if (!yzrsResultCompleted[resultType]) {
@@ -163,6 +167,19 @@ window.yzrsTrackResult = function (resultType, category) {
     window.yzrsTrack("tool_complete", params);
   }
 };
+
+// 関連ツールからの導線 (?yzrs_ref=...) をページ到達時に1回だけ計測する。
+// 許可形式の route_key だけを送り、自由入力やURLは送らない。
+function yzrsTrackToolLinkLanding() {
+  try {
+    var values = new URLSearchParams(location.search).getAll("yzrs_ref");
+    if (values.length !== 1 || !/^[a-z0-9][a-z0-9-]{0,60}$/.test(values[0]) || !window.yzrsTrack) return;
+    window.yzrsTrack("tool_link_landing", { app_name: yzrsAppName(), route_key: values[0] });
+  } catch (_) {
+    // URL解析に失敗した場合は何も送らない
+  }
+}
+yzrsTrackToolLinkLanding();
 
 function yzrsIsAmazonLink(a) {
   try {

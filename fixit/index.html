@@ -1242,7 +1242,7 @@ function renderNode(tree, node) {
     });
   });
   if (isSolution && fixitUserInteracted && window.yzrsTrackResult) {
-    window.yzrsTrackResult('troubleshooting_step', 'troubleshooting');
+    window.yzrsTrackResult('troubleshooting_step', 'troubleshooting', current.treeId);
   }
 }
 
