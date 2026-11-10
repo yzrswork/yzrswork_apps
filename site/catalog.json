@@ -414,6 +414,7 @@
           "recommendationReason": "導通確認と電圧確認を中心に、電子工作の「つながっていない」「電圧が想定と違う」を切り分けるためのテスターです。YZRSではジャックの端子の見分けや電源の出力確認に使っています。",
           "displayOn": [
             "kit",
+            "fixit",
             "deals"
           ],
           "evidence": {
@@ -790,8 +791,8 @@
     {
       "slug": "fixit",
       "name": "直し方ナビ",
-      "description": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期に対応。",
-      "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期)",
+      "description": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期、BluetoothアンプのAUX無音に対応。",
+      "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期、BluetoothアンプのAUX無音)",
       "category": null,
       "managed": true,
       "related": [

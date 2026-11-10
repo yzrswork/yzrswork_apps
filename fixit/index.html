@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="や印工務店 — YZRS WORK" />
 <meta property="og:locale" content="ja_JP" />
 <meta property="og:title" content="直し方ナビ — Fix-it Navigator" />
-<meta property="og:description" content="よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
+<meta property="og:description" content="よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期・BluetoothアンプのAUX無音。" />
 <meta property="og:url" content="https://apps.yzrswork.com/fixit/" />
 <meta property="og:image" content="https://apps.yzrswork.com/icons/og-fixit.png?v=20261104" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="直し方ナビ — Fix-it Navigator" />
-<meta name="twitter:description" content="質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。" />
+<meta name="twitter:description" content="質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期・BluetoothアンプのAUX無音。" />
 <meta name="twitter:image" content="https://apps.yzrswork.com/icons/og-fixit.png?v=20261104" />
-<meta name="description" content="iPhoneのYahoo!メールが繋がらない、Windows11 24H2で共有フォルダが見えない。よくあるトラブルを質問に答えるだけで切り分ける、オフライン対応の診断ナビ。" />
+<meta name="description" content="iPhoneのYahoo!メールが繋がらない、Windows11 24H2で共有フォルダが見えない。BluetoothアンプでAUXだけ鳴らない。よくあるトラブルを質問に答えるだけで切り分ける、オフライン対応の診断ナビ。" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,7 +36,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
-  "description": "よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期。",
+  "description": "よくあるトラブルを質問に答えるだけで切り分ける診断ナビ。Yahoo!メール・Windows共有・自作PCビープ・Obsidian同期・BluetoothアンプのAUX無音。",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -354,6 +354,9 @@
   }
   .ext-link:hover { color: var(--terracotta); border-color: var(--terracotta); }
   .ext-link .lab { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .tools { margin-top: 16px; }
+  .tools-lead { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .ext-link.tool .tag { font-family: var(--mono); font-size: 10.5px; color: var(--muted); border: 1px solid var(--rule-soft); border-radius: 4px; padding: 1px 5px; }
   .affiliate {
     display: block;
     background: var(--action);
@@ -515,6 +518,7 @@
 /* ---------- 決定木データ ----------
    node.type: 'question'（選択肢で分岐）/ 'solution'（最終手順）
    共通: text, help?, warn?, steps?[], links?[{label,url}], affiliate?{keyword,label,note}, options[{label,next,style?}]
+   tools?[catalog key]（solutionのみ、最大2件。承認済み・実使用の商品のみ表示）
    特殊next: '__home'（メニューへ戻る）
 */
 const TREES = {
@@ -1078,6 +1082,102 @@ const TREES = {
         options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
       }
     }
+  },
+
+  'aux-no-sound': {
+    num: '05',
+    title: 'BluetoothアンプでAUXだけ音が出ない',
+    sub: 'Bluetoothは鳴るのにAUX INは無音（YS-AP50Lなどのアンプ基板）',
+    article: { label: '元記事（note）', url: 'https://note.com/yzrswork/n/n4ca2e1ba5b8e' },
+    start: 'x0',
+    nodes: {
+      x0: {
+        type: 'question',
+        text: 'Bluetoothアンプ基板でAUX入力だけ音が出ませんか？ まず、Bluetooth（ほかの入力）では音が出ますか？',
+        help: '元記事の環境（YS-AP50L）では、外部AUX INへL / R / GNDだけを延長したため、AUXだけ無音になりました。純正AUXジャックは、プラグを挿すと L / R / GND以外の端子（挿入検出DET、元記事では右上の端子）がGNDへ落ち、アンプはこれを見てAUXへ切り替えています。DETは音声線ではないため、音声線だけ延長すると切り替わりません。前回のSW端子（機械式スイッチ接点）とは役割が違う点にも注意してください。切り分けは「信号源 → ケーブル → 純正入力 → 外部化配線 → 接点」の順で行います。',
+        options: [
+          { label: 'Bluetoothは鳴る（AUXだけ無音）', next: 'x1' },
+          { label: 'Bluetoothも鳴らない', next: 'xOther', style: 'ghost' }
+        ]
+      },
+      xOther: {
+        type: 'solution',
+        text: 'このナビは「Bluetoothは鳴るのにAUXだけ無音」向けです',
+        text2: 'Bluetoothも鳴らない場合は、AUX入力の切り分けとは別の問題の可能性があります。電源の供給、アンプ基板の動作、スピーカーとの接続など、アンプ全体の確認から始めてください。',
+        links: [{ label: '元記事で構成を確認する', url: 'https://note.com/yzrswork/n/n4ca2e1ba5b8e' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      x1: {
+        type: 'question',
+        text: 'アンプ基板の純正AUX INジャックに、プラグを直接挿すと音は出ますか？',
+        help: '外部ジャックを経由せず、純正AUX INへ直接プラグを挿して確認します。ここで鳴れば、アンプのAUX入力そのものは正常で、問題は外部化した部分に絞られます。元記事でも、信号源とケーブルを先に確認してから、純正ジャックへ挿して切り分けました。',
+        options: [
+          { label: '純正ジャックに直接挿すと鳴る（外部ジャック経由だけ無音）', next: 'x2' },
+          { label: '純正ジャックでも鳴らない', next: 'x3' },
+          { label: 'ジャックを外部化しておらず、直接挿している', next: 'x3' }
+        ]
+      },
+      x2: {
+        type: 'question',
+        text: '純正ジャックから外部ジャックへの延長配線は、L / R / GNDの3本だけですか？',
+        help: '純正AUXジャックは音声を通すだけでなく、プラグの挿入を検出するDETの接点も持っています。アンプはDETを見てAUXモードへ切り替えるため、L / R / GNDだけを延長すると、音声が届いてもAUXへ切り替わりません。',
+        options: [
+          { label: 'L / R / GNDの3本だけ', next: 'xDet' },
+          { label: 'DETも含めて配線した／わからない', next: 'xContact' }
+        ]
+      },
+      xDet: {
+        type: 'solution',
+        text: '挿入検出DETを外部ジャックへ渡していなかった可能性が高いです',
+        help: 'L / R / GNDが正しくても、機器がDETで入力モードを切り替えている場合は、音声線だけでは同じ動作になりません。用途によっては自動検出を完全に再現する必要はなく、DETをトグルスイッチへ出して、BluetoothとAUXを手動で切り替える方法もあります。',
+        steps: [
+          '純正AUXジャックの、L / R / GND以外の端子（元記事のYS-AP50Lでは右上の端子＝DET）とGNDの導通をテスターで測る。プラグを抜いた状態は非導通、挿した状態は導通になるかを確認する',
+          'DETを外部ジャック側へ渡して自動検出を再現するか、トグルスイッチで手動に置き換える。トグルの場合は <code>DET --- トグル --- GND</code> とし、OFFでBluetooth、ONでAUXになる',
+          '配線を変更したら、AUXとBluetooth、両方の再生を確認する'
+        ],
+        tools: ['tool-astroai-dt132a'],
+        links: [
+          { label: '関連ガイド：音が出ない系の切り分け（AUX・ジャック）', url: 'https://yzrswork.com/guides/aux-no-sound/' },
+          { label: '元記事で導通チェックの様子を見る', url: 'https://note.com/yzrswork/n/n4ca2e1ba5b8e' }
+        ],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      x3: {
+        type: 'question',
+        text: '信号源（再生機器）とケーブルを、別のものに替えても無音ですか？',
+        help: '信号源→ケーブルの順で切り分けます。純正ジャックでも鳴らない場合、原因は信号源かケーブル、またはアンプのAUX入力側のいずれかです。1つずつ替えて確認します。',
+        options: [
+          { label: '替えたら鳴った', next: 'xSource' },
+          { label: '替えても無音', next: 'xContact' }
+        ]
+      },
+      xSource: {
+        type: 'solution',
+        text: 'ケーブルか信号源側に原因がありそうです',
+        steps: [
+          'ケーブルと信号源を一つずつ入れ替えて、どちらを替えると鳴るかを確認する',
+          '無音になっていた方（ケーブルまたは信号源）を交換する',
+          '交換後、純正AUX INへ直接挿して鳴るか確認する'
+        ],
+        links: [{ label: '元記事で切り分けの順番を見る', url: 'https://note.com/yzrswork/n/n4ca2e1ba5b8e' }],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      },
+      xContact: {
+        type: 'solution',
+        text: 'ジャックの接点と配線をテスターで確認します',
+        steps: [
+          '純正ジャックの、L / R / GND以外の端子（DET候補）とGNDの導通を、プラグを抜いた状態と挿した状態で比べる（抜いて非導通、挿して導通が目安）',
+          'プラグ側から基板側までのL / R / GNDの導通を確認する',
+          '接点が変化しない、または音声線が途切れている場合は、ジャックの接点か配線を疑い、配線し直すか部品を交換する'
+        ],
+        tools: ['tool-astroai-dt132a'],
+        links: [
+          { label: '関連ガイド：音が出ない系の切り分け（AUX・ジャック）', url: 'https://yzrswork.com/guides/aux-no-sound/' },
+          { label: '元記事で導通チェックの様子を見る', url: 'https://note.com/yzrswork/n/n4ca2e1ba5b8e' }
+        ],
+        options: [{ label: '最初に戻る', next: '__home', style: 'ghost' }]
+      }
+    }
   }
 };
 
@@ -1142,7 +1242,7 @@ function renderHome() {
       <ul class="menu">${cards}</ul>
     </section>
     <details class="fold about yapps-nav-support"><summary><span>このナビについて</span></summary><div class="fold-body">
-      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側の外部メール利用設定とIMAP・SMTPを確認して復旧した話。Windows 11の共有フォルダーが見えなくなり、資格情報・Function Discovery・ESET設定の3点を確認・変更したあとに復旧した話（個別の原因は未分離）。自作PCのビープ音が、ケーブルやモニターも含めた切り分け後、HDMIセレクターを挟んだ構成では再発しなくなった話（原因仮説は未検証）。ObsidianとiCloudの過去記事は現在の公式情報と非推奨追記を踏まえ、バックアップ優先の安全手順へ改訂しています。トラブルの渦中でも確認しやすいよう、観測事実と未確認の仮説を分けてナビ形式に組み直しました。</p>
+      <p>ここに並んでいる診断は、どれも、や印工務店が実際に踏んだトラブルの記録から作っています。ある日いきなりiPhoneのYahoo!メールに「パスワードが正しくありません」と出て、Yahoo!側の外部メール利用設定とIMAP・SMTPを確認して復旧した話。Windows 11の共有フォルダーが見えなくなり、資格情報・Function Discovery・ESET設定の3点を確認・変更したあとに復旧した話（個別の原因は未分離）。自作PCのビープ音が、ケーブルやモニターも含めた切り分け後、HDMIセレクターを挟んだ構成では再発しなくなった話（原因仮説は未検証）。BluetoothアンプでBluetoothは鳴るのにAUXだけ無音になり、純正AUXジャックのL / R / GNDだけを外部ジャックへ延長していて挿入検出（DET）が落ちていなかったことが原因だった話。ObsidianとiCloudの過去記事は現在の公式情報と非推奨追記を踏まえ、バックアップ優先の安全手順へ改訂しています。トラブルの渦中でも確認しやすいよう、観測事実と未確認の仮説を分けてナビ形式に組み直しました。</p>
     </div></details>`;
 
   appEl.querySelectorAll('.menu-card').forEach((btn) => {
@@ -1198,6 +1298,19 @@ function renderNode(tree, node) {
     html += '<ol class="steps">';
     node.steps.forEach((s) => { html += `<li>${s}</li>`; });
     html += '</ol>';
+  }
+
+  // 手順で使う道具（解決手順のみ・承認済みかつ実使用の商品だけ、最大2件）
+  if (isSolution && node.tools && node.tools.length && window.yzrsAffiliate) {
+    let toolsHtml = '';
+    node.tools.slice(0, 2).forEach((key) => {
+      const p = window.yzrsAffiliate.getProduct(key);
+      if (!p || p.ownerReview !== 'approved' || !p.evidence || p.evidence.level !== 'used') return;
+      let url;
+      try { url = window.yzrsAffiliate.urlFor(key); } catch (e) { return; }
+      toolsHtml += `<a class="ext-link tool" href="${esc(url)}" data-product-key="${esc(key)}" data-track-label="${esc(key)}" target="_blank" rel="noopener noreferrer sponsored nofollow"><span class="lab">広告</span>${esc(p.label)}<span class="tag">${esc(window.yzrsAffiliate.evidenceLabels[p.evidence.level] || '実使用')}</span></a><br>`;
+    });
+    if (toolsHtml) html += `<div class="tools"><div class="tools-lead">次にやること：手順で使う道具</div>${toolsHtml}</div>`;
   }
 
   // 選択肢
