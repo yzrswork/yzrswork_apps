@@ -46,7 +46,7 @@ amazonSupportApprovedは旧gate名を維持していますが、今回はOwner�
 | HDD選びナビ | WDの色とCMR/SMR判定 | `hdd/` |
 | 自作PC構成プランナー | 構成サマリーと電源容量の目安 | `build/` |
 | USB-C見分けナビ | USB-Cの電力・データ・映像仕様を、型番・性能表記・認証表示から確認 | `usbc/` |
-| 直し方ナビ | トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期) | `fixit/` |
+| 直し方ナビ | トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期、BluetoothアンプのAUX無音) | `fixit/` |
 | 接着剤選びナビ | くっつけたい素材2つから接着剤タイプと推奨製品を診断。見分け方つき | `glue/` |
 | 塗れるくん | 住所からDIY塗装ができるタイミングを気温、湿度、露点、降水、風で判定。PWA | `nurerukun/` |
 | ねじ下穴ナビ | タップ下穴、バカ穴、木ねじ下穴の径をねじサイズから早見 | `neji/` |

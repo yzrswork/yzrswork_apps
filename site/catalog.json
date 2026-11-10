@@ -791,8 +791,8 @@
     {
       "slug": "fixit",
       "name": "直し方ナビ",
-      "description": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期に対応。",
-      "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期)",
+      "description": "質問に答えるだけでトラブルを切り分ける診断ナビ。Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期、BluetoothアンプのAUX無音に対応。",
+      "readmeDescription": "トラブル診断(Yahoo!メール、Windows共有、自作PCビープ、Obsidian同期、BluetoothアンプのAUX無音)",
       "category": null,
       "managed": true,
       "related": [
