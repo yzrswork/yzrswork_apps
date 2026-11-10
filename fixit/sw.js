@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fixit-v17';
+const CACHE_NAME = 'fixit-v18';
 const CACHE_PREFIX = 'fixit-';
 const ASSETS = [
   './',

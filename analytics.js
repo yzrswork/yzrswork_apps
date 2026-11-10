@@ -147,7 +147,7 @@ var YZRS_RESULT_CATEGORIES = Object.freeze({
 });
 
 // 固定値として許可するトピック。アプリ側のツールIDのみを受け付け、それ以外は送らない。
-var YZRS_RESULT_TOPICS = Object.freeze(["yahoo-mail", "win-share", "pc-boot", "obsidian-sync"]);
+var YZRS_RESULT_TOPICS = Object.freeze(["yahoo-mail", "win-share", "pc-boot", "obsidian-sync", "aux-no-sound"]);
 
 var yzrsResultCompleted = Object.create(null);
 window.yzrsTrackResult = function (resultType, category, topic) {
