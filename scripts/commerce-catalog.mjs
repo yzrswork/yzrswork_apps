@@ -19,6 +19,14 @@ export function validateCommerceCatalog(catalog) {
     errors.push('Commerce publication requires API/support gates and HTTPS endpoint');
   }
   if (config?.enabled && JSON.stringify(config.webDisplayOn) !== '["deals"]') errors.push('Production commerce display requires normal Deals web page only');
+  // dealsShelf（任意）: deals ページに並べる商品の絞り込み。catalog の displayOn は変えず、生成側だけが使う。
+  if (config?.dealsShelf !== undefined) {
+    if (!strings(config.dealsShelf) || !config.dealsShelf.length) errors.push('site.commerce.dealsShelf invalid');
+    else for (const key of config.dealsShelf) {
+      const p = catalog.site.affiliate.products[key];
+      if (!p || p.kind !== 'product' || !p.displayOn?.includes('deals')) errors.push(`dealsShelf: ${key} is not a deals product`);
+    }
+  }
   if (config?.endpoint !== null && !https(config?.endpoint)) errors.push('Commerce endpoint invalid');
   const seen = new Set();
   for (const [key, p] of Object.entries(catalog.site.affiliate.products)) {

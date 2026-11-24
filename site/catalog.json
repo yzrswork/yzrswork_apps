@@ -110,7 +110,8 @@
           ],
           "recommendationReason": "DDR4対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
           "displayOn": [
-            "mem"
+            "mem",
+            "deals"
           ],
           "relatedArticles": [],
           "evidence": {
@@ -149,7 +150,8 @@
           ],
           "recommendationReason": "DDR4対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。YZRSの自宅PCで使っていて、今のところ不具合は出ていません。CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
           "displayOn": [
-            "mem"
+            "mem",
+            "deals"
           ],
           "relatedArticles": [],
           "evidence": {
@@ -185,7 +187,8 @@
           ],
           "recommendationReason": "DDR5対応のデスクトップで、32GB（16GB×2）の2枚構成を検討する際の候補です。ゲーム・制作・ローカルAIで必要容量を確認し、CPU・マザーボードの対応規格、QVL、空きスロットを照合してください。",
           "displayOn": [
-            "mem"
+            "mem",
+            "deals"
           ],
           "relatedArticles": [],
           "evidence": {
@@ -318,7 +321,8 @@
           "recommendationReason": "一般的なデスクトップPCで大容量データ保存用HDDを選ぶ際の候補です。4TB・CMRのWD Blueで、OSや高速作業領域よりも大容量保存・アーカイブ用途を想定します。",
           "displayOn": [
             "hdd",
-            "build"
+            "build",
+            "deals"
           ],
           "relatedArticles": [],
           "evidence": {
@@ -454,7 +458,8 @@
           "sourceUrl": "https://www.nejisaurus.engineer.jp/product-page/ns-04-%E3%83%9E%E3%82%A4%E3%82%AF%E3%83%AD%E3%83%8B%E3%83%83%E3%83%91%E3%83%BC",
           "recommendationReason": "リード線や部品の足を切る、電子工作で一番出番の多い工具の候補です。安いニッパーとの切れ味の差が分かりやすく、YZRSでも長く使っています。",
           "displayOn": [
-            "kit"
+            "kit",
+            "deals"
           ],
           "evidence": {
             "level": "used",
@@ -567,6 +572,14 @@
       },
       "webDisplayOn": [
         "deals"
+      ],
+      "dealsShelf": [
+        "solder-hakko-fx600a",
+        "tool-engineer-paw01",
+        "solder-goot-sd83",
+        "tool-astroai-dt132a",
+        "tool-shinfuji-rz300",
+        "solder-hakko-fh300"
       ]
     }
   },
