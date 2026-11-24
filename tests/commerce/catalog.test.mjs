@@ -50,7 +50,8 @@ test('real catalog: every approved+enabled product is published in catalog order
 test('static Deals: ordered rows keep judgment and safety visible; full rationale and canonical sources remain in native details', () => {
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
   const rows = [...html.matchAll(/<article\b[^>]*data-deals-card="([^"]+)"[^>]*>[\s\S]*?<\/article>/g)];
-  assert.deepEqual(rows.map(row => row[1]), Object.keys(browser.products));
+  // dealsShelf がある期間は棚の商品だけが並ぶ。それ以外は全 commerce 商品が並ぶ。
+  assert.deepEqual(rows.map(row => row[1]), browser.config.dealsShelf ?? Object.keys(browser.products));
   const escaped = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
   for (const [card, key] of rows) {
     const p = browser.products[key];
@@ -92,8 +93,8 @@ test('static Deals: ordered rows keep judgment and safety visible; full rational
       assert.ok(details.includes(escaped(article.label)), `${key}: related article label`);
     }
   }
-  const memoryFirstLayer = rows.find(row => row[1] === 'mem-crucial-ddr4-32')[0].split('<details')[0];
-  assert.match(memoryFirstLayer, /QVL/);
+  const memoryRow = rows.find(row => row[1] === 'mem-crucial-ddr4-32');
+  if (memoryRow) assert.match(memoryRow[0].split('<details')[0], /QVL/);
   const sd83FirstLayer = rows.find(row => row[1] === 'solder-goot-sd83')[0].split('<details')[0];
   const warning = sd83FirstLayer.match(/<p\b[^>]*class="[^"]*\bcommerce-warning\b[^>]*>([\s\S]*?)<\/p>/);
   assert.ok(warning, 'SD-83 critical safety stays visible while details are collapsed');

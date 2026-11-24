@@ -897,7 +897,10 @@ function main() {
   for (const page of catalog.pages.filter(page => page.managedHead)) {
     const path = join(ROOT, page.slug, 'index.html');
     let html = replaceMarked(readFileSync(path, 'utf8'), HEAD_START, HEAD_END, renderHead(page, catalog));
-    const cards = Object.entries(commerce.products).filter(([, p]) => p.displayOn.includes('deals')).map(([key, p]) => {
+    // dealsShelf が catalog にある期間は、その商品だけを deals ページに並べる（BF2026 の棚差し替え）。
+    // displayOn は触らないので commerce 本体（Worker/PoC/SALE判定）は全商品のまま。棚を戻すときは dealsShelf を消して再生成する。
+    const shelf = commerce.config.dealsShelf;
+    const cards = Object.entries(commerce.products).filter(([key, p]) => p.displayOn.includes('deals') && (!shelf || shelf.includes(key))).map(([key, p]) => {
       const url = `https://www.amazon.co.jp/dp/${p.asin}?tag=${encodeURIComponent(commerce.config.associateTag)}`;
       const uses = p.useCases.map(use => ({ game: 'ゲーム', creative: '制作・動画編集', ai: 'ローカルAI', web: 'ブラウジング・文書作業', maker: '電子工作', repair: '修理', storage: '大容量保存', archive: 'アーカイブ' })[use] || use).join(' / ');
       const note = p.note || '';

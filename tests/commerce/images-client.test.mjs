@@ -299,7 +299,8 @@ test('all approved products preserve editorial order, recommendation, SALE and C
   const expected = Object.keys(c.products);
   assert.ok(expected.length >= 6, 'mixed-image cases need at least six approved products');
   const html = readFileSync(new URL('../../deals/index.html', import.meta.url), 'utf8');
-  assert.deepEqual([...html.matchAll(/data-deals-card="([^"]+)"/g)].map(match => match[1]), expected);
+  // dealsShelf がある期間は、ページに並ぶのは棚の商品だけ（commerce 本体の対象は全商品のまま）。
+  assert.deepEqual([...html.matchAll(/data-deals-card="([^"]+)"/g)].map(match => match[1]), c.config.dealsShelf ?? expected);
   function approvedPayload(mixed = false) {
     const items = Object.fromEntries(Object.entries(c.products).map(([key, p], index) => {
       const raw = rawItem(p.asin);

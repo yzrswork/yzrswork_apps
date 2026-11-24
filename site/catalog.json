@@ -572,6 +572,14 @@
       },
       "webDisplayOn": [
         "deals"
+      ],
+      "dealsShelf": [
+        "solder-hakko-fx600a",
+        "tool-engineer-paw01",
+        "solder-goot-sd83",
+        "tool-astroai-dt132a",
+        "tool-shinfuji-rz300",
+        "solder-hakko-fh300"
       ]
     }
   },
